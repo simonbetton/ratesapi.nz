@@ -4,6 +4,7 @@
     "deploy": "wrangler deploy --minify src/index.ts"
   },
   "dependencies": {
+    "@hono/swagger-ui": "^0.2.1",
     "@hono/zod-openapi": "^0.9.6",
     "axios": "^1.6.7",
     "cheerio": "^1.0.0-rc.12",
