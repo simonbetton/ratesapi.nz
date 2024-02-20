@@ -1,9 +1,12 @@
-name: Scrape Mortage Rates and Commit
+name: Scrape Mortage Rates, Commit and Deploy
 
 on:
   schedule:
     - cron: "0 * * * *" # Runs at the start of every hour
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   scrape-and-commit:
