@@ -5,7 +5,7 @@
 <p align="center">
   ✨ <a href="https://ratesapi.nz">https://ratesapi.nz</a> ✨
   <br />
-  Rates API is a free service for current rates of financial products in New Zealand.
+  Rates API is a free OpenAPI service to retrieve the latest lending rates offered by New Zealand financial institutions – updated hourly.
 </p>
 <br />
 
@@ -27,6 +27,14 @@ Cloudflare Workers is a JavaScript edge runtime on Cloudflare CDN.
 
 You can develop the application locally and publish it with a few commands using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
 Wrangler includes trans compiler, so we can write the code with TypeScript.
+
+### Live URL examples
+
+🔗 [https://ratesapi.nz/doc](https://ratesapi.nz/doc) - OpenAPI specification
+
+🔗 [https://ratesapi.nz/mortgage-rates](https://ratesapi.nz/mortgage-rates) - List of all mortgage rates by institution
+
+🔗 [https://ratesapi.nz/mortgage-rates/anz](https://ratesapi.nz/mortgage-rates/anz) - Specific institution mortgage rates
 
 <a id="setup"></a>
 
@@ -56,7 +64,11 @@ bun run deploy
 
 ## API
 
-### GET `/api/mortgage-rates`
+### GET `/doc`
+
+Get the OpenAPI documentation of the API.
+
+### GET `/mortgage-rates`
 
 Get the current (updated hourly) mortgage rates of institutions in New Zealand.
 
@@ -95,7 +107,7 @@ Get the current (updated hourly) mortgage rates of institutions in New Zealand.
 ]
 ```
 
-### GET `/api/mortgage-rates/:institution`
+### GET `/mortgage-rates/:institution`
 
 Get the current (updated hourly) mortgage rates of a specific institution in New Zealand.
 
