@@ -1,6 +1,17 @@
 import { createRoute } from "@hono/zod-openapi";
-import { MortgageRates, ParamsSchema } from "../models/mortgage-rates";
+import { z } from "@hono/zod-openapi";
+import { MortgageRates } from "../models/mortgage-rates";
 import { ApiError } from "../models/api-error";
+
+const ParamsSchema = z.object({
+  institution: z.string().openapi({
+    param: {
+      name: "institution",
+      in: "path",
+    },
+    examples: ["anz", "kiwibank", "westpac"],
+  }),
+});
 
 export const getMortgageRatesByInstitutionNameRoute = createRoute({
   method: "get",
