@@ -3,6 +3,7 @@ import * as cheerio from "cheerio";
 import { writeFileSync } from "fs";
 import {
   Institution,
+  MortgageRates,
   Product,
   Rate,
   RateTerm,
@@ -41,7 +42,7 @@ async function main() {
     const { data } = await axios.get(config.url);
     const $ = cheerio.load(data);
     const institutions = modelExtractedFromDOM($);
-    saveDataToFile(institutions);
+    saveDataToFile(MortgageRates.parse(institutions));
   } catch (error) {
     console.error("Error during scraping or file writing:", error);
   }
