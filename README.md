@@ -28,24 +28,106 @@ Cloudflare Workers is a JavaScript edge runtime on Cloudflare CDN.
 You can develop the application locally and publish it with a few commands using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
 Wrangler includes trans compiler, so we can write the code with TypeScript.
 
-## 1. Setup
+<a id="setup"></a>
 
-```
+## Setup
+
+#### 📦 Install dependencies
+
+```zsh
 bun i
 ```
 
-## 2. Run
+#### 🏗️ Run locally
 
 Run the development server locally. Then, access `http://localhost:8787` in your web browser.
 
-```
+```zsh
 bun run dev
 ```
 
-## 3. Deploy
+#### 🚀 Deploy to Cloudflare Workers
 
-```
+```zsh
 bun run deploy
 ```
 
-That's it!
+<a id="api"></a>
+
+## API
+
+### GET `/api/mortgage-rates`
+
+Get the current (updated hourly) mortgage rates of institutions in New Zealand.
+
+#### Response
+
+```json
+[
+  {
+    "name": "ANZ",
+    "products": [
+      {
+        "name": "Standard",
+        "rates": [
+          {
+            "term": "Variable floating",
+            "rate": 8.64
+          },
+          {
+            "term": "6 months",
+            "rate": 7.95
+          },
+          {
+            "term": "1 year",
+            "rate": 7.99
+          },
+          {
+            "term": "2 years",
+            "rate": 7.49
+          },
+          ...
+        ]
+      },
+      ...
+    }
+  ...
+]
+```
+
+### GET `/api/mortgage-rates/:institution`
+
+Get the current (updated hourly) mortgage rates of a specific institution in New Zealand.
+
+#### Response
+
+```json
+{
+  "name": "Kiwibank",
+  "products": [
+    {
+      "name": "Standard",
+      "rates": [
+        {
+          "term": "Variable floating",
+          "rate": 8.64
+        },
+        {
+          "term": "6 months",
+          "rate": 7.95
+        },
+        {
+          "term": "1 year",
+          "rate": 7.99
+        },
+        {
+          "term": "2 years",
+          "rate": 7.49
+        },
+        ...
+      ]
+    },
+    ...
+  }
+}
+```
