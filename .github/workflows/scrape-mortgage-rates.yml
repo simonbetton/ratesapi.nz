@@ -34,3 +34,8 @@ jobs:
           git add data/mortgage-rates.json
           git commit -m "Update scraped table" -a || exit 0
           git push
+
+      - name: Deploy Cloudflare Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
