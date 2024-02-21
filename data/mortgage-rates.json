@@ -323,37 +323,37 @@
             "id": "rate:1a8b0bd35480c9c3287fb2fd97d5a7cc22ef20b9",
             "term": "1 year",
             "termInMonths": 12,
-            "rate": 7.35
+            "rate": 7.29
           },
           {
             "id": "rate:a6e93001db3e5635a3fd07805d170bed1caeeb07",
             "term": "18 months",
             "termInMonths": 18,
-            "rate": 7.15
+            "rate": 6.99
           },
           {
             "id": "rate:c0307b45a45acf2efbe030d16df418d32fc391be",
             "term": "2 years",
             "termInMonths": 24,
-            "rate": 6.89
+            "rate": 6.85
           },
           {
             "id": "rate:6df15d606621a519798e90d08740ca17ff6b7fbc",
             "term": "3 years",
             "termInMonths": 36,
-            "rate": 6.79
+            "rate": 6.65
           },
           {
             "id": "rate:3362e0f9079704db7503b1e1b745668e49971828",
             "term": "4 years",
             "termInMonths": 48,
-            "rate": 6.75
+            "rate": 6.55
           },
           {
             "id": "rate:b6a7a86bee9770f4b810cad80e0146bf3d9c86b9",
             "term": "5 years",
             "termInMonths": 60,
-            "rate": 6.75
+            "rate": 6.55
           }
         ]
       },
@@ -389,37 +389,37 @@
             "id": "rate:1a8b0bd35480c9c3287fb2fd97d5a7cc22ef20b9",
             "term": "1 year",
             "termInMonths": 12,
-            "rate": 7.95
+            "rate": 7.89
           },
           {
             "id": "rate:a6e93001db3e5635a3fd07805d170bed1caeeb07",
             "term": "18 months",
             "termInMonths": 18,
-            "rate": 7.75
+            "rate": 7.59
           },
           {
             "id": "rate:c0307b45a45acf2efbe030d16df418d32fc391be",
             "term": "2 years",
             "termInMonths": 24,
-            "rate": 7.49
+            "rate": 7.45
           },
           {
             "id": "rate:6df15d606621a519798e90d08740ca17ff6b7fbc",
             "term": "3 years",
             "termInMonths": 36,
-            "rate": 7.39
+            "rate": 7.25
           },
           {
             "id": "rate:3362e0f9079704db7503b1e1b745668e49971828",
             "term": "4 years",
             "termInMonths": 48,
-            "rate": 7.35
+            "rate": 7.15
           },
           {
             "id": "rate:b6a7a86bee9770f4b810cad80e0146bf3d9c86b9",
             "term": "5 years",
             "termInMonths": 60,
-            "rate": 7.35
+            "rate": 7.15
           }
         ]
       },
