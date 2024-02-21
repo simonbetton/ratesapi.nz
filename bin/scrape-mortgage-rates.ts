@@ -1,6 +1,7 @@
-import axios from "axios";
 import * as cheerio from "cheerio";
 import { writeFileSync } from "fs";
+import { createHash } from "hono/utils/crypto";
+import ora from "ora";
 import {
   Institution,
   MortgageRates,
@@ -33,53 +34,85 @@ const config: {
     "Special LVR under 80%",
     "Special - Classic",
     "Special LVR <80%",
+    "Special LVR < 80%",
   ],
   outputFilePath: "data/mortgage-rates.json",
 };
 
 async function main() {
+  let data: string = "";
+  const gather = ora("Scraping mortgage rates").start();
   try {
-    const { data } = await axios.get(config.url);
-    const $ = cheerio.load(data);
-    const institutions = modelExtractedFromDOM($);
-    saveDataToFile(MortgageRates.parse(institutions));
+    const response = await fetchWithTimeout(config.url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${config.url}`);
+    }
+    data = await response.text();
+    gather.succeed("Scraped mortgage rates").stop();
   } catch (error) {
-    console.error("Error during scraping or file writing:", error);
+    gather.fail("Failed to scrape mortgage rates").stop();
+  }
+
+  let validatedModel: MortgageRates = [];
+  const handle = ora("Extracting and Validating").start();
+  try {
+    const $ = cheerio.load(data);
+    const unvalidatedModel = await getModelExtractedFromDOM($);
+    validatedModel = MortgageRates.parse(unvalidatedModel);
+    handle.succeed("Extracted and Validated").stop();
+  } catch (error) {
+    handle.fail("Failed to extract and/or validate").stop();
+  }
+
+  const save = ora("Saving to file").start();
+  try {
+    saveDataToFile(validatedModel);
+    save.succeed("Saved to local file").stop();
+  } catch (error) {
+    save.fail("Failed to save to local file").stop();
   }
 }
 main().catch(console.error);
 
-function modelExtractedFromDOM($: cheerio.CheerioAPI): Institution[] {
+async function getModelExtractedFromDOM(
+  $: cheerio.CheerioAPI
+): Promise<Institution[]> {
   const institutions: Institution[] = [];
   const rows = $(config.tableSelector);
+  let currentInstitution: Institution | null = null;
 
-  let currentInstitution: Institution;
-
-  rows.each((_, row) => {
+  for await (const row of rows) {
     const cells = Array.from($(row).find("td"));
     const isPrimaryRow = $(row).hasClass("primary_row");
     if (isPrimaryRow) {
-      currentInstitution = createInstitution($, cells[0]);
+      currentInstitution = await createInstitution($, cells[0]);
       institutions.push(currentInstitution);
     }
     if (currentInstitution) {
       const productName = getProductName($, cells);
-      const product = findOrCreateProduct(currentInstitution, productName);
-      product.rates = [...product.rates, ...getRatesForProduct($, cells)];
+      const product = await findOrCreateProduct(
+        currentInstitution,
+        productName
+      );
+      product.rates = [
+        ...product.rates,
+        ...(await createRatesForProduct(currentInstitution, $, cells)),
+      ];
       sortProductRatesByTerm(product.rates);
     }
-  });
+  }
 
   return institutions;
 }
 
-function findOrCreateProduct(
+async function findOrCreateProduct(
   institution: Institution,
   productName: string
-): Product {
+): Promise<Product> {
   let product = institution.products.find((p) => p.name === productName);
   if (!product) {
     product = {
+      id: await generateKeyFor("product", productName, institution.name),
       name: productName,
       rates: [],
     };
@@ -88,46 +121,61 @@ function findOrCreateProduct(
   return product;
 }
 
-function createInstitution(
+async function createInstitution(
   $: cheerio.CheerioAPI,
   cell: cheerio.Element
-): Institution {
+): Promise<Institution> {
+  const name = getInstitutionName($, cell);
   return {
-    name: getInstitutionName($, cell),
+    id: await generateKeyFor("institution", name),
+    name,
     products: [],
   };
 }
 
-function getRatesForProduct(
+async function createRatesForProduct(
+  institution: Institution,
   $: cheerio.CheerioAPI,
   cells: cheerio.Element[]
-): Rate[] {
+): Promise<Rate[]> {
   const rates: Rate[] = [];
 
-  cells.slice(2).forEach((cell, i) => {
+  for (let i = 2; i < cells.length; i++) {
+    const cell = cells[i];
+    const colspan = $(cell).hasClass("special-line");
     // Check for "18 months" lines. These are spanned across multiple columns 🤷
-    if ($(cell).attr("colspan")) {
-      const specialRateText = $(cell).text().trim();
-      const matches = specialRateText.match(/(\d+ months) = (.+)/);
-      if (matches && matches.length === 3) {
-        const term = matches[1];
-        const rate = matches[2];
-        if (term && rate && isRateTerm(term)) {
-          rates.push({ term, rate: parseFloat(rate) });
-        }
+    if (colspan) {
+      const specialRate = getSpecialRate(
+        $(cell).text().replace(/\n|\r/g, "").trim()
+      );
+      if (specialRate && isRateTerm(specialRate.term)) {
+        rates.push(
+          await createRate(institution, specialRate.term, specialRate.rate)
+        );
       }
     } else {
       const rate = $(cell).text().trim();
-      if (rate && isRateTerm(config.tableColumnHeaders[i])) {
-        rates.push({
-          term: config.tableColumnHeaders[i],
-          rate: parseFloat(rate),
-        });
+      const term = config.tableColumnHeaders[i - 2].replace(/\n|\r/g, ""); // Need to zero-base the index back to the tableColumnHeaders array
+      if (rate && isRateTerm(term)) {
+        rates.push(await createRate(institution, term, rate));
       }
     }
-  });
+  }
 
   return rates;
+}
+
+async function createRate(
+  institution: Institution,
+  term: RateTerm,
+  rate: string
+): Promise<Rate> {
+  return {
+    id: await generateKeyFor("rate", term, institution.name),
+    term,
+    termInMonths: convertTermToMonths(term),
+    rate: parseFloat(rate),
+  };
 }
 
 function getInstitutionName(
@@ -156,15 +204,68 @@ function normalizeProductName(name: string) {
   return name;
 }
 
+function getSpecialRate(text: string): { term: string; rate: string } | null {
+  const matches = text.match(/(\d+ months) = (.+)/);
+  if (matches && matches.length === 3) {
+    return { term: matches[1], rate: matches[2] };
+  }
+  return null;
+}
+
 function sortProductRatesByTerm(rates: Rate[]) {
   rates.sort((a, b) => {
-    return (
-      config.tableColumnHeaders.indexOf(a.term) -
-      config.tableColumnHeaders.indexOf(b.term)
-    );
+    return (a.termInMonths ?? 0) - (b.termInMonths ?? 0);
   });
+}
+
+function convertTermToMonths(term: RateTerm): number | null {
+  // If term has "months" in it, parse the number of months
+  const matches = term.match(/(\d+) months?/);
+  if (matches && matches.length === 2) {
+    return parseInt(matches[1]);
+  }
+  // If term has "year" in it, parse the number of years
+  const matchesYears = term.match(/(\d+) years?/);
+  if (matchesYears && matchesYears.length === 2) {
+    return parseInt(matchesYears[1]) * 12;
+  }
+  return null;
+}
+
+async function generateKeyFor(
+  prefix: "rate" | "product" | "institution",
+  input: string,
+  mix?: string
+): Promise<string> {
+  return `${prefix}:${
+    (await createHash(`${mix}:${input}`, { name: "SHA-1", alias: "SHA1" })) ??
+    "unknown"
+  }`;
 }
 
 function saveDataToFile(data: Institution[]) {
   writeFileSync(config.outputFilePath, JSON.stringify(data, null, 2));
+}
+
+async function fetchWithTimeout(
+  resource: string,
+  options: RequestInit = {},
+  timeout: number = 2000
+) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+
+  const response = await fetch(resource, {
+    ...options,
+    signal: controller.signal, // Pass the abort signal to the fetch call
+  }).catch((error) => {
+    if (error.name === "AbortError") {
+      throw new Error("Fetch request timed out");
+    } else {
+      throw error; // Rethrow other errors for caller to handle
+    }
+  });
+
+  clearTimeout(id); // Clear the timeout if the fetch completes in time
+  return response;
 }
