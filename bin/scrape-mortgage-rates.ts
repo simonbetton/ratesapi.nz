@@ -1,5 +1,4 @@
-import * as cheerio from "cheerio";
-import { writeFileSync } from "fs";
+import { CheerioAPI, load, Element } from "cheerio";
 import ora from "ora";
 import {
   Institution,
@@ -10,6 +9,8 @@ import {
   isRateTerm,
 } from "../src/models/mortgage-rates";
 import { generateId } from "../src/utils/generate-id";
+import mortgageRatesFromJson from "../data/mortgage-rates.json";
+import { fetchWithTimeout, hasDataChanged, saveDataToFile } from "./utils";
 
 const config: {
   url: string;
@@ -57,7 +58,7 @@ async function main() {
   let validatedModel: MortgageRates;
   const handle = ora("Extracting and Validating").start();
   try {
-    const $ = cheerio.load(data);
+    const $ = load(data);
     const unvalidatedData = getModelExtractedFromDOM($);
     validatedModel = MortgageRates.parse({
       type: "MortgageRates",
@@ -70,9 +71,18 @@ async function main() {
     throw error;
   }
 
+  // Check if the rates have changed
+  // If they haven't, don't save to file
+  // TODO: Fix this `as MortgageRates` type casting
+  if (!hasDataChanged(validatedModel, mortgageRatesFromJson as MortgageRates)) {
+    const noChange = ora("No changes detected").start();
+    noChange.succeed("No changes detected").stop();
+    return;
+  }
+
   const save = ora("Saving to file").start();
   try {
-    saveDataToFile(validatedModel);
+    saveDataToFile(validatedModel, config);
     save.succeed("Saved to local file").stop();
   } catch (error) {
     save.fail("Failed to save to local file").stop();
@@ -81,7 +91,7 @@ async function main() {
 }
 main().catch(console.error);
 
-function getModelExtractedFromDOM($: cheerio.CheerioAPI): Institution[] {
+function getModelExtractedFromDOM($: CheerioAPI): Institution[] {
   const institutions: Institution[] = [];
   const rows = $(config.tableSelector);
   let currentInstitution: Institution | null = null;
@@ -90,27 +100,24 @@ function getModelExtractedFromDOM($: cheerio.CheerioAPI): Institution[] {
     const cells = Array.from($(row).find("td"));
     const isPrimaryRow = $(row).hasClass("primary_row");
     if (isPrimaryRow) {
-      currentInstitution = createInstitution($, cells[0]);
+      currentInstitution = asInstitution($, cells[0]);
       institutions.push(currentInstitution);
     }
     if (currentInstitution) {
       const productName = getProductName($, cells);
-      const product = findOrCreateProduct(currentInstitution, productName);
+      const product = asProduct(currentInstitution, productName);
       product.rates = [
         ...product.rates,
-        ...createRatesForProduct(currentInstitution, product, $, cells),
+        ...asRatesForProduct(currentInstitution, product, $, cells),
       ];
-      sortProductRatesByTerm(product.rates);
+      sortProductRatesByTermInMonths(product.rates);
     }
   }
 
   return institutions;
 }
 
-function findOrCreateProduct(
-  institution: Institution,
-  productName: string
-): Product {
+function asProduct(institution: Institution, productName: string): Product {
   let product = institution.products.find((p) => p.name === productName);
   if (!product) {
     product = {
@@ -123,10 +130,7 @@ function findOrCreateProduct(
   return product;
 }
 
-function createInstitution(
-  $: cheerio.CheerioAPI,
-  cell: cheerio.Element
-): Institution {
+function asInstitution($: CheerioAPI, cell: Element): Institution {
   const name = getInstitutionName($, cell);
   return {
     id: generateId(["institution", name]),
@@ -135,11 +139,11 @@ function createInstitution(
   };
 }
 
-function createRatesForProduct(
+function asRatesForProduct(
   institution: Institution,
   product: Product,
-  $: cheerio.CheerioAPI,
-  cells: cheerio.Element[]
+  $: CheerioAPI,
+  cells: Element[]
 ): Rate[] {
   const rates: Rate[] = [];
 
@@ -153,19 +157,14 @@ function createRatesForProduct(
       );
       if (specialRate && isRateTerm(specialRate.term)) {
         rates.push(
-          createRate(
-            institution,
-            product.name,
-            specialRate.term,
-            specialRate.rate
-          )
+          asRate(institution, product.name, specialRate.term, specialRate.rate)
         );
       }
     } else {
       const rate = $(cell).text().trim();
       const term = config.tableColumnHeaders[i - 2].replace(/\n|\r/g, ""); // Need to zero-base the index back to the tableColumnHeaders array
       if (rate && isRateTerm(term)) {
-        rates.push(createRate(institution, product.name, term, rate));
+        rates.push(asRate(institution, product.name, term, rate));
       }
     }
   }
@@ -173,7 +172,7 @@ function createRatesForProduct(
   return rates;
 }
 
-function createRate(
+function asRate(
   institution: Institution,
   productName: string,
   term: RateTerm,
@@ -182,15 +181,12 @@ function createRate(
   return {
     id: generateId(["rate", institution.name, productName, term]),
     term,
-    termInMonths: convertTermToMonths(term),
+    termInMonths: convertTermToMonthsNumber(term),
     rate: parseFloat(rate),
   };
 }
 
-function getInstitutionName(
-  $: cheerio.CheerioAPI,
-  cell: cheerio.Element
-): string {
+function getInstitutionName($: CheerioAPI, cell: Element): string {
   const imgElement = $(cell).find("img");
   if (imgElement) {
     return imgElement.attr("alt")?.trim() ?? $(cell).text().trim(); // Use alt text if image exists
@@ -199,18 +195,8 @@ function getInstitutionName(
   }
 }
 
-function getProductName(
-  $: cheerio.CheerioAPI,
-  cells: cheerio.Element[]
-): string {
+function getProductName($: CheerioAPI, cells: Element[]): string {
   return normalizeProductName($(cells[1]).text().trim());
-}
-
-function normalizeProductName(name: string) {
-  if (config.alternativeSpecialProductNames.includes(name)) {
-    return "Special";
-  }
-  return name;
 }
 
 function getSpecialRate(text: string): { term: string; rate: string } | null {
@@ -221,13 +207,20 @@ function getSpecialRate(text: string): { term: string; rate: string } | null {
   return null;
 }
 
-function sortProductRatesByTerm(rates: Rate[]) {
+function normalizeProductName(name: string) {
+  if (config.alternativeSpecialProductNames.includes(name)) {
+    return "Special";
+  }
+  return name;
+}
+
+function sortProductRatesByTermInMonths(rates: Rate[]) {
   rates.sort((a, b) => {
     return (a.termInMonths ?? 0) - (b.termInMonths ?? 0);
   });
 }
 
-function convertTermToMonths(term: RateTerm): number | null {
+function convertTermToMonthsNumber(term: RateTerm): number | null {
   // If term has "months" in it, parse the number of months
   const matches = term.match(/(\d+) months?/);
   if (matches && matches.length === 2) {
@@ -239,31 +232,4 @@ function convertTermToMonths(term: RateTerm): number | null {
     return parseInt(matchesYears[1]) * 12;
   }
   return null;
-}
-
-function saveDataToFile(data: MortgageRates) {
-  writeFileSync(config.outputFilePath, JSON.stringify(data, null, 2));
-}
-
-async function fetchWithTimeout(
-  resource: string,
-  options: RequestInit = {},
-  timeout: number = 2000
-) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
-
-  const response = await fetch(resource, {
-    ...options,
-    signal: controller.signal, // Pass the abort signal to the fetch call
-  }).catch((error) => {
-    if (error.name === "AbortError") {
-      throw new Error("Fetch request timed out");
-    } else {
-      throw error; // Rethrow other errors for caller to handle
-    }
-  });
-
-  clearTimeout(id); // Clear the timeout if the fetch completes in time
-  return response;
 }

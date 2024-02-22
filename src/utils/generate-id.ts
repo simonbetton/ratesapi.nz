@@ -3,9 +3,6 @@ type Args = [Prefix, ...string[]];
 
 /**
  * Generates an ID based on the provided arguments.
- *
- * @param args - The arguments used to generate the ID.
- * @returns The generated ID.
  */
 export function generateId(args: Args): string {
   return args
