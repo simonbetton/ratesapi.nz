@@ -1,7 +1,6 @@
 import { createRoute } from "@hono/zod-openapi";
 import { z } from "@hono/zod-openapi";
-import { MortgageRates } from "../models/mortgage-rates";
-import { ApiError } from "../models/api-error";
+import { ApiError, ApiSuccess } from "../models/api";
 
 const ParamsSchema = z.object({
   institution: z.string().openapi({
@@ -13,17 +12,31 @@ const ParamsSchema = z.object({
   }),
 });
 
+const QuerySchema = z.object({
+  termInMonths: z
+    .string()
+    .optional()
+    .openapi({
+      param: {
+        name: "termInMonths",
+        in: "query",
+      },
+      examples: ["6", "12", "24", "36"],
+    }),
+});
+
 export const getMortgageRatesByInstitutionNameRoute = createRoute({
   method: "get",
-  path: "/mortgage-rates/{institution}",
+  path: "/api/v1/mortgage-rates/{institution}",
   request: {
     params: ParamsSchema,
+    query: QuerySchema,
   },
   responses: {
     200: {
       content: {
         "application/json": {
-          schema: MortgageRates,
+          schema: ApiSuccess,
         },
       },
       description: "Retrieve all mortgage rates for all institutions",

@@ -14,7 +14,7 @@ export type RateTerm = (typeof RateTerm)[keyof typeof RateTerm];
 
 export const Rate = z.object({
   id: z.string().openapi({
-    examples: ["rate:xxx"],
+    examples: ["rate:anz:standard:18-months"],
   }),
   term: z.nativeEnum(RateTerm).openapi({
     examples: ["6 months", "3 years"],
@@ -33,7 +33,7 @@ export type Rate = z.infer<typeof Rate>;
 
 export const Product = z.object({
   id: z.string().openapi({
-    examples: ["product:xxx"],
+    examples: ["product:anz:standard"],
   }),
   name: z.string().openapi({
     examples: ["Standard"],
@@ -44,7 +44,7 @@ export type Product = z.infer<typeof Product>;
 
 export const Institution = z.object({
   id: z.string().openapi({
-    examples: ["institution:xxx"],
+    examples: ["institution:anz"],
   }),
   name: z.string().openapi({
     examples: ["ANZ", "Kiwibank", "Westpac"],
@@ -53,7 +53,15 @@ export const Institution = z.object({
 });
 export type Institution = z.infer<typeof Institution>;
 
-export const MortgageRates = z.array(Institution).openapi("MortgageRates");
+export const MortgageRates = z
+  .object({
+    type: z.literal("MortgageRates"),
+    data: z.array(Institution).openapi("MortgageRates"),
+    lastUpdated: z.string().openapi({
+      example: "2021-08-01T00:00:00.000Z",
+    }),
+  })
+  .strict();
 export type MortgageRates = z.infer<typeof MortgageRates>;
 
 export function isRateTerm(term: string): term is RateTerm {

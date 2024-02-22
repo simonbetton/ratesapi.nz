@@ -1,6 +1,5 @@
 import * as cheerio from "cheerio";
 import { writeFileSync } from "fs";
-import { createHash } from "hono/utils/crypto";
 import ora from "ora";
 import {
   Institution,
@@ -10,6 +9,7 @@ import {
   RateTerm,
   isRateTerm,
 } from "../src/models/mortgage-rates";
+import { generateId } from "../src/utils/generate-id";
 
 const config: {
   url: string;
@@ -51,17 +51,23 @@ async function main() {
     gather.succeed("Scraped mortgage rates").stop();
   } catch (error) {
     gather.fail("Failed to scrape mortgage rates").stop();
+    return;
   }
 
-  let validatedModel: MortgageRates = [];
+  let validatedModel: MortgageRates;
   const handle = ora("Extracting and Validating").start();
   try {
     const $ = cheerio.load(data);
-    const unvalidatedModel = await getModelExtractedFromDOM($);
-    validatedModel = MortgageRates.parse(unvalidatedModel);
+    const unvalidatedData = getModelExtractedFromDOM($);
+    validatedModel = MortgageRates.parse({
+      type: "MortgageRates",
+      data: unvalidatedData,
+      lastUpdated: new Date().toISOString(),
+    });
     handle.succeed("Extracted and Validated").stop();
   } catch (error) {
     handle.fail("Failed to extract and/or validate").stop();
+    throw error;
   }
 
   const save = ora("Saving to file").start();
@@ -70,33 +76,29 @@ async function main() {
     save.succeed("Saved to local file").stop();
   } catch (error) {
     save.fail("Failed to save to local file").stop();
+    return;
   }
 }
 main().catch(console.error);
 
-async function getModelExtractedFromDOM(
-  $: cheerio.CheerioAPI
-): Promise<Institution[]> {
+function getModelExtractedFromDOM($: cheerio.CheerioAPI): Institution[] {
   const institutions: Institution[] = [];
   const rows = $(config.tableSelector);
   let currentInstitution: Institution | null = null;
 
-  for await (const row of rows) {
+  for (const row of rows) {
     const cells = Array.from($(row).find("td"));
     const isPrimaryRow = $(row).hasClass("primary_row");
     if (isPrimaryRow) {
-      currentInstitution = await createInstitution($, cells[0]);
+      currentInstitution = createInstitution($, cells[0]);
       institutions.push(currentInstitution);
     }
     if (currentInstitution) {
       const productName = getProductName($, cells);
-      const product = await findOrCreateProduct(
-        currentInstitution,
-        productName
-      );
+      const product = findOrCreateProduct(currentInstitution, productName);
       product.rates = [
         ...product.rates,
-        ...(await createRatesForProduct(currentInstitution, $, cells)),
+        ...createRatesForProduct(currentInstitution, product, $, cells),
       ];
       sortProductRatesByTerm(product.rates);
     }
@@ -105,14 +107,14 @@ async function getModelExtractedFromDOM(
   return institutions;
 }
 
-async function findOrCreateProduct(
+function findOrCreateProduct(
   institution: Institution,
   productName: string
-): Promise<Product> {
+): Product {
   let product = institution.products.find((p) => p.name === productName);
   if (!product) {
     product = {
-      id: await generateKeyFor("product", productName, institution.name),
+      id: generateId(["product", institution.name, productName]),
       name: productName,
       rates: [],
     };
@@ -121,23 +123,24 @@ async function findOrCreateProduct(
   return product;
 }
 
-async function createInstitution(
+function createInstitution(
   $: cheerio.CheerioAPI,
   cell: cheerio.Element
-): Promise<Institution> {
+): Institution {
   const name = getInstitutionName($, cell);
   return {
-    id: await generateKeyFor("institution", name),
+    id: generateId(["institution", name]),
     name,
     products: [],
   };
 }
 
-async function createRatesForProduct(
+function createRatesForProduct(
   institution: Institution,
+  product: Product,
   $: cheerio.CheerioAPI,
   cells: cheerio.Element[]
-): Promise<Rate[]> {
+): Rate[] {
   const rates: Rate[] = [];
 
   for (let i = 2; i < cells.length; i++) {
@@ -150,14 +153,19 @@ async function createRatesForProduct(
       );
       if (specialRate && isRateTerm(specialRate.term)) {
         rates.push(
-          await createRate(institution, specialRate.term, specialRate.rate)
+          createRate(
+            institution,
+            product.name,
+            specialRate.term,
+            specialRate.rate
+          )
         );
       }
     } else {
       const rate = $(cell).text().trim();
       const term = config.tableColumnHeaders[i - 2].replace(/\n|\r/g, ""); // Need to zero-base the index back to the tableColumnHeaders array
       if (rate && isRateTerm(term)) {
-        rates.push(await createRate(institution, term, rate));
+        rates.push(createRate(institution, product.name, term, rate));
       }
     }
   }
@@ -165,13 +173,14 @@ async function createRatesForProduct(
   return rates;
 }
 
-async function createRate(
+function createRate(
   institution: Institution,
+  productName: string,
   term: RateTerm,
   rate: string
-): Promise<Rate> {
+): Rate {
   return {
-    id: await generateKeyFor("rate", term, institution.name),
+    id: generateId(["rate", institution.name, productName, term]),
     term,
     termInMonths: convertTermToMonths(term),
     rate: parseFloat(rate),
@@ -232,18 +241,7 @@ function convertTermToMonths(term: RateTerm): number | null {
   return null;
 }
 
-async function generateKeyFor(
-  prefix: "rate" | "product" | "institution",
-  input: string,
-  mix?: string
-): Promise<string> {
-  return `${prefix}:${
-    (await createHash(`${mix}:${input}`, { name: "SHA-1", alias: "SHA1" })) ??
-    "unknown"
-  }`;
-}
-
-function saveDataToFile(data: Institution[]) {
+function saveDataToFile(data: MortgageRates) {
   writeFileSync(config.outputFilePath, JSON.stringify(data, null, 2));
 }
 

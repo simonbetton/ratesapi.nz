@@ -30,11 +30,11 @@ Wrangler includes trans compiler, so we can write the code with TypeScript.
 
 ### Live URL examples
 
-🔗 [https://ratesapi.nz/doc](https://ratesapi.nz/doc) - OpenAPI specification
+🔗 [https://ratesapi.nz/api/v1/doc](https://ratesapi.nz/api/v1/doc) - OpenAPI specification
 
-🔗 [https://ratesapi.nz/mortgage-rates](https://ratesapi.nz/mortgage-rates) - List of all mortgage rates by institution
+🔗 [https://ratesapi.nz/api/v1/mortgage-rates](https://ratesapi.nz/api/v1/mortgage-rates) - List of all mortgage rates by institution
 
-🔗 [https://ratesapi.nz/mortgage-rates/anz](https://ratesapi.nz/mortgage-rates/anz) - Specific institution mortgage rates
+🔗 [https://ratesapi.nz/api/v1/mortgage-rates/anz](https://ratesapi.nz/api/v1/mortgage-rates/anz) - Specific institution mortgage rates
 
 <a id="setup"></a>
 
@@ -64,50 +64,78 @@ bun run deploy
 
 ## API
 
-### GET `/doc`
+### GET `/api/v1/doc`
 
 Get the OpenAPI documentation of the API.
 
-### GET `/mortgage-rates`
+### GET `/api/v1/mortgage-rates`
 
 Get the current (updated hourly) mortgage rates of institutions in New Zealand.
 
 #### Response
 
 ```json
-[
-  {
-    "name": "ANZ",
-    "products": [
-      {
-        "name": "Standard",
-        "rates": [
-          {
-            "term": "Variable floating",
-            "rate": 8.64
-          },
-          {
-            "term": "6 months",
-            "rate": 7.95
-          },
-          {
-            "term": "1 year",
-            "rate": 7.99
-          },
-          {
-            "term": "2 years",
-            "rate": 7.49
-          },
-          ...
-        ]
-      },
-      ...
+{
+  "type": "MortgageRates",
+  "data": [
+    {
+      "id": "institution:anz",
+      "name": "ANZ",
+      "products": [
+        {
+          "id": "product:anz:standard",
+          "name": "Standard",
+          "rates": [
+            {
+              "id": "rate:anz:standard:variable-floating",
+              "term": "Variable floating",
+              "termInMonths": null,
+              "rate": 8.64
+            },
+            {
+              "id": "rate:anz:standard:6-months",
+              "term": "6 months",
+              "termInMonths": 6,
+              "rate": 7.95
+            }
+            //...
+          ]
+        }
+        //...
+      ]
+    },
+    {
+      "id": "institution:asb",
+      "name": "ASB",
+      "products": [
+        {
+          "id": "product:asb:standard",
+          "name": "Standard",
+          "rates": [
+            {
+              "id": "rate:asb:standard:variable-floating",
+              "term": "Variable floating",
+              "termInMonths": null,
+              "rate": 8.64
+            },
+            {
+              "id": "rate:asb:standard:6-months",
+              "term": "6 months",
+              "termInMonths": 6,
+              "rate": 7.39
+            }
+            //...
+          ]
+        }
+        //...
+      ]
     }
-  ...
-]
+    //...
+  ]
+}
 ```
 
-### GET `/mortgage-rates/:institution`
+### GET `/api/v1/mortgage-rates/:institution`
 
 Get the current (updated hourly) mortgage rates of a specific institution in New Zealand.
 
@@ -115,31 +143,41 @@ Get the current (updated hourly) mortgage rates of a specific institution in New
 
 ```json
 {
-  "name": "Kiwibank",
-  "products": [
+  "type": "MortgageRates",
+  "data": [
     {
-      "name": "Standard",
-      "rates": [
+      "id": "institution:kiwibank",
+      "name": "Kiwibank",
+      "products": [
         {
-          "term": "Variable floating",
-          "rate": 8.64
-        },
-        {
-          "term": "6 months",
-          "rate": 7.95
-        },
-        {
-          "term": "1 year",
-          "rate": 7.99
-        },
-        {
-          "term": "2 years",
-          "rate": 7.49
-        },
-        ...
+          "id": "product:kiwibank:standard",
+          "name": "Standard",
+          "rates": [
+            {
+              "id": "rate:kiwibank:standard:variable-floating",
+              "term": "Variable floating",
+              "termInMonths": null,
+              "rate": 8.5
+            },
+            {
+              "id": "rate:kiwibank:standard:6-months",
+              "term": "6 months",
+              "termInMonths": 6,
+              "rate": 8.39
+            },
+            {
+              "id": "rate:kiwibank:standard:1-year",
+              "term": "1 year",
+              "termInMonths": 12,
+              "rate": 8.35
+            }
+            //...
+          ]
+        }
+        //...
       ]
-    },
-    ...
-  }
+    }
+    //...
+  ]
 }
 ```
