@@ -5,7 +5,7 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { MortgageRates } from "./models/mortgage-rates";
 import unValidatedMortgageRates from "../data/mortgage-rates.json";
-import { getMortgageRatesByInstitutionNameRoute } from "./routes/getMortgageRatesByInstitutionName";
+import { getMortgageRatesByInstitutionRoute } from "./routes/getMortgageRatesByInstitution";
 import { getMortgageRatesRoute } from "./routes/getMortgageRates";
 
 const app = new OpenAPIHono({
@@ -73,7 +73,7 @@ app.openapi(getMortgageRatesRoute, (c) => {
 });
 
 // Route: `GET /api/v1/mortgage-rates/{institution}`
-app.openapi(getMortgageRatesByInstitutionNameRoute, (c) => {
+app.openapi(getMortgageRatesByInstitutionRoute, (c) => {
   const { institution } = c.req.valid("param");
   const { termInMonths } = c.req.valid("query");
 

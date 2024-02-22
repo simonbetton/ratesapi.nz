@@ -16,6 +16,7 @@ const QuerySchema = z.object({
 });
 
 export const getMortgageRatesRoute = createRoute({
+  operationId: "getMortgageRates",
   method: "get",
   path: "/api/v1/mortgage-rates",
   request: {

@@ -25,7 +25,8 @@ const QuerySchema = z.object({
     }),
 });
 
-export const getMortgageRatesByInstitutionNameRoute = createRoute({
+export const getMortgageRatesByInstitutionRoute = createRoute({
+  operationId: "getMortgageRatesByInstitution",
   method: "get",
   path: "/api/v1/mortgage-rates/{institution}",
   request: {
