@@ -118,7 +118,9 @@ function getModelExtractedFromDOM($: CheerioAPI): Institution[] {
 }
 
 function asProduct(institution: Institution, productName: string): Product {
-  let product = institution.products.find((p) => p.name === productName);
+  let product = institution.products.find(
+    (p: Product) => p.name === productName
+  );
   if (!product) {
     product = {
       id: generateId(["product", institution.name, productName]),

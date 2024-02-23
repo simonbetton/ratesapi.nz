@@ -1,0 +1,1200 @@
+{
+  "type": "PersonalLoanRates",
+  "data": [
+    {
+      "id": "institution:anz",
+      "name": "ANZ",
+      "products": [
+        {
+          "id": "product:anz:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:anz:personal-loan:unsecured:3000-to-50000",
+              "plan": "Unsecured",
+              "condition": "$3,000 to $50,000",
+              "rate": 13.9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:asb",
+      "name": "ASB",
+      "products": [
+        {
+          "id": "product:asb:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:asb:personal-loan:secured",
+              "plan": "Secured",
+              "condition": null,
+              "rate": 12.9
+            },
+            {
+              "id": "rate:asb:personal-loan:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 12.9
+            }
+          ]
+        },
+        {
+          "id": "product:asb:debt-consolidation",
+          "name": "Debt Consolidation",
+          "rates": [
+            {
+              "id": "rate:asb:debt-consolidation:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 12.9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:bnz",
+      "name": "BNZ",
+      "products": [
+        {
+          "id": "product:bnz:advanced",
+          "name": "Advanced",
+          "rates": [
+            {
+              "id": "rate:bnz:advanced:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 12.9
+            }
+          ]
+        },
+        {
+          "id": "product:bnz:campus-pack-advanced",
+          "name": "Campus Pack Advanced",
+          "rates": [
+            {
+              "id": "rate:bnz:campus-pack-advanced:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 12.65
+            }
+          ]
+        },
+        {
+          "id": "product:bnz:graduate-pack-advanced",
+          "name": "Graduate Pack Advanced",
+          "rates": [
+            {
+              "id": "rate:bnz:graduate-pack-advanced:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 12.65
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:co-operative-bank",
+      "name": "Co-operative Bank",
+      "products": [
+        {
+          "id": "product:co-operative-bank:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:co-operative-bank:personal-loan:unsecured:from",
+              "plan": "Unsecured",
+              "condition": "From",
+              "rate": 8.99
+            },
+            {
+              "id": "rate:co-operative-bank:personal-loan:unsecured:to",
+              "plan": "Unsecured",
+              "condition": "To",
+              "rate": 17.75
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:heartland-bank",
+      "name": "Heartland Bank",
+      "products": [
+        {
+          "id": "product:heartland-bank:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:heartland-bank:personal-loan:unsecured:from",
+              "plan": "Unsecured",
+              "condition": "From",
+              "rate": 8.95
+            },
+            {
+              "id": "rate:heartland-bank:personal-loan:unsecured:to",
+              "plan": "Unsecured",
+              "condition": "To",
+              "rate": 15.95
+            }
+          ]
+        },
+        {
+          "id": "product:heartland-bank:youchoose-overdraft",
+          "name": "YouChoose Overdraft",
+          "rates": [
+            {
+              "id": "rate:heartland-bank:youchoose-overdraft:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:kiwibank",
+      "name": "Kiwibank",
+      "products": [
+        {
+          "id": "product:kiwibank:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:kiwibank:personal-loan:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 18.95
+            }
+          ]
+        },
+        {
+          "id": "product:kiwibank:personal-loan-graduate-pack",
+          "name": "Personal Loan - Graduate pack",
+          "rates": [
+            {
+              "id": "rate:kiwibank:personal-loan-graduate-pack:unsecured:2000-15000",
+              "plan": "Unsecured",
+              "condition": "$2,000-$15,000",
+              "rate": 13.95
+            }
+          ]
+        },
+        {
+          "id": "product:kiwibank:home-loan-customers",
+          "name": "Home Loan Customers",
+          "rates": [
+            {
+              "id": "rate:kiwibank:home-loan-customers:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 13.95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:sbs-bank",
+      "name": "SBS Bank.",
+      "products": [
+        {
+          "id": "product:sbs-bank:personal-loan",
+          "name": "Personal loan",
+          "rates": [
+            {
+              "id": "rate:sbs-bank:personal-loan:secured",
+              "plan": "Secured",
+              "condition": null,
+              "rate": 13.85
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:tsb-bank",
+      "name": "TSB Bank",
+      "products": [
+        {
+          "id": "product:tsb-bank:personal-loan",
+          "name": "Personal loan",
+          "rates": [
+            {
+              "id": "rate:tsb-bank:personal-loan:unsecured:from",
+              "plan": "Unsecured",
+              "condition": "from",
+              "rate": 12.95
+            }
+          ]
+        },
+        {
+          "id": "product:tsb-bank:overdraft-facilities",
+          "name": "Overdraft facilities",
+          "rates": [
+            {
+              "id": "rate:tsb-bank:overdraft-facilities:unsecured:from",
+              "plan": "Unsecured",
+              "condition": "From",
+              "rate": 15.39
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:westpac",
+      "name": "Westpac",
+      "products": [
+        {
+          "id": "product:westpac:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:westpac:personal-loan:unsecured:from",
+              "plan": "Unsecured",
+              "condition": "From",
+              "rate": 13.9
+            }
+          ]
+        },
+        {
+          "id": "product:westpac:graduate-loan",
+          "name": "Graduate Loan",
+          "rates": [
+            {
+              "id": "rate:westpac:graduate-loan:unsecured:to",
+              "plan": "Unsecured",
+              "condition": "To",
+              "rate": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:squirrel-money",
+      "name": "Squirrel Money",
+      "products": [
+        {
+          "id": "product:squirrel-money:credit-grade-a",
+          "name": "Credit Grade A",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:credit-grade-a:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 8.95
+            }
+          ]
+        },
+        {
+          "id": "product:squirrel-money:credit-grade-b",
+          "name": "Credit Grade B",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:credit-grade-b:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 11.45
+            }
+          ]
+        },
+        {
+          "id": "product:squirrel-money:credit-grade-c",
+          "name": "Credit Grade C",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:credit-grade-c:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 12.95
+            }
+          ]
+        },
+        {
+          "id": "product:squirrel-money:credit-grade-d",
+          "name": "Credit Grade D",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:credit-grade-d:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 15.95
+            }
+          ]
+        },
+        {
+          "id": "product:squirrel-money:homeowners-loan-1-year",
+          "name": "Homeowner's loan; 1 Year",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:homeowners-loan-1-year:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 8
+            }
+          ]
+        },
+        {
+          "id": "product:squirrel-money:homeowners-loan-2-3-years",
+          "name": "Homeowner's loan; 2 - 3 Years",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:homeowners-loan-2-3-years:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 8
+            }
+          ]
+        },
+        {
+          "id": "product:squirrel-money:homeowners-loan-5-7-years",
+          "name": "Homeowner's loan; 5 - 7 Years",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:homeowners-loan-5-7-years:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 7.75
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:nelson",
+      "name": "Nelson",
+      "products": [
+        {
+          "id": "product:nelson:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:nelson:personal-loan:secured",
+              "plan": "Secured",
+              "condition": null,
+              "rate": 16
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:first-cu",
+      "name": "First CU",
+      "products": [
+        {
+          "id": "product:first-cu:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:first-cu:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 10.95
+            },
+            {
+              "id": "rate:first-cu:personal-loan:unsecured:to",
+              "plan": "Unsecured",
+              "condition": "To",
+              "rate": 18
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:nzcu-auckland",
+      "name": "NZCU Auckland",
+      "products": [
+        {
+          "id": "product:nzcu-auckland:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:nzcu-auckland:personal-loan:secured",
+              "plan": "Secured",
+              "condition": null,
+              "rate": 12.95
+            },
+            {
+              "id": "rate:nzcu-auckland:personal-loan:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 19.95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:police-cu",
+      "name": "Police CU",
+      "products": [
+        {
+          "id": "product:police-cu:standard",
+          "name": "Standard",
+          "rates": [
+            {
+              "id": "rate:police-cu:standard:secured",
+              "plan": "Secured",
+              "condition": null,
+              "rate": 10.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:unity",
+      "name": "Unity",
+      "products": [
+        {
+          "id": "product:unity:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:unity:personal-loan:secured:blue-from",
+              "plan": "Secured",
+              "condition": "Blue, from",
+              "rate": 13.9
+            },
+            {
+              "id": "rate:unity:personal-loan:secured:blue-to",
+              "plan": "Secured",
+              "condition": "Blue, to",
+              "rate": 15.9
+            },
+            {
+              "id": "rate:unity:personal-loan:secured:green-from",
+              "plan": "Secured",
+              "condition": "Green, from",
+              "rate": 9.9
+            },
+            {
+              "id": "rate:unity:personal-loan:secured:green-to",
+              "plan": "Secured",
+              "condition": "Green, to",
+              "rate": 11.9
+            },
+            {
+              "id": "rate:unity:personal-loan:secured:orange",
+              "plan": "Secured",
+              "condition": "Orange",
+              "rate": 21.9
+            },
+            {
+              "id": "rate:unity:personal-loan:secured:yellow-from",
+              "plan": "Secured",
+              "condition": "Yellow, from",
+              "rate": 17.9
+            },
+            {
+              "id": "rate:unity:personal-loan:secured:yellow-to",
+              "plan": "Secured",
+              "condition": "Yellow, to",
+              "rate": 19.9
+            },
+            {
+              "id": "rate:unity:personal-loan:unsecured:blue-from",
+              "plan": "Unsecured",
+              "condition": "Blue, from",
+              "rate": 16.9
+            },
+            {
+              "id": "rate:unity:personal-loan:unsecured:blue-to",
+              "plan": "Unsecured",
+              "condition": "Blue, to",
+              "rate": 18.9
+            },
+            {
+              "id": "rate:unity:personal-loan:unsecured:green-from",
+              "plan": "Unsecured",
+              "condition": "Green, from",
+              "rate": 12.9
+            },
+            {
+              "id": "rate:unity:personal-loan:unsecured:green-to",
+              "plan": "Unsecured",
+              "condition": "Green, to",
+              "rate": 14.9
+            },
+            {
+              "id": "rate:unity:personal-loan:unsecured:orange",
+              "plan": "Unsecured",
+              "condition": "Orange",
+              "rate": 24.9
+            },
+            {
+              "id": "rate:unity:personal-loan:unsecured:yellow-from",
+              "plan": "Unsecured",
+              "condition": "Yellow, from",
+              "rate": 20.9
+            },
+            {
+              "id": "rate:unity:personal-loan:unsecured:yellow-to",
+              "plan": "Unsecured",
+              "condition": "Yellow, to",
+              "rate": 22.9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:aa-money",
+      "name": "AA Money",
+      "products": [
+        {
+          "id": "product:aa-money:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:aa-money:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 10.45
+            },
+            {
+              "id": "rate:aa-money:personal-loan:secured:to",
+              "plan": "Secured",
+              "condition": "To",
+              "rate": 18.95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:admiral-finance",
+      "name": "Admiral Finance",
+      "products": [
+        {
+          "id": "product:admiral-finance:personal-loans",
+          "name": "Personal Loans",
+          "rates": [
+            {
+              "id": "rate:admiral-finance:personal-loans:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 13.95
+            },
+            {
+              "id": "rate:admiral-finance:personal-loans:secured:to",
+              "plan": "Secured",
+              "condition": "To",
+              "rate": 23.95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:advaro-finance",
+      "name": "Advaro Finance",
+      "products": [
+        {
+          "id": "product:advaro-finance:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:advaro-finance:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 10.95
+            },
+            {
+              "id": "rate:advaro-finance:personal-loan:secured:to",
+              "plan": "Secured",
+              "condition": "To",
+              "rate": 19.95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:aotea-finance",
+      "name": "Aotea Finance",
+      "products": [
+        {
+          "id": "product:aotea-finance:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:aotea-finance:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 22.5
+            },
+            {
+              "id": "rate:aotea-finance:personal-loan:secured:to",
+              "plan": "Secured",
+              "condition": "To",
+              "rate": 32.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:avanti-finance",
+      "name": "Avanti Finance",
+      "products": [
+        {
+          "id": "product:avanti-finance:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:avanti-finance:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 16.5
+            },
+            {
+              "id": "rate:avanti-finance:personal-loan:secured:to",
+              "plan": "Secured",
+              "condition": "To",
+              "rate": 25.7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:diners-club",
+      "name": "Diners Club",
+      "products": [
+        {
+          "id": "product:diners-club:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:diners-club:personal-loan:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 17.8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:finance-direct",
+      "name": "Finance Direct",
+      "products": [
+        {
+          "id": "product:finance-direct:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:finance-direct:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 6.69
+            },
+            {
+              "id": "rate:finance-direct:personal-loan:secured:to",
+              "plan": "Secured",
+              "condition": "To",
+              "rate": 24.95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:finance-now",
+      "name": "Finance Now",
+      "products": [
+        {
+          "id": "product:finance-now:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:finance-now:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 12.95
+            },
+            {
+              "id": "rate:finance-now:personal-loan:secured:to",
+              "plan": "Secured",
+              "condition": "To",
+              "rate": 29.95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:financial-holdings",
+      "name": "Financial Holdings",
+      "products": [
+        {
+          "id": "product:financial-holdings:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:financial-holdings:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 12.95
+            },
+            {
+              "id": "rate:financial-holdings:personal-loan:unsecured:to",
+              "plan": "Unsecured",
+              "condition": "To",
+              "rate": 24.95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:future-finance",
+      "name": "Future Finance",
+      "products": [
+        {
+          "id": "product:future-finance:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:future-finance:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 9.95
+            },
+            {
+              "id": "rate:future-finance:personal-loan:secured:to",
+              "plan": "Secured",
+              "condition": "To",
+              "rate": 28.99
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:gem",
+      "name": "Gem",
+      "products": [
+        {
+          "id": "product:gem:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:gem:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "from",
+              "rate": 8.99
+            },
+            {
+              "id": "rate:gem:personal-loan:secured:to",
+              "plan": "Secured",
+              "condition": "to",
+              "rate": 29.49
+            },
+            {
+              "id": "rate:gem:personal-loan:unsecured:from",
+              "plan": "Unsecured",
+              "condition": "from",
+              "rate": 9.99
+            },
+            {
+              "id": "rate:gem:personal-loan:unsecured:to",
+              "plan": "Unsecured",
+              "condition": "to",
+              "rate": 29.49
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:geneva-finance",
+      "name": "Geneva Finance",
+      "products": [
+        {
+          "id": "product:geneva-finance:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:geneva-finance:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 12.95
+            },
+            {
+              "id": "rate:geneva-finance:personal-loan:secured:to",
+              "plan": "Secured",
+              "condition": "To",
+              "rate": 28.95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:gilrose-finance",
+      "name": "Gilrose Finance",
+      "products": [
+        {
+          "id": "product:gilrose-finance:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:gilrose-finance:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 9.95
+            },
+            {
+              "id": "rate:gilrose-finance:personal-loan:secured:to",
+              "plan": "Secured",
+              "condition": "To",
+              "rate": 22.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:harmoney",
+      "name": "Harmoney",
+      "products": [
+        {
+          "id": "product:harmoney:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:harmoney:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 9.89
+            },
+            {
+              "id": "rate:harmoney:personal-loan:secured:to",
+              "plan": "Secured",
+              "condition": "To",
+              "rate": 21.49
+            },
+            {
+              "id": "rate:harmoney:personal-loan:unsecured:from",
+              "plan": "Unsecured",
+              "condition": "From",
+              "rate": 9.99
+            },
+            {
+              "id": "rate:harmoney:personal-loan:unsecured:to",
+              "plan": "Unsecured",
+              "condition": "To",
+              "rate": 24.99
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:instant-finance",
+      "name": "Instant Finance",
+      "products": [
+        {
+          "id": "product:instant-finance:personal-loans",
+          "name": "Personal Loans",
+          "rates": [
+            {
+              "id": "rate:instant-finance:personal-loans:unsecured:from",
+              "plan": "Unsecured",
+              "condition": "From",
+              "rate": 12.95
+            },
+            {
+              "id": "rate:instant-finance:personal-loans:unsecured:to",
+              "plan": "Unsecured",
+              "condition": "To",
+              "rate": 29.95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:mtf-finance",
+      "name": "MTF Finance",
+      "products": [
+        {
+          "id": "product:mtf-finance:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:mtf-finance:personal-loan:secured-by-car:from",
+              "plan": "Secured by car",
+              "condition": "From",
+              "rate": 11.7
+            },
+            {
+              "id": "rate:mtf-finance:personal-loan:secured-by-car:to",
+              "plan": "Secured by car",
+              "condition": "To",
+              "rate": 23.7
+            },
+            {
+              "id": "rate:mtf-finance:personal-loan:unsecured:from",
+              "plan": "Unsecured",
+              "condition": "From",
+              "rate": 14.2
+            },
+            {
+              "id": "rate:mtf-finance:personal-loan:unsecured:to",
+              "plan": "Unsecured",
+              "condition": "To",
+              "rate": 24.2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:mutual-credit-finance",
+      "name": "Mutual Credit Finance",
+      "products": [
+        {
+          "id": "product:mutual-credit-finance:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:mutual-credit-finance:personal-loan:unsecured:from",
+              "plan": "Unsecured",
+              "condition": "From",
+              "rate": 13.85
+            },
+            {
+              "id": "rate:mutual-credit-finance:personal-loan:unsecured:to",
+              "plan": "Unsecured",
+              "condition": "To",
+              "rate": 23.85
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:nectar",
+      "name": "Nectar",
+      "products": [
+        {
+          "id": "product:nectar:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:nectar:personal-loan:unsecured:from",
+              "plan": "Unsecured",
+              "condition": "From",
+              "rate": 8.95
+            },
+            {
+              "id": "rate:nectar:personal-loan:unsecured:to",
+              "plan": "Unsecured",
+              "condition": "To",
+              "rate": 29.95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:nova-medical-finance",
+      "name": "Nova Medical Finance",
+      "products": [
+        {
+          "id": "product:nova-medical-finance:personal-loan",
+          "name": "Personal loan",
+          "rates": [
+            {
+              "id": "rate:nova-medical-finance:personal-loan:unsecured:from",
+              "plan": "Unsecured",
+              "condition": "From",
+              "rate": 12.9
+            },
+            {
+              "id": "rate:nova-medical-finance:personal-loan:unsecured:to",
+              "plan": "Unsecured",
+              "condition": "To",
+              "rate": 17.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:nz-loan",
+      "name": "NZ Loan",
+      "products": [
+        {
+          "id": "product:nz-loan:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:nz-loan:personal-loan:debt-consolidation:from",
+              "plan": "Debt Consolidation",
+              "condition": "From",
+              "rate": 13.5
+            },
+            {
+              "id": "rate:nz-loan:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 13.5
+            },
+            {
+              "id": "rate:nz-loan:personal-loan:unsecured:from",
+              "plan": "Unsecured",
+              "condition": "From",
+              "rate": 16
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:paraloan",
+      "name": "Paraloan",
+      "products": [
+        {
+          "id": "product:paraloan:for-people-with-physical-disabilities",
+          "name": "for people with physical disabilities",
+          "rates": [
+            {
+              "id": "rate:paraloan:for-people-with-physical-disabilities:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 10.3
+            },
+            {
+              "id": "rate:paraloan:for-people-with-physical-disabilities:unsecured:from-limited-to-10000",
+              "plan": "Unsecured",
+              "condition": "From (limited to $10,000)",
+              "rate": 12.9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:pronto-finance",
+      "name": "Pronto Finance",
+      "products": [
+        {
+          "id": "product:pronto-finance:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:pronto-finance:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 11.97
+            },
+            {
+              "id": "rate:pronto-finance:personal-loan:secured:to",
+              "plan": "Secured",
+              "condition": "To",
+              "rate": 29.97
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:quick-cash-finance",
+      "name": "Quick Cash Finance",
+      "products": [
+        {
+          "id": "product:quick-cash-finance:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:quick-cash-finance:personal-loan:secured",
+              "plan": "Secured",
+              "condition": null,
+              "rate": 26
+            },
+            {
+              "id": "rate:quick-cash-finance:personal-loan:unsecured",
+              "plan": "Unsecured",
+              "condition": null,
+              "rate": 26
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:thorn-finance",
+      "name": "Thorn Finance",
+      "products": [
+        {
+          "id": "product:thorn-finance:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:thorn-finance:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 9.95
+            },
+            {
+              "id": "rate:thorn-finance:personal-loan:secured:to",
+              "plan": "Secured",
+              "condition": "To",
+              "rate": 17.95
+            },
+            {
+              "id": "rate:thorn-finance:personal-loan:unsecured:from",
+              "plan": "Unsecured",
+              "condition": "From",
+              "rate": 14.95
+            },
+            {
+              "id": "rate:thorn-finance:personal-loan:unsecured:to",
+              "plan": "Unsecured",
+              "condition": "To",
+              "rate": 22.95
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:toyota-financial-services",
+      "name": "Toyota Financial Services",
+      "products": [
+        {
+          "id": "product:toyota-financial-services:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:toyota-financial-services:personal-loan:secured:from",
+              "plan": "Secured",
+              "condition": "From",
+              "rate": 12.95
+            },
+            {
+              "id": "rate:toyota-financial-services:personal-loan:secured:to",
+              "plan": "Secured",
+              "condition": "To",
+              "rate": 19.95
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "lastUpdated": "2024-02-23T04:33:00.038Z"
+}

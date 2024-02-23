@@ -1476,11 +1476,11 @@
       "name": "NZCU Auckland",
       "products": [
         {
-          "id": "product:nzcu-auckland:",
+          "id": "product:nzcu-auckland",
           "name": "",
           "rates": [
             {
-              "id": "rate:nzcu-auckland::variable-floating",
+              "id": "rate:nzcu-auckland:variable-floating",
               "term": "Variable floating",
               "termInMonths": null,
               "rate": 8.55
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-02-22T22:05:07.112Z"
+  "lastUpdated": "2024-02-23T04:35:39.784Z"
 }
