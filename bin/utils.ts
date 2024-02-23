@@ -1,7 +1,8 @@
 import { writeFileSync } from "fs";
 import { MortgageRates } from "../src/models/mortgage-rates";
+import { PersonalLoanRates } from "../src/models/personal-loan-rates";
 
-type SupportedModels = MortgageRates;
+type SupportedModels = MortgageRates | PersonalLoanRates;
 
 export async function fetchWithTimeout(
   resource: string,
