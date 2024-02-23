@@ -64,7 +64,7 @@ async function main() {
       type: "MortgageRates",
       data: unvalidatedData,
       lastUpdated: new Date().toISOString(),
-    });
+    }) as MortgageRates; // We have to cast because Zod type inference does not create string literal types from .regex(). It's safe here because
     handle.succeed("Extracted and Validated").stop();
   } catch (error) {
     handle.fail("Failed to extract and/or validate").stop();
