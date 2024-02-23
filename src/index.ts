@@ -22,8 +22,8 @@ const app = new OpenAPIHono({
 
 app.use(
   "*",
-  prettyJSON()
-  //cache({ cacheName: "rates-api", cacheControl: "public, max-age=3600" })
+  prettyJSON(),
+  cache({ cacheName: "rates-api", cacheControl: "public, max-age=3600" })
 );
 
 app.use(
