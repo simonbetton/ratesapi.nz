@@ -1,0 +1,822 @@
+{
+  "type": "PersonalLoanRates",
+  "data": [
+    {
+      "id": "institution:asb",
+      "name": "ASB",
+      "products": [
+        {
+          "id": "product:asb:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:asb:personal-loan:secured-by-car:from",
+              "rate": 12.95,
+              "plan": "Secured by car",
+              "condition": "From"
+            },
+            {
+              "id": "rate:asb:personal-loan:secured-by-car:to",
+              "rate": 17.95,
+              "plan": "Secured by car",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:co-operative-bank",
+      "name": "Co-operative Bank",
+      "products": [
+        {
+          "id": "product:co-operative-bank:vehicle-loan",
+          "name": "Vehicle Loan",
+          "rates": [
+            {
+              "id": "rate:co-operative-bank:vehicle-loan:unsecured:from",
+              "rate": 8.99,
+              "plan": "Unsecured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:co-operative-bank:vehicle-loan:unsecured:to",
+              "rate": 17.75,
+              "plan": "Unsecured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:heartland-bank",
+      "name": "Heartland Bank",
+      "products": [
+        {
+          "id": "product:heartland-bank:car-loan",
+          "name": "Car Loan",
+          "rates": [
+            {
+              "id": "rate:heartland-bank:car-loan:secured:from",
+              "rate": 9.95,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:heartland-bank:car-loan:secured:to",
+              "rate": 15.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:kiwibank",
+      "name": "Kiwibank",
+      "products": [
+        {
+          "id": "product:kiwibank:vehicle-loan",
+          "name": "Vehicle Loan",
+          "rates": [
+            {
+              "id": "rate:kiwibank:vehicle-loan:secured-by-car:from",
+              "rate": 9.95,
+              "plan": "Secured by car",
+              "condition": "From"
+            },
+            {
+              "id": "rate:kiwibank:vehicle-loan:secured-by-car:to",
+              "rate": 18.95,
+              "plan": "Secured by car",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:westpac",
+      "name": "Westpac",
+      "products": [
+        {
+          "id": "product:westpac:evs-and-e-bikes",
+          "name": "EVs and e-Bikes",
+          "rates": [
+            {
+              "id": "rate:westpac:evs-and-e-bikes:secured-by-car",
+              "rate": 6.99,
+              "plan": "Secured by car",
+              "condition": null
+            }
+          ]
+        },
+        {
+          "id": "product:westpac:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:westpac:personal-loan:secured-by-car",
+              "rate": 14,
+              "plan": "Secured by car",
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:squirrel-money",
+      "name": "Squirrel Money",
+      "products": [
+        {
+          "id": "product:squirrel-money:vehicle-loans",
+          "name": "Vehicle Loans",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:vehicle-loans:secured",
+              "rate": 8.95,
+              "plan": "Secured",
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:first-cu",
+      "name": "First CU",
+      "products": [
+        {
+          "id": "product:first-cu:car-loan",
+          "name": "Car Loan",
+          "rates": [
+            {
+              "id": "rate:first-cu:car-loan:secured:from",
+              "rate": 9.99,
+              "plan": "Secured",
+              "condition": "From"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:nzcu-auckland",
+      "name": "NZCU Auckland",
+      "products": [
+        {
+          "id": "product:nzcu-auckland:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:nzcu-auckland:personal-loan:secured",
+              "rate": 9.95,
+              "plan": "Secured",
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:police-cu",
+      "name": "Police CU",
+      "products": [
+        {
+          "id": "product:police-cu:personal-loan-membership-criteria-apply",
+          "name": "Personal Loan (Membership criteria apply)",
+          "rates": [
+            {
+              "id": "rate:police-cu:personal-loan-membership-criteria-apply:secured",
+              "rate": 12.95,
+              "plan": "Secured",
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:unity",
+      "name": "Unity",
+      "products": [
+        {
+          "id": "product:unity:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:unity:personal-loan:secured:from",
+              "rate": 13.95,
+              "plan": "Secured",
+              "condition": "from"
+            },
+            {
+              "id": "rate:unity:personal-loan:secured:premium-rate-from",
+              "rate": 9.9,
+              "plan": "Secured",
+              "condition": "premium rate from"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:aa-money",
+      "name": "AA Money",
+      "products": [
+        {
+          "id": "product:aa-money:car-or-boat-loan",
+          "name": "Car or Boat Loan",
+          "rates": [
+            {
+              "id": "rate:aa-money:car-or-boat-loan:secured:from",
+              "rate": 7.95,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:aa-money:car-or-boat-loan:secured:to",
+              "rate": 18.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:avanti-finance",
+      "name": "Avanti Finance",
+      "products": [
+        {
+          "id": "product:avanti-finance:car-loans",
+          "name": "Car Loans",
+          "rates": [
+            {
+              "id": "rate:avanti-finance:car-loans:secured:from",
+              "rate": 10.7,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:avanti-finance:car-loans:secured:to",
+              "rate": 24.2,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:cfs-finance",
+      "name": "CFS Finance",
+      "products": [
+        {
+          "id": "product:cfs-finance:car-loan",
+          "name": "Car Loan",
+          "rates": [
+            {
+              "id": "rate:cfs-finance:car-loan:secured:from",
+              "rate": 9.95,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:cfs-finance:car-loan:secured:to",
+              "rate": 22.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:finance-direct",
+      "name": "Finance Direct",
+      "products": [
+        {
+          "id": "product:finance-direct:car-loans",
+          "name": "Car Loans",
+          "rates": [
+            {
+              "id": "rate:finance-direct:car-loans:secured:from",
+              "rate": 6.69,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:finance-direct:car-loans:secured:to",
+              "rate": 24.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:finance-now",
+      "name": "Finance Now",
+      "products": [
+        {
+          "id": "product:finance-now:personal-loan",
+          "name": "Personal Loan",
+          "rates": [
+            {
+              "id": "rate:finance-now:personal-loan:secured:from",
+              "rate": 12.95,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:finance-now:personal-loan:secured:to",
+              "rate": 27.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:financial-holdings",
+      "name": "Financial Holdings",
+      "products": [
+        {
+          "id": "product:financial-holdings:vehicle-loan",
+          "name": "Vehicle Loan",
+          "rates": [
+            {
+              "id": "rate:financial-holdings:vehicle-loan:secured:from",
+              "rate": 9.95,
+              "plan": "Secured",
+              "condition": "from"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:gem",
+      "name": "Gem",
+      "products": [
+        {
+          "id": "product:gem:car-loan-6000",
+          "name": "Car Loan (>$6,000)",
+          "rates": [
+            {
+              "id": "rate:gem:car-loan-6000:secured:from",
+              "rate": 8.99,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:gem:car-loan-6000:secured:to",
+              "rate": 24.99,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:geneva-finance",
+      "name": "Geneva Finance",
+      "products": [
+        {
+          "id": "product:geneva-finance:vehicle-loan",
+          "name": "Vehicle Loan",
+          "rates": [
+            {
+              "id": "rate:geneva-finance:vehicle-loan:secured:from",
+              "rate": 12.95,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:geneva-finance:vehicle-loan:secured:to",
+              "rate": 28.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:go-car-finance",
+      "name": "Go Car Finance",
+      "products": [
+        {
+          "id": "product:go-car-finance:vehicle-loan",
+          "name": "Vehicle Loan",
+          "rates": [
+            {
+              "id": "rate:go-car-finance:vehicle-loan:secured:from",
+              "rate": 10.45,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:go-car-finance:vehicle-loan:secured:to",
+              "rate": 29.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:harmoney",
+      "name": "Harmoney",
+      "products": [
+        {
+          "id": "product:harmoney:vehicle-loan",
+          "name": "Vehicle Loan",
+          "rates": [
+            {
+              "id": "rate:harmoney:vehicle-loan:secured:from",
+              "rate": 9.89,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:harmoney:vehicle-loan:secured:to",
+              "rate": 21.49,
+              "plan": "Secured",
+              "condition": "To"
+            },
+            {
+              "id": "rate:harmoney:vehicle-loan:unsecured:from",
+              "rate": 9.99,
+              "plan": "Unsecured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:harmoney:vehicle-loan:unsecured:to",
+              "rate": 24.99,
+              "plan": "Unsecured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:instant-finance",
+      "name": "Instant Finance",
+      "products": [
+        {
+          "id": "product:instant-finance:car-loan",
+          "name": "Car Loan",
+          "rates": [
+            {
+              "id": "rate:instant-finance:car-loan:unsecured:from",
+              "rate": 12.95,
+              "plan": "Unsecured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:instant-finance:car-loan:unsecured:to",
+              "rate": 29.95,
+              "plan": "Unsecured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:john-deere-credit",
+      "name": "John Deere Credit",
+      "products": [
+        {
+          "id": "product:john-deere-credit:tractors",
+          "name": "Tractors",
+          "rates": [
+            {
+              "id": "rate:john-deere-credit:tractors:secured",
+              "rate": 4.75,
+              "plan": "Secured",
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:kiwi-car-loans",
+      "name": "Kiwi Car Loans",
+      "products": [
+        {
+          "id": "product:kiwi-car-loans:vehicle-loan",
+          "name": "Vehicle Loan",
+          "rates": [
+            {
+              "id": "rate:kiwi-car-loans:vehicle-loan:secured:from",
+              "rate": 9.95,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:kiwi-car-loans:vehicle-loan:secured:to",
+              "rate": 19.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:marac",
+      "name": "MARAC",
+      "products": [
+        {
+          "id": "product:marac:car-loan",
+          "name": "Car loan",
+          "rates": [
+            {
+              "id": "rate:marac:car-loan:secured:from",
+              "rate": 9.95,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:marac:car-loan:secured:to",
+              "rate": 15.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:mtf-finance",
+      "name": "MTF Finance",
+      "products": [
+        {
+          "id": "product:mtf-finance:vehicles-loan",
+          "name": "Vehicles loan",
+          "rates": [
+            {
+              "id": "rate:mtf-finance:vehicles-loan:secured:from",
+              "rate": 11.7,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:mtf-finance:vehicles-loan:secured:to",
+              "rate": 23.7,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:mutual-credit-finance",
+      "name": "Mutual Credit Finance",
+      "products": [
+        {
+          "id": "product:mutual-credit-finance:cars-boats",
+          "name": "Cars, Boats",
+          "rates": [
+            {
+              "id": "rate:mutual-credit-finance:cars-boats:secured:from",
+              "rate": 11.35,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:mutual-credit-finance:cars-boats:secured:to",
+              "rate": 23.35,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:nz-loan",
+      "name": "NZ Loan",
+      "products": [
+        {
+          "id": "product:nz-loan:car-and-boat-loan",
+          "name": "Car and Boat Loan",
+          "rates": [
+            {
+              "id": "rate:nz-loan:car-and-boat-loan:secured:from",
+              "rate": 12.95,
+              "plan": "Secured",
+              "condition": "From"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:nz-vehicle-finance",
+      "name": "NZ Vehicle Finance",
+      "products": [
+        {
+          "id": "product:nz-vehicle-finance:car-loan",
+          "name": "Car Loan",
+          "rates": [
+            {
+              "id": "rate:nz-vehicle-finance:car-loan:secured:from",
+              "rate": 8.9,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:nz-vehicle-finance:car-loan:secured:to",
+              "rate": 15.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:oxford-finance",
+      "name": "Oxford Finance",
+      "products": [
+        {
+          "id": "product:oxford-finance:vehicle-finance",
+          "name": "Vehicle finance",
+          "rates": [
+            {
+              "id": "rate:oxford-finance:vehicle-finance:secured:from-",
+              "rate": 10.95,
+              "plan": "Secured",
+              "condition": "From ..."
+            },
+            {
+              "id": "rate:oxford-finance:vehicle-finance:secured:to-",
+              "rate": 20.95,
+              "plan": "Secured",
+              "condition": "To ..."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:paraloan",
+      "name": "Paraloan",
+      "products": [
+        {
+          "id": "product:paraloan:for-people-with-physical-disabilities",
+          "name": "for people with physical disabilities",
+          "rates": [
+            {
+              "id": "rate:paraloan:for-people-with-physical-disabilities:secured:from",
+              "rate": 10.3,
+              "plan": "Secured",
+              "condition": "From"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:stadium-finance",
+      "name": "Stadium Finance",
+      "products": [
+        {
+          "id": "product:stadium-finance:car-loan",
+          "name": "Car Loan",
+          "rates": [
+            {
+              "id": "rate:stadium-finance:car-loan:secured:from",
+              "rate": 9.95,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:stadium-finance:car-loan:secured:to",
+              "rate": 19.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:thorn-finance",
+      "name": "Thorn Finance",
+      "products": [
+        {
+          "id": "product:thorn-finance:car-loan",
+          "name": "Car Loan",
+          "rates": [
+            {
+              "id": "rate:thorn-finance:car-loan:secured:from",
+              "rate": 9.95,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:thorn-finance:car-loan:secured:to",
+              "rate": 29.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:toyota-financial-services",
+      "name": "Toyota Financial Services",
+      "products": [
+        {
+          "id": "product:toyota-financial-services:classic-choices",
+          "name": "Classic / Choices",
+          "rates": [
+            {
+              "id": "rate:toyota-financial-services:classic-choices:secured:from",
+              "rate": 8.25,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:toyota-financial-services:classic-choices:secured:to",
+              "rate": 13.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        },
+        {
+          "id": "product:toyota-financial-services:marine-loan",
+          "name": "Marine Loan",
+          "rates": [
+            {
+              "id": "rate:toyota-financial-services:marine-loan:secured:from",
+              "rate": 9.95,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:toyota-financial-services:marine-loan:secured:to",
+              "rate": 15.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        },
+        {
+          "id": "product:toyota-financial-services:special-signature-class",
+          "name": "Special - Signature Class",
+          "rates": [
+            {
+              "id": "rate:toyota-financial-services:special-signature-class:secured",
+              "rate": 7.25,
+              "plan": "Secured",
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:udc",
+      "name": "UDC",
+      "products": [
+        {
+          "id": "product:udc:standard",
+          "name": "Standard",
+          "rates": [
+            {
+              "id": "rate:udc:standard:secured:from",
+              "rate": 9.45,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:udc:standard:secured:to",
+              "rate": 11.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "lastUpdated": "2024-02-23T11:59:04.829Z"
+}

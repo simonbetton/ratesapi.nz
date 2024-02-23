@@ -16,26 +16,12 @@ const ParamsSchema = z.object({
   }),
 });
 
-const QuerySchema = z.object({
-  termInMonths: z
-    .string()
-    .optional()
-    .openapi({
-      param: {
-        name: "termInMonths",
-        in: "query",
-      },
-      examples: ["6", "12", "24", "36"],
-    }),
-});
-
-export const getMortgageRatesByInstitutionRoute = createRoute({
-  operationId: "getMortgageRatesByInstitution",
+export const getCarLoanRatesByInstitutionRoute = createRoute({
+  operationId: "getCarLoanRatesByInstitution",
   method: "get",
   path: "/{institutionId}",
   request: {
     params: ParamsSchema,
-    query: QuerySchema,
   },
   responses: {
     200: {
@@ -44,7 +30,7 @@ export const getMortgageRatesByInstitutionRoute = createRoute({
           schema: ApiSuccess,
         },
       },
-      description: "Retrieve all mortgage rates for all institutions",
+      description: "Retrieve all car loan rates for all institutions",
     },
     500: {
       content: {

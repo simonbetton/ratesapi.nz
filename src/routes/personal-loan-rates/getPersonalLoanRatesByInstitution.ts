@@ -3,19 +3,23 @@ import { z } from "@hono/zod-openapi";
 import { ApiError, ApiSuccess } from "../../models/api";
 
 const ParamsSchema = z.object({
-  institution: z.string().openapi({
+  institutionId: z.string().openapi({
     param: {
-      name: "institution",
+      name: "institutionId",
       in: "path",
     },
-    examples: ["anz", "kiwibank", "westpac"],
+    examples: [
+      "institution:anz",
+      "institution:kiwibank",
+      "institution:westpac",
+    ],
   }),
 });
 
 export const getPersonalLoanRatesByInstitutionRoute = createRoute({
   operationId: "getPersonalLoanRatesByInstitution",
   method: "get",
-  path: "/{institution}",
+  path: "/{institutionId}",
   request: {
     params: ParamsSchema,
   },

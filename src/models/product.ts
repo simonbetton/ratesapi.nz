@@ -1,7 +1,7 @@
 import { z } from "@hono/zod-openapi";
 import { Rate } from "./rate";
 
-export type ProductId = `product:${string}:${string}`;
+export type ProductId = `product:${string}`;
 
 export const Product = z
   .object({

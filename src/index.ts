@@ -5,6 +5,7 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { routes as mortgageRatesRoutes } from "./routes/mortgage-rates";
 import { routes as personalLoanRatesRoutes } from "./routes/personal-loan-rates";
+import { routes as carLoanRatesRoutes } from "./routes/car-loan-rates";
 
 const app = new OpenAPIHono({
   defaultHook: (result, c) => {
@@ -36,6 +37,7 @@ app.use(
 
 app.route("/api/v1/mortgage-rates", mortgageRatesRoutes);
 app.route("/api/v1/personal-loan-rates", personalLoanRatesRoutes);
+app.route("/api/v1/car-loan-rates", carLoanRatesRoutes);
 
 // OpenAPI documentation
 // Route: `GET /api/v1/doc`

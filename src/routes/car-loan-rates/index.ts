@@ -1,37 +1,33 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { Bindings } from "hono/types";
-import { getPersonalLoanRatesRoute } from "./getPersonalLoanRates";
-import { getPersonalLoanRatesByInstitutionRoute } from "./getPersonalLoanRatesByInstitution";
-import unValidatedPersonalLoanRates from "../../../data/personal-loan-rates.json";
-import { PersonalLoanRates } from "../../models/personal-loan-rates";
+import { getCarLoanRatesRoute } from "./getCarLoanRates";
+import { getCarLoanRatesByInstitutionRoute } from "./getCarLoanRatesByInstitution";
+import unValidatedCarLoanRates from "../../../data/car-loan-rates.json";
+import { CarLoanRates } from "../../models/car-loan-rates";
 
 const routes = new OpenAPIHono<{ Bindings: Bindings }>();
 
-// Route: `GET /personal-loan-rates`
-routes.openapi(getPersonalLoanRatesRoute, (c) => {
-  const validatedPersonalLoanRates = PersonalLoanRates.parse(
-    unValidatedPersonalLoanRates
-  );
+// Route: `GET /car-loan-rates`
+routes.openapi(getCarLoanRatesRoute, (c) => {
+  const validatedCarLoanRates = CarLoanRates.parse(unValidatedCarLoanRates);
   const termsOfUse =
     "Data is retrieved hourly from interest.co.nz. Please note that the information provided is not guaranteed to be accurate. For the most up-to-date and accurate rates, please check with the provider directly.";
 
   return c.json({
-    ...validatedPersonalLoanRates,
+    ...validatedCarLoanRates,
     termsOfUse,
   });
 });
 
-// Route: `GET /personal-loan-rates/{institutionId}`
-routes.openapi(getPersonalLoanRatesByInstitutionRoute, (c) => {
+// Route: `GET /car-loan-rates/{institutionId}`
+routes.openapi(getCarLoanRatesByInstitutionRoute, (c) => {
   const { institutionId } = c.req.valid("param");
 
-  const validatedPersonalLoanRates = PersonalLoanRates.parse(
-    unValidatedPersonalLoanRates
-  );
+  const validatedCarLoanRates = CarLoanRates.parse(unValidatedCarLoanRates);
   const termsOfUse =
     "Data is retrieved hourly from interest.co.nz. Please note that the information provided is not guaranteed to be accurate. For the most up-to-date and accurate rates, please check with the provider directly.";
 
-  const singleInstitution = validatedPersonalLoanRates.data.find(
+  const singleInstitution = validatedCarLoanRates.data.find(
     (i) => i.id.toLowerCase() === institutionId.toLowerCase()
   );
 
@@ -46,7 +42,7 @@ routes.openapi(getPersonalLoanRatesByInstitutionRoute, (c) => {
   }
 
   return c.json({
-    ...validatedPersonalLoanRates,
+    ...validatedCarLoanRates,
     data: [singleInstitution],
     termsOfUse,
   });

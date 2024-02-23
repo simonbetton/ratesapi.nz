@@ -43,9 +43,9 @@ routes.openapi(getMortgageRatesRoute, (c) => {
   });
 });
 
-// Route: `GET /mortgage-rates/{institution}`
+// Route: `GET /mortgage-rates/{institutionId}`
 routes.openapi(getMortgageRatesByInstitutionRoute, (c) => {
-  const { institution } = c.req.valid("param");
+  const { institutionId } = c.req.valid("param");
   const { termInMonths } = c.req.valid("query");
 
   const validatedMortgageRates = MortgageRates.parse(unValidatedMortgageRates);
@@ -53,7 +53,7 @@ routes.openapi(getMortgageRatesByInstitutionRoute, (c) => {
     "Data is retrieved hourly from interest.co.nz. Please note that the information provided is not guaranteed to be accurate. For the most up-to-date and accurate rates, please check with the provider directly.";
 
   const singleInstitution = validatedMortgageRates.data.find(
-    (i) => i.name.toLowerCase() === institution.toLowerCase()
+    (i) => i.id.toLowerCase() === institutionId.toLowerCase()
   );
 
   if (!singleInstitution) {
