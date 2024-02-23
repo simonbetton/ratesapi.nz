@@ -3,10 +3,8 @@ import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { MortgageRates } from "./models/mortgage-rates";
-import unValidatedMortgageRates from "../data/mortgage-rates.json";
-import { getMortgageRatesByInstitutionRoute } from "./routes/getMortgageRatesByInstitution";
-import { getMortgageRatesRoute } from "./routes/getMortgageRates";
+import { routes as mortgageRatesRoutes } from "./routes/mortgage-rates";
+import { routes as personalLoanRatesRoutes } from "./routes/personal-loan-rates";
 
 const app = new OpenAPIHono({
   defaultHook: (result, c) => {
@@ -24,8 +22,8 @@ const app = new OpenAPIHono({
 
 app.use(
   "*",
-  prettyJSON(),
-  cache({ cacheName: "rates-api", cacheControl: "public, max-age=3600" })
+  prettyJSON()
+  //cache({ cacheName: "rates-api", cacheControl: "public, max-age=3600" })
 );
 
 app.use(
@@ -36,93 +34,8 @@ app.use(
   })
 );
 
-// Route: `GET /api/v1/mortgage-rates`
-app.openapi(getMortgageRatesRoute, (c) => {
-  const { termInMonths } = c.req.valid("query");
-
-  const validatedMortgageRates = MortgageRates.parse(unValidatedMortgageRates);
-  const termsOfUse =
-    "Data is retrieved hourly from interest.co.nz. Please note that the information provided is not guaranteed to be accurate. For the most up-to-date and accurate rates, please check with the provider directly.";
-
-  if (termInMonths) {
-    const filteredMortgageRates = validatedMortgageRates.data.map(
-      (institution) => ({
-        ...institution,
-        products: institution.products
-          .map((product) => ({
-            ...product,
-            rates: product.rates.filter(
-              (rate) => rate.termInMonths === parseInt(termInMonths)
-            ),
-          }))
-          .filter((product) => product.rates.length > 0),
-      })
-    );
-
-    return c.json({
-      ...validatedMortgageRates,
-      data: filteredMortgageRates,
-      termsOfUse,
-    });
-  }
-
-  return c.json({
-    ...validatedMortgageRates,
-    termsOfUse,
-  });
-});
-
-// Route: `GET /api/v1/mortgage-rates/{institution}`
-app.openapi(getMortgageRatesByInstitutionRoute, (c) => {
-  const { institution } = c.req.valid("param");
-  const { termInMonths } = c.req.valid("query");
-
-  const validatedMortgageRates = MortgageRates.parse(unValidatedMortgageRates);
-  const termsOfUse =
-    "Data is retrieved hourly from interest.co.nz. Please note that the information provided is not guaranteed to be accurate. For the most up-to-date and accurate rates, please check with the provider directly.";
-
-  const singleInstitution = validatedMortgageRates.data.find(
-    (i) => i.name.toLowerCase() === institution.toLowerCase()
-  );
-
-  if (!singleInstitution) {
-    return c.json(
-      {
-        code: 404,
-        message: "Institution not found",
-      },
-      404
-    );
-  }
-
-  if (termInMonths) {
-    const filteredProducts = singleInstitution.products
-      .map((product) => ({
-        ...product,
-        rates: product.rates.filter(
-          (rate) => rate.termInMonths === parseInt(termInMonths)
-        ),
-      }))
-      .filter((product) => product.rates.length > 0);
-
-    return c.json({
-      ...validatedMortgageRates,
-      data: [
-        {
-          ...singleInstitution,
-          products: filteredProducts,
-        },
-      ],
-      termsOfUse,
-    });
-  }
-
-  return c.json({
-    ...validatedMortgageRates,
-    data: [singleInstitution],
-    termsOfUse,
-  });
-});
+app.route("/api/v1/mortgage-rates", mortgageRatesRoutes);
+app.route("/api/v1/personal-loan-rates", personalLoanRatesRoutes);
 
 // OpenAPI documentation
 // Route: `GET /api/v1/doc`

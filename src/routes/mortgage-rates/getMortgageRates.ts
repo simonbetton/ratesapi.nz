@@ -1,6 +1,6 @@
 import { createRoute } from "@hono/zod-openapi";
 import { z } from "@hono/zod-openapi";
-import { ApiError, ApiSuccess } from "../models/api";
+import { ApiError, ApiSuccess } from "../../models/api";
 
 const QuerySchema = z.object({
   termInMonths: z
@@ -18,7 +18,7 @@ const QuerySchema = z.object({
 export const getMortgageRatesRoute = createRoute({
   operationId: "getMortgageRates",
   method: "get",
-  path: "/api/v1/mortgage-rates",
+  path: "/",
   request: {
     query: QuerySchema,
   },
