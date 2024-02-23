@@ -1,4 +1,7 @@
 import { z } from "@hono/zod-openapi";
+import { Rate, RateId } from "./rate";
+import { Institution } from "./institution";
+import { Product } from "./product";
 
 export const RateTerm = {
   VARIABLE_FLOATING: "Variable floating",
@@ -12,97 +15,50 @@ export const RateTerm = {
 } as const;
 export type RateTerm = (typeof RateTerm)[keyof typeof RateTerm];
 
-export const Rate = z
-  .object({
-    id: z
-      .string()
-      .regex(/^rate:/, "String must start with 'rate:'")
-      .openapi({
-        examples: ["rate:anz:standard:18-months"],
-      }),
-    term: z.nativeEnum(RateTerm).openapi({
-      examples: ["6 months", "3 years"],
-    }),
-    termInMonths: z
-      .number()
-      .nullable()
-      .openapi({
-        examples: [6, 36],
-      }),
-    rate: z.number().openapi({
-      examples: [4.29],
-    }),
-  })
-  .strict();
-// The inferred type from a Zod schema using .regex() for string patterns
-// would result in a generic string type when inferred.
-// To enforce the pattern and have a specific type for the id,
-// we intersect the inferred type with a literal type.
-export type Rate = z.infer<typeof Rate> & {
-  id: `rate:${string}`;
-};
-
-export const Product = z
-  .object({
-    id: z
-      .string()
-      .regex(/^product:/, "String must start with 'product:'")
-      .openapi({
-        examples: ["product:anz:standard"],
-      }),
-    name: z.string().openapi({
-      examples: ["Standard"],
-    }),
-    rates: z.array(Rate),
-  })
-  .strict();
-// The inferred type from a Zod schema using .regex() for string patterns
-// would result in a generic string type when inferred.
-// To enforce the pattern and have a specific type for the id,
-// we intersect the inferred type with a literal type.
-export type Product = z.infer<typeof Product> & {
-  id: `product:${string}`;
-  rates: Rate[];
-};
-
-export const Institution = z
-  .object({
-    id: z
-      .string()
-      .regex(/^institution:/, "String must start with 'institution:'")
-      .openapi({
-        examples: ["institution:anz"],
-      }),
-    name: z.string().openapi({
-      examples: ["ANZ", "Kiwibank", "Westpac"],
-    }),
-    products: z.array(Product),
-  })
-  .strict();
-// The inferred type from a Zod schema using .regex() for string patterns
-// would result in a generic string type when inferred.
-// To enforce the pattern and have a specific type for the id,
-// we intersect the inferred type with a literal type.
-export type Institution = z.infer<typeof Institution> & {
-  id: `institution:${string}`;
-  products: Product[];
-};
-
 export const MortgageRates = z
   .object({
     type: z.literal("MortgageRates"),
-    data: z.array(Institution).openapi("MortgageRates"),
+    data: z
+      .array(
+        Institution.extend({
+          products: z.array(
+            Product.extend({
+              rates: z.array(
+                Rate.extend({
+                  term: z.nativeEnum(RateTerm).openapi({
+                    examples: ["6 months", "3 years"],
+                  }),
+                  termInMonths: z
+                    .number()
+                    .nullable()
+                    .openapi({
+                      examples: [6, 36],
+                    }),
+                })
+              ),
+            })
+          ),
+        })
+      )
+      .openapi("MortgageRates"),
     lastUpdated: z.string().openapi({
       example: "2021-08-01T00:00:00.000Z",
     }),
   })
   .strict();
-// The inferred type from a Zod schema using .regex() for string patterns
-// would result in a generic string type when inferred.
-// To enforce the pattern and have a specific type for the id,
-// we intersect the inferred type with a literal type.
-export type MortgageRates = z.infer<typeof MortgageRates> & {
-  data: Institution[];
+
+type ExtendedRate = z.infer<
+  typeof MortgageRates
+>["data"][number]["products"][number]["rates"][number] & {
+  id: RateId;
+};
+
+export type MortgageRates = {
+  data: (Institution & {
+    products: (Product & {
+      rates: ExtendedRate[];
+    })[];
+  })[];
 };
 
 export function isRateTerm(term: string): term is RateTerm {

@@ -11,51 +11,51 @@
           "rates": [
             {
               "id": "rate:anz:standard:variable-floating",
+              "rate": 8.64,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.64
+              "termInMonths": null
             },
             {
               "id": "rate:anz:standard:6-months",
+              "rate": 7.95,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.95
+              "termInMonths": 6
             },
             {
               "id": "rate:anz:standard:1-year",
+              "rate": 7.99,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.99
+              "termInMonths": 12
             },
             {
               "id": "rate:anz:standard:18-months",
+              "rate": 7.75,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.75
+              "termInMonths": 18
             },
             {
               "id": "rate:anz:standard:2-years",
+              "rate": 7.49,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.49
+              "termInMonths": 24
             },
             {
               "id": "rate:anz:standard:3-years",
+              "rate": 7.35,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 7.35
+              "termInMonths": 36
             },
             {
               "id": "rate:anz:standard:4-years",
+              "rate": 7.34,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 7.34
+              "termInMonths": 48
             },
             {
               "id": "rate:anz:standard:5-years",
+              "rate": 7.34,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 7.34
+              "termInMonths": 60
             }
           ]
         },
@@ -65,33 +65,33 @@
           "rates": [
             {
               "id": "rate:anz:special:6-months",
+              "rate": 7.35,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.35
+              "termInMonths": 6
             },
             {
               "id": "rate:anz:special:1-year",
+              "rate": 7.39,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.39
+              "termInMonths": 12
             },
             {
               "id": "rate:anz:special:18-months",
+              "rate": 7.15,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.15
+              "termInMonths": 18
             },
             {
               "id": "rate:anz:special:2-years",
+              "rate": 6.89,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.89
+              "termInMonths": 24
             },
             {
               "id": "rate:anz:special:3-years",
+              "rate": 6.75,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 6.75
+              "termInMonths": 36
             }
           ]
         },
@@ -101,9 +101,9 @@
           "rates": [
             {
               "id": "rate:anz:good-energy-up-to-80k:3-years",
+              "rate": 1,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 1
+              "termInMonths": 36
             }
           ]
         }
@@ -119,51 +119,51 @@
           "rates": [
             {
               "id": "rate:asb:standard:variable-floating",
+              "rate": 8.64,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.64
+              "termInMonths": null
             },
             {
               "id": "rate:asb:standard:6-months",
+              "rate": 7.39,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.39
+              "termInMonths": 6
             },
             {
               "id": "rate:asb:standard:1-year",
+              "rate": 7.39,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.39
+              "termInMonths": 12
             },
             {
               "id": "rate:asb:standard:18-months",
+              "rate": 7.15,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.15
+              "termInMonths": 18
             },
             {
               "id": "rate:asb:standard:2-years",
+              "rate": 6.89,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.89
+              "termInMonths": 24
             },
             {
               "id": "rate:asb:standard:3-years",
+              "rate": 6.65,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 6.65
+              "termInMonths": 36
             },
             {
               "id": "rate:asb:standard:4-years",
+              "rate": 6.55,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 6.55
+              "termInMonths": 48
             },
             {
               "id": "rate:asb:standard:5-years",
+              "rate": 6.55,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 6.55
+              "termInMonths": 60
             }
           ]
         },
@@ -173,9 +173,9 @@
           "rates": [
             {
               "id": "rate:asb:better-homes-top-up:3-years",
+              "rate": 1,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 1
+              "termInMonths": 36
             }
           ]
         }
@@ -191,21 +191,21 @@
           "rates": [
             {
               "id": "rate:bank-of-baroda:standard:variable-floating",
+              "rate": 9.25,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 9.25
+              "termInMonths": null
             },
             {
               "id": "rate:bank-of-baroda:standard:1-year",
+              "rate": 7.69,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.69
+              "termInMonths": 12
             },
             {
               "id": "rate:bank-of-baroda:standard:2-years",
+              "rate": 7.99,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.99
+              "termInMonths": 24
             }
           ]
         }
@@ -221,39 +221,39 @@
           "rates": [
             {
               "id": "rate:bank-of-china:standard:variable-floating",
+              "rate": 9.39,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 9.39
+              "termInMonths": null
             },
             {
               "id": "rate:bank-of-china:standard:1-year",
+              "rate": 8.09,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 8.09
+              "termInMonths": 12
             },
             {
               "id": "rate:bank-of-china:standard:2-years",
+              "rate": 7.89,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.89
+              "termInMonths": 24
             },
             {
               "id": "rate:bank-of-china:standard:3-years",
+              "rate": 7.79,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 7.79
+              "termInMonths": 36
             },
             {
               "id": "rate:bank-of-china:standard:4-years",
+              "rate": 7.69,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 7.69
+              "termInMonths": 48
             },
             {
               "id": "rate:bank-of-china:standard:5-years",
+              "rate": 7.59,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 7.59
+              "termInMonths": 60
             }
           ]
         },
@@ -263,45 +263,45 @@
           "rates": [
             {
               "id": "rate:bank-of-china:special:variable-floating",
+              "rate": 7.49,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 7.49
+              "termInMonths": null
             },
             {
               "id": "rate:bank-of-china:special:1-year",
+              "rate": 7.09,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.09
+              "termInMonths": 12
             },
             {
               "id": "rate:bank-of-china:special:18-months",
+              "rate": 6.99,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 6.99
+              "termInMonths": 18
             },
             {
               "id": "rate:bank-of-china:special:2-years",
+              "rate": 6.89,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.89
+              "termInMonths": 24
             },
             {
               "id": "rate:bank-of-china:special:3-years",
+              "rate": 6.79,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 6.79
+              "termInMonths": 36
             },
             {
               "id": "rate:bank-of-china:special:4-years",
+              "rate": 6.69,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 6.69
+              "termInMonths": 48
             },
             {
               "id": "rate:bank-of-china:special:5-years",
+              "rate": 6.59,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 6.59
+              "termInMonths": 60
             }
           ]
         }
@@ -317,45 +317,45 @@
           "rates": [
             {
               "id": "rate:bnz:special:6-months",
+              "rate": 7.39,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.39
+              "termInMonths": 6
             },
             {
               "id": "rate:bnz:special:1-year",
+              "rate": 7.29,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.29
+              "termInMonths": 12
             },
             {
               "id": "rate:bnz:special:18-months",
+              "rate": 6.99,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 6.99
+              "termInMonths": 18
             },
             {
               "id": "rate:bnz:special:2-years",
+              "rate": 6.85,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.85
+              "termInMonths": 24
             },
             {
               "id": "rate:bnz:special:3-years",
+              "rate": 6.65,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 6.65
+              "termInMonths": 36
             },
             {
               "id": "rate:bnz:special:4-years",
+              "rate": 6.55,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 6.55
+              "termInMonths": 48
             },
             {
               "id": "rate:bnz:special:5-years",
+              "rate": 6.55,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 6.55
+              "termInMonths": 60
             }
           ]
         },
@@ -365,9 +365,9 @@
           "rates": [
             {
               "id": "rate:bnz:totalmoney:variable-floating",
+              "rate": 8.69,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.69
+              "termInMonths": null
             }
           ]
         },
@@ -377,51 +377,51 @@
           "rates": [
             {
               "id": "rate:bnz:std-flybuys:variable-floating",
+              "rate": 8.69,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.69
+              "termInMonths": null
             },
             {
               "id": "rate:bnz:std-flybuys:6-months",
+              "rate": 7.99,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.99
+              "termInMonths": 6
             },
             {
               "id": "rate:bnz:std-flybuys:1-year",
+              "rate": 7.89,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.89
+              "termInMonths": 12
             },
             {
               "id": "rate:bnz:std-flybuys:18-months",
+              "rate": 7.59,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.59
+              "termInMonths": 18
             },
             {
               "id": "rate:bnz:std-flybuys:2-years",
+              "rate": 7.45,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.45
+              "termInMonths": 24
             },
             {
               "id": "rate:bnz:std-flybuys:3-years",
+              "rate": 7.25,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 7.25
+              "termInMonths": 36
             },
             {
               "id": "rate:bnz:std-flybuys:4-years",
+              "rate": 7.15,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 7.15
+              "termInMonths": 48
             },
             {
               "id": "rate:bnz:std-flybuys:5-years",
+              "rate": 7.15,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 7.15
+              "termInMonths": 60
             }
           ]
         },
@@ -431,9 +431,9 @@
           "rates": [
             {
               "id": "rate:bnz:green-home-loan-top-ups:3-years",
+              "rate": 1,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 1
+              "termInMonths": 36
             }
           ]
         }
@@ -449,39 +449,39 @@
           "rates": [
             {
               "id": "rate:china-construction-bank:non-standard:variable-floating",
+              "rate": 8.14,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.14
+              "termInMonths": null
             },
             {
               "id": "rate:china-construction-bank:non-standard:6-months",
+              "rate": 7.79,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.79
+              "termInMonths": 6
             },
             {
               "id": "rate:china-construction-bank:non-standard:1-year",
+              "rate": 7.79,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.79
+              "termInMonths": 12
             },
             {
               "id": "rate:china-construction-bank:non-standard:18-months",
+              "rate": 7.49,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.49
+              "termInMonths": 18
             },
             {
               "id": "rate:china-construction-bank:non-standard:2-years",
+              "rate": 7.39,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.39
+              "termInMonths": 24
             },
             {
               "id": "rate:china-construction-bank:non-standard:3-years",
+              "rate": 7.34,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 7.34
+              "termInMonths": 36
             }
           ]
         },
@@ -491,45 +491,45 @@
           "rates": [
             {
               "id": "rate:china-construction-bank:standard:6-months",
+              "rate": 7.19,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.19
+              "termInMonths": 6
             },
             {
               "id": "rate:china-construction-bank:standard:1-year",
+              "rate": 7.09,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.09
+              "termInMonths": 12
             },
             {
               "id": "rate:china-construction-bank:standard:18-months",
+              "rate": 6.89,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 6.89
+              "termInMonths": 18
             },
             {
               "id": "rate:china-construction-bank:standard:2-years",
+              "rate": 6.75,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.75
+              "termInMonths": 24
             },
             {
               "id": "rate:china-construction-bank:standard:3-years",
+              "rate": 6.49,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 6.49
+              "termInMonths": 36
             },
             {
               "id": "rate:china-construction-bank:standard:4-years",
+              "rate": 6.4,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 6.4
+              "termInMonths": 48
             },
             {
               "id": "rate:china-construction-bank:standard:5-years",
+              "rate": 6.4,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 6.4
+              "termInMonths": 60
             }
           ]
         }
@@ -545,51 +545,51 @@
           "rates": [
             {
               "id": "rate:co-operative-bank:owner-occupied:variable-floating",
+              "rate": 8.4,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.4
+              "termInMonths": null
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:6-months",
+              "rate": 7.39,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.39
+              "termInMonths": 6
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:1-year",
+              "rate": 7.35,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.35
+              "termInMonths": 12
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:18-months",
+              "rate": 7.15,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.15
+              "termInMonths": 18
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:2-years",
+              "rate": 6.89,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.89
+              "termInMonths": 24
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:3-years",
+              "rate": 6.75,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 6.75
+              "termInMonths": 36
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:4-years",
+              "rate": 6.75,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 6.75
+              "termInMonths": 48
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:5-years",
+              "rate": 6.75,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 6.75
+              "termInMonths": 60
             }
           ]
         },
@@ -599,51 +599,51 @@
           "rates": [
             {
               "id": "rate:co-operative-bank:standard:variable-floating",
+              "rate": 8.4,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.4
+              "termInMonths": null
             },
             {
               "id": "rate:co-operative-bank:standard:6-months",
+              "rate": 7.89,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.89
+              "termInMonths": 6
             },
             {
               "id": "rate:co-operative-bank:standard:1-year",
+              "rate": 7.85,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.85
+              "termInMonths": 12
             },
             {
               "id": "rate:co-operative-bank:standard:18-months",
+              "rate": 7.65,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.65
+              "termInMonths": 18
             },
             {
               "id": "rate:co-operative-bank:standard:2-years",
+              "rate": 7.39,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.39
+              "termInMonths": 24
             },
             {
               "id": "rate:co-operative-bank:standard:3-years",
+              "rate": 7.25,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 7.25
+              "termInMonths": 36
             },
             {
               "id": "rate:co-operative-bank:standard:4-years",
+              "rate": 7.25,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 7.25
+              "termInMonths": 48
             },
             {
               "id": "rate:co-operative-bank:standard:5-years",
+              "rate": 7.25,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 7.25
+              "termInMonths": 60
             }
           ]
         },
@@ -653,9 +653,9 @@
           "rates": [
             {
               "id": "rate:co-operative-bank:first-home-buyer-special:1-year",
+              "rate": 7.15,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.15
+              "termInMonths": 12
             }
           ]
         }
@@ -671,33 +671,33 @@
           "rates": [
             {
               "id": "rate:heartland-bank:residential:variable-floating",
+              "rate": 7.99,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 7.99
+              "termInMonths": null
             },
             {
               "id": "rate:heartland-bank:residential:1-year",
+              "rate": 6.69,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 6.69
+              "termInMonths": 12
             },
             {
               "id": "rate:heartland-bank:residential:18-months",
+              "rate": 6.59,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 6.59
+              "termInMonths": 18
             },
             {
               "id": "rate:heartland-bank:residential:2-years",
+              "rate": 6.45,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.45
+              "termInMonths": 24
             },
             {
               "id": "rate:heartland-bank:residential:3-years",
+              "rate": 6.19,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 6.19
+              "termInMonths": 36
             }
           ]
         },
@@ -707,9 +707,9 @@
           "rates": [
             {
               "id": "rate:heartland-bank:reverse-mortgage:variable-floating",
+              "rate": 9.98,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 9.98
+              "termInMonths": null
             }
           ]
         }
@@ -725,51 +725,51 @@
           "rates": [
             {
               "id": "rate:icbc:special:variable-floating",
+              "rate": 7.85,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 7.85
+              "termInMonths": null
             },
             {
               "id": "rate:icbc:special:6-months",
+              "rate": 7.19,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.19
+              "termInMonths": 6
             },
             {
               "id": "rate:icbc:special:1-year",
+              "rate": 7.05,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.05
+              "termInMonths": 12
             },
             {
               "id": "rate:icbc:special:18-months",
+              "rate": 6.95,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 6.95
+              "termInMonths": 18
             },
             {
               "id": "rate:icbc:special:2-years",
+              "rate": 6.85,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.85
+              "termInMonths": 24
             },
             {
               "id": "rate:icbc:special:3-years",
+              "rate": 6.59,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 6.59
+              "termInMonths": 36
             },
             {
               "id": "rate:icbc:special:4-years",
+              "rate": 6.49,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 6.49
+              "termInMonths": 48
             },
             {
               "id": "rate:icbc:special:5-years",
+              "rate": 6.49,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 6.49
+              "termInMonths": 60
             }
           ]
         }
@@ -785,45 +785,45 @@
           "rates": [
             {
               "id": "rate:kiwibank:standard:variable-floating",
+              "rate": 8.5,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.5
+              "termInMonths": null
             },
             {
               "id": "rate:kiwibank:standard:6-months",
+              "rate": 8.39,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 8.39
+              "termInMonths": 6
             },
             {
               "id": "rate:kiwibank:standard:1-year",
+              "rate": 8.35,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 8.35
+              "termInMonths": 12
             },
             {
               "id": "rate:kiwibank:standard:2-years",
+              "rate": 7.89,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.89
+              "termInMonths": 24
             },
             {
               "id": "rate:kiwibank:standard:3-years",
+              "rate": 7.65,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 7.65
+              "termInMonths": 36
             },
             {
               "id": "rate:kiwibank:standard:4-years",
+              "rate": 7.59,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 7.59
+              "termInMonths": 48
             },
             {
               "id": "rate:kiwibank:standard:5-years",
+              "rate": 7.49,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 7.49
+              "termInMonths": 60
             }
           ]
         },
@@ -833,39 +833,39 @@
           "rates": [
             {
               "id": "rate:kiwibank:special:6-months",
+              "rate": 7.39,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.39
+              "termInMonths": 6
             },
             {
               "id": "rate:kiwibank:special:1-year",
+              "rate": 7.35,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.35
+              "termInMonths": 12
             },
             {
               "id": "rate:kiwibank:special:2-years",
+              "rate": 6.89,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.89
+              "termInMonths": 24
             },
             {
               "id": "rate:kiwibank:special:3-years",
+              "rate": 6.75,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 6.75
+              "termInMonths": 36
             },
             {
               "id": "rate:kiwibank:special:4-years",
+              "rate": 6.69,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 6.69
+              "termInMonths": 48
             },
             {
               "id": "rate:kiwibank:special:5-years",
+              "rate": 6.59,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 6.59
+              "termInMonths": 60
             }
           ]
         },
@@ -875,9 +875,9 @@
           "rates": [
             {
               "id": "rate:kiwibank:offset-mortgage:variable-floating",
+              "rate": 8.5,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.5
+              "termInMonths": null
             }
           ]
         }
@@ -893,27 +893,27 @@
           "rates": [
             {
               "id": "rate:kookmin:standard:variable-floating",
+              "rate": 9,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 9
+              "termInMonths": null
             },
             {
               "id": "rate:kookmin:standard:6-months",
+              "rate": 8.6,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 8.6
+              "termInMonths": 6
             },
             {
               "id": "rate:kookmin:standard:1-year",
+              "rate": 8.6,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 8.6
+              "termInMonths": 12
             },
             {
               "id": "rate:kookmin:standard:2-years",
+              "rate": 8.9,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 8.9
+              "termInMonths": 24
             }
           ]
         }
@@ -929,51 +929,51 @@
           "rates": [
             {
               "id": "rate:sbs-bank:residential:variable-floating",
+              "rate": 8.74,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.74
+              "termInMonths": null
             },
             {
               "id": "rate:sbs-bank:residential:6-months",
+              "rate": 7.95,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.95
+              "termInMonths": 6
             },
             {
               "id": "rate:sbs-bank:residential:1-year",
+              "rate": 7.95,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.95
+              "termInMonths": 12
             },
             {
               "id": "rate:sbs-bank:residential:18-months",
+              "rate": 7.75,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.75
+              "termInMonths": 18
             },
             {
               "id": "rate:sbs-bank:residential:2-years",
+              "rate": 7.45,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.45
+              "termInMonths": 24
             },
             {
               "id": "rate:sbs-bank:residential:3-years",
+              "rate": 7.29,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 7.29
+              "termInMonths": 36
             },
             {
               "id": "rate:sbs-bank:residential:4-years",
+              "rate": 7.19,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 7.19
+              "termInMonths": 48
             },
             {
               "id": "rate:sbs-bank:residential:5-years",
+              "rate": 7.09,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 7.09
+              "termInMonths": 60
             }
           ]
         },
@@ -983,45 +983,45 @@
           "rates": [
             {
               "id": "rate:sbs-bank:special:6-months",
+              "rate": 7.45,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.45
+              "termInMonths": 6
             },
             {
               "id": "rate:sbs-bank:special:1-year",
+              "rate": 7.45,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.45
+              "termInMonths": 12
             },
             {
               "id": "rate:sbs-bank:special:18-months",
+              "rate": 7.25,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.25
+              "termInMonths": 18
             },
             {
               "id": "rate:sbs-bank:special:2-years",
+              "rate": 6.95,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.95
+              "termInMonths": 24
             },
             {
               "id": "rate:sbs-bank:special:3-years",
+              "rate": 6.79,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 6.79
+              "termInMonths": 36
             },
             {
               "id": "rate:sbs-bank:special:4-years",
+              "rate": 6.69,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 6.69
+              "termInMonths": 48
             },
             {
               "id": "rate:sbs-bank:special:5-years",
+              "rate": 6.59,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 6.59
+              "termInMonths": 60
             }
           ]
         },
@@ -1031,9 +1031,9 @@
           "rates": [
             {
               "id": "rate:sbs-bank:first-home-combo:1-year",
+              "rate": 6.95,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 6.95
+              "termInMonths": 12
             }
           ]
         },
@@ -1043,9 +1043,9 @@
           "rates": [
             {
               "id": "rate:sbs-bank:construction-lending-for-fhb:variable-floating",
+              "rate": 6.19,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 6.19
+              "termInMonths": null
             }
           ]
         },
@@ -1055,9 +1055,9 @@
           "rates": [
             {
               "id": "rate:sbs-bank:unwind-reverse-equity:variable-floating",
+              "rate": 9.95,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 9.95
+              "termInMonths": null
             }
           ]
         }
@@ -1073,51 +1073,51 @@
           "rates": [
             {
               "id": "rate:tsb-bank:standard:variable-floating",
+              "rate": 9.44,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 9.44
+              "termInMonths": null
             },
             {
               "id": "rate:tsb-bank:standard:6-months",
+              "rate": 8.19,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 8.19
+              "termInMonths": 6
             },
             {
               "id": "rate:tsb-bank:standard:1-year",
+              "rate": 8.19,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 8.19
+              "termInMonths": 12
             },
             {
               "id": "rate:tsb-bank:standard:18-months",
+              "rate": 7.99,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.99
+              "termInMonths": 18
             },
             {
               "id": "rate:tsb-bank:standard:2-years",
+              "rate": 7.55,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.55
+              "termInMonths": 24
             },
             {
               "id": "rate:tsb-bank:standard:3-years",
+              "rate": 7.55,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 7.55
+              "termInMonths": 36
             },
             {
               "id": "rate:tsb-bank:standard:4-years",
+              "rate": 7.59,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 7.59
+              "termInMonths": 48
             },
             {
               "id": "rate:tsb-bank:standard:5-years",
+              "rate": 7.59,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 7.59
+              "termInMonths": 60
             }
           ]
         },
@@ -1127,51 +1127,51 @@
           "rates": [
             {
               "id": "rate:tsb-bank:special:variable-floating",
+              "rate": 8.64,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.64
+              "termInMonths": null
             },
             {
               "id": "rate:tsb-bank:special:6-months",
+              "rate": 7.39,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.39
+              "termInMonths": 6
             },
             {
               "id": "rate:tsb-bank:special:1-year",
+              "rate": 7.39,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.39
+              "termInMonths": 12
             },
             {
               "id": "rate:tsb-bank:special:18-months",
+              "rate": 7.19,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.19
+              "termInMonths": 18
             },
             {
               "id": "rate:tsb-bank:special:2-years",
+              "rate": 6.75,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.75
+              "termInMonths": 24
             },
             {
               "id": "rate:tsb-bank:special:3-years",
+              "rate": 6.75,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 6.75
+              "termInMonths": 36
             },
             {
               "id": "rate:tsb-bank:special:4-years",
+              "rate": 6.79,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 6.79
+              "termInMonths": 48
             },
             {
               "id": "rate:tsb-bank:special:5-years",
+              "rate": 6.79,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 6.79
+              "termInMonths": 60
             }
           ]
         }
@@ -1187,51 +1187,51 @@
           "rates": [
             {
               "id": "rate:westpac:standard:variable-floating",
+              "rate": 8.64,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.64
+              "termInMonths": null
             },
             {
               "id": "rate:westpac:standard:6-months",
+              "rate": 7.99,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.99
+              "termInMonths": 6
             },
             {
               "id": "rate:westpac:standard:1-year",
+              "rate": 7.89,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.89
+              "termInMonths": 12
             },
             {
               "id": "rate:westpac:standard:18-months",
+              "rate": 7.55,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.55
+              "termInMonths": 18
             },
             {
               "id": "rate:westpac:standard:2-years",
+              "rate": 7.49,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.49
+              "termInMonths": 24
             },
             {
               "id": "rate:westpac:standard:3-years",
+              "rate": 7.25,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 7.25
+              "termInMonths": 36
             },
             {
               "id": "rate:westpac:standard:4-years",
+              "rate": 7.19,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 7.19
+              "termInMonths": 48
             },
             {
               "id": "rate:westpac:standard:5-years",
+              "rate": 6.99,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 6.99
+              "termInMonths": 60
             }
           ]
         },
@@ -1241,45 +1241,45 @@
           "rates": [
             {
               "id": "rate:westpac:special:6-months",
+              "rate": 7.39,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.39
+              "termInMonths": 6
             },
             {
               "id": "rate:westpac:special:1-year",
+              "rate": 7.29,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.29
+              "termInMonths": 12
             },
             {
               "id": "rate:westpac:special:18-months",
+              "rate": 6.95,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 6.95
+              "termInMonths": 18
             },
             {
               "id": "rate:westpac:special:2-years",
+              "rate": 6.89,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.89
+              "termInMonths": 24
             },
             {
               "id": "rate:westpac:special:3-years",
+              "rate": 6.65,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 6.65
+              "termInMonths": 36
             },
             {
               "id": "rate:westpac:special:4-years",
+              "rate": 6.59,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 6.59
+              "termInMonths": 48
             },
             {
               "id": "rate:westpac:special:5-years",
+              "rate": 6.39,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 6.39
+              "termInMonths": 60
             }
           ]
         },
@@ -1289,9 +1289,9 @@
           "rates": [
             {
               "id": "rate:westpac:greater-choices:5-years",
+              "rate": 0,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 0
+              "termInMonths": 60
             }
           ]
         },
@@ -1301,9 +1301,9 @@
           "rates": [
             {
               "id": "rate:westpac:choices-offset:variable-floating",
+              "rate": 8.64,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.64
+              "termInMonths": null
             }
           ]
         },
@@ -1313,9 +1313,9 @@
           "rates": [
             {
               "id": "rate:westpac:choices-everyday:variable-floating",
+              "rate": 8.74,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.74
+              "termInMonths": null
             }
           ]
         }
@@ -1331,21 +1331,21 @@
           "rates": [
             {
               "id": "rate:heretaunga:residential:variable-floating",
+              "rate": 8.9,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.9
+              "termInMonths": null
             },
             {
               "id": "rate:heretaunga:residential:1-year",
+              "rate": 7.6,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.6
+              "termInMonths": 12
             },
             {
               "id": "rate:heretaunga:residential:2-years",
+              "rate": 7.4,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.4
+              "termInMonths": 24
             }
           ]
         }
@@ -1361,21 +1361,21 @@
           "rates": [
             {
               "id": "rate:nelson:residential:variable-floating",
+              "rate": 9,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 9
+              "termInMonths": null
             },
             {
               "id": "rate:nelson:residential:1-year",
+              "rate": 7.9,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.9
+              "termInMonths": 12
             },
             {
               "id": "rate:nelson:residential:2-years",
+              "rate": 7.39,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.39
+              "termInMonths": 24
             }
           ]
         }
@@ -1391,27 +1391,27 @@
           "rates": [
             {
               "id": "rate:wairarapa:residential:variable-floating",
+              "rate": 8.6,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.6
+              "termInMonths": null
             },
             {
               "id": "rate:wairarapa:residential:1-year",
+              "rate": 7.15,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.15
+              "termInMonths": 12
             },
             {
               "id": "rate:wairarapa:residential:18-months",
+              "rate": 7.1,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.1
+              "termInMonths": 18
             },
             {
               "id": "rate:wairarapa:residential:2-years",
+              "rate": 6.85,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.85
+              "termInMonths": 24
             }
           ]
         }
@@ -1427,21 +1427,21 @@
           "rates": [
             {
               "id": "rate:first-cu:special:variable-floating",
+              "rate": 8.5,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.5
+              "termInMonths": null
             },
             {
               "id": "rate:first-cu:special:1-year",
+              "rate": 7.45,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.45
+              "termInMonths": 12
             },
             {
               "id": "rate:first-cu:special:2-years",
+              "rate": 7.35,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.35
+              "termInMonths": 24
             }
           ]
         },
@@ -1451,21 +1451,21 @@
           "rates": [
             {
               "id": "rate:first-cu:standard:variable-floating",
+              "rate": 8.5,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.5
+              "termInMonths": null
             },
             {
               "id": "rate:first-cu:standard:1-year",
+              "rate": 7.99,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.99
+              "termInMonths": 12
             },
             {
               "id": "rate:first-cu:standard:2-years",
+              "rate": 7.85,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.85
+              "termInMonths": 24
             }
           ]
         }
@@ -1481,9 +1481,9 @@
           "rates": [
             {
               "id": "rate:nzcu-auckland:variable-floating",
+              "rate": 8.55,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.55
+              "termInMonths": null
             }
           ]
         }
@@ -1499,21 +1499,21 @@
           "rates": [
             {
               "id": "rate:police-cu:standard:variable-floating",
+              "rate": 8.14,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.14
+              "termInMonths": null
             },
             {
               "id": "rate:police-cu:standard:1-year",
+              "rate": 7.39,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.39
+              "termInMonths": 12
             },
             {
               "id": "rate:police-cu:standard:2-years",
+              "rate": 6.89,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.89
+              "termInMonths": 24
             }
           ]
         },
@@ -1523,21 +1523,21 @@
           "rates": [
             {
               "id": "rate:police-cu:shared-ownership:variable-floating",
+              "rate": 8.14,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.14
+              "termInMonths": null
             },
             {
               "id": "rate:police-cu:shared-ownership:1-year",
+              "rate": 7.99,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.99
+              "termInMonths": 12
             },
             {
               "id": "rate:police-cu:shared-ownership:2-years",
+              "rate": 7.49,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.49
+              "termInMonths": 24
             }
           ]
         }
@@ -1553,33 +1553,33 @@
           "rates": [
             {
               "id": "rate:unity:residential:variable-floating",
+              "rate": 8.64,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.64
+              "termInMonths": null
             },
             {
               "id": "rate:unity:residential:6-months",
+              "rate": 7.35,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.35
+              "termInMonths": 6
             },
             {
               "id": "rate:unity:residential:1-year",
+              "rate": 6.99,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 6.99
+              "termInMonths": 12
             },
             {
               "id": "rate:unity:residential:18-months",
+              "rate": 7.15,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.15
+              "termInMonths": 18
             },
             {
               "id": "rate:unity:residential:2-years",
+              "rate": 6.85,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.85
+              "termInMonths": 24
             }
           ]
         },
@@ -1589,9 +1589,9 @@
           "rates": [
             {
               "id": "rate:unity:first-home-buyer-special:2-years",
+              "rate": 6.45,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.45
+              "termInMonths": 24
             }
           ]
         }
@@ -1607,33 +1607,33 @@
           "rates": [
             {
               "id": "rate:kainga-ora-hnz:residential:variable-floating",
+              "rate": 8.64,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.64
+              "termInMonths": null
             },
             {
               "id": "rate:kainga-ora-hnz:residential:1-year",
+              "rate": 7.79,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.79
+              "termInMonths": 12
             },
             {
               "id": "rate:kainga-ora-hnz:residential:2-years",
+              "rate": 7.59,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.59
+              "termInMonths": 24
             },
             {
               "id": "rate:kainga-ora-hnz:residential:3-years",
+              "rate": 7.29,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 7.29
+              "termInMonths": 36
             },
             {
               "id": "rate:kainga-ora-hnz:residential:5-years",
+              "rate": 6.99,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 6.99
+              "termInMonths": 60
             }
           ]
         }
@@ -1649,9 +1649,9 @@
           "rates": [
             {
               "id": "rate:avanti-finance:near-prime:variable-floating",
+              "rate": 9.15,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 9.15
+              "termInMonths": null
             }
           ]
         }
@@ -1667,9 +1667,9 @@
           "rates": [
             {
               "id": "rate:basecorp-finance:standard-from:variable-floating",
+              "rate": 9.6,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 9.6
+              "termInMonths": null
             }
           ]
         }
@@ -1685,9 +1685,9 @@
           "rates": [
             {
               "id": "rate:bluestone:prime-60-lvr:variable-floating",
+              "rate": 9.09,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 9.09
+              "termInMonths": null
             }
           ]
         }
@@ -1703,9 +1703,9 @@
           "rates": [
             {
               "id": "rate:cfml-loans:standard:variable-floating",
+              "rate": 9.45,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 9.45
+              "termInMonths": null
             }
           ]
         }
@@ -1721,27 +1721,27 @@
           "rates": [
             {
               "id": "rate:liberty-financial:residential:variable-floating",
+              "rate": 8.59,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.59
+              "termInMonths": null
             },
             {
               "id": "rate:liberty-financial:residential:1-year",
+              "rate": 8.69,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 8.69
+              "termInMonths": 12
             },
             {
               "id": "rate:liberty-financial:residential:2-years",
+              "rate": 8.79,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 8.79
+              "termInMonths": 24
             },
             {
               "id": "rate:liberty-financial:residential:3-years",
+              "rate": 8.94,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 8.94
+              "termInMonths": 36
             }
           ]
         }
@@ -1757,9 +1757,9 @@
           "rates": [
             {
               "id": "rate:paraloan:for-people-with-physical-disabilitiesfrom:3-years",
+              "rate": 5.39,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 5.39
+              "termInMonths": 36
             }
           ]
         }
@@ -1775,9 +1775,9 @@
           "rates": [
             {
               "id": "rate:pepper-money:essential:variable-floating",
+              "rate": 8.29,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.29
+              "termInMonths": null
             }
           ]
         },
@@ -1787,9 +1787,9 @@
           "rates": [
             {
               "id": "rate:pepper-money:easy:variable-floating",
+              "rate": 8.69,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.69
+              "termInMonths": null
             }
           ]
         },
@@ -1799,9 +1799,9 @@
           "rates": [
             {
               "id": "rate:pepper-money:advantage:variable-floating",
+              "rate": 10.49,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 10.49
+              "termInMonths": null
             }
           ]
         }
@@ -1817,39 +1817,39 @@
           "rates": [
             {
               "id": "rate:resimac:standard-lvr-80:variable-floating",
+              "rate": 8.84,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.84
+              "termInMonths": null
             },
             {
               "id": "rate:resimac:standard-lvr-80:1-year",
+              "rate": 8.29,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 8.29
+              "termInMonths": 12
             },
             {
               "id": "rate:resimac:standard-lvr-80:2-years",
+              "rate": 7.89,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 7.89
+              "termInMonths": 24
             },
             {
               "id": "rate:resimac:standard-lvr-80:3-years",
+              "rate": 7.49,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 7.49
+              "termInMonths": 36
             },
             {
               "id": "rate:resimac:standard-lvr-80:4-years",
+              "rate": 7.29,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 7.29
+              "termInMonths": 48
             },
             {
               "id": "rate:resimac:standard-lvr-80:5-years",
+              "rate": 7.19,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 7.19
+              "termInMonths": 60
             }
           ]
         },
@@ -1859,39 +1859,39 @@
           "rates": [
             {
               "id": "rate:resimac:standard-lvr-90:variable-floating",
+              "rate": 9.84,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 9.84
+              "termInMonths": null
             },
             {
               "id": "rate:resimac:standard-lvr-90:1-year",
+              "rate": 9.29,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 9.29
+              "termInMonths": 12
             },
             {
               "id": "rate:resimac:standard-lvr-90:2-years",
+              "rate": 8.89,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 8.89
+              "termInMonths": 24
             },
             {
               "id": "rate:resimac:standard-lvr-90:3-years",
+              "rate": 8.49,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 8.49
+              "termInMonths": 36
             },
             {
               "id": "rate:resimac:standard-lvr-90:4-years",
+              "rate": 8.29,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 8.29
+              "termInMonths": 48
             },
             {
               "id": "rate:resimac:standard-lvr-90:5-years",
+              "rate": 8.19,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 8.19
+              "termInMonths": 60
             }
           ]
         }
@@ -1907,9 +1907,9 @@
           "rates": [
             {
               "id": "rate:simplicity:member-home-loan:variable-floating",
+              "rate": 6.1,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 6.1
+              "termInMonths": null
             }
           ]
         }
@@ -1925,21 +1925,21 @@
           "rates": [
             {
               "id": "rate:xceda-finance:short-term-bridge-mortgage-loans-from:6-months",
+              "rate": 9.25,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 9.25
+              "termInMonths": 6
             },
             {
               "id": "rate:xceda-finance:short-term-bridge-mortgage-loans-from:1-year",
+              "rate": 9.25,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 9.25
+              "termInMonths": 12
             },
             {
               "id": "rate:xceda-finance:short-term-bridge-mortgage-loans-from:2-years",
+              "rate": 9.25,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 9.25
+              "termInMonths": 24
             }
           ]
         }
@@ -1955,51 +1955,51 @@
           "rates": [
             {
               "id": "rate:aia:standard-go:variable-floating",
+              "rate": 8.74,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.74
+              "termInMonths": null
             },
             {
               "id": "rate:aia:standard-go:6-months",
+              "rate": 7.39,
               "term": "6 months",
-              "termInMonths": 6,
-              "rate": 7.39
+              "termInMonths": 6
             },
             {
               "id": "rate:aia:standard-go:1-year",
+              "rate": 7.39,
               "term": "1 year",
-              "termInMonths": 12,
-              "rate": 7.39
+              "termInMonths": 12
             },
             {
               "id": "rate:aia:standard-go:18-months",
+              "rate": 7.15,
               "term": "18 months",
-              "termInMonths": 18,
-              "rate": 7.15
+              "termInMonths": 18
             },
             {
               "id": "rate:aia:standard-go:2-years",
+              "rate": 6.89,
               "term": "2 years",
-              "termInMonths": 24,
-              "rate": 6.89
+              "termInMonths": 24
             },
             {
               "id": "rate:aia:standard-go:3-years",
+              "rate": 6.65,
               "term": "3 years",
-              "termInMonths": 36,
-              "rate": 6.65
+              "termInMonths": 36
             },
             {
               "id": "rate:aia:standard-go:4-years",
+              "rate": 6.55,
               "term": "4 years",
-              "termInMonths": 48,
-              "rate": 6.55
+              "termInMonths": 48
             },
             {
               "id": "rate:aia:standard-go:5-years",
+              "rate": 6.55,
               "term": "5 years",
-              "termInMonths": 60,
-              "rate": 6.55
+              "termInMonths": 60
             }
           ]
         }
@@ -2015,9 +2015,9 @@
           "rates": [
             {
               "id": "rate:first-mortgage-trust:residential-from:variable-floating",
+              "rate": 8,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8
+              "termInMonths": null
             }
           ]
         },
@@ -2027,9 +2027,9 @@
           "rates": [
             {
               "id": "rate:first-mortgage-trust:commercial-rural-from:variable-floating",
+              "rate": 8,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8
+              "termInMonths": null
             }
           ]
         }
@@ -2045,9 +2045,9 @@
           "rates": [
             {
               "id": "rate:midlands-mortgage-trust:residential:variable-floating",
+              "rate": 8.6,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.6
+              "termInMonths": null
             }
           ]
         },
@@ -2057,9 +2057,9 @@
           "rates": [
             {
               "id": "rate:midlands-mortgage-trust:commercial:variable-floating",
+              "rate": 8.85,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.85
+              "termInMonths": null
             }
           ]
         },
@@ -2069,14 +2069,14 @@
           "rates": [
             {
               "id": "rate:midlands-mortgage-trust:rural:variable-floating",
+              "rate": 8.7,
               "term": "Variable floating",
-              "termInMonths": null,
-              "rate": 8.7
+              "termInMonths": null
             }
           ]
         }
       ]
     }
   ],
-  "lastUpdated": "2024-02-23T04:35:39.784Z"
+  "lastUpdated": "2024-02-23T11:43:14.226Z"
 }
