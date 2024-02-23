@@ -1,7 +1,7 @@
 import { z } from "@hono/zod-openapi";
-import { Rate, RateId } from "./rate";
-import { Institution } from "./institution";
-import { Product } from "./product";
+import { Rate as RateSchema, RateId } from "./rate";
+import { Institution as InstitutionSchema } from "./institution";
+import { Product as ProductSchema } from "./product";
 
 export const RateTerm = {
   VARIABLE_FLOATING: "Variable floating",
@@ -20,11 +20,11 @@ export const MortgageRates = z
     type: z.literal("MortgageRates"),
     data: z
       .array(
-        Institution.extend({
+        InstitutionSchema.extend({
           products: z.array(
-            Product.extend({
+            ProductSchema.extend({
               rates: z.array(
-                Rate.extend({
+                RateSchema.extend({
                   term: z.nativeEnum(RateTerm).openapi({
                     examples: ["6 months", "3 years"],
                   }),
@@ -47,19 +47,22 @@ export const MortgageRates = z
   })
   .strict();
 
-type ExtendedRate = z.infer<
+// Why must this be external? 🤷
+export type Rate = z.infer<
   typeof MortgageRates
 >["data"][number]["products"][number]["rates"][number] & {
   id: RateId;
 };
 
 export type MortgageRates = {
-  data: (Institution & {
-    products: (Product & {
-      rates: ExtendedRate[];
+  data: (InstitutionSchema & {
+    products: (ProductSchema & {
+      rates: Rate[];
     })[];
   })[];
 };
+export type Institution = MortgageRates["data"][number];
+export type Product = MortgageRates["data"][number]["products"][number];
 
 export function isRateTerm(term: string): term is RateTerm {
   return Object.values(RateTerm).includes(term as RateTerm);
