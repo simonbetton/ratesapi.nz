@@ -1,5 +1,5 @@
 {
-  "type": "PersonalLoanRates",
+  "type": "CarLoanRates",
   "data": [
     {
       "id": "institution:asb",
@@ -818,5 +818,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-02-23T11:59:04.829Z"
+  "lastUpdated": "2024-02-24T09:09:16.337Z"
 }
