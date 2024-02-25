@@ -4,6 +4,8 @@ const Prefix = {
   INSTITUTION: "institution",
   PRODUCT: "product",
   RATE: "rate",
+  ISSUER: "issuer",
+  PLAN: "plan",
 } as const;
 
 type Prefix = (typeof Prefix)[keyof typeof Prefix];
@@ -19,6 +21,8 @@ export function generateId<T extends Prefix>(args: Args): `${T}:${string}` {
         .toString()
         .toLowerCase()
         .trim()
+        .replace(/</g, "less-than-")
+        .replace(/>/g, "greater-than-")
         .replace(/\s+/g, "-") // Replace spaces with -
         .replace(/[^\w\-]+/g, "") // Remove all non-word chars
         .replace(/\-\-+/g, "-"); // Replace multiple - with single -

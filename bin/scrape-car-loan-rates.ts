@@ -32,16 +32,16 @@ const config: {
 
 async function main() {
   let data: string = "";
-  const gather = ora("Scraping mortgage rates").start();
+  const gather = ora("Scraping car loan rates").start();
   try {
     const response = await fetchWithTimeout(config.url);
     if (!response.ok) {
       throw new Error(`Failed to fetch ${config.url}`);
     }
     data = await response.text();
-    gather.succeed("Scraped mortgage rates").stop();
+    gather.succeed("Scraped car loan rates").stop();
   } catch (error) {
-    gather.fail("Failed to scrape mortgage rates").stop();
+    gather.fail("Failed to scrape car loan rates").stop();
     return;
   }
 

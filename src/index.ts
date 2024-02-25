@@ -6,9 +6,12 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { routes as mortgageRatesRoutes } from "./routes/mortgage-rates";
 import { routes as personalLoanRatesRoutes } from "./routes/personal-loan-rates";
 import { routes as carLoanRatesRoutes } from "./routes/car-loan-rates";
+import { routes as creditCardRatesRoutes } from "./routes/credit-card-rates";
 import { Institution } from "./models/institution";
 import { Product } from "./models/product";
 import { Rate } from "./models/rate";
+import { Issuer } from "./models/issuer";
+import { Plan } from "./models/plan";
 
 const app = new OpenAPIHono({
   defaultHook: (result, c) => {
@@ -47,10 +50,13 @@ app.use(
 app.route("/api/v1/mortgage-rates", mortgageRatesRoutes);
 app.route("/api/v1/personal-loan-rates", personalLoanRatesRoutes);
 app.route("/api/v1/car-loan-rates", carLoanRatesRoutes);
+app.route("/api/v1/credit-card-rates", creditCardRatesRoutes);
 
 // Models
 app.openAPIRegistry.register("Institution", Institution);
+app.openAPIRegistry.register("Issuer", Issuer);
 app.openAPIRegistry.register("Product", Product);
+app.openAPIRegistry.register("Plan", Plan);
 app.openAPIRegistry.register("Rate", Rate);
 
 // OpenAPI documentation

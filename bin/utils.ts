@@ -1,8 +1,14 @@
 import { writeFileSync } from "fs";
 import { MortgageRates } from "../src/models/mortgage-rates";
 import { PersonalLoanRates } from "../src/models/personal-loan-rates";
+import { CarLoanRates } from "../src/models/car-loan-rates";
+import { CreditCardRates } from "../src/models/credit-card-rates";
 
-type SupportedModels = MortgageRates | PersonalLoanRates;
+type SupportedModels =
+  | MortgageRates
+  | PersonalLoanRates
+  | CarLoanRates
+  | CreditCardRates;
 
 export async function fetchWithTimeout(
   resource: string,

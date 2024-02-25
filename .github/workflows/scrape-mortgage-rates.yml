@@ -33,13 +33,21 @@ jobs:
       - name: Run the scraper script for personal loan rates
         run: bun run bin/scrape-personal-loan-rates.ts
 
+      - name: Run the scraper script for car loan rates
+        run: bun run bin/scrape-car-loan-rates.ts
+
+      - name: Run the scraper script for credit card rates
+        run: bun run bin/scrape-credit-card-rates.ts
+
       - name: Commit and push if changes
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git add data/mortgage-rates.json
           git add data/personal-loan-rates.json
-          git commit -m "Update scraped table" -a || exit 0
+          git add data/car-loan-rates.json
+          git add data/credit-card-rates.json
+          git commit -m "Update scraped tables" -a || exit 0
           git push
 
       - name: Deploy Cloudflare Worker

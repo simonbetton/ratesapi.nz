@@ -2,11 +2,13 @@ import { z } from "@hono/zod-openapi";
 import { MortgageRates } from "./mortgage-rates";
 import { PersonalLoanRates } from "./personal-loan-rates";
 import { CarLoanRates } from "./car-loan-rates";
+import { CreditCardRates } from "./credit-card-rates";
 
 const Models = z.discriminatedUnion("type", [
   MortgageRates,
   PersonalLoanRates,
   CarLoanRates,
+  CreditCardRates,
 ]);
 
 export const ApiSuccess = Models.and(
