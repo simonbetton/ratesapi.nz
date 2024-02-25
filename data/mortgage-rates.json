@@ -1680,11 +1680,11 @@
       "name": "Bluestone",
       "products": [
         {
-          "id": "product:bluestone:prime-60-lvr",
+          "id": "product:bluestone:prime-less-than-60-lvr",
           "name": "Prime <60% LVR",
           "rates": [
             {
-              "id": "rate:bluestone:prime-60-lvr:variable-floating",
+              "id": "rate:bluestone:prime-less-than-60-lvr:variable-floating",
               "rate": 9.09,
               "term": "Variable floating",
               "termInMonths": null
@@ -1812,41 +1812,41 @@
       "name": "Resimac",
       "products": [
         {
-          "id": "product:resimac:standard-lvr-80",
+          "id": "product:resimac:standard-lvr-less-than-80",
           "name": "Standard  LVR < 80%",
           "rates": [
             {
-              "id": "rate:resimac:standard-lvr-80:variable-floating",
+              "id": "rate:resimac:standard-lvr-less-than-80:variable-floating",
               "rate": 8.84,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
-              "id": "rate:resimac:standard-lvr-80:1-year",
+              "id": "rate:resimac:standard-lvr-less-than-80:1-year",
               "rate": 8.29,
               "term": "1 year",
               "termInMonths": 12
             },
             {
-              "id": "rate:resimac:standard-lvr-80:2-years",
+              "id": "rate:resimac:standard-lvr-less-than-80:2-years",
               "rate": 7.89,
               "term": "2 years",
               "termInMonths": 24
             },
             {
-              "id": "rate:resimac:standard-lvr-80:3-years",
+              "id": "rate:resimac:standard-lvr-less-than-80:3-years",
               "rate": 7.49,
               "term": "3 years",
               "termInMonths": 36
             },
             {
-              "id": "rate:resimac:standard-lvr-80:4-years",
+              "id": "rate:resimac:standard-lvr-less-than-80:4-years",
               "rate": 7.29,
               "term": "4 years",
               "termInMonths": 48
             },
             {
-              "id": "rate:resimac:standard-lvr-80:5-years",
+              "id": "rate:resimac:standard-lvr-less-than-80:5-years",
               "rate": 7.19,
               "term": "5 years",
               "termInMonths": 60
@@ -1854,41 +1854,41 @@
           ]
         },
         {
-          "id": "product:resimac:standard-lvr-90",
+          "id": "product:resimac:standard-lvr-less-than-90",
           "name": "Standard LVR < 90%",
           "rates": [
             {
-              "id": "rate:resimac:standard-lvr-90:variable-floating",
+              "id": "rate:resimac:standard-lvr-less-than-90:variable-floating",
               "rate": 9.84,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
-              "id": "rate:resimac:standard-lvr-90:1-year",
+              "id": "rate:resimac:standard-lvr-less-than-90:1-year",
               "rate": 9.29,
               "term": "1 year",
               "termInMonths": 12
             },
             {
-              "id": "rate:resimac:standard-lvr-90:2-years",
+              "id": "rate:resimac:standard-lvr-less-than-90:2-years",
               "rate": 8.89,
               "term": "2 years",
               "termInMonths": 24
             },
             {
-              "id": "rate:resimac:standard-lvr-90:3-years",
+              "id": "rate:resimac:standard-lvr-less-than-90:3-years",
               "rate": 8.49,
               "term": "3 years",
               "termInMonths": 36
             },
             {
-              "id": "rate:resimac:standard-lvr-90:4-years",
+              "id": "rate:resimac:standard-lvr-less-than-90:4-years",
               "rate": 8.29,
               "term": "4 years",
               "termInMonths": 48
             },
             {
-              "id": "rate:resimac:standard-lvr-90:5-years",
+              "id": "rate:resimac:standard-lvr-less-than-90:5-years",
               "rate": 8.19,
               "term": "5 years",
               "termInMonths": 60
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-02-23T11:43:14.226Z"
+  "lastUpdated": "2024-02-25T21:36:10.055Z"
 }

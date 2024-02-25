@@ -366,17 +366,17 @@
       "name": "Gem",
       "products": [
         {
-          "id": "product:gem:car-loan-6000",
+          "id": "product:gem:car-loan-greater-than-6000",
           "name": "Car Loan (>$6,000)",
           "rates": [
             {
-              "id": "rate:gem:car-loan-6000:secured:from",
+              "id": "rate:gem:car-loan-greater-than-6000:secured:from",
               "rate": 8.99,
               "plan": "Secured",
               "condition": "From"
             },
             {
-              "id": "rate:gem:car-loan-6000:secured:to",
+              "id": "rate:gem:car-loan-greater-than-6000:secured:to",
               "rate": 24.99,
               "plan": "Secured",
               "condition": "To"
@@ -818,5 +818,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-02-24T09:09:16.337Z"
+  "lastUpdated": "2024-02-25T21:36:14.269Z"
 }
