@@ -30,11 +30,23 @@ jobs:
       - name: Run the scraper script for mortgage rates
         run: bun run bin/scrape-mortgage-rates.ts
 
+      - name: Sleep for 2 seconds
+        run: sleep 2s
+        shell: bash
+
       - name: Run the scraper script for personal loan rates
         run: bun run bin/scrape-personal-loan-rates.ts
 
+      - name: Sleep for 2 seconds
+        run: sleep 2s
+        shell: bash
+
       - name: Run the scraper script for car loan rates
         run: bun run bin/scrape-car-loan-rates.ts
+
+      - name: Sleep for 2 seconds
+        run: sleep 2s
+        shell: bash
 
       - name: Run the scraper script for credit card rates
         run: bun run bin/scrape-credit-card-rates.ts
