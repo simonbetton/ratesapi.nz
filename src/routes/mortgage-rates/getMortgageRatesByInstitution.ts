@@ -10,6 +10,8 @@ const ParamsSchema = z.object({
     },
     examples: [
       "institution:anz",
+      "institution:asb",
+      "institution:bnz",
       "institution:kiwibank",
       "institution:westpac",
     ],
@@ -45,6 +47,14 @@ export const getMortgageRatesByInstitutionRoute = createRoute({
         },
       },
       description: "Retrieve all mortgage rates for all institutions",
+    },
+    404: {
+      content: {
+        "application/json": {
+          schema: ApiError,
+        },
+      },
+      description: "Institution not found",
     },
     500: {
       content: {

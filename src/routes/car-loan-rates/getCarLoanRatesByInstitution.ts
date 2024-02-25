@@ -8,11 +8,7 @@ const ParamsSchema = z.object({
       name: "institutionId",
       in: "path",
     },
-    examples: [
-      "institution:anz",
-      "institution:kiwibank",
-      "institution:westpac",
-    ],
+    examples: ["institution:asb", "institution:kiwibank"],
   }),
 });
 
@@ -31,6 +27,14 @@ export const getCarLoanRatesByInstitutionRoute = createRoute({
         },
       },
       description: "Retrieve all car loan rates for all institutions",
+    },
+    404: {
+      content: {
+        "application/json": {
+          schema: ApiError,
+        },
+      },
+      description: "Institution not found",
     },
     500: {
       content: {

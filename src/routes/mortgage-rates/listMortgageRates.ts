@@ -1,10 +1,27 @@
 import { createRoute } from "@hono/zod-openapi";
+import { z } from "@hono/zod-openapi";
 import { ApiError, ApiSuccess } from "../../models/api";
 
-export const getCarLoanRatesRoute = createRoute({
-  operationId: "getCarLoanRates",
+const QuerySchema = z.object({
+  termInMonths: z
+    .string()
+    .optional()
+    .openapi({
+      param: {
+        name: "termInMonths",
+        in: "query",
+      },
+      examples: ["6", "12", "24", "36"],
+    }),
+});
+
+export const listMortgageRatesRoute = createRoute({
+  operationId: "listMortgageRates",
   method: "get",
   path: "/",
+  request: {
+    query: QuerySchema,
+  },
   responses: {
     200: {
       content: {
@@ -12,7 +29,7 @@ export const getCarLoanRatesRoute = createRoute({
           schema: ApiSuccess,
         },
       },
-      description: "Retrieve all car loan rates for all institutions",
+      description: "Retrieve all mortgage rates for all institutions",
     },
     500: {
       content: {

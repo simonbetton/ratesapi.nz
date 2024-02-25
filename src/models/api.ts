@@ -18,9 +18,9 @@ export type ApiSuccess = z.infer<typeof ApiSuccess>;
 
 export const ApiError = z.object({
   code: z.number().openapi({
-    example: 500,
+    examples: [404, 500],
   }),
   message: z.string().openapi({
-    example: "Internal Server Error",
+    examples: ["Internal Server Error"],
   }),
 });

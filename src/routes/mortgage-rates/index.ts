@@ -1,19 +1,17 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { Bindings } from "hono/types";
-import { getMortgageRatesRoute } from "./getMortgageRates";
+import { listMortgageRatesRoute } from "./listMortgageRates";
 import { getMortgageRatesByInstitutionRoute } from "./getMortgageRatesByInstitution";
 import unValidatedMortgageRates from "../../../data/mortgage-rates.json";
 import { MortgageRates } from "../../models/mortgage-rates";
+import { termsOfUse } from "../../utils/terms-of-use";
 
 const routes = new OpenAPIHono<{ Bindings: Bindings }>();
 
 // Route: `GET /mortgage-rates`
-routes.openapi(getMortgageRatesRoute, (c) => {
+routes.openapi(listMortgageRatesRoute, (c) => {
   const { termInMonths } = c.req.valid("query");
-
   const validatedMortgageRates = MortgageRates.parse(unValidatedMortgageRates);
-  const termsOfUse =
-    "Data is retrieved hourly from interest.co.nz. Please note that the information provided is not guaranteed to be accurate. For the most up-to-date and accurate rates, please check with the provider directly.";
 
   if (termInMonths) {
     const filteredMortgageRates = validatedMortgageRates.data.map(
@@ -33,13 +31,13 @@ routes.openapi(getMortgageRatesRoute, (c) => {
     return c.json({
       ...validatedMortgageRates,
       data: filteredMortgageRates,
-      termsOfUse,
+      termsOfUse: termsOfUse(),
     });
   }
 
   return c.json({
     ...validatedMortgageRates,
-    termsOfUse,
+    termsOfUse: termsOfUse(),
   });
 });
 
@@ -47,11 +45,7 @@ routes.openapi(getMortgageRatesRoute, (c) => {
 routes.openapi(getMortgageRatesByInstitutionRoute, (c) => {
   const { institutionId } = c.req.valid("param");
   const { termInMonths } = c.req.valid("query");
-
   const validatedMortgageRates = MortgageRates.parse(unValidatedMortgageRates);
-  const termsOfUse =
-    "Data is retrieved hourly from interest.co.nz. Please note that the information provided is not guaranteed to be accurate. For the most up-to-date and accurate rates, please check with the provider directly.";
-
   const singleInstitution = validatedMortgageRates.data.find(
     (i) => i.id.toLowerCase() === institutionId.toLowerCase()
   );
@@ -84,14 +78,14 @@ routes.openapi(getMortgageRatesByInstitutionRoute, (c) => {
           products: filteredProducts,
         },
       ],
-      termsOfUse,
+      termsOfUse: termsOfUse(),
     });
   }
 
   return c.json({
     ...validatedMortgageRates,
     data: [singleInstitution],
-    termsOfUse,
+    termsOfUse: termsOfUse(),
   });
 });
 

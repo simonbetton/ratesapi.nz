@@ -1,36 +1,30 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { Bindings } from "hono/types";
-import { getPersonalLoanRatesRoute } from "./getPersonalLoanRates";
+import { listPersonalLoanRatesRoute } from "./listPersonalLoanRates";
 import { getPersonalLoanRatesByInstitutionRoute } from "./getPersonalLoanRatesByInstitution";
 import unValidatedPersonalLoanRates from "../../../data/personal-loan-rates.json";
 import { PersonalLoanRates } from "../../models/personal-loan-rates";
+import { termsOfUse } from "../../utils/terms-of-use";
 
 const routes = new OpenAPIHono<{ Bindings: Bindings }>();
 
 // Route: `GET /personal-loan-rates`
-routes.openapi(getPersonalLoanRatesRoute, (c) => {
+routes.openapi(listPersonalLoanRatesRoute, (c) => {
   const validatedPersonalLoanRates = PersonalLoanRates.parse(
     unValidatedPersonalLoanRates
   );
-  const termsOfUse =
-    "Data is retrieved hourly from interest.co.nz. Please note that the information provided is not guaranteed to be accurate. For the most up-to-date and accurate rates, please check with the provider directly.";
-
   return c.json({
     ...validatedPersonalLoanRates,
-    termsOfUse,
+    termsOfUse: termsOfUse(),
   });
 });
 
 // Route: `GET /personal-loan-rates/{institutionId}`
 routes.openapi(getPersonalLoanRatesByInstitutionRoute, (c) => {
   const { institutionId } = c.req.valid("param");
-
   const validatedPersonalLoanRates = PersonalLoanRates.parse(
     unValidatedPersonalLoanRates
   );
-  const termsOfUse =
-    "Data is retrieved hourly from interest.co.nz. Please note that the information provided is not guaranteed to be accurate. For the most up-to-date and accurate rates, please check with the provider directly.";
-
   const singleInstitution = validatedPersonalLoanRates.data.find(
     (i) => i.id.toLowerCase() === institutionId.toLowerCase()
   );
@@ -48,7 +42,7 @@ routes.openapi(getPersonalLoanRatesByInstitutionRoute, (c) => {
   return c.json({
     ...validatedPersonalLoanRates,
     data: [singleInstitution],
-    termsOfUse,
+    termsOfUse: termsOfUse(),
   });
 });
 

@@ -10,6 +10,8 @@ const ParamsSchema = z.object({
     },
     examples: [
       "institution:anz",
+      "institution:asb",
+      "institution:bnz",
       "institution:kiwibank",
       "institution:westpac",
     ],
@@ -31,6 +33,14 @@ export const getPersonalLoanRatesByInstitutionRoute = createRoute({
         },
       },
       description: "Retrieve all personal loan rates for all institutions",
+    },
+    404: {
+      content: {
+        "application/json": {
+          schema: ApiError,
+        },
+      },
+      description: "Institution not found",
     },
     500: {
       content: {

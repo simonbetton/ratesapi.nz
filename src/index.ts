@@ -6,6 +6,9 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { routes as mortgageRatesRoutes } from "./routes/mortgage-rates";
 import { routes as personalLoanRatesRoutes } from "./routes/personal-loan-rates";
 import { routes as carLoanRatesRoutes } from "./routes/car-loan-rates";
+import { Institution } from "./models/institution";
+import { Product } from "./models/product";
+import { Rate } from "./models/rate";
 
 const app = new OpenAPIHono({
   defaultHook: (result, c) => {
@@ -21,10 +24,15 @@ const app = new OpenAPIHono({
   },
 });
 
+const isProduction = process.env.NODE_ENV === "production";
+
 app.use(
   "*",
   prettyJSON(),
-  cache({ cacheName: "rates-api", cacheControl: "public, max-age=3600" })
+  cache({
+    cacheName: "rates-api",
+    cacheControl: isProduction ? "public, max-age=3600" : "no-cache",
+  })
 );
 
 app.use(
@@ -35,9 +43,15 @@ app.use(
   })
 );
 
+// Routes
 app.route("/api/v1/mortgage-rates", mortgageRatesRoutes);
 app.route("/api/v1/personal-loan-rates", personalLoanRatesRoutes);
 app.route("/api/v1/car-loan-rates", carLoanRatesRoutes);
+
+// Models
+app.openAPIRegistry.register("Institution", Institution);
+app.openAPIRegistry.register("Product", Product);
+app.openAPIRegistry.register("Rate", Rate);
 
 // OpenAPI documentation
 // Route: `GET /api/v1/doc`
@@ -61,7 +75,7 @@ app.doc31("/api/v1/doc", {
   ],
 });
 
-// Swagger UI
-app.get("/", swaggerUI({ url: "/api/v1/doc" }));
+// Swagger UI - only in development – production redirects to the documentation
+if (!isProduction) app.get("/", swaggerUI({ url: "/api/v1/doc" }));
 
 export default app;

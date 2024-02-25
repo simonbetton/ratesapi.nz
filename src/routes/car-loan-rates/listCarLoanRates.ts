@@ -1,8 +1,8 @@
 import { createRoute } from "@hono/zod-openapi";
 import { ApiError, ApiSuccess } from "../../models/api";
 
-export const getPersonalLoanRatesRoute = createRoute({
-  operationId: "getPersonalLoanRates",
+export const listCarLoanRatesRoute = createRoute({
+  operationId: "listCarLoanRates",
   method: "get",
   path: "/",
   responses: {
@@ -12,7 +12,7 @@ export const getPersonalLoanRatesRoute = createRoute({
           schema: ApiSuccess,
         },
       },
-      description: "Retrieve all personal loan rates for all institutions",
+      description: "Retrieve all car loan rates for all institutions",
     },
     500: {
       content: {
