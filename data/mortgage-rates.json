@@ -137,7 +137,7 @@
             },
             {
               "id": "rate:asb:standard:18-months",
-              "rate": 7.15,
+              "rate": 6.89,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-02-25T21:36:10.055Z"
+  "lastUpdated": "2024-02-26T19:05:07.073Z"
 }
