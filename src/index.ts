@@ -27,16 +27,12 @@ const app = new OpenAPIHono({
   },
 });
 
-const isProduction = process.env.NODE_ENV === "production";
-
 app.use(
   "*",
   prettyJSON(),
   cache({
     cacheName: "rates-api",
-    cacheControl: isProduction
-      ? "public, max-age=300, must-revalidate"
-      : "no-cache",
+    cacheControl: "public, max-age=300, must-revalidate",
   })
 );
 
