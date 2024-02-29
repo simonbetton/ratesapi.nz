@@ -14,7 +14,7 @@ import { isTruthy } from "../src/utils/is-truthy";
 const config: {
   url: string;
   tableSelector: string;
-  tableColumnHeaders: RateTerm[];
+  tableColumnHeaders: string[];
   alternativeSpecialProductNames: string[];
   outputFilePath: string;
 } = {

@@ -7,14 +7,14 @@ import {
   Rate,
 } from "../src/models/car-loan-rates";
 import { generateId } from "../src/utils/generate-id";
-import CarLoanRatesFromJson from "../data/personal-loan-rates.json";
+import CarLoanRatesFromJson from "../data/car-loan-rates.json";
 import { fetchWithTimeout, hasDataChanged, saveDataToFile } from "./utils";
 import { isTruthy } from "../src/utils/is-truthy";
 
 const config: {
   url: string;
   tableSelector: string;
-  tableColumnHeaders: RateTerm[];
+  tableColumnHeaders: string[];
   alternativeSpecialProductNames: string[];
   outputFilePath: string;
 } = {

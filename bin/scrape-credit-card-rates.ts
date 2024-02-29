@@ -3,7 +3,6 @@ import ora from "ora";
 import { generateId } from "../src/utils/generate-id";
 import CreditCardRatesFromJson from "../data/credit-card-rates.json";
 import { fetchWithTimeout, hasDataChanged, saveDataToFile } from "./utils";
-import { isTruthy } from "../src/utils/is-truthy";
 import { CreditCardRates } from "../src/models/credit-card-rates";
 import { Issuer } from "../src/models/issuer";
 import { Plan } from "../src/models/plan";
@@ -11,7 +10,7 @@ import { Plan } from "../src/models/plan";
 const config: {
   url: string;
   tableSelector: string;
-  tableColumnHeaders: RateTerm[];
+  tableColumnHeaders: string[];
   alternativeSpecialPlanNames: string[];
   outputFilePath: string;
 } = {
