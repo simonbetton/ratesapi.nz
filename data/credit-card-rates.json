@@ -198,42 +198,6 @@
       ]
     },
     {
-      "id": "issuer:gem",
-      "name": "Gem",
-      "plans": [
-        {
-          "id": "plan:gem:credit-line",
-          "name": "Credit Line",
-          "interestFreePeriodInMonths": 120,
-          "primaryFeeNZD": 50,
-          "balanceTransferRate": null,
-          "balanceTransferPeriod": null,
-          "cashAdvanceRate": 28.99,
-          "purchaseRate": 28.99
-        },
-        {
-          "id": "plan:gem:gem-visa-less-than-25000",
-          "name": "Gem Visa (<$250.00)",
-          "interestFreePeriodInMonths": 55,
-          "primaryFeeNZD": 52,
-          "balanceTransferRate": null,
-          "balanceTransferPeriod": null,
-          "cashAdvanceRate": 28.99,
-          "purchaseRate": 28.99
-        },
-        {
-          "id": "plan:gem:gem-visa-greater-than-25000",
-          "name": "Gem Visa (>$250.00)",
-          "interestFreePeriodInMonths": 180,
-          "primaryFeeNZD": 52,
-          "balanceTransferRate": null,
-          "balanceTransferPeriod": null,
-          "cashAdvanceRate": 28.99,
-          "purchaseRate": 28.99
-        }
-      ]
-    },
-    {
       "id": "issuer:arthur-barnett",
       "name": "Arthur Barnett",
       "plans": [
@@ -946,5 +910,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-02-25T21:20:22.909Z"
+  "lastUpdated": "2024-02-29T06:06:35.102Z"
 }
