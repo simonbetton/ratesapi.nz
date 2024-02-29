@@ -653,7 +653,7 @@
           "rates": [
             {
               "id": "rate:co-operative-bank:first-home-buyer-special:1-year",
-              "rate": 7.15,
+              "rate": 7.09,
               "term": "1 year",
               "termInMonths": 12
             }
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-02-28T23:06:11.600Z"
+  "lastUpdated": "2024-02-29T01:24:59.328Z"
 }
