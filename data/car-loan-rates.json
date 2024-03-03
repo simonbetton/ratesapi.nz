@@ -211,13 +211,13 @@
               "id": "rate:unity:personal-loan:secured:from",
               "rate": 13.95,
               "plan": "Secured",
-              "condition": "from"
+              "condition": "From"
             },
             {
               "id": "rate:unity:personal-loan:secured:premium-rate-from",
               "rate": 9.9,
               "plan": "Secured",
-              "condition": "premium rate from"
+              "condition": "Premium rate from"
             }
           ]
         }
@@ -355,7 +355,7 @@
               "id": "rate:financial-holdings:vehicle-loan:secured:from",
               "rate": 9.95,
               "plan": "Secured",
-              "condition": "from"
+              "condition": "From"
             }
           ]
         }
@@ -679,7 +679,7 @@
       "products": [
         {
           "id": "product:paraloan:for-people-with-physical-disabilities",
-          "name": "for people with physical disabilities",
+          "name": "For people with physical disabilities",
           "rates": [
             {
               "id": "rate:paraloan:for-people-with-physical-disabilities:secured:from",
@@ -818,5 +818,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-02-29T10:05:35.159Z"
+  "lastUpdated": "2024-03-03T23:05:32.749Z"
 }

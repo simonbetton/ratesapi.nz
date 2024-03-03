@@ -317,7 +317,7 @@
           "interestFreePeriodInMonths": 55,
           "primaryFeeNZD": 44,
           "balanceTransferRate": 5.95,
-          "balanceTransferPeriod": "life of balance transferred",
+          "balanceTransferPeriod": "Life of balance transferred",
           "cashAdvanceRate": 22.95,
           "purchaseRate": 20.95
         },
@@ -327,7 +327,7 @@
           "interestFreePeriodInMonths": 55,
           "primaryFeeNZD": 125,
           "balanceTransferRate": 5.95,
-          "balanceTransferPeriod": "life of balance transferred",
+          "balanceTransferPeriod": "Life of balance transferred",
           "cashAdvanceRate": 22.95,
           "purchaseRate": 20.95
         },
@@ -337,7 +337,7 @@
           "interestFreePeriodInMonths": 44,
           "primaryFeeNZD": 390,
           "balanceTransferRate": 5.95,
-          "balanceTransferPeriod": "life of balance transferred",
+          "balanceTransferPeriod": "Life of balance transferred",
           "cashAdvanceRate": 22.95,
           "purchaseRate": 16.95
         },
@@ -347,7 +347,7 @@
           "interestFreePeriodInMonths": 55,
           "primaryFeeNZD": 55,
           "balanceTransferRate": 5.95,
-          "balanceTransferPeriod": "life of balance transferred",
+          "balanceTransferPeriod": "Life of balance transferred",
           "cashAdvanceRate": 22.95,
           "purchaseRate": 20.95
         },
@@ -357,7 +357,7 @@
           "interestFreePeriodInMonths": 44,
           "primaryFeeNZD": 145,
           "balanceTransferRate": 5.95,
-          "balanceTransferPeriod": "life of balance transferred",
+          "balanceTransferPeriod": "Life of balance transferred",
           "cashAdvanceRate": 22.95,
           "purchaseRate": 20.95
         },
@@ -367,7 +367,7 @@
           "interestFreePeriodInMonths": 44,
           "primaryFeeNZD": 390,
           "balanceTransferRate": 5.95,
-          "balanceTransferPeriod": "life of balance transferred",
+          "balanceTransferPeriod": "Life of balance transferred",
           "cashAdvanceRate": 22.95,
           "purchaseRate": 16.95
         },
@@ -377,7 +377,7 @@
           "interestFreePeriodInMonths": 55,
           "primaryFeeNZD": null,
           "balanceTransferRate": null,
-          "balanceTransferPeriod": "six months",
+          "balanceTransferPeriod": "Six months",
           "cashAdvanceRate": 19.95,
           "purchaseRate": 12.9
         }
@@ -877,7 +877,7 @@
       "plans": [
         {
           "id": "plan:air-new-zealand:onesmart",
-          "name": "onesmart",
+          "name": "OneSmart",
           "interestFreePeriodInMonths": null,
           "primaryFeeNZD": null,
           "balanceTransferRate": null,
@@ -946,5 +946,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-02-29T07:06:07.222Z"
+  "lastUpdated": "2024-03-03T23:05:35.325Z"
 }

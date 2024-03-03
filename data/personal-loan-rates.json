@@ -1069,7 +1069,7 @@
       "products": [
         {
           "id": "product:paraloan:for-people-with-physical-disabilities",
-          "name": "for people with physical disabilities",
+          "name": "For people with physical disabilities",
           "rates": [
             {
               "id": "rate:paraloan:for-people-with-physical-disabilities:secured:from",
@@ -1196,5 +1196,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-02-23T11:43:06.502Z"
+  "lastUpdated": "2024-03-03T23:05:29.718Z"
 }
