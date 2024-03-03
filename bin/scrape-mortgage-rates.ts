@@ -52,6 +52,7 @@ async function main() {
     gather.succeed("Scraped mortgage rates").stop();
   } catch (error) {
     gather.fail("Failed to scrape mortgage rates").stop();
+    console.error("Failed to scrape mortgage rates", error);
     return;
   }
 
@@ -68,6 +69,7 @@ async function main() {
     handle.succeed("Extracted and Validated").stop();
   } catch (error) {
     handle.fail("Failed to extract and/or validate").stop();
+    console.error("Failed to extract and/or validate", error);
     throw error;
   }
 
@@ -86,6 +88,7 @@ async function main() {
     save.succeed("Saved to local file").stop();
   } catch (error) {
     save.fail("Failed to save to local file").stop();
+    console.error("Failed to save to local file", error);
     return;
   }
 }

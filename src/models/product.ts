@@ -1,5 +1,6 @@
 import { z } from "@hono/zod-openapi";
 import { Rate } from "./rate";
+import { toTitleFormat } from "../utils/transforms";
 
 export type ProductId = `product:${string}`;
 
@@ -11,9 +12,12 @@ export const Product = z
       .openapi({
         examples: ["product:anz:standard"],
       }),
-    name: z.string().openapi({
-      examples: ["Standard"],
-    }),
+    name: z
+      .string()
+      .transform(toTitleFormat)
+      .openapi({
+        examples: ["Standard"],
+      }),
     rates: z.array(Rate),
   })
   .strict();

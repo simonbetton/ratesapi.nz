@@ -2,6 +2,7 @@ import { z } from "@hono/zod-openapi";
 import { Institution as InstitutionSchema } from "./institution";
 import { Product as ProductSchema } from "./product";
 import { Rate as RateSchema, RateId } from "./rate";
+import { toTitleFormat } from "../utils/transforms";
 
 export const CarLoanRates = z
   .object({
@@ -15,12 +16,14 @@ export const CarLoanRates = z
                 RateSchema.extend({
                   plan: z
                     .string()
+                    .transform(toTitleFormat)
                     .nullable()
                     .openapi({
                       examples: ["Secured"],
                     }),
                   condition: z
                     .string()
+                    .transform(toTitleFormat)
                     .nullable()
                     .openapi({
                       examples: ["$3,000 to $50,000"],

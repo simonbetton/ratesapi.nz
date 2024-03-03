@@ -1,4 +1,5 @@
 import { z } from "@hono/zod-openapi";
+import { toTitleFormat } from "../utils/transforms";
 
 export type PlanId = `plan:${string}`;
 
@@ -10,9 +11,12 @@ export const Plan = z
       .openapi({
         examples: ["plan:amex:airpoint-card"],
       }),
-    name: z.string().openapi({
-      examples: ["Airpoint Card"],
-    }),
+    name: z
+      .string()
+      .transform(toTitleFormat)
+      .openapi({
+        examples: ["Airpoint Card"],
+      }),
     interestFreePeriodInMonths: z
       .number()
       .nullable()
@@ -33,6 +37,7 @@ export const Plan = z
       }),
     balanceTransferPeriod: z
       .string()
+      .transform(toTitleFormat)
       .nullable()
       .openapi({
         examples: ["6 months"],
