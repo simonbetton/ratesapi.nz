@@ -15,6 +15,15 @@ import { Plan } from "./models/plan";
 
 const app = new OpenAPIHono({
   defaultHook: (result, c) => {
+    const environment: string | undefined =
+      String(c.env?.ENVIRONMENT) ?? undefined;
+
+    if (environment === "production") {
+      console.log("Running in production mode");
+    } else {
+      console.log("Running in development mode");
+    }
+
     if (!result.success) {
       return c.json(
         {
@@ -80,6 +89,15 @@ app.doc31("/api/v1/doc", {
 });
 
 // Swagger UI - only in development – production redirects to the documentation
-if (!isProduction) app.get("/", swaggerUI({ url: "/api/v1/doc" }));
+app.get("/", async (c, next) => {
+  const environment: string | undefined =
+    String(c.env?.ENVIRONMENT) ?? undefined;
+
+  if (environment === "production") {
+    return c.redirect("https://docs.ratesapi.nz");
+  }
+  // Serve SwaggerUI in non-production (or other environments)
+  return swaggerUI({ url: "/api/v1/doc" })(c, next);
+});
 
 export default app;

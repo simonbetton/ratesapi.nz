@@ -1,5 +1,6 @@
-import { createRoute } from "@hono/zod-openapi";
-import { ApiError, ApiSuccess } from "../../models/api";
+import { createRoute, z } from "@hono/zod-openapi";
+import { GenericApiError } from "../../models/api";
+import { CreditCardRates } from "../../models/credit-card-rates";
 
 export const listCreditCardRatesRoute = createRoute({
   operationId: "listCreditCardRates",
@@ -9,7 +10,9 @@ export const listCreditCardRatesRoute = createRoute({
     200: {
       content: {
         "application/json": {
-          schema: ApiSuccess,
+          schema: CreditCardRates.extend({
+            termsOfUse: z.string().openapi({}),
+          }),
         },
       },
       description: "Retrieve all credit card rates for all institutions",
@@ -17,7 +20,7 @@ export const listCreditCardRatesRoute = createRoute({
     500: {
       content: {
         "application/json": {
-          schema: ApiError,
+          schema: GenericApiError,
         },
       },
       description: "A server error occurred while processing the request",

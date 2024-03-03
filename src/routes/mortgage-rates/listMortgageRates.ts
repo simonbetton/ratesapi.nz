@@ -1,6 +1,7 @@
 import { createRoute } from "@hono/zod-openapi";
 import { z } from "@hono/zod-openapi";
-import { ApiError, ApiSuccess } from "../../models/api";
+import { GenericApiError } from "../../models/api";
+import { MortgageRates } from "../../models/mortgage-rates";
 
 const QuerySchema = z.object({
   termInMonths: z
@@ -26,7 +27,9 @@ export const listMortgageRatesRoute = createRoute({
     200: {
       content: {
         "application/json": {
-          schema: ApiSuccess,
+          schema: MortgageRates.extend({
+            termsOfUse: z.string().openapi({}),
+          }),
         },
       },
       description: "Retrieve all mortgage rates for all institutions",
@@ -34,7 +37,7 @@ export const listMortgageRatesRoute = createRoute({
     500: {
       content: {
         "application/json": {
-          schema: ApiError,
+          schema: GenericApiError,
         },
       },
       description: "A server error occurred while processing the request",

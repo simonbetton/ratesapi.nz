@@ -1,6 +1,7 @@
 import { createRoute } from "@hono/zod-openapi";
 import { z } from "@hono/zod-openapi";
-import { ApiError, ApiSuccess } from "../../models/api";
+import { GenericApiError } from "../../models/api";
+import { CreditCardRates } from "../../models/credit-card-rates";
 
 const ParamsSchema = z.object({
   issuerId: z.string().openapi({
@@ -23,7 +24,9 @@ export const getCreditCardRatesIssuerRoute = createRoute({
     200: {
       content: {
         "application/json": {
-          schema: ApiSuccess,
+          schema: CreditCardRates.extend({
+            termsOfUse: z.string().openapi({}),
+          }),
         },
       },
       description: "Retrieve all credit card rates for all institutions",
@@ -31,7 +34,7 @@ export const getCreditCardRatesIssuerRoute = createRoute({
     404: {
       content: {
         "application/json": {
-          schema: ApiError,
+          schema: GenericApiError,
         },
       },
       description: "Issuer not found",
@@ -39,7 +42,7 @@ export const getCreditCardRatesIssuerRoute = createRoute({
     500: {
       content: {
         "application/json": {
-          schema: ApiError,
+          schema: GenericApiError,
         },
       },
       description: "A server error occurred while processing the request",
