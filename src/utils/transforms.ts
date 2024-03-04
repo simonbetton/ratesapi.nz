@@ -1,5 +1,7 @@
 export function toTitleFormat(str: string | null) {
-  if (!str) return str;
+  if (!str) {
+    return str;
+  }
 
   // Capitalize the first character
   let result = str.charAt(0).toUpperCase();

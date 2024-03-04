@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 import { Issuer } from "./issuer";
-import { Plan } from "./plan";
+import { type Plan } from "./plan";
 
 export const CreditCardRates = z
   .object({

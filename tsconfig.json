@@ -1,12 +1,38 @@
 {
   "compilerOptions": {
+    /* Base Options: */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "allowJs": false,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "incremental": true,
+
+    /* Strictness */
     "strict": true,
+    "alwaysStrict": true,
+    "noImplicitOverride": true,
+    "useUnknownInCatchVariables": true,
+    "noImplicitReturns": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Transpiling with Bun */
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "noEmit": true,
+
     "lib": ["ESNext", "DOM"],
-    "types": ["@cloudflare/workers-types"],
+    "types": ["@cloudflare/workers-types", "hono", "@hono/zod-openapi"],
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
+    "jsxImportSource": "hono/jsx",
+    "typeRoots": ["./node_modules"],
+
+    "noErrorTruncation": true // TLDR - Don't truncate errors (useful for debugging)
   }
 }

@@ -1,11 +1,12 @@
-import { CheerioAPI, load, Element } from "cheerio";
+/* eslint-disable no-console */
+import { type CheerioAPI, type Element, load } from "cheerio";
 import ora from "ora";
-import { generateId } from "../src/utils/generate-id";
 import CreditCardRatesFromJson from "../data/credit-card-rates.json";
-import { fetchWithTimeout, hasDataChanged, saveDataToFile } from "./utils";
 import { CreditCardRates } from "../src/models/credit-card-rates";
-import { Issuer } from "../src/models/issuer";
-import { Plan } from "../src/models/plan";
+import { type Issuer } from "../src/models/issuer";
+import { type Plan } from "../src/models/plan";
+import { generateId } from "../src/utils/generate-id";
+import { fetchWithTimeout, hasDataChanged, saveDataToFile } from "./utils";
 
 const config: {
   url: string;
@@ -146,9 +147,8 @@ function getIssuerName($: CheerioAPI, cell: Element): string {
   const imgElement = $(cell).find("img");
   if (imgElement) {
     return imgElement.attr("alt")?.trim() ?? $(cell).text().trim(); // Use alt text if image exists
-  } else {
-    return $(cell).text().trim(); // Fallback to innerText
   }
+  return $(cell).text().trim(); // Fallback to innerText
 }
 
 function getPlanName($: CheerioAPI, cells: Element[]): string {

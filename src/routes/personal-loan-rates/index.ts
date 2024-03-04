@@ -1,17 +1,17 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { Bindings } from "hono/types";
-import { listPersonalLoanRatesRoute } from "./listPersonalLoanRates";
-import { getPersonalLoanRatesByInstitutionRoute } from "./getPersonalLoanRatesByInstitution";
+import { type Bindings } from "hono/types";
 import unValidatedPersonalLoanRates from "../../../data/personal-loan-rates.json";
 import { PersonalLoanRates } from "../../models/personal-loan-rates";
 import { termsOfUse } from "../../utils/terms-of-use";
+import { getPersonalLoanRatesByInstitutionRoute } from "./getPersonalLoanRatesByInstitution";
+import { listPersonalLoanRatesRoute } from "./listPersonalLoanRates";
 
 const routes = new OpenAPIHono<{ Bindings: Bindings }>();
 
 // Route: `GET /personal-loan-rates`
 routes.openapi(listPersonalLoanRatesRoute, (c) => {
   const validatedPersonalLoanRates = PersonalLoanRates.parse(
-    unValidatedPersonalLoanRates
+    unValidatedPersonalLoanRates,
   );
   return c.json({
     ...validatedPersonalLoanRates,
@@ -23,10 +23,10 @@ routes.openapi(listPersonalLoanRatesRoute, (c) => {
 routes.openapi(getPersonalLoanRatesByInstitutionRoute, (c) => {
   const { institutionId } = c.req.valid("param");
   const validatedPersonalLoanRates = PersonalLoanRates.parse(
-    unValidatedPersonalLoanRates
+    unValidatedPersonalLoanRates,
   );
   const singleInstitution = validatedPersonalLoanRates.data.find(
-    (i) => i.id.toLowerCase() === institutionId.toLowerCase()
+    (i) => i.id.toLowerCase() === institutionId.toLowerCase(),
   );
 
   if (!singleInstitution) {
@@ -35,7 +35,7 @@ routes.openapi(getPersonalLoanRatesByInstitutionRoute, (c) => {
         code: 404,
         message: "Institution not found",
       },
-      404
+      404,
     );
   }
 

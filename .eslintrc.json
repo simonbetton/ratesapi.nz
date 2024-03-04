@@ -1,0 +1,54 @@
+{
+  "plugins": ["@typescript-eslint/eslint-plugin"],
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "prettier",
+    "plugin:prettier/recommended" // Enables eslint-plugin-prettier and eslint-config-prettier. This will display prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
+  ],
+  "rules": {
+    "import/no-unresolved": "off",
+    "no-console": "warn", // ideally 'error' but could be annoying when quick debugging in dev
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      { "prefer": "type-imports", "fixStyle": "inline-type-imports" }
+    ],
+    "curly": ["error", "all"],
+    "no-throw-literal": "error",
+    "no-else-return": "error",
+    "no-restricted-imports": ["error", { "paths": [".", "./index"] }],
+    "import/no-default-export": ["error"],
+    "import/consistent-type-specifier-style": ["error", "prefer-inline"],
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error",
+    "import/max-dependencies": [
+      "warn",
+      {
+        "max": 10,
+        "ignoreTypeImports": true
+      }
+    ],
+    "import/no-unused-modules": "error",
+    "complexity": ["error", 7],
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "order": "asc"
+        },
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index",
+          "object",
+          "type"
+        ]
+      }
+    ]
+  }
+}

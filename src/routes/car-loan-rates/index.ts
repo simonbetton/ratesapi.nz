@@ -1,10 +1,10 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { Bindings } from "hono/types";
-import { listCarLoanRatesRoute } from "./listCarLoanRates";
-import { getCarLoanRatesByInstitutionRoute } from "./getCarLoanRatesByInstitution";
+import { type Bindings } from "hono/types";
 import unValidatedCarLoanRates from "../../../data/car-loan-rates.json";
 import { CarLoanRates } from "../../models/car-loan-rates";
 import { termsOfUse } from "../../utils/terms-of-use";
+import { getCarLoanRatesByInstitutionRoute } from "./getCarLoanRatesByInstitution";
+import { listCarLoanRatesRoute } from "./listCarLoanRates";
 
 const routes = new OpenAPIHono<{ Bindings: Bindings }>();
 
@@ -22,7 +22,7 @@ routes.openapi(getCarLoanRatesByInstitutionRoute, (c) => {
   const { institutionId } = c.req.valid("param");
   const validatedCarLoanRates = CarLoanRates.parse(unValidatedCarLoanRates);
   const singleInstitution = validatedCarLoanRates.data.find(
-    (i) => i.id.toLowerCase() === institutionId.toLowerCase()
+    (i) => i.id.toLowerCase() === institutionId.toLowerCase(),
   );
 
   if (!singleInstitution) {
@@ -31,7 +31,7 @@ routes.openapi(getCarLoanRatesByInstitutionRoute, (c) => {
         code: 404,
         message: "Institution not found",
       },
-      404
+      404,
     );
   }
 

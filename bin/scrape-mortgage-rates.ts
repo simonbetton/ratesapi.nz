@@ -1,15 +1,16 @@
-import { CheerioAPI, load, Element } from "cheerio";
+/* eslint-disable no-console */
+import { type CheerioAPI, type Element, load } from "cheerio";
 import ora from "ora";
+import mortgageRatesFromJson from "../data/mortgage-rates.json";
 import {
-  Institution,
+  type Institution,
   MortgageRates,
-  Product,
-  Rate,
-  RateTerm,
+  type Product,
+  type Rate,
+  type RateTerm,
   isRateTerm,
 } from "../src/models/mortgage-rates";
 import { generateId } from "../src/utils/generate-id";
-import mortgageRatesFromJson from "../data/mortgage-rates.json";
 import { fetchWithTimeout, hasDataChanged, saveDataToFile } from "./utils";
 
 const config: {
@@ -122,7 +123,7 @@ function getModelExtractedFromDOM($: CheerioAPI): Institution[] {
 
 function asProduct(institution: Institution, productName: string): Product {
   let product = institution.products.find(
-    (p: Product) => p.name === productName
+    (p: Product) => p.name === productName,
   );
   if (!product) {
     product = {
@@ -148,7 +149,7 @@ function asRatesForProduct(
   institution: Institution,
   product: Product,
   $: CheerioAPI,
-  cells: Element[]
+  cells: Element[],
 ): Rate[] {
   const rates: Rate[] = [];
 
@@ -158,11 +159,11 @@ function asRatesForProduct(
     // Check for "18 months" lines. These are spanned across multiple columns 🤷
     if (colspan) {
       const specialRate = getSpecialRate(
-        $(cell).text().replace(/\n|\r/g, "").trim()
+        $(cell).text().replace(/\n|\r/g, "").trim(),
       );
       if (specialRate && isRateTerm(specialRate.term)) {
         rates.push(
-          asRate(institution, product.name, specialRate.term, specialRate.rate)
+          asRate(institution, product.name, specialRate.term, specialRate.rate),
         );
       }
     } else {
@@ -181,7 +182,7 @@ function asRate(
   institution: Institution,
   productName: string,
   term: RateTerm,
-  rate: string
+  rate: string,
 ): Rate {
   return {
     id: generateId(["rate", institution.name, productName, term]),
@@ -195,9 +196,8 @@ function getInstitutionName($: CheerioAPI, cell: Element): string {
   const imgElement = $(cell).find("img");
   if (imgElement) {
     return imgElement.attr("alt")?.trim() ?? $(cell).text().trim(); // Use alt text if image exists
-  } else {
-    return $(cell).text().trim(); // Fallback to innerText
   }
+  return $(cell).text().trim(); // Fallback to innerText
 }
 
 function getProductName($: CheerioAPI, cells: Element[]): string {

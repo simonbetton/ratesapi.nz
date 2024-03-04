@@ -1,26 +1,29 @@
+import { swaggerUI } from "@hono/swagger-ui";
+import { OpenAPIHono } from "@hono/zod-openapi";
 import { cache } from "hono/cache";
 import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
-import { swaggerUI } from "@hono/swagger-ui";
-import { OpenAPIHono } from "@hono/zod-openapi";
-import { routes as mortgageRatesRoutes } from "./routes/mortgage-rates";
-import { routes as personalLoanRatesRoutes } from "./routes/personal-loan-rates";
-import { routes as carLoanRatesRoutes } from "./routes/car-loan-rates";
-import { routes as creditCardRatesRoutes } from "./routes/credit-card-rates";
-import { Institution } from "./models/institution";
-import { Product } from "./models/product";
-import { Rate } from "./models/rate";
-import { Issuer } from "./models/issuer";
-import { Plan } from "./models/plan";
+import { Institution, Issuer, Plan, Product, Rate } from "./models";
+import {
+  carLoanRatesRoutes,
+  creditCardRatesRoutes,
+  mortgageRatesRoutes,
+  personalLoanRatesRoutes,
+} from "./routes";
 
-const app = new OpenAPIHono({
+type Environment = {
+  ENVIRONMENT: string;
+};
+
+const app = new OpenAPIHono<{ Bindings: Environment }>({
   defaultHook: (result, c) => {
-    const environment: string | undefined =
-      String(c.env?.ENVIRONMENT) ?? undefined;
+    const environment: string | undefined = c.env?.ENVIRONMENT ?? undefined;
 
     if (environment === "production") {
+      // eslint-disable-next-line no-console
       console.log("Running in production mode");
     } else {
+      // eslint-disable-next-line no-console
       console.log("Running in development mode");
     }
 
@@ -28,11 +31,20 @@ const app = new OpenAPIHono({
       return c.json(
         {
           code: 500,
-          message: "A server error occurred while processing the request",
+          message: "The server tried to process the request but failed",
         },
-        500
+        500,
       );
     }
+
+    return c.json(
+      {
+        code: 500,
+        message:
+          "An unknown server error occurred while processing the request",
+      },
+      500,
+    );
   },
 });
 
@@ -42,7 +54,7 @@ app.use(
   cache({
     cacheName: "rates-api",
     cacheControl: "public, max-age=300, must-revalidate",
-  })
+  }),
 );
 
 app.use(
@@ -50,7 +62,7 @@ app.use(
   cors({
     origin: "*",
     maxAge: 600,
-  })
+  }),
 );
 
 // Routes
@@ -90,14 +102,14 @@ app.doc31("/api/v1/doc", {
 
 // Swagger UI - only in development – production redirects to the documentation
 app.get("/", async (c, next) => {
-  const environment: string | undefined =
-    String(c.env?.ENVIRONMENT) ?? undefined;
+  const environment: string | undefined = c.env?.ENVIRONMENT ?? undefined;
 
   if (environment === "production") {
     return c.redirect("https://docs.ratesapi.nz");
   }
   // Serve SwaggerUI in non-production (or other environments)
-  return swaggerUI({ url: "/api/v1/doc" })(c, next);
+  return swaggerUI<{ Bindings: Environment }>({ url: "/api/v1/doc" })(c, next);
 });
 
+// eslint-disable-next-line import/no-default-export
 export default app;

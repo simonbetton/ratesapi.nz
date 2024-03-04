@@ -1,8 +1,8 @@
 import { z } from "@hono/zod-openapi";
+import { toTitleFormat } from "../utils/transforms";
 import { Institution as InstitutionSchema } from "./institution";
 import { Product as ProductSchema } from "./product";
-import { Rate as RateSchema, RateId } from "./rate";
-import { toTitleFormat } from "../utils/transforms";
+import { type RateId, Rate as RateSchema } from "./rate";
 
 export const CarLoanRates = z
   .object({
@@ -28,11 +28,11 @@ export const CarLoanRates = z
                     .openapi({
                       examples: ["$3,000 to $50,000"],
                     }),
-                })
+                }),
               ),
-            })
+            }),
           ),
-        })
+        }),
       )
       .openapi("CarLoanRates"),
     lastUpdated: z.string().openapi({

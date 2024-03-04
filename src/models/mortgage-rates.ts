@@ -1,7 +1,7 @@
 import { z } from "@hono/zod-openapi";
-import { Rate as RateSchema, RateId } from "./rate";
 import { Institution as InstitutionSchema } from "./institution";
 import { Product as ProductSchema } from "./product";
+import { type RateId, Rate as RateSchema } from "./rate";
 
 export const RateTerm = {
   VARIABLE_FLOATING: "Variable floating",
@@ -34,11 +34,11 @@ export const MortgageRates = z
                     .openapi({
                       examples: [6, 36],
                     }),
-                })
+                }),
               ),
-            })
+            }),
           ),
-        })
+        }),
       )
       .openapi("MortgageRates"),
     lastUpdated: z.string().openapi({

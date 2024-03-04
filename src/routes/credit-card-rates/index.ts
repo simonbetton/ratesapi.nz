@@ -1,18 +1,17 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { Bindings } from "hono/types";
+import { type Bindings } from "hono/types";
 import unValidatedCreditCardRates from "../../../data/credit-card-rates.json";
-import { CarLoanRates } from "../../models/car-loan-rates";
-import { termsOfUse } from "../../utils/terms-of-use";
-import { listCreditCardRatesRoute } from "./listCreditCardRates";
-import { getCreditCardRatesIssuerRoute } from "./getCreditCardRatesIssuer";
 import { CreditCardRates } from "../../models/credit-card-rates";
+import { termsOfUse } from "../../utils/terms-of-use";
+import { getCreditCardRatesIssuerRoute } from "./getCreditCardRatesIssuer";
+import { listCreditCardRatesRoute } from "./listCreditCardRates";
 
 const routes = new OpenAPIHono<{ Bindings: Bindings }>();
 
 // Route: `GET /credit-card-rates`
 routes.openapi(listCreditCardRatesRoute, (c) => {
   const validatedCreditCardRates = CreditCardRates.parse(
-    unValidatedCreditCardRates
+    unValidatedCreditCardRates,
   );
   return c.json({
     ...validatedCreditCardRates,
@@ -24,10 +23,10 @@ routes.openapi(listCreditCardRatesRoute, (c) => {
 routes.openapi(getCreditCardRatesIssuerRoute, (c) => {
   const { issuerId } = c.req.valid("param");
   const validatedCreditCardRates = CreditCardRates.parse(
-    unValidatedCreditCardRates
+    unValidatedCreditCardRates,
   );
   const singleIssuer = validatedCreditCardRates.data.find(
-    (i) => i.id.toLowerCase() === issuerId.toLowerCase()
+    (i) => i.id.toLowerCase() === issuerId.toLowerCase(),
   );
 
   if (!singleIssuer) {
@@ -36,7 +35,7 @@ routes.openapi(getCreditCardRatesIssuerRoute, (c) => {
         code: 404,
         message: "Institution not found",
       },
-      404
+      404,
     );
   }
 

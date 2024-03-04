@@ -1,5 +1,4 @@
-import { createRoute } from "@hono/zod-openapi";
-import { z } from "@hono/zod-openapi";
+import { createRoute, z } from "@hono/zod-openapi";
 import { GenericApiError } from "../../models/api";
 import { MortgageRates } from "../../models/mortgage-rates";
 

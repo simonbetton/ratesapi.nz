@@ -1,6 +1,6 @@
 import { createRoute, z } from "@hono/zod-openapi";
-import { CarLoanRates } from "../../models/car-loan-rates";
 import { GenericApiError } from "../../models/api";
+import { CarLoanRates } from "../../models/car-loan-rates";
 
 export const listCarLoanRatesRoute = createRoute({
   operationId: "listCarLoanRates",
