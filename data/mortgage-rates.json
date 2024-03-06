@@ -317,25 +317,25 @@
           "rates": [
             {
               "id": "rate:bnz:special:6-months",
-              "rate": 7.39,
+              "rate": 7.29,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bnz:special:1-year",
-              "rate": 7.29,
+              "rate": 7.24,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bnz:special:18-months",
-              "rate": 6.99,
+              "rate": 6.89,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bnz:special:2-years",
-              "rate": 6.85,
+              "rate": 6.79,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -383,25 +383,25 @@
             },
             {
               "id": "rate:bnz:std-flybuys:6-months",
-              "rate": 7.99,
+              "rate": 7.89,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bnz:std-flybuys:1-year",
-              "rate": 7.89,
+              "rate": 7.84,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bnz:std-flybuys:18-months",
-              "rate": 7.59,
+              "rate": 7.49,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bnz:std-flybuys:2-years",
-              "rate": 7.45,
+              "rate": 7.39,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -557,19 +557,19 @@
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:1-year",
-              "rate": 7.29,
+              "rate": 7.24,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:18-months",
-              "rate": 7.15,
+              "rate": 6.99,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:2-years",
-              "rate": 6.89,
+              "rate": 6.85,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -611,19 +611,19 @@
             },
             {
               "id": "rate:co-operative-bank:standard:1-year",
-              "rate": 7.79,
+              "rate": 7.74,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:co-operative-bank:standard:18-months",
-              "rate": 7.65,
+              "rate": 7.49,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:co-operative-bank:standard:2-years",
-              "rate": 7.39,
+              "rate": 7.35,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -1478,14 +1478,7 @@
         {
           "id": "product:nzcu-auckland",
           "name": "",
-          "rates": [
-            {
-              "id": "rate:nzcu-auckland:variable-floating",
-              "rate": 8.55,
-              "term": "Variable floating",
-              "termInMonths": null
-            }
-          ]
+          "rates": []
         }
       ]
     },
@@ -2078,5 +2071,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-03-03T23:05:26.826Z"
+  "lastUpdated": "2024-03-06T06:12:34.646Z"
 }
