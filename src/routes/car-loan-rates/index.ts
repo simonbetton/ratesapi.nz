@@ -1,8 +1,8 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { type Bindings } from "hono/types";
 import unValidatedCarLoanRates from "../../../data/car-loan-rates.json";
+import { termsOfUse } from "../../lib/terms-of-use";
 import { CarLoanRates } from "../../models/car-loan-rates";
-import { termsOfUse } from "../../utils/terms-of-use";
 import { getCarLoanRatesByInstitutionRoute } from "./getCarLoanRatesByInstitution";
 import { listCarLoanRatesRoute } from "./listCarLoanRates";
 

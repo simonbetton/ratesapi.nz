@@ -33,23 +33,11 @@ jobs:
       - name: Run the scraper script for mortgage rates
         run: bun run bin/scrape-mortgage-rates.ts
 
-      - name: Sleep for 2 seconds
-        run: sleep 2s
-        shell: bash
-
       - name: Run the scraper script for personal loan rates
         run: bun run bin/scrape-personal-loan-rates.ts
 
-      - name: Sleep for 2 seconds
-        run: sleep 2s
-        shell: bash
-
       - name: Run the scraper script for car loan rates
         run: bun run bin/scrape-car-loan-rates.ts
-
-      - name: Sleep for 2 seconds
-        run: sleep 2s
-        shell: bash
 
       - name: Run the scraper script for credit card rates
         run: bun run bin/scrape-credit-card-rates.ts
@@ -57,14 +45,7 @@ jobs:
       - name: Check for changes
         id: git-check
         run: |
-          git status
-          if git diff --quiet; then
-            echo "No changes detected."
-            echo "changes_detected=false" >> $GITHUB_ENV
-          else
-            echo "Changes detected."
-            echo "changes_detected=true" >> $GITHUB_ENV
-          fi
+          git diff --quiet || echo "changes=true" >> $GITHUB_ENV
 
       - name: Setup GitHub CLI
         if: env.changes == 'true'

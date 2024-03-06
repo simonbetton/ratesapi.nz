@@ -1,8 +1,8 @@
 import { z } from "@hono/zod-openapi";
-import { toTitleFormat } from "../utils/transforms";
+import { toTitleFormat } from "../lib/transforms";
 import { Institution as InstitutionSchema } from "./institution";
 import { Product as ProductSchema } from "./product";
-import { type RateId, Rate as RateSchema } from "./rate";
+import { Rate as RateSchema, type RateId } from "./rate";
 
 export const CarLoanRates = z
   .object({

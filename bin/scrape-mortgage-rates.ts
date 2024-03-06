@@ -1,26 +1,25 @@
 /* eslint-disable no-console */
-import { type CheerioAPI, type Element, load } from "cheerio";
+import { load, type CheerioAPI, type Element } from "cheerio";
 import ora from "ora";
 import mortgageRatesFromJson from "../data/mortgage-rates.json";
+import { generateId } from "../src/lib/generate-id";
+import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
 import {
-  type Institution,
   MortgageRates,
+  isRateTerm,
+  type Institution,
   type Product,
   type Rate,
   type RateTerm,
-  isRateTerm,
 } from "../src/models/mortgage-rates";
-import { generateId } from "../src/utils/generate-id";
-import { fetchWithTimeout, hasDataChanged, saveDataToFile } from "./utils";
+import { hasDataChanged, saveDataToFile } from "./utils";
 
 const config: {
-  url: string;
   tableSelector: string;
   tableColumnHeaders: RateTerm[];
   alternativeSpecialProductNames: string[];
   outputFilePath: string;
 } = {
-  url: "https://www.interest.co.nz/borrowing",
   tableSelector: "#interest_financial_datatable tbody tr",
   tableColumnHeaders: [
     // These are the headers for the rate table columns
@@ -41,15 +40,17 @@ const config: {
   outputFilePath: "data/mortgage-rates.json",
 };
 
+const interestScraperAPI = InterestScraperAPI();
+
 async function main() {
   let data: string = "";
   const gather = ora("Scraping mortgage rates").start();
   try {
-    const response = await fetchWithTimeout(config.url);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch ${config.url}`);
+    const response = await interestScraperAPI.getMortgageRatesPage();
+    if (!response) {
+      throw new Error(`Failed to fetch mortgage rates`);
     }
-    data = await response.text();
+    data = response;
     gather.succeed("Scraped mortgage rates").stop();
   } catch (error) {
     gather.fail("Failed to scrape mortgage rates").stop();
@@ -103,7 +104,7 @@ function getModelExtractedFromDOM($: CheerioAPI): Institution[] {
   for (const row of rows) {
     const cells = Array.from($(row).find("td"));
     const isPrimaryRow = $(row).hasClass("primary_row");
-    if (isPrimaryRow) {
+    if (isPrimaryRow && cells[0]) {
       currentInstitution = asInstitution($, cells[0]);
       institutions.push(currentInstitution);
     }
@@ -161,15 +162,15 @@ function asRatesForProduct(
       const specialRate = getSpecialRate(
         $(cell).text().replace(/\n|\r/g, "").trim(),
       );
-      if (specialRate && isRateTerm(specialRate.term)) {
+      if (specialRate && isRateTerm(specialRate.term) && product.name) {
         rates.push(
           asRate(institution, product.name, specialRate.term, specialRate.rate),
         );
       }
     } else {
       const rate = $(cell).text().trim();
-      const term = config.tableColumnHeaders[i - 2].replace(/\n|\r/g, ""); // Need to zero-base the index back to the tableColumnHeaders array
-      if (rate && isRateTerm(term)) {
+      const term = config.tableColumnHeaders[i - 2]?.replace(/\n|\r/g, ""); // Need to zero-base the index back to the tableColumnHeaders array
+      if (rate && term && isRateTerm(term) && product.name) {
         rates.push(asRate(institution, product.name, term, rate));
       }
     }
@@ -206,7 +207,7 @@ function getProductName($: CheerioAPI, cells: Element[]): string {
 
 function getSpecialRate(text: string): { term: string; rate: string } | null {
   const matches = text.match(/(\d+ months) = (.+)/);
-  if (matches && matches.length === 3) {
+  if (matches && matches.length === 3 && matches[1] && matches[2]) {
     return { term: matches[1], rate: matches[2] };
   }
   return null;
@@ -228,12 +229,12 @@ function sortProductRatesByTermInMonths(rates: Rate[]) {
 function convertTermToMonthsNumber(term: RateTerm): number | null {
   // If term has "months" in it, parse the number of months
   const matches = term.match(/(\d+) months?/);
-  if (matches && matches.length === 2) {
+  if (matches && matches.length === 2 && matches[1]) {
     return parseInt(matches[1]);
   }
   // If term has "year" in it, parse the number of years
   const matchesYears = term.match(/(\d+) years?/);
-  if (matchesYears && matchesYears.length === 2) {
+  if (matchesYears && matchesYears.length === 2 && matchesYears[1]) {
     return parseInt(matchesYears[1]) * 12;
   }
   return null;

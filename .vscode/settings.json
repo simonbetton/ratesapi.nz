@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["hono", "Kiwibank", "openapi"],
+  "cSpell.words": ["hono", "Kiwibank", "openapi", "pino"],
   "editor.formatOnSave": true,
   "[javascript]": {
     "editor.formatOnSave": false

@@ -1,8 +1,8 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { type Bindings } from "hono/types";
 import unValidatedCreditCardRates from "../../../data/credit-card-rates.json";
+import { termsOfUse } from "../../lib/terms-of-use";
 import { CreditCardRates } from "../../models/credit-card-rates";
-import { termsOfUse } from "../../utils/terms-of-use";
 import { getCreditCardRatesIssuerRoute } from "./getCreditCardRatesIssuer";
 import { listCreditCardRatesRoute } from "./listCreditCardRates";
 

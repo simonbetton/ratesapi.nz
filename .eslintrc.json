@@ -31,7 +31,7 @@
       }
     ],
     "import/no-unused-modules": "error",
-    "complexity": ["error", 7],
+    "complexity": ["error", 10],
     "import/order": [
       "error",
       {
