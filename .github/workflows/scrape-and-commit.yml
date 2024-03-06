@@ -1,4 +1,4 @@
-name: Scrape, Commit to PR and Deploy
+name: Schedule Scrape and Commit to PR
 
 on:
   schedule:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  scrape-commit-pr-deploy:
+  schedule-scrape-and-commit-pr:
     runs-on: ubuntu-latest
 
     env:
@@ -57,7 +57,14 @@ jobs:
       - name: Check for changes
         id: git-check
         run: |
-          git diff --quiet || echo "changes=true" >> $GITHUB_ENV
+          git status
+          if git diff --quiet; then
+            echo "No changes detected."
+            echo "changes_detected=false" >> $GITHUB_ENV
+          else
+            echo "Changes detected."
+            echo "changes_detected=true" >> $GITHUB_ENV
+          fi
 
       - name: Setup GitHub CLI
         if: env.changes == 'true'
@@ -79,33 +86,33 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH_NAME="update-rates"
-          # Check if the branch already exists
-          if ! git ls-remote --exit-code --heads origin $BRANCH_NAME; then
-            # Create new branch
+          EXISTING_BRANCH=$(git ls-remote --heads origin $BRANCH_NAME | wc -l)
+
+          git fetch origin
+
+          if [ $EXISTING_BRANCH -eq 0 ]; then
+            echo "Creating new branch: $BRANCH_NAME"
             git checkout -b $BRANCH_NAME
           else
-            # Checkout to the existing branch
+            echo "Branch exists, checking out: $BRANCH_NAME"
             git checkout $BRANCH_NAME
+            git pull origin $BRANCH_NAME
           fi
 
           git add data/*.json
-          git commit -m "Update scraped tables"
+          git commit -m "Update scraped tables" || echo "No changes to commit"
 
           # Push changes
           git push -u origin $BRANCH_NAME
 
-          # Check for existing PR
-          PR_URL=$(gh pr list --head $BRANCH_NAME --json url --jq '.[0].url')
+          # Check for existing PR and create/update accordingly
+          PR_NUMBER=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[0].number')
 
-          if [ -z "$PR_URL" ]; then
-            # Create a new PR
-            gh pr create --base main --head $BRANCH_NAME --title "Update Rates" --body "Automated rates update from scrapers." --label "auto-merge"
+          if [ -z "$PR_NUMBER" ]; then
+            # Create a new PR and add a label
+            gh pr create --base main --head $BRANCH_NAME --title "Update Rates" --body "Automated rates update." --label "auto-merge"
           else
-            echo "PR already exists: $PR_URL"
+            echo "PR already exists with number: $PR_NUMBER"
+            # Optionally, update the existing PR, e.g., add a label
+            gh pr edit "$PR_NUMBER" --add-label "auto-merge"
           fi
-
-      - name: Deploy Cloudflare Worker
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: deploy --minify src/index.ts
