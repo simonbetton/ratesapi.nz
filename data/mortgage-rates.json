@@ -2062,7 +2062,7 @@
           "rates": [
             {
               "id": "rate:midlands-mortgage-trust:rural:variable-floating",
-              "rate": 8.71,
+              "rate": 8.7,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2071,5 +2071,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-03-06T06:17:11.094Z"
+  "lastUpdated": "2024-03-06T06:43:39.722Z"
 }
