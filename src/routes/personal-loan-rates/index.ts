@@ -1,8 +1,8 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { type Bindings } from "hono/types";
 import unValidatedPersonalLoanRates from "../../../data/personal-loan-rates.json";
+import { termsOfUse } from "../../lib/terms-of-use";
 import { PersonalLoanRates } from "../../models/personal-loan-rates";
-import { termsOfUse } from "../../utils/terms-of-use";
 import { getPersonalLoanRatesByInstitutionRoute } from "./getPersonalLoanRatesByInstitution";
 import { listPersonalLoanRatesRoute } from "./listPersonalLoanRates";
 

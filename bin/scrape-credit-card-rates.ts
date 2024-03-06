@@ -1,21 +1,18 @@
 /* eslint-disable no-console */
-import { type CheerioAPI, type Element, load } from "cheerio";
+import { load, type CheerioAPI, type Element } from "cheerio";
 import ora from "ora";
 import CreditCardRatesFromJson from "../data/credit-card-rates.json";
-import { CreditCardRates } from "../src/models/credit-card-rates";
-import { type Issuer } from "../src/models/issuer";
-import { type Plan } from "../src/models/plan";
-import { generateId } from "../src/utils/generate-id";
-import { fetchWithTimeout, hasDataChanged, saveDataToFile } from "./utils";
+import { generateId } from "../src/lib/generate-id";
+import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
+import { CreditCardRates, type Issuer, type Plan } from "../src/models";
+import { hasDataChanged, saveDataToFile } from "./utils";
 
 const config: {
-  url: string;
   tableSelector: string;
   tableColumnHeaders: string[];
   alternativeSpecialPlanNames: string[];
   outputFilePath: string;
 } = {
-  url: "https://www.interest.co.nz/borrowing/credit-cards",
   tableSelector: "#interest_financial_datatable tbody tr",
   tableColumnHeaders: [
     // These are the headers for the rate table columns
@@ -31,15 +28,17 @@ const config: {
   outputFilePath: "data/credit-card-rates.json",
 };
 
+const interestScraperAPI = InterestScraperAPI();
+
 async function main() {
   let data: string = "";
   const gather = ora("Scraping credit card rates").start();
   try {
-    const response = await fetchWithTimeout(config.url);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch ${config.url}`);
+    const response = await interestScraperAPI.getCreditCardRatesPage();
+    if (!response) {
+      throw new Error(`Failed to fetch credit card rates`);
     }
-    data = await response.text();
+    data = response;
     gather.succeed("Scraped credit card rates").stop();
   } catch (error) {
     gather.fail("Failed to scrape credit card rates").stop();
@@ -95,7 +94,7 @@ function getModelExtractedFromDOM($: CheerioAPI): Issuer[] {
   for (const row of rows) {
     const cells = Array.from($(row).find("td"));
     const isPrimaryRow = $(row).hasClass("primary_row");
-    if (isPrimaryRow) {
+    if (isPrimaryRow && cells[0]) {
       currentIssuer = asIssuer($, cells[0]);
       issuers.push(currentIssuer);
     }

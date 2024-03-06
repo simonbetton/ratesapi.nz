@@ -1,25 +1,24 @@
-/* eslint-disable no-console */
-import { type CheerioAPI, type Element, load } from "cheerio";
+import { load, type CheerioAPI, type Element } from "cheerio";
 import ora from "ora";
 import CarLoanRatesFromJson from "../data/car-loan-rates.json";
+import { generateId } from "../src/lib/generate-id";
+import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
+import { isTruthy } from "../src/lib/is-truthy";
+import { createLogger } from "../src/lib/logging";
 import {
   CarLoanRates,
   type Institution,
   type Product,
   type Rate,
 } from "../src/models/car-loan-rates";
-import { generateId } from "../src/utils/generate-id";
-import { isTruthy } from "../src/utils/is-truthy";
-import { fetchWithTimeout, hasDataChanged, saveDataToFile } from "./utils";
+import { hasDataChanged, saveDataToFile } from "./utils";
 
 const config: {
-  url: string;
   tableSelector: string;
   tableColumnHeaders: string[];
   alternativeSpecialProductNames: string[];
   outputFilePath: string;
 } = {
-  url: "https://www.interest.co.nz/borrowing/car-loan",
   tableSelector: "#interest_financial_datatable tbody tr",
   tableColumnHeaders: [
     // These are the headers for the rate table columns
@@ -31,19 +30,22 @@ const config: {
   outputFilePath: "data/car-loan-rates.json",
 };
 
+const log = createLogger("scrape-car-loan-rates");
+const interestScraperAPI = InterestScraperAPI();
+
 async function main() {
   let data: string = "";
   const gather = ora("Scraping car loan rates").start();
   try {
-    const response = await fetchWithTimeout(config.url);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch ${config.url}`);
+    const response = await interestScraperAPI.getCarLoanRatesPage();
+    if (!response) {
+      throw new Error(`Failed to fetch car loan rates`);
     }
-    data = await response.text();
-    gather.succeed("Scraped car loan rates").stop();
+    data = response;
+    gather.succeed("Scraped car loan rates\n").stop();
   } catch (error) {
-    gather.fail("Failed to scrape car loan rates").stop();
-    console.error("Failed to scrape car loan rates", error);
+    gather.fail("Failed to scrape car loan rates\n").stop();
+    log.error({ error }, "Failed to scrape car loan rates");
     return;
   }
 
@@ -60,7 +62,7 @@ async function main() {
     handle.succeed("Extracted and Validated").stop();
   } catch (error) {
     handle.fail("Failed to extract and/or validate").stop();
-    console.error("Failed to extract and/or validate", error);
+    log.error({ error }, "Failed to extract and/or validate");
     throw error;
   }
 
@@ -79,11 +81,11 @@ async function main() {
     save.succeed("Saved to local file").stop();
   } catch (error) {
     save.fail("Failed to save to local file").stop();
-    console.error("Failed to save to local file", error);
+    log.error({ error }, "Failed to save to local file");
     return;
   }
 }
-main().catch(console.error);
+main().catch(log.error);
 
 function getModelExtractedFromDOM($: CheerioAPI): Institution[] {
   const institutions: Institution[] = [];
@@ -93,7 +95,7 @@ function getModelExtractedFromDOM($: CheerioAPI): Institution[] {
   for (const row of rows) {
     const cells = Array.from($(row).find("td"));
     const isPrimaryRow = $(row).hasClass("primary_row");
-    if (isPrimaryRow) {
+    if (isPrimaryRow && cells[0]) {
       currentInstitution = asInstitution($, cells[0]);
       institutions.push(currentInstitution);
     }
@@ -145,9 +147,10 @@ function asRateForProduct(
   const plan = $(remainingCells[0]).text().trim();
   const condition = $(remainingCells[1]).text().trim();
   const rate = $(remainingCells[2]).text().trim();
-  if (rate) {
+  if (rate && product.name) {
     return asRate(institution, product.name, plan, condition, rate);
   }
+  return undefined;
 }
 
 function asRate(

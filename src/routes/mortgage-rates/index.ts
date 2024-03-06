@@ -1,8 +1,8 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { type Bindings } from "hono/types";
 import unValidatedMortgageRates from "../../../data/mortgage-rates.json";
+import { termsOfUse } from "../../lib/terms-of-use";
 import { MortgageRates } from "../../models/mortgage-rates";
-import { termsOfUse } from "../../utils/terms-of-use";
 import { getMortgageRatesByInstitutionRoute } from "./getMortgageRatesByInstitution";
 import { listMortgageRatesRoute } from "./listMortgageRates";
 

@@ -1,5 +1,5 @@
 import { z } from "@hono/zod-openapi";
-import { toTitleFormat } from "../utils/transforms";
+import { toTitleFormat } from "../lib/transforms";
 import { Rate } from "./rate";
 
 export type ProductId = `product:${string}`;
