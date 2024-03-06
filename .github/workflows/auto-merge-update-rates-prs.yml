@@ -1,0 +1,32 @@
+name: Auto Merge PRs
+
+on:
+  pull_request:
+    types: [labeled]
+  check_suite:
+    types: [completed]
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install gh
+
+      - name: Auto Merge
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          LABEL=$(jq --raw-output .label.name "$GITHUB_EVENT_PATH")
+
+          if [ "$LABEL" == "auto-merge" ]; then
+            # Attempt to merge the PR
+            gh pr merge "$PR_NUMBER" --auto --merge
+          fi

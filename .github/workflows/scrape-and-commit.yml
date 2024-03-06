@@ -1,0 +1,111 @@
+name: Scrape, Commit to PR and Deploy
+
+on:
+  schedule:
+    - cron: "0 * * * *" # Runs at the start of every hour
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  scrape-commit-pr-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      changes: false # Set the default value for `changes`
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Bun
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          echo "$HOME/.bun/bin" >> $GITHUB_PATH
+
+      - name: Verify Bun Installation
+        run: bun --version
+
+      - name: Install dependencies with Bun
+        run: bun install
+
+      - name: Run the scraper script for mortgage rates
+        run: bun run bin/scrape-mortgage-rates.ts
+
+      - name: Sleep for 2 seconds
+        run: sleep 2s
+        shell: bash
+
+      - name: Run the scraper script for personal loan rates
+        run: bun run bin/scrape-personal-loan-rates.ts
+
+      - name: Sleep for 2 seconds
+        run: sleep 2s
+        shell: bash
+
+      - name: Run the scraper script for car loan rates
+        run: bun run bin/scrape-car-loan-rates.ts
+
+      - name: Sleep for 2 seconds
+        run: sleep 2s
+        shell: bash
+
+      - name: Run the scraper script for credit card rates
+        run: bun run bin/scrape-credit-card-rates.ts
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --quiet || echo "changes=true" >> $GITHUB_ENV
+
+      - name: Setup GitHub CLI
+        if: env.changes == 'true'
+        run: |
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh
+
+      - name: Configure Git
+        if: env.changes == 'true'
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Create or Update Branch and PR
+        if: env.changes == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME="update-rates"
+          # Check if the branch already exists
+          if ! git ls-remote --exit-code --heads origin $BRANCH_NAME; then
+            # Create new branch
+            git checkout -b $BRANCH_NAME
+          else
+            # Checkout to the existing branch
+            git checkout $BRANCH_NAME
+          fi
+
+          git add data/*.json
+          git commit -m "Update scraped tables"
+
+          # Push changes
+          git push -u origin $BRANCH_NAME
+
+          # Check for existing PR
+          PR_URL=$(gh pr list --head $BRANCH_NAME --json url --jq '.[0].url')
+
+          if [ -z "$PR_URL" ]; then
+            # Create a new PR
+            gh pr create --base main --head $BRANCH_NAME --title "Update Rates" --body "Automated rates update from scrapers." --label "auto-merge"
+          else
+            echo "PR already exists: $PR_URL"
+          fi
+
+      - name: Deploy Cloudflare Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: deploy --minify src/index.ts
