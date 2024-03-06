@@ -2069,7 +2069,7 @@
           "rates": [
             {
               "id": "rate:midlands-mortgage-trust:rural:variable-floating",
-              "rate": 8.7,
+              "rate": 8.71,
               "term": "Variable floating",
               "termInMonths": null
             }
