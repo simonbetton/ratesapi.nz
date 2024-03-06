@@ -3,11 +3,13 @@ name: Auto Merge PRs
 on:
   workflow_dispatch:
   pull_request:
-    branches:
-      - update-rates
+    types:
+      - opened
+      - labeled
 
 jobs:
   auto-merge:
+    if: contains(github.event.pull_request.labels.*.name, 'auto-merge')
     runs-on: ubuntu-latest
 
     steps:
