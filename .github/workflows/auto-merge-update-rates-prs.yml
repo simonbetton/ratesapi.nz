@@ -2,6 +2,10 @@ name: Auto Merge PRs
 
 on:
   workflow_dispatch:
+    inputs:
+      pull-request:
+        description: Pull Request Number
+        required: false
   schedule:
     - cron: 0 * * * *
   pull_request_review:
@@ -23,9 +27,11 @@ jobs:
     steps:
       - id: auto-merge
         name: auto-merge
-        uses: "pascalgn/automerge-action@v0.16.2"
+        uses: reitermarkus/automerge@v2
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request: ${{ github.event.inputs.pull-request }}
           required-labels: auto-merge
           merge-method: rebase
