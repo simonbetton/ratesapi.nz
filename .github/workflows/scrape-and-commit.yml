@@ -66,19 +66,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BRANCH_NAME="update-rates"
-          EXISTING_BRANCH=$(git ls-remote --heads origin $BRANCH_NAME | wc -l)
+          BRANCH_NAME="update-rates-$(date +%Y-%m-%d-%H-%M-%S)"
 
           git fetch origin
 
-          if [ $EXISTING_BRANCH -eq 0 ]; then
-            echo "Creating new branch: $BRANCH_NAME"
-            git checkout -b $BRANCH_NAME
-          else
-            echo "Branch exists, checking out: $BRANCH_NAME"
-            git checkout $BRANCH_NAME
-            git pull origin $BRANCH_NAME
-          fi
+          echo "Creating new branch: $BRANCH_NAME"
+          git checkout -b $BRANCH_NAME
 
           git add data/*.json
           git commit -m "Update scraped tables" || echo "No changes to commit"

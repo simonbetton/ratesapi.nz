@@ -2,14 +2,13 @@ name: Auto Merge PRs
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: 0 * * * *
   pull_request:
     types:
       - labeled
       - synchronize
       - opened
-    branches:
-      - main
-      - update-rates
 
 jobs:
   auto-merge:
@@ -20,3 +19,7 @@ jobs:
         uses: "pascalgn/automerge-action@v0.16.2"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          required-labels: auto-merge
+          merge-method: rebase
+          dry-run: true
