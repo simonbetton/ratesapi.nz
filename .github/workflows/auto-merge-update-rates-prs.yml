@@ -27,7 +27,9 @@ jobs:
     steps:
       - id: auto-merge
         name: auto-merge
-        uses: "pascalgn/automerge-action@v0.16.2"
+        uses: reitermarkus/automerge@v2
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           pull-request: ${{ github.event.inputs.pull-request }}
