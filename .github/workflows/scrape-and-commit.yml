@@ -84,7 +84,7 @@ jobs:
 
           if [ -z "$PR_NUMBER" ]; then
             # Create a new PR and add a label
-            gh pr create --base main --head $BRANCH_NAME --title "Update Rates" --body "Automated rates update." --label "automerge"
+            gh pr create --base main --head $BRANCH_NAME --title "Update Rates" --body "Automated rates update." --label "auto-merge"
           else
             echo "PR already exists with number: $PR_NUMBER"
             # Optionally, update the existing PR, e.g., add a label

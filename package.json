@@ -3,7 +3,7 @@
     "dev": "wrangler dev --env development --port 8787 src/index.ts",
     "deploy": "wrangler deploy --minify src/index.ts",
     "prepare": "husky",
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
     "@hono/swagger-ui": "^0.2.1",
