@@ -4,11 +4,15 @@ on:
   workflow_dispatch:
   schedule:
     - cron: 0 * * * *
-  pull_request:
+  pull_request_target:
     types:
-      - labeled
-      - synchronize
       - opened
+      - synchronize
+      - reopened
+      - edited
+      - labeled
+      - unlabeled
+      - ready_for_review
 
 jobs:
   auto-merge:
