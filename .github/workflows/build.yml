@@ -1,11 +1,11 @@
-name: Deploy
+name: Build
 
 on:
   workflow_dispatch:
   push:
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
