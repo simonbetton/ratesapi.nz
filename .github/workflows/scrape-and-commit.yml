@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PERSONAL_TOKEN }}
 
       - name: Install Bun
         run: |
@@ -63,8 +65,6 @@ jobs:
 
       - name: Create or Update Branch and PR
         if: env.changes == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH_NAME="update-rates-$(date +%Y-%m-%d-%H-%M-%S)"
 
