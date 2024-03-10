@@ -125,13 +125,13 @@
             },
             {
               "id": "rate:asb:standard:6-months",
-              "rate": 7.39,
+              "rate": 7.29,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:asb:standard:1-year",
-              "rate": 7.29,
+              "rate": 7.24,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -143,7 +143,7 @@
             },
             {
               "id": "rate:asb:standard:2-years",
-              "rate": 6.85,
+              "rate": 6.79,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -1498,13 +1498,13 @@
             },
             {
               "id": "rate:police-cu:standard:1-year",
-              "rate": 7.39,
+              "rate": 7.24,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:police-cu:standard:2-years",
-              "rate": 6.89,
+              "rate": 6.79,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1522,7 +1522,7 @@
             },
             {
               "id": "rate:police-cu:shared-ownership:1-year",
-              "rate": 7.99,
+              "rate": 7.84,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1954,13 +1954,13 @@
             },
             {
               "id": "rate:aia:standard-go:6-months",
-              "rate": 7.39,
+              "rate": 7.29,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:aia:standard-go:1-year",
-              "rate": 7.29,
+              "rate": 7.24,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1972,7 +1972,7 @@
             },
             {
               "id": "rate:aia:standard-go:2-years",
-              "rate": 6.85,
+              "rate": 6.79,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -2071,5 +2071,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-03-09T08:23:38.153Z"
+  "lastUpdated": "2024-03-10T20:04:56.612Z"
 }
