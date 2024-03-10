@@ -125,13 +125,13 @@
             },
             {
               "id": "rate:asb:standard:6-months",
-              "rate": 7.39,
+              "rate": 7.29,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:asb:standard:1-year",
-              "rate": 7.29,
+              "rate": 7.24,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -143,7 +143,7 @@
             },
             {
               "id": "rate:asb:standard:2-years",
-              "rate": 6.85,
+              "rate": 6.79,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -791,37 +791,37 @@
             },
             {
               "id": "rate:kiwibank:standard:6-months",
-              "rate": 8.39,
+              "rate": 8.35,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:kiwibank:standard:1-year",
-              "rate": 8.35,
+              "rate": 8.25,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:kiwibank:standard:2-years",
-              "rate": 7.89,
+              "rate": 7.79,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:kiwibank:standard:3-years",
-              "rate": 7.65,
+              "rate": 7.55,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:kiwibank:standard:4-years",
-              "rate": 7.59,
+              "rate": 7.45,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:kiwibank:standard:5-years",
-              "rate": 7.49,
+              "rate": 7.45,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -833,37 +833,37 @@
           "rates": [
             {
               "id": "rate:kiwibank:special:6-months",
-              "rate": 7.39,
+              "rate": 7.35,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:kiwibank:special:1-year",
-              "rate": 7.35,
+              "rate": 7.25,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:kiwibank:special:2-years",
-              "rate": 6.89,
+              "rate": 6.79,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:kiwibank:special:3-years",
-              "rate": 6.75,
+              "rate": 6.65,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:kiwibank:special:4-years",
-              "rate": 6.69,
+              "rate": 6.55,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:kiwibank:special:5-years",
-              "rate": 6.59,
+              "rate": 6.55,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -1322,102 +1322,6 @@
       ]
     },
     {
-      "id": "institution:heretaunga",
-      "name": "Heretaunga",
-      "products": [
-        {
-          "id": "product:heretaunga:residential",
-          "name": "Residential",
-          "rates": [
-            {
-              "id": "rate:heretaunga:residential:variable-floating",
-              "rate": 8.9,
-              "term": "Variable floating",
-              "termInMonths": null
-            },
-            {
-              "id": "rate:heretaunga:residential:1-year",
-              "rate": 7.6,
-              "term": "1 year",
-              "termInMonths": 12
-            },
-            {
-              "id": "rate:heretaunga:residential:2-years",
-              "rate": 7.4,
-              "term": "2 years",
-              "termInMonths": 24
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "institution:nelson",
-      "name": "Nelson",
-      "products": [
-        {
-          "id": "product:nelson:residential",
-          "name": "Residential",
-          "rates": [
-            {
-              "id": "rate:nelson:residential:variable-floating",
-              "rate": 9,
-              "term": "Variable floating",
-              "termInMonths": null
-            },
-            {
-              "id": "rate:nelson:residential:1-year",
-              "rate": 7.75,
-              "term": "1 year",
-              "termInMonths": 12
-            },
-            {
-              "id": "rate:nelson:residential:2-years",
-              "rate": 7.35,
-              "term": "2 years",
-              "termInMonths": 24
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "institution:wairarapa",
-      "name": "Wairarapa",
-      "products": [
-        {
-          "id": "product:wairarapa:residential",
-          "name": "Residential",
-          "rates": [
-            {
-              "id": "rate:wairarapa:residential:variable-floating",
-              "rate": 8.6,
-              "term": "Variable floating",
-              "termInMonths": null
-            },
-            {
-              "id": "rate:wairarapa:residential:1-year",
-              "rate": 7.15,
-              "term": "1 year",
-              "termInMonths": 12
-            },
-            {
-              "id": "rate:wairarapa:residential:18-months",
-              "rate": 7.1,
-              "term": "18 months",
-              "termInMonths": 18
-            },
-            {
-              "id": "rate:wairarapa:residential:2-years",
-              "rate": 6.85,
-              "term": "2 years",
-              "termInMonths": 24
-            }
-          ]
-        }
-      ]
-    },
-    {
       "id": "institution:first-cu",
       "name": "First CU",
       "products": [
@@ -1498,13 +1402,13 @@
             },
             {
               "id": "rate:police-cu:standard:1-year",
-              "rate": 7.39,
+              "rate": 7.24,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:police-cu:standard:2-years",
-              "rate": 6.89,
+              "rate": 6.79,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1522,13 +1426,13 @@
             },
             {
               "id": "rate:police-cu:shared-ownership:1-year",
-              "rate": 7.99,
+              "rate": 7.84,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:police-cu:shared-ownership:2-years",
-              "rate": 7.49,
+              "rate": 7.39,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1954,13 +1858,13 @@
             },
             {
               "id": "rate:aia:standard-go:6-months",
-              "rate": 7.39,
+              "rate": 7.29,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:aia:standard-go:1-year",
-              "rate": 7.29,
+              "rate": 7.24,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1972,7 +1876,7 @@
             },
             {
               "id": "rate:aia:standard-go:2-years",
-              "rate": 6.85,
+              "rate": 6.79,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -2071,5 +1975,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-03-09T08:23:38.153Z"
+  "lastUpdated": "2024-03-10T21:52:40.425Z"
 }
