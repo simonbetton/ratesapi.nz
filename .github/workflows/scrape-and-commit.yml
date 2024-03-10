@@ -65,6 +65,8 @@ jobs:
 
       - name: Create or Update Branch and PR
         if: env.changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
         run: |
           BRANCH_NAME="update-rates-$(date +%Y-%m-%d-%H-%M-%S)"
 
