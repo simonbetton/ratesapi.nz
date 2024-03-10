@@ -1322,6 +1322,102 @@
       ]
     },
     {
+      "id": "institution:heretaunga",
+      "name": "Heretaunga",
+      "products": [
+        {
+          "id": "product:heretaunga:residential",
+          "name": "Residential",
+          "rates": [
+            {
+              "id": "rate:heretaunga:residential:variable-floating",
+              "rate": 8.9,
+              "term": "Variable floating",
+              "termInMonths": null
+            },
+            {
+              "id": "rate:heretaunga:residential:1-year",
+              "rate": 7.6,
+              "term": "1 year",
+              "termInMonths": 12
+            },
+            {
+              "id": "rate:heretaunga:residential:2-years",
+              "rate": 7.4,
+              "term": "2 years",
+              "termInMonths": 24
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:nelson",
+      "name": "Nelson",
+      "products": [
+        {
+          "id": "product:nelson:residential",
+          "name": "Residential",
+          "rates": [
+            {
+              "id": "rate:nelson:residential:variable-floating",
+              "rate": 9,
+              "term": "Variable floating",
+              "termInMonths": null
+            },
+            {
+              "id": "rate:nelson:residential:1-year",
+              "rate": 7.75,
+              "term": "1 year",
+              "termInMonths": 12
+            },
+            {
+              "id": "rate:nelson:residential:2-years",
+              "rate": 7.35,
+              "term": "2 years",
+              "termInMonths": 24
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:wairarapa",
+      "name": "Wairarapa",
+      "products": [
+        {
+          "id": "product:wairarapa:residential",
+          "name": "Residential",
+          "rates": [
+            {
+              "id": "rate:wairarapa:residential:variable-floating",
+              "rate": 8.6,
+              "term": "Variable floating",
+              "termInMonths": null
+            },
+            {
+              "id": "rate:wairarapa:residential:1-year",
+              "rate": 7.15,
+              "term": "1 year",
+              "termInMonths": 12
+            },
+            {
+              "id": "rate:wairarapa:residential:18-months",
+              "rate": 7.1,
+              "term": "18 months",
+              "termInMonths": 18
+            },
+            {
+              "id": "rate:wairarapa:residential:2-years",
+              "rate": 6.85,
+              "term": "2 years",
+              "termInMonths": 24
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "institution:first-cu",
       "name": "First CU",
       "products": [
@@ -1975,5 +2071,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-03-10T21:52:40.425Z"
+  "lastUpdated": "2024-03-10T23:04:36.592Z"
 }
