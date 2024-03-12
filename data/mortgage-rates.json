@@ -743,13 +743,13 @@
             },
             {
               "id": "rate:icbc:special:18-months",
-              "rate": 6.95,
+              "rate": 6.79,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:icbc:special:2-years",
-              "rate": 6.85,
+              "rate": 6.75,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -2071,5 +2071,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-03-10T23:04:36.592Z"
+  "lastUpdated": "2024-03-12T01:24:30.912Z"
 }
