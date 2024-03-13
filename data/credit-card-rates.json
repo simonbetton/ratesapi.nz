@@ -720,8 +720,8 @@
           "primaryFeeNZD": null,
           "balanceTransferRate": null,
           "balanceTransferPeriod": null,
-          "cashAdvanceRate": 22.95,
-          "purchaseRate": 19.95
+          "cashAdvanceRate": 29.4,
+          "purchaseRate": 26.65
         },
         {
           "id": "plan:the-warehouse:warehouse-money",
@@ -946,5 +946,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-03-03T23:05:35.325Z"
+  "lastUpdated": "2024-03-13T22:05:07.450Z"
 }
