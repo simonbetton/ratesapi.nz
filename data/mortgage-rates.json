@@ -1900,7 +1900,7 @@
           "rates": [
             {
               "id": "rate:simplicity:member-home-loan:variable-floating",
-              "rate": 6.1,
+              "rate": 6.4,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2071,5 +2071,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-03-14T00:17:21.704Z"
+  "lastUpdated": "2024-03-15T03:05:03.365Z"
 }
