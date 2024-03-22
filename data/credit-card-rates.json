@@ -481,7 +481,7 @@
           "id": "plan:anz:airpoints-visa",
           "name": "Airpoints Visa",
           "interestFreePeriodInMonths": 44,
-          "primaryFeeNZD": 151.5,
+          "primaryFeeNZD": 65,
           "balanceTransferRate": null,
           "balanceTransferPeriod": null,
           "cashAdvanceRate": 20.95,
@@ -946,5 +946,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-03-22T00:17:36.728Z"
+  "lastUpdated": "2024-03-22T03:05:32.576Z"
 }
