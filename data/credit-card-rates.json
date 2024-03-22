@@ -474,18 +474,18 @@
           "primaryFeeNZD": null,
           "balanceTransferRate": 1.99,
           "balanceTransferPeriod": "24 months",
-          "cashAdvanceRate": 19.95,
-          "purchaseRate": 12.9
+          "cashAdvanceRate": 20.95,
+          "purchaseRate": 13.9
         },
         {
           "id": "plan:anz:airpoints-visa",
           "name": "Airpoints Visa",
           "interestFreePeriodInMonths": 44,
-          "primaryFeeNZD": 65,
+          "primaryFeeNZD": 151.5,
           "balanceTransferRate": null,
           "balanceTransferPeriod": null,
-          "cashAdvanceRate": 19.95,
-          "purchaseRate": 19.95
+          "cashAdvanceRate": 20.95,
+          "purchaseRate": 20.95
         },
         {
           "id": "plan:anz:airpoints-visa-platinum",
@@ -494,8 +494,8 @@
           "primaryFeeNZD": 150,
           "balanceTransferRate": null,
           "balanceTransferPeriod": null,
-          "cashAdvanceRate": 19.95,
-          "purchaseRate": 19.95
+          "cashAdvanceRate": 20.95,
+          "purchaseRate": 20.95
         },
         {
           "id": "plan:anz:cashback",
@@ -504,8 +504,8 @@
           "primaryFeeNZD": 40,
           "balanceTransferRate": null,
           "balanceTransferPeriod": null,
-          "cashAdvanceRate": 19.95,
-          "purchaseRate": 19.95
+          "cashAdvanceRate": 20.95,
+          "purchaseRate": 20.95
         },
         {
           "id": "plan:anz:cashback-platinum",
@@ -514,8 +514,8 @@
           "primaryFeeNZD": 80,
           "balanceTransferRate": null,
           "balanceTransferPeriod": null,
-          "cashAdvanceRate": 19.95,
-          "purchaseRate": 19.95
+          "cashAdvanceRate": 20.95,
+          "purchaseRate": 20.95
         }
       ]
     },
@@ -946,5 +946,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-03-13T22:05:07.450Z"
+  "lastUpdated": "2024-03-22T00:17:36.728Z"
 }
