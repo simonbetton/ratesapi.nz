@@ -233,25 +233,25 @@
             },
             {
               "id": "rate:bank-of-china:standard:2-years",
-              "rate": 7.89,
+              "rate": 7.65,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bank-of-china:standard:3-years",
-              "rate": 7.79,
+              "rate": 7.49,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:bank-of-china:standard:4-years",
-              "rate": 7.69,
+              "rate": 7.39,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:bank-of-china:standard:5-years",
-              "rate": 7.59,
+              "rate": 7.39,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -275,31 +275,31 @@
             },
             {
               "id": "rate:bank-of-china:special:18-months",
-              "rate": 6.99,
+              "rate": 6.75,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bank-of-china:special:2-years",
-              "rate": 6.89,
+              "rate": 6.65,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bank-of-china:special:3-years",
-              "rate": 6.79,
+              "rate": 6.49,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:bank-of-china:special:4-years",
-              "rate": 6.69,
+              "rate": 6.39,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:bank-of-china:special:5-years",
-              "rate": 6.59,
+              "rate": 6.39,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2071,5 +2071,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-03-24T23:05:22.603Z"
+  "lastUpdated": "2024-03-25T21:04:50.060Z"
 }
