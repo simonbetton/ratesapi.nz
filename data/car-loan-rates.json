@@ -419,13 +419,13 @@
           "rates": [
             {
               "id": "rate:go-car-finance:vehicle-loan:secured:from",
-              "rate": 10.45,
+              "rate": 11.95,
               "plan": "Secured",
               "condition": "From"
             },
             {
               "id": "rate:go-car-finance:vehicle-loan:secured:to",
-              "rate": 29.95,
+              "rate": 27.95,
               "plan": "Secured",
               "condition": "To"
             }
@@ -818,5 +818,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-03-03T23:05:32.749Z"
+  "lastUpdated": "2024-04-01T20:05:15.576Z"
 }
