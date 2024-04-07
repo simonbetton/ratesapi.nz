@@ -143,7 +143,7 @@
             },
             {
               "id": "rate:asb:standard:2-years",
-              "rate": 6.79,
+              "rate": 6.75,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -161,7 +161,7 @@
             },
             {
               "id": "rate:asb:standard:5-years",
-              "rate": 6.55,
+              "rate": 6.39,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -1972,7 +1972,7 @@
             },
             {
               "id": "rate:aia:standard-go:2-years",
-              "rate": 6.79,
+              "rate": 6.75,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -1990,7 +1990,7 @@
             },
             {
               "id": "rate:aia:standard-go:5-years",
-              "rate": 6.55,
+              "rate": 6.39,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2071,5 +2071,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-04-02T05:04:54.631Z"
+  "lastUpdated": "2024-04-07T20:04:52.521Z"
 }
