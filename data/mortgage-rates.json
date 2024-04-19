@@ -953,25 +953,25 @@
             },
             {
               "id": "rate:sbs-bank:residential:2-years",
-              "rate": 7.45,
+              "rate": 7.29,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:sbs-bank:residential:3-years",
-              "rate": 7.25,
+              "rate": 6.59,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:sbs-bank:residential:4-years",
-              "rate": 7.15,
+              "rate": 6.79,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:sbs-bank:residential:5-years",
-              "rate": 7.15,
+              "rate": 6.79,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -1001,25 +1001,25 @@
             },
             {
               "id": "rate:sbs-bank:special:2-years",
-              "rate": 6.85,
+              "rate": 6.69,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:sbs-bank:special:3-years",
-              "rate": 6.65,
+              "rate": 5.99,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:sbs-bank:special:4-years",
-              "rate": 6.55,
+              "rate": 6.19,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:sbs-bank:special:5-years",
-              "rate": 6.55,
+              "rate": 6.19,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2071,5 +2071,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-04-07T20:04:52.521Z"
+  "lastUpdated": "2024-04-19T03:05:18.977Z"
 }
