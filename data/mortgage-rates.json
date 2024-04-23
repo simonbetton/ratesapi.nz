@@ -677,25 +677,25 @@
             },
             {
               "id": "rate:heartland-bank:residential:1-year",
-              "rate": 6.69,
+              "rate": 6.89,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:heartland-bank:residential:18-months",
-              "rate": 6.59,
+              "rate": 6.69,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:heartland-bank:residential:2-years",
-              "rate": 6.45,
+              "rate": 6.55,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:heartland-bank:residential:3-years",
-              "rate": 6.19,
+              "rate": 6.35,
               "term": "3 years",
               "termInMonths": 36
             }
@@ -2071,5 +2071,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-04-19T03:05:18.977Z"
+  "lastUpdated": "2024-04-23T22:05:18.041Z"
 }
