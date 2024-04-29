@@ -1085,7 +1085,7 @@
             },
             {
               "id": "rate:tsb-bank:standard:1-year",
-              "rate": 8.04,
+              "rate": 7.79,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1139,7 +1139,7 @@
             },
             {
               "id": "rate:tsb-bank:special:1-year",
-              "rate": 7.24,
+              "rate": 6.99,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -2071,5 +2071,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-04-23T22:05:18.041Z"
+  "lastUpdated": "2024-04-29T04:05:29.001Z"
 }
