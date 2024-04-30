@@ -1581,6 +1581,12 @@
           "name": "First Home Buyer Special",
           "rates": [
             {
+              "id": "rate:unity:first-home-buyer-special:1-year",
+              "rate": 6.55,
+              "term": "1 year",
+              "termInMonths": 12
+            },
+            {
               "id": "rate:unity:first-home-buyer-special:2-years",
               "rate": 6.45,
               "term": "2 years",
@@ -2071,5 +2077,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-04-29T04:05:29.001Z"
+  "lastUpdated": "2024-04-30T22:05:44.087Z"
 }
