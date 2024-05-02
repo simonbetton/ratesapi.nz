@@ -17,13 +17,13 @@
             },
             {
               "id": "rate:anz:standard:6-months",
-              "rate": 7.95,
+              "rate": 7.85,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:anz:standard:1-year",
-              "rate": 7.84,
+              "rate": 7.74,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -65,13 +65,13 @@
           "rates": [
             {
               "id": "rate:anz:special:6-months",
-              "rate": 7.35,
+              "rate": 7.25,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:anz:special:1-year",
-              "rate": 7.24,
+              "rate": 7.14,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -2077,5 +2077,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-04-30T22:05:44.087Z"
+  "lastUpdated": "2024-05-02T06:05:49.044Z"
 }
