@@ -125,13 +125,13 @@
             },
             {
               "id": "rate:asb:standard:6-months",
-              "rate": 7.29,
+              "rate": 7.24,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:asb:standard:1-year",
-              "rate": 7.24,
+              "rate": 7.14,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -155,7 +155,7 @@
             },
             {
               "id": "rate:asb:standard:4-years",
-              "rate": 6.55,
+              "rate": 6.49,
               "term": "4 years",
               "termInMonths": 48
             },
@@ -2077,5 +2077,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-05-02T06:05:49.044Z"
+  "lastUpdated": "2024-05-07T20:04:55.078Z"
 }
