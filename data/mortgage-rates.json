@@ -226,10 +226,22 @@
               "termInMonths": null
             },
             {
-              "id": "rate:bank-of-china:standard:1-year",
+              "id": "rate:bank-of-china:standard:6-months",
               "rate": 8.09,
+              "term": "6 months",
+              "termInMonths": 6
+            },
+            {
+              "id": "rate:bank-of-china:standard:1-year",
+              "rate": 7.99,
               "term": "1 year",
               "termInMonths": 12
+            },
+            {
+              "id": "rate:bank-of-china:standard:18-months",
+              "rate": 7.75,
+              "term": "18 months",
+              "termInMonths": 18
             },
             {
               "id": "rate:bank-of-china:standard:2-years",
@@ -268,8 +280,14 @@
               "termInMonths": null
             },
             {
-              "id": "rate:bank-of-china:special:1-year",
+              "id": "rate:bank-of-china:special:6-months",
               "rate": 7.09,
+              "term": "6 months",
+              "termInMonths": 6
+            },
+            {
+              "id": "rate:bank-of-china:special:1-year",
+              "rate": 6.99,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1960,13 +1978,13 @@
             },
             {
               "id": "rate:aia:standard-go:6-months",
-              "rate": 7.29,
+              "rate": 7.24,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:aia:standard-go:1-year",
-              "rate": 7.24,
+              "rate": 7.14,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1990,7 +2008,7 @@
             },
             {
               "id": "rate:aia:standard-go:4-years",
-              "rate": 6.55,
+              "rate": 6.49,
               "term": "4 years",
               "termInMonths": 48
             },
@@ -2077,5 +2095,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-05-07T20:04:55.078Z"
+  "lastUpdated": "2024-05-07T23:04:57.891Z"
 }
