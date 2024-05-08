@@ -575,7 +575,7 @@
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:1-year",
-              "rate": 7.24,
+              "rate": 7.14,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -629,7 +629,7 @@
             },
             {
               "id": "rate:co-operative-bank:standard:1-year",
-              "rate": 7.74,
+              "rate": 7.64,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -671,7 +671,7 @@
           "rates": [
             {
               "id": "rate:co-operative-bank:first-home-buyer-special:1-year",
-              "rate": 7.04,
+              "rate": 6.94,
               "term": "1 year",
               "termInMonths": 12
             }
@@ -2095,5 +2095,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-05-07T23:04:57.891Z"
+  "lastUpdated": "2024-05-08T04:04:55.082Z"
 }
