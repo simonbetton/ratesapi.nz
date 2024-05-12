@@ -809,13 +809,13 @@
             },
             {
               "id": "rate:kiwibank:standard:6-months",
-              "rate": 8.35,
+              "rate": 8.25,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:kiwibank:standard:1-year",
-              "rate": 8.25,
+              "rate": 7.99,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -851,13 +851,13 @@
           "rates": [
             {
               "id": "rate:kiwibank:special:6-months",
-              "rate": 7.35,
+              "rate": 7.25,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:kiwibank:special:1-year",
-              "rate": 7.25,
+              "rate": 6.99,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -2095,5 +2095,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-05-10T00:18:29.374Z"
+  "lastUpdated": "2024-05-12T19:04:30.798Z"
 }
