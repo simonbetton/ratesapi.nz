@@ -335,13 +335,13 @@
           "rates": [
             {
               "id": "rate:bnz:special:6-months",
-              "rate": 7.29,
+              "rate": 7.24,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bnz:special:1-year",
-              "rate": 7.24,
+              "rate": 7.14,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -401,13 +401,13 @@
             },
             {
               "id": "rate:bnz:std-flybuys:6-months",
-              "rate": 7.89,
+              "rate": 7.84,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bnz:std-flybuys:1-year",
-              "rate": 7.84,
+              "rate": 7.74,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -2095,5 +2095,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-05-12T19:04:30.798Z"
+  "lastUpdated": "2024-05-13T19:04:43.165Z"
 }
