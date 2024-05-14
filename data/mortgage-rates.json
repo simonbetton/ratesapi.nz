@@ -959,7 +959,7 @@
             },
             {
               "id": "rate:sbs-bank:residential:1-year",
-              "rate": 7.84,
+              "rate": 7.74,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1007,7 +1007,7 @@
             },
             {
               "id": "rate:sbs-bank:special:1-year",
-              "rate": 7.24,
+              "rate": 7.14,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1049,7 +1049,7 @@
           "rates": [
             {
               "id": "rate:sbs-bank:first-home-combo:1-year",
-              "rate": 6.74,
+              "rate": 6.14,
               "term": "1 year",
               "termInMonths": 12
             }
@@ -2095,5 +2095,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-05-13T19:04:43.165Z"
+  "lastUpdated": "2024-05-14T05:04:55.300Z"
 }
