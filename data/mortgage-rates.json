@@ -785,7 +785,7 @@
             },
             {
               "id": "rate:icbc:special:5-years",
-              "rate": 6.49,
+              "rate": 6.39,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2095,5 +2095,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-05-17T00:19:00.445Z"
+  "lastUpdated": "2024-05-17T20:05:41.729Z"
 }
