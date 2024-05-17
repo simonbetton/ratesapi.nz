@@ -767,7 +767,7 @@
             },
             {
               "id": "rate:icbc:special:2-years",
-              "rate": 6.75,
+              "rate": 6.69,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -2095,5 +2095,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-05-15T22:05:46.669Z"
+  "lastUpdated": "2024-05-17T00:19:00.445Z"
 }
