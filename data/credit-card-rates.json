@@ -234,22 +234,6 @@
       ]
     },
     {
-      "id": "issuer:arthur-barnett",
-      "name": "Arthur Barnett",
-      "plans": [
-        {
-          "id": "plan:arthur-barnett:standard",
-          "name": "Standard",
-          "interestFreePeriodInMonths": 90,
-          "primaryFeeNZD": null,
-          "balanceTransferRate": null,
-          "balanceTransferPeriod": null,
-          "cashAdvanceRate": 18,
-          "purchaseRate": 18
-        }
-      ]
-    },
-    {
       "id": "issuer:co-operative-bank",
       "name": "Co-operative Bank",
       "plans": [
@@ -946,5 +930,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-05-16T16:05:07.483Z"
+  "lastUpdated": "2024-05-20T02:16:44.441Z"
 }
