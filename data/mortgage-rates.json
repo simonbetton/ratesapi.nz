@@ -1630,19 +1630,19 @@
             },
             {
               "id": "rate:kainga-ora-hnz:residential:1-year",
-              "rate": 7.79,
+              "rate": 7.74,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:kainga-ora-hnz:residential:2-years",
-              "rate": 7.39,
+              "rate": 7.35,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:kainga-ora-hnz:residential:3-years",
-              "rate": 7.25,
+              "rate": 6.99,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -2095,5 +2095,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-05-27T01:30:32.376Z"
+  "lastUpdated": "2024-06-05T04:06:59.556Z"
 }
