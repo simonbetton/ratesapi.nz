@@ -205,11 +205,11 @@
           "id": "plan:gem:credit-line",
           "name": "Credit Line",
           "interestFreePeriodInMonths": 120,
-          "primaryFeeNZD": 50,
+          "primaryFeeNZD": 65,
           "balanceTransferRate": null,
           "balanceTransferPeriod": null,
-          "cashAdvanceRate": 28.99,
-          "purchaseRate": 28.99
+          "cashAdvanceRate": 29.95,
+          "purchaseRate": 29.49
         },
         {
           "id": "plan:gem:gem-visa-less-than-25000",
@@ -946,5 +946,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-05-20T03:05:44.341Z"
+  "lastUpdated": "2024-06-11T22:11:28.447Z"
 }
