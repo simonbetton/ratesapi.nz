@@ -29,13 +29,13 @@
           "rates": [
             {
               "id": "rate:asb:personal-loan:secured",
-              "rate": 12.9,
+              "rate": 13.9,
               "plan": "Secured",
               "condition": null
             },
             {
               "id": "rate:asb:personal-loan:unsecured",
-              "rate": 12.9,
+              "rate": 13.9,
               "plan": "Unsecured",
               "condition": null
             }
@@ -47,7 +47,7 @@
           "rates": [
             {
               "id": "rate:asb:debt-consolidation:unsecured",
-              "rate": 12.9,
+              "rate": 13.9,
               "plan": "Unsecured",
               "condition": null
             }
@@ -1106,5 +1106,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-04-03T21:05:34.475Z"
+  "lastUpdated": "2024-06-20T02:16:46.193Z"
 }
