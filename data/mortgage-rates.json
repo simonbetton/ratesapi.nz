@@ -1490,17 +1490,6 @@
       ]
     },
     {
-      "id": "institution:nzcu-auckland",
-      "name": "NZCU Auckland",
-      "products": [
-        {
-          "id": "product:nzcu-auckland",
-          "name": "",
-          "rates": []
-        }
-      ]
-    },
-    {
       "id": "institution:police-cu",
       "name": "Police CU",
       "products": [
@@ -2095,5 +2084,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-06-26T06:06:21.064Z"
+  "lastUpdated": "2024-06-30T22:04:52.165Z"
 }

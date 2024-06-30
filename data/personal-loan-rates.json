@@ -320,30 +320,6 @@
       ]
     },
     {
-      "id": "institution:nzcu-auckland",
-      "name": "NZCU Auckland",
-      "products": [
-        {
-          "id": "product:nzcu-auckland:personal-loan",
-          "name": "Personal Loan",
-          "rates": [
-            {
-              "id": "rate:nzcu-auckland:personal-loan:secured",
-              "rate": 12.95,
-              "plan": "Secured",
-              "condition": null
-            },
-            {
-              "id": "rate:nzcu-auckland:personal-loan:unsecured",
-              "rate": 19.95,
-              "plan": "Unsecured",
-              "condition": null
-            }
-          ]
-        }
-      ]
-    },
-    {
       "id": "institution:police-cu",
       "name": "Police CU",
       "products": [
@@ -1106,5 +1082,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-06-20T02:16:46.193Z"
+  "lastUpdated": "2024-06-30T22:04:54.204Z"
 }
