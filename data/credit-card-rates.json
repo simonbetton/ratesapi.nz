@@ -315,7 +315,7 @@
           "id": "plan:westpac:hotpoints",
           "name": "Hotpoints",
           "interestFreePeriodInMonths": 55,
-          "primaryFeeNZD": 44,
+          "primaryFeeNZD": 40,
           "balanceTransferRate": 5.95,
           "balanceTransferPeriod": "Life of balance transferred",
           "cashAdvanceRate": 22.95,
@@ -325,7 +325,7 @@
           "id": "plan:westpac:platinum-hotpoints",
           "name": "Platinum Hotpoints",
           "interestFreePeriodInMonths": 55,
-          "primaryFeeNZD": 125,
+          "primaryFeeNZD": 70,
           "balanceTransferRate": 5.95,
           "balanceTransferPeriod": "Life of balance transferred",
           "cashAdvanceRate": 22.95,
@@ -335,7 +335,7 @@
           "id": "plan:westpac:hotpoints-world",
           "name": "Hotpoints World",
           "interestFreePeriodInMonths": 44,
-          "primaryFeeNZD": 390,
+          "primaryFeeNZD": 285,
           "balanceTransferRate": 5.95,
           "balanceTransferPeriod": "Life of balance transferred",
           "cashAdvanceRate": 22.95,
@@ -345,7 +345,7 @@
           "id": "plan:westpac:airpoints",
           "name": "Airpoints",
           "interestFreePeriodInMonths": 55,
-          "primaryFeeNZD": 55,
+          "primaryFeeNZD": 70,
           "balanceTransferRate": 5.95,
           "balanceTransferPeriod": "Life of balance transferred",
           "cashAdvanceRate": 22.95,
@@ -355,7 +355,7 @@
           "id": "plan:westpac:airpoints-platinum",
           "name": "Airpoints Platinum",
           "interestFreePeriodInMonths": 44,
-          "primaryFeeNZD": 145,
+          "primaryFeeNZD": 125,
           "balanceTransferRate": 5.95,
           "balanceTransferPeriod": "Life of balance transferred",
           "cashAdvanceRate": 22.95,
@@ -365,19 +365,19 @@
           "id": "plan:westpac:airpoints-world",
           "name": "Airpoints World",
           "interestFreePeriodInMonths": 44,
-          "primaryFeeNZD": 390,
+          "primaryFeeNZD": 310,
           "balanceTransferRate": 5.95,
           "balanceTransferPeriod": "Life of balance transferred",
           "cashAdvanceRate": 22.95,
           "purchaseRate": 16.95
         },
         {
-          "id": "plan:westpac:low-rate",
-          "name": "Low Rate",
+          "id": "plan:westpac:fee-free",
+          "name": "Fee Free",
           "interestFreePeriodInMonths": 55,
           "primaryFeeNZD": null,
-          "balanceTransferRate": null,
-          "balanceTransferPeriod": "Six months",
+          "balanceTransferRate": 5.95,
+          "balanceTransferPeriod": "Life of balance transferred",
           "cashAdvanceRate": 19.95,
           "purchaseRate": 12.9
         }
@@ -946,5 +946,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-06-11T22:05:03.991Z"
+  "lastUpdated": "2024-07-08T05:06:35.520Z"
 }
