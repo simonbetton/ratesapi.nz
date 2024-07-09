@@ -683,7 +683,7 @@
             },
             {
               "id": "rate:gem:personal-loan:secured:to",
-              "rate": 29.49,
+              "rate": 28.99,
               "plan": "Secured",
               "condition": "to"
             },
@@ -695,7 +695,7 @@
             },
             {
               "id": "rate:gem:personal-loan:unsecured:to",
-              "rate": 29.49,
+              "rate": 29.99,
               "plan": "Unsecured",
               "condition": "to"
             }
@@ -1082,5 +1082,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-06-30T22:04:54.204Z"
+  "lastUpdated": "2024-07-09T21:04:59.700Z"
 }
