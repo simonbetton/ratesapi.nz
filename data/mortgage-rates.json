@@ -953,7 +953,7 @@
             },
             {
               "id": "rate:sbs-bank:residential:6-months",
-              "rate": 7.95,
+              "rate": 7.84,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -1001,7 +1001,7 @@
           "rates": [
             {
               "id": "rate:sbs-bank:special:6-months",
-              "rate": 7.35,
+              "rate": 7.24,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -2084,5 +2084,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-07-11T00:20:19.642Z"
+  "lastUpdated": "2024-07-12T03:05:27.615Z"
 }
