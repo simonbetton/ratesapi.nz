@@ -1355,13 +1355,13 @@
             },
             {
               "id": "rate:heretaunga:residential:1-year",
-              "rate": 7.6,
+              "rate": 7.5,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:heretaunga:residential:2-years",
-              "rate": 7.4,
+              "rate": 7.25,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2084,5 +2084,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-07-21T21:04:45.995Z"
+  "lastUpdated": "2024-07-21T22:05:01.143Z"
 }
