@@ -125,43 +125,43 @@
             },
             {
               "id": "rate:asb:standard:6-months",
-              "rate": 7.24,
+              "rate": 6.99,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:asb:standard:1-year",
-              "rate": 7.14,
+              "rate": 6.85,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:asb:standard:18-months",
-              "rate": 6.89,
+              "rate": 6.69,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:asb:standard:2-years",
-              "rate": 6.75,
+              "rate": 6.49,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:asb:standard:3-years",
-              "rate": 6.39,
+              "rate": 6.35,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:asb:standard:4-years",
-              "rate": 6.39,
+              "rate": 6.29,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:asb:standard:5-years",
-              "rate": 6.39,
+              "rate": 5.99,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -1097,43 +1097,43 @@
             },
             {
               "id": "rate:tsb-bank:standard:6-months",
-              "rate": 8.19,
+              "rate": 7.79,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:tsb-bank:standard:1-year",
-              "rate": 7.79,
+              "rate": 7.65,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:tsb-bank:standard:18-months",
-              "rate": 7.99,
+              "rate": 7.69,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:tsb-bank:standard:2-years",
-              "rate": 7.55,
+              "rate": 7.29,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:tsb-bank:standard:3-years",
-              "rate": 7.45,
+              "rate": 7.19,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:tsb-bank:standard:4-years",
-              "rate": 7.39,
+              "rate": 7.19,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:tsb-bank:standard:5-years",
-              "rate": 7.39,
+              "rate": 7.19,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -1151,43 +1151,43 @@
             },
             {
               "id": "rate:tsb-bank:special:6-months",
-              "rate": 7.39,
+              "rate": 6.99,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:tsb-bank:special:1-year",
-              "rate": 6.99,
+              "rate": 6.85,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:tsb-bank:special:18-months",
-              "rate": 7.19,
+              "rate": 6.89,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:tsb-bank:special:2-years",
-              "rate": 6.75,
+              "rate": 6.49,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:tsb-bank:special:3-years",
-              "rate": 6.65,
+              "rate": 6.39,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:tsb-bank:special:4-years",
-              "rate": 6.59,
+              "rate": 6.39,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:tsb-bank:special:5-years",
-              "rate": 6.59,
+              "rate": 6.39,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -1967,43 +1967,43 @@
             },
             {
               "id": "rate:aia:standard-go:6-months",
-              "rate": 7.24,
+              "rate": 6.99,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:aia:standard-go:1-year",
-              "rate": 7.14,
+              "rate": 6.85,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:aia:standard-go:18-months",
-              "rate": 6.89,
+              "rate": 6.69,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:aia:standard-go:2-years",
-              "rate": 6.75,
+              "rate": 6.49,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:aia:standard-go:3-years",
-              "rate": 6.39,
+              "rate": 6.35,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:aia:standard-go:4-years",
-              "rate": 6.39,
+              "rate": 6.29,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:aia:standard-go:5-years",
-              "rate": 6.39,
+              "rate": 5.99,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2084,5 +2084,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-07-19T02:16:51.184Z"
+  "lastUpdated": "2024-07-21T21:04:45.995Z"
 }
