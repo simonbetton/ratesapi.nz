@@ -2021,7 +2021,7 @@
           "rates": [
             {
               "id": "rate:first-mortgage-trust:residential-from:variable-floating",
-              "rate": 8,
+              "rate": 9.25,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2033,7 +2033,7 @@
           "rates": [
             {
               "id": "rate:first-mortgage-trust:commercial-rural-from:variable-floating",
-              "rate": 8,
+              "rate": 9.25,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2084,5 +2084,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-07-21T22:05:01.143Z"
+  "lastUpdated": "2024-07-22T04:06:06.715Z"
 }
