@@ -1385,13 +1385,13 @@
             },
             {
               "id": "rate:nelson:residential:1-year",
-              "rate": 7.65,
+              "rate": 7.25,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:nelson:residential:2-years",
-              "rate": 7.25,
+              "rate": 6.9,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2084,5 +2084,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-07-24T03:05:16.392Z"
+  "lastUpdated": "2024-07-24T07:05:00.288Z"
 }
