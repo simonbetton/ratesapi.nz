@@ -953,19 +953,19 @@
             },
             {
               "id": "rate:sbs-bank:residential:6-months",
-              "rate": 7.84,
+              "rate": 7.65,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:sbs-bank:residential:1-year",
-              "rate": 7.74,
+              "rate": 7.49,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:sbs-bank:residential:18-months",
-              "rate": 7.49,
+              "rate": 7.29,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -1001,19 +1001,19 @@
           "rates": [
             {
               "id": "rate:sbs-bank:special:6-months",
-              "rate": 7.24,
+              "rate": 7.05,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:sbs-bank:special:1-year",
-              "rate": 7.14,
+              "rate": 6.89,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:sbs-bank:special:18-months",
-              "rate": 6.89,
+              "rate": 6.69,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -1049,7 +1049,7 @@
           "rates": [
             {
               "id": "rate:sbs-bank:first-home-combo:1-year",
-              "rate": 6.14,
+              "rate": 5.89,
               "term": "1 year",
               "termInMonths": 12
             }
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-07-24T20:05:02.044Z"
+  "lastUpdated": "2024-07-25T04:06:01.608Z"
 }
