@@ -197,13 +197,13 @@
             },
             {
               "id": "rate:bank-of-baroda:standard:1-year",
-              "rate": 7.59,
+              "rate": 7.39,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bank-of-baroda:standard:2-years",
-              "rate": 7.75,
+              "rate": 7.29,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-07-29T20:05:15.172Z"
+  "lastUpdated": "2024-07-29T21:06:07.505Z"
 }
