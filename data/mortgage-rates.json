@@ -749,43 +749,43 @@
             },
             {
               "id": "rate:icbc:special:6-months",
-              "rate": 7.19,
+              "rate": 7.05,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:icbc:special:1-year",
-              "rate": 7.05,
+              "rate": 6.85,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:icbc:special:18-months",
-              "rate": 6.79,
+              "rate": 6.65,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:icbc:special:2-years",
-              "rate": 6.69,
+              "rate": 6.49,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:icbc:special:3-years",
-              "rate": 6.59,
+              "rate": 6.39,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:icbc:special:4-years",
-              "rate": 6.49,
+              "rate": 6.29,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:icbc:special:5-years",
-              "rate": 6.39,
+              "rate": 6.29,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-07-28T20:05:13.607Z"
+  "lastUpdated": "2024-07-29T20:05:15.172Z"
 }
