@@ -1559,13 +1559,13 @@
             },
             {
               "id": "rate:unity:residential:6-months",
-              "rate": 7.05,
+              "rate": 6.9,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:unity:residential:1-year",
-              "rate": 6.85,
+              "rate": 6.7,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1589,7 +1589,7 @@
           "rates": [
             {
               "id": "rate:unity:first-home-buyer-special:1-year",
-              "rate": 6.45,
+              "rate": 6.2,
               "term": "1 year",
               "termInMonths": 12
             }
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-07-29T21:06:07.505Z"
+  "lastUpdated": "2024-07-30T21:05:10.484Z"
 }
