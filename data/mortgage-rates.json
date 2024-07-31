@@ -11,13 +11,13 @@
           "rates": [
             {
               "id": "rate:anz:standard:variable-floating",
-              "rate": 8.64,
+              "rate": 8.49,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:anz:standard:6-months",
-              "rate": 7.65,
+              "rate": 7.59,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -29,31 +29,31 @@
             },
             {
               "id": "rate:anz:standard:18-months",
-              "rate": 7.29,
+              "rate": 7.09,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:anz:standard:2-years",
-              "rate": 7.09,
+              "rate": 6.94,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:anz:standard:3-years",
-              "rate": 6.95,
+              "rate": 6.59,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:anz:standard:4-years",
-              "rate": 7.14,
+              "rate": 6.84,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:anz:standard:5-years",
-              "rate": 7.14,
+              "rate": 6.84,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -65,7 +65,7 @@
           "rates": [
             {
               "id": "rate:anz:special:6-months",
-              "rate": 7.05,
+              "rate": 6.99,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -77,19 +77,19 @@
             },
             {
               "id": "rate:anz:special:18-months",
-              "rate": 6.69,
+              "rate": 6.49,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:anz:special:2-years",
-              "rate": 6.49,
+              "rate": 6.34,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:anz:special:3-years",
-              "rate": 6.35,
+              "rate": 5.99,
               "term": "3 years",
               "termInMonths": 36
             }
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-07-30T21:05:10.484Z"
+  "lastUpdated": "2024-07-31T06:05:38.073Z"
 }
