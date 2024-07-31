@@ -1451,13 +1451,13 @@
             },
             {
               "id": "rate:first-cu:special:1-year",
-              "rate": 7.45,
+              "rate": 6.99,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:first-cu:special:2-years",
-              "rate": 7.35,
+              "rate": 6.6,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1475,13 +1475,13 @@
             },
             {
               "id": "rate:first-cu:standard:1-year",
-              "rate": 7.99,
+              "rate": 7.59,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:first-cu:standard:2-years",
-              "rate": 7.85,
+              "rate": 7.2,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-07-31T06:05:38.073Z"
+  "lastUpdated": "2024-07-31T22:04:56.209Z"
 }
