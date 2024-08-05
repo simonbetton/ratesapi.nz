@@ -227,43 +227,43 @@
             },
             {
               "id": "rate:bank-of-china:standard:6-months",
-              "rate": 8.05,
+              "rate": 7.95,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bank-of-china:standard:1-year",
-              "rate": 7.85,
+              "rate": 7.79,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bank-of-china:standard:18-months",
-              "rate": 7.75,
+              "rate": 7.59,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bank-of-china:standard:2-years",
-              "rate": 7.49,
+              "rate": 7.39,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bank-of-china:standard:3-years",
-              "rate": 7.29,
+              "rate": 7.09,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:bank-of-china:standard:4-years",
-              "rate": 7.29,
+              "rate": 7.09,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:bank-of-china:standard:5-years",
-              "rate": 7.29,
+              "rate": 7.09,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -281,43 +281,43 @@
             },
             {
               "id": "rate:bank-of-china:special:6-months",
-              "rate": 7.05,
+              "rate": 6.95,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bank-of-china:special:1-year",
-              "rate": 6.85,
+              "rate": 6.79,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bank-of-china:special:18-months",
-              "rate": 6.75,
+              "rate": 6.59,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bank-of-china:special:2-years",
-              "rate": 6.49,
+              "rate": 6.39,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bank-of-china:special:3-years",
-              "rate": 6.29,
+              "rate": 6.09,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:bank-of-china:special:4-years",
-              "rate": 6.29,
+              "rate": 6.09,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:bank-of-china:special:5-years",
-              "rate": 6.29,
+              "rate": 6.09,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -335,7 +335,7 @@
           "rates": [
             {
               "id": "rate:bnz:special:6-months",
-              "rate": 7.05,
+              "rate": 6.99,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -347,31 +347,31 @@
             },
             {
               "id": "rate:bnz:special:18-months",
-              "rate": 6.65,
+              "rate": 6.49,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bnz:special:2-years",
-              "rate": 6.49,
+              "rate": 6.34,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bnz:special:3-years",
-              "rate": 6.39,
+              "rate": 5.99,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:bnz:special:4-years",
-              "rate": 6.39,
+              "rate": 5.99,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:bnz:special:5-years",
-              "rate": 6.39,
+              "rate": 5.99,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -401,7 +401,7 @@
             },
             {
               "id": "rate:bnz:std-flybuys:6-months",
-              "rate": 7.65,
+              "rate": 7.59,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -413,31 +413,31 @@
             },
             {
               "id": "rate:bnz:std-flybuys:18-months",
-              "rate": 7.25,
+              "rate": 7.09,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bnz:std-flybuys:2-years",
-              "rate": 7.09,
+              "rate": 6.94,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bnz:std-flybuys:3-years",
-              "rate": 6.99,
+              "rate": 6.59,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:bnz:std-flybuys:4-years",
-              "rate": 6.99,
+              "rate": 6.59,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:bnz:std-flybuys:5-years",
-              "rate": 6.99,
+              "rate": 6.59,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-05T01:32:02.141Z"
+  "lastUpdated": "2024-08-05T20:05:09.041Z"
 }
