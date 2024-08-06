@@ -809,7 +809,7 @@
             },
             {
               "id": "rate:kiwibank:standard:6-months",
-              "rate": 7.89,
+              "rate": 7.79,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-06T00:20:16.305Z"
+  "lastUpdated": "2024-08-06T05:05:27.557Z"
 }
