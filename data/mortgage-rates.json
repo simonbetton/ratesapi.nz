@@ -1973,25 +1973,25 @@
             },
             {
               "id": "rate:aia:standard-go:18-months",
-              "rate": 6.69,
+              "rate": 6.49,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:aia:standard-go:2-years",
-              "rate": 6.49,
+              "rate": 6.25,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:aia:standard-go:3-years",
-              "rate": 6.35,
+              "rate": 5.99,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:aia:standard-go:4-years",
-              "rate": 6.29,
+              "rate": 5.99,
               "term": "4 years",
               "termInMonths": 48
             },
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-05T22:04:59.768Z"
+  "lastUpdated": "2024-08-06T00:20:16.305Z"
 }
