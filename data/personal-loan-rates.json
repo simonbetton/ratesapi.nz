@@ -881,7 +881,7 @@
           "rates": [
             {
               "id": "rate:nectar:personal-loan:unsecured:from",
-              "rate": 8.95,
+              "rate": 11.95,
               "plan": "Unsecured",
               "condition": "From"
             },
@@ -1082,5 +1082,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-07-09T21:04:59.700Z"
+  "lastUpdated": "2024-08-08T04:07:02.913Z"
 }
