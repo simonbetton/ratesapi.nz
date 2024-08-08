@@ -953,43 +953,43 @@
             },
             {
               "id": "rate:sbs-bank:residential:6-months",
-              "rate": 7.65,
+              "rate": 7.59,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:sbs-bank:residential:1-year",
-              "rate": 7.49,
+              "rate": 7.45,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:sbs-bank:residential:18-months",
-              "rate": 7.29,
+              "rate": 7.09,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:sbs-bank:residential:2-years",
-              "rate": 7.09,
+              "rate": 6.59,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:sbs-bank:residential:3-years",
-              "rate": 6.95,
+              "rate": 6.59,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:sbs-bank:residential:4-years",
-              "rate": 6.79,
+              "rate": 6.59,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:sbs-bank:residential:5-years",
-              "rate": 6.79,
+              "rate": 6.59,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -1001,43 +1001,43 @@
           "rates": [
             {
               "id": "rate:sbs-bank:special:6-months",
-              "rate": 7.05,
+              "rate": 6.99,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:sbs-bank:special:1-year",
-              "rate": 6.89,
+              "rate": 6.85,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:sbs-bank:special:18-months",
-              "rate": 6.69,
+              "rate": 6.49,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:sbs-bank:special:2-years",
-              "rate": 6.49,
+              "rate": 5.99,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:sbs-bank:special:3-years",
-              "rate": 6.35,
+              "rate": 5.99,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:sbs-bank:special:4-years",
-              "rate": 6.19,
+              "rate": 5.99,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:sbs-bank:special:5-years",
-              "rate": 6.19,
+              "rate": 5.99,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -1049,7 +1049,7 @@
           "rates": [
             {
               "id": "rate:sbs-bank:first-home-combo:1-year",
-              "rate": 5.89,
+              "rate": 5.85,
               "term": "1 year",
               "termInMonths": 12
             }
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-07T01:31:50.947Z"
+  "lastUpdated": "2024-08-08T03:05:29.821Z"
 }
