@@ -21,6 +21,9 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
       - name: Run the scraper script for mortgage rates
         run: bun run bin/scrape-mortgage-rates.ts
 
