@@ -1,0 +1,48 @@
+name: Hourly Scraping
+
+on:
+  schedule:
+    - cron: "0 * * * *" # Runs every hour
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  run-scripts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Run the scraper script for mortgage rates
+        run: bun run bin/scrape-mortgage-rates.ts
+
+      - name: Run the scraper script for personal loan rates
+        run: bun run bin/scrape-personal-loan-rates.ts
+
+      - name: Run the scraper script for car loan rates
+        run: bun run bin/scrape-car-loan-rates.ts
+
+      - name: Run the scraper script for credit card rates
+        run: bun run bin/scrape-credit-card-rates.ts
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
+
+      - name: Commit changes
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "Auto-commit changes at $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          git push
