@@ -119,49 +119,49 @@
           "rates": [
             {
               "id": "rate:asb:standard:variable-floating",
-              "rate": 8.64,
+              "rate": 8.39,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:asb:standard:6-months",
-              "rate": 6.99,
+              "rate": 6.89,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:asb:standard:1-year",
-              "rate": 6.85,
+              "rate": 6.59,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:asb:standard:18-months",
-              "rate": 6.49,
+              "rate": 6.15,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:asb:standard:2-years",
-              "rate": 6.25,
+              "rate": 5.99,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:asb:standard:3-years",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:asb:standard:4-years",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:asb:standard:5-years",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -803,7 +803,7 @@
           "rates": [
             {
               "id": "rate:kiwibank:standard:variable-floating",
-              "rate": 8.5,
+              "rate": 8.25,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -893,7 +893,7 @@
           "rates": [
             {
               "id": "rate:kiwibank:offset-mortgage:variable-floating",
-              "rate": 8.5,
+              "rate": 8.25,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -1955,49 +1955,49 @@
           "rates": [
             {
               "id": "rate:aia:standard-go:variable-floating",
-              "rate": 8.74,
+              "rate": 8.49,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:aia:standard-go:6-months",
-              "rate": 6.99,
+              "rate": 6.89,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:aia:standard-go:1-year",
-              "rate": 6.85,
+              "rate": 6.59,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:aia:standard-go:18-months",
-              "rate": 6.49,
+              "rate": 6.15,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:aia:standard-go:2-years",
-              "rate": 6.25,
+              "rate": 5.99,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:aia:standard-go:3-years",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:aia:standard-go:4-years",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:aia:standard-go:5-years",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-12T21:04:30.857Z"
+  "lastUpdated": "2024-08-14T03:05:44.940Z"
 }
