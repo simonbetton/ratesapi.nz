@@ -1205,7 +1205,7 @@
           "rates": [
             {
               "id": "rate:westpac:standard:variable-floating",
-              "rate": 8.64,
+              "rate": 8.39,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -1319,7 +1319,7 @@
           "rates": [
             {
               "id": "rate:westpac:choices-offset:variable-floating",
-              "rate": 8.64,
+              "rate": 8.39,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -1331,7 +1331,7 @@
           "rates": [
             {
               "id": "rate:westpac:choices-everyday:variable-floating",
-              "rate": 8.74,
+              "rate": 8.49,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-14T04:05:06.623Z"
+  "lastUpdated": "2024-08-14T06:05:33.559Z"
 }
