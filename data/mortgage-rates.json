@@ -114,53 +114,53 @@
       "name": "ASB",
       "products": [
         {
-          "id": "product:asb:standard",
-          "name": "Standard",
+          "id": "product:asb:standard-from-aug-20",
+          "name": "Standard from Aug 20",
           "rates": [
             {
-              "id": "rate:asb:standard:variable-floating",
+              "id": "rate:asb:standard-from-aug-20:variable-floating",
               "rate": 8.39,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
-              "id": "rate:asb:standard:6-months",
+              "id": "rate:asb:standard-from-aug-20:6-months",
               "rate": 6.89,
               "term": "6 months",
               "termInMonths": 6
             },
             {
-              "id": "rate:asb:standard:1-year",
+              "id": "rate:asb:standard-from-aug-20:1-year",
               "rate": 6.59,
               "term": "1 year",
               "termInMonths": 12
             },
             {
-              "id": "rate:asb:standard:18-months",
+              "id": "rate:asb:standard-from-aug-20:18-months",
               "rate": 6.15,
               "term": "18 months",
               "termInMonths": 18
             },
             {
-              "id": "rate:asb:standard:2-years",
+              "id": "rate:asb:standard-from-aug-20:2-years",
               "rate": 5.99,
               "term": "2 years",
               "termInMonths": 24
             },
             {
-              "id": "rate:asb:standard:3-years",
+              "id": "rate:asb:standard-from-aug-20:3-years",
               "rate": 5.89,
               "term": "3 years",
               "termInMonths": 36
             },
             {
-              "id": "rate:asb:standard:4-years",
+              "id": "rate:asb:standard-from-aug-20:4-years",
               "rate": 5.89,
               "term": "4 years",
               "termInMonths": 48
             },
             {
-              "id": "rate:asb:standard:5-years",
+              "id": "rate:asb:standard-from-aug-20:5-years",
               "rate": 5.89,
               "term": "5 years",
               "termInMonths": 60
@@ -2078,5 +2078,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-14T03:05:44.940Z"
+  "lastUpdated": "2024-08-14T04:05:06.623Z"
 }
