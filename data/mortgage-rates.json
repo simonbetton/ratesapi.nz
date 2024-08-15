@@ -191,19 +191,19 @@
           "rates": [
             {
               "id": "rate:bank-of-baroda:standard:variable-floating",
-              "rate": 9.25,
+              "rate": 8.9,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:bank-of-baroda:standard:1-year",
-              "rate": 7.39,
+              "rate": 7.09,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bank-of-baroda:standard:2-years",
-              "rate": 7.29,
+              "rate": 6.89,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -563,7 +563,7 @@
           "rates": [
             {
               "id": "rate:co-operative-bank:owner-occupied:variable-floating",
-              "rate": 8.4,
+              "rate": 8.15,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2084,5 +2084,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-15T03:04:49.748Z"
+  "lastUpdated": "2024-08-15T21:04:22.713Z"
 }
