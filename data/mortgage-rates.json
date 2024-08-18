@@ -1517,7 +1517,7 @@
             },
             {
               "id": "rate:police-cu:standard:2-years",
-              "rate": 6.49,
+              "rate": 6.34,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1541,7 +1541,7 @@
             },
             {
               "id": "rate:police-cu:shared-ownership:2-years",
-              "rate": 7.09,
+              "rate": 6.94,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2084,5 +2084,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-16T05:04:18.685Z"
+  "lastUpdated": "2024-08-18T21:04:03.733Z"
 }
