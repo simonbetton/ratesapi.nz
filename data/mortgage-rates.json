@@ -335,43 +335,43 @@
           "rates": [
             {
               "id": "rate:bnz:special:6-months",
-              "rate": 6.99,
+              "rate": 6.89,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bnz:special:1-year",
-              "rate": 6.85,
+              "rate": 6.55,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bnz:special:18-months",
-              "rate": 6.49,
+              "rate": 6.15,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bnz:special:2-years",
-              "rate": 6.34,
+              "rate": 5.99,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bnz:special:3-years",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:bnz:special:4-years",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:bnz:special:5-years",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -401,43 +401,43 @@
             },
             {
               "id": "rate:bnz:std-flybuys:6-months",
-              "rate": 7.59,
+              "rate": 6.89,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bnz:std-flybuys:1-year",
-              "rate": 7.45,
+              "rate": 6.55,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bnz:std-flybuys:18-months",
-              "rate": 7.09,
+              "rate": 6.15,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bnz:std-flybuys:2-years",
-              "rate": 6.94,
+              "rate": 5.89,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bnz:std-flybuys:3-years",
-              "rate": 6.59,
+              "rate": 5.89,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:bnz:std-flybuys:4-years",
-              "rate": 6.59,
+              "rate": 5.89,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:bnz:std-flybuys:5-years",
-              "rate": 6.59,
+              "rate": 5.89,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2084,5 +2084,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-19T08:06:04.241Z"
+  "lastUpdated": "2024-08-19T20:04:24.887Z"
 }
