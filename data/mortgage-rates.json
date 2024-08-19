@@ -1505,7 +1505,7 @@
           "rates": [
             {
               "id": "rate:police-cu:standard:variable-floating",
-              "rate": 8.14,
+              "rate": 7.89,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -1529,7 +1529,7 @@
           "rates": [
             {
               "id": "rate:police-cu:shared-ownership:variable-floating",
-              "rate": 8.14,
+              "rate": 7.89,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2084,5 +2084,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-19T20:04:24.887Z"
+  "lastUpdated": "2024-08-19T23:05:25.883Z"
 }
