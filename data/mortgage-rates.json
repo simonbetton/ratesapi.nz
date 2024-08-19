@@ -569,25 +569,25 @@
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:6-months",
-              "rate": 6.99,
+              "rate": 6.89,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:1-year",
-              "rate": 6.79,
+              "rate": 6.39,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:18-months",
-              "rate": 6.49,
+              "rate": 6.19,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:2-years",
-              "rate": 6.29,
+              "rate": 5.99,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -599,13 +599,13 @@
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:4-years",
-              "rate": 6.09,
+              "rate": 5.99,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:5-years",
-              "rate": 6.09,
+              "rate": 5.99,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -623,25 +623,25 @@
             },
             {
               "id": "rate:co-operative-bank:standard:6-months",
-              "rate": 7.49,
+              "rate": 7.39,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:co-operative-bank:standard:1-year",
-              "rate": 7.29,
+              "rate": 6.89,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:co-operative-bank:standard:18-months",
-              "rate": 6.99,
+              "rate": 6.69,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:co-operative-bank:standard:2-years",
-              "rate": 6.79,
+              "rate": 6.49,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -653,13 +653,13 @@
             },
             {
               "id": "rate:co-operative-bank:standard:4-years",
-              "rate": 6.59,
+              "rate": 6.49,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:co-operative-bank:standard:5-years",
-              "rate": 6.59,
+              "rate": 6.49,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -671,7 +671,7 @@
           "rates": [
             {
               "id": "rate:co-operative-bank:first-home-buyer-special:1-year",
-              "rate": 6.59,
+              "rate": 6.19,
               "term": "1 year",
               "termInMonths": 12
             }
@@ -2084,5 +2084,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-19T01:31:17.785Z"
+  "lastUpdated": "2024-08-19T04:04:59.419Z"
 }
