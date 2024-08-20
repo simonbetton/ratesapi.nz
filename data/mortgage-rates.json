@@ -197,13 +197,13 @@
             },
             {
               "id": "rate:bank-of-baroda:standard:1-year",
-              "rate": 7.09,
+              "rate": 6.89,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bank-of-baroda:standard:2-years",
-              "rate": 6.89,
+              "rate": 6.59,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1607,7 +1607,7 @@
           "rates": [
             {
               "id": "rate:avanti-finance:near-prime:variable-floating",
-              "rate": 9.15,
+              "rate": 8.9,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2036,5 +2036,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-20T01:30:48.473Z"
+  "lastUpdated": "2024-08-20T21:04:16.048Z"
 }

@@ -821,7 +821,7 @@
           "rates": [
             {
               "id": "rate:mtf-finance:personal-loan:secured-by-car:from",
-              "rate": 11.7,
+              "rate": 11.45,
               "plan": "Secured by car",
               "condition": "From"
             },
@@ -833,7 +833,7 @@
             },
             {
               "id": "rate:mtf-finance:personal-loan:unsecured:from",
-              "rate": 14.2,
+              "rate": 14.05,
               "plan": "Unsecured",
               "condition": "From"
             },
@@ -1082,5 +1082,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-20T20:04:48.002Z"
+  "lastUpdated": "2024-08-20T21:04:18.536Z"
 }

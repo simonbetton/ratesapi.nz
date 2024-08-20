@@ -221,13 +221,13 @@
           "rates": [
             {
               "id": "rate:avanti-finance:car-loans:secured:from",
-              "rate": 10.7,
+              "rate": 10.25,
               "plan": "Secured",
               "condition": "From"
             },
             {
               "id": "rate:avanti-finance:car-loans:secured:to",
-              "rate": 24.2,
+              "rate": 23.95,
               "plan": "Secured",
               "condition": "To"
             }
@@ -533,7 +533,7 @@
           "rates": [
             {
               "id": "rate:mtf-finance:vehicles-loan:secured:from",
-              "rate": 11.7,
+              "rate": 11.45,
               "plan": "Secured",
               "condition": "From"
             },
@@ -782,5 +782,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-06-30T22:04:55.362Z"
+  "lastUpdated": "2024-08-20T21:04:19.241Z"
 }
