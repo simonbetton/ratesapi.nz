@@ -539,13 +539,13 @@
           "rates": [
             {
               "id": "rate:avanti-finance:personal-loan:secured:from",
-              "rate": 16.5,
+              "rate": 15.95,
               "plan": "Secured",
               "condition": "From"
             },
             {
               "id": "rate:avanti-finance:personal-loan:secured:to",
-              "rate": 25.7,
+              "rate": 24.95,
               "plan": "Secured",
               "condition": "To"
             }
@@ -1082,5 +1082,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-08T04:07:02.913Z"
+  "lastUpdated": "2024-08-20T20:04:48.002Z"
 }
