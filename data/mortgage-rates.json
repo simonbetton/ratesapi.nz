@@ -125,13 +125,13 @@
             },
             {
               "id": "rate:asb:standard:6-months",
-              "rate": 6.89,
+              "rate": 6.85,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:asb:standard:1-year",
-              "rate": 6.59,
+              "rate": 6.45,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -149,7 +149,7 @@
             },
             {
               "id": "rate:asb:standard:3-years",
-              "rate": 5.89,
+              "rate": 5.79,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -227,43 +227,43 @@
             },
             {
               "id": "rate:bank-of-china:standard:6-months",
-              "rate": 7.95,
+              "rate": 7.8,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bank-of-china:standard:1-year",
-              "rate": 7.79,
+              "rate": 7.45,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bank-of-china:standard:18-months",
-              "rate": 7.59,
+              "rate": 6.95,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bank-of-china:standard:2-years",
-              "rate": 7.39,
+              "rate": 6.95,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bank-of-china:standard:3-years",
-              "rate": 7.09,
+              "rate": 6.85,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:bank-of-china:standard:4-years",
-              "rate": 7.09,
+              "rate": 6.85,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:bank-of-china:standard:5-years",
-              "rate": 7.09,
+              "rate": 6.85,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -281,43 +281,43 @@
             },
             {
               "id": "rate:bank-of-china:special:6-months",
-              "rate": 6.95,
+              "rate": 6.8,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bank-of-china:special:1-year",
-              "rate": 6.79,
+              "rate": 6.45,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bank-of-china:special:18-months",
-              "rate": 6.59,
+              "rate": 5.95,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bank-of-china:special:2-years",
-              "rate": 6.39,
+              "rate": 5.95,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bank-of-china:special:3-years",
-              "rate": 6.09,
+              "rate": 5.85,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:bank-of-china:special:4-years",
-              "rate": 6.09,
+              "rate": 5.85,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:bank-of-china:special:5-years",
-              "rate": 6.09,
+              "rate": 5.85,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -1919,43 +1919,43 @@
             },
             {
               "id": "rate:aia:standard-go:6-months",
-              "rate": 6.89,
+              "rate": 6.85,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:aia:standard-go:1-year",
-              "rate": 6.59,
+              "rate": 6.45,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:aia:standard-go:18-months",
-              "rate": 6.15,
+              "rate": 5.99,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:aia:standard-go:2-years",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:aia:standard-go:3-years",
-              "rate": 5.89,
+              "rate": 5.79,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:aia:standard-go:4-years",
-              "rate": 5.89,
+              "rate": 5.79,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:aia:standard-go:5-years",
-              "rate": 5.89,
+              "rate": 5.69,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2036,5 +2036,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-21T20:04:30.390Z"
+  "lastUpdated": "2024-08-21T21:04:23.191Z"
 }
