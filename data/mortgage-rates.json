@@ -1634,24 +1634,6 @@
       ]
     },
     {
-      "id": "institution:bluestone",
-      "name": "Bluestone",
-      "products": [
-        {
-          "id": "product:bluestone:prime-less-than-60-lvr",
-          "name": "Prime <60% LVR",
-          "rates": [
-            {
-              "id": "rate:bluestone:prime-less-than-60-lvr:variable-floating",
-              "rate": 9.09,
-              "term": "Variable floating",
-              "termInMonths": null
-            }
-          ]
-        }
-      ]
-    },
-    {
       "id": "institution:cfml-loans",
       "name": "CFML Loans",
       "products": [
@@ -2036,5 +2018,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-23T04:05:39.780Z"
+  "lastUpdated": "2024-08-23T07:05:10.859Z"
 }
