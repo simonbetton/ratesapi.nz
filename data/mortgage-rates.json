@@ -1781,31 +1781,31 @@
             },
             {
               "id": "rate:resimac:standard-lvr-less-than-80:1-year",
-              "rate": 8.09,
+              "rate": 7.09,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:resimac:standard-lvr-less-than-80:2-years",
-              "rate": 7.59,
+              "rate": 6.49,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:resimac:standard-lvr-less-than-80:3-years",
-              "rate": 7.29,
+              "rate": 6.29,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:resimac:standard-lvr-less-than-80:4-years",
-              "rate": 7.09,
+              "rate": 6.24,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:resimac:standard-lvr-less-than-80:5-years",
-              "rate": 7.09,
+              "rate": 6.29,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -1823,31 +1823,31 @@
             },
             {
               "id": "rate:resimac:standard-lvr-less-than-90:1-year",
-              "rate": 9.09,
+              "rate": 8.09,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:resimac:standard-lvr-less-than-90:2-years",
-              "rate": 8.59,
+              "rate": 7.49,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:resimac:standard-lvr-less-than-90:3-years",
-              "rate": 8.29,
+              "rate": 7.29,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:resimac:standard-lvr-less-than-90:4-years",
-              "rate": 8.09,
+              "rate": 7.24,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:resimac:standard-lvr-less-than-90:5-years",
-              "rate": 8.09,
+              "rate": 7.29,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2036,5 +2036,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-21T21:04:23.191Z"
+  "lastUpdated": "2024-08-23T04:05:39.780Z"
 }
