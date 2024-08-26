@@ -581,13 +581,13 @@
           "rates": [
             {
               "id": "rate:finance-direct:personal-loan:secured:from",
-              "rate": 6.69,
+              "rate": 11.95,
               "plan": "Secured",
               "condition": "From"
             },
             {
               "id": "rate:finance-direct:personal-loan:secured:to",
-              "rate": 24.95,
+              "rate": 24.6,
               "plan": "Secured",
               "condition": "To"
             }
@@ -1082,5 +1082,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-20T21:04:18.536Z"
+  "lastUpdated": "2024-08-26T00:17:19.415Z"
 }
