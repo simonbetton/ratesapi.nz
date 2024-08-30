@@ -917,7 +917,7 @@
             },
             {
               "id": "rate:sbs-bank:residential:18-months",
-              "rate": 6.75,
+              "rate": 6.59,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -965,7 +965,7 @@
             },
             {
               "id": "rate:sbs-bank:special:18-months",
-              "rate": 6.15,
+              "rate": 5.99,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -1643,7 +1643,7 @@
           "rates": [
             {
               "id": "rate:cfml-loans:standard:variable-floating",
-              "rate": 9.45,
+              "rate": 9.7,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2018,5 +2018,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-30T02:22:13.679Z"
+  "lastUpdated": "2024-08-30T07:04:17.116Z"
 }
