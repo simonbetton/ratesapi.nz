@@ -1643,7 +1643,7 @@
           "rates": [
             {
               "id": "rate:cfml-loans:standard:variable-floating",
-              "rate": 9.7,
+              "rate": 6.95,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2018,5 +2018,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-09-01T20:04:54.850Z"
+  "lastUpdated": "2024-09-01T21:04:16.355Z"
 }
