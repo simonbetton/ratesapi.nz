@@ -1638,12 +1638,48 @@
       "name": "CFML Loans",
       "products": [
         {
-          "id": "product:cfml-loans:standard",
-          "name": "Standard",
+          "id": "product:cfml-loans:home-loans",
+          "name": "Home Loans",
           "rates": [
             {
-              "id": "rate:cfml-loans:standard:variable-floating",
+              "id": "rate:cfml-loans:home-loans:variable-floating",
               "rate": 6.95,
+              "term": "Variable floating",
+              "termInMonths": null
+            }
+          ]
+        },
+        {
+          "id": "product:cfml-loans:321-loans",
+          "name": "321 Loans",
+          "rates": [
+            {
+              "id": "rate:cfml-loans:321-loans:variable-floating",
+              "rate": 6.75,
+              "term": "Variable floating",
+              "termInMonths": null
+            }
+          ]
+        },
+        {
+          "id": "product:cfml-loans:prime-loans",
+          "name": "Prime Loans",
+          "rates": [
+            {
+              "id": "rate:cfml-loans:prime-loans:variable-floating",
+              "rate": 8.75,
+              "term": "Variable floating",
+              "termInMonths": null
+            }
+          ]
+        },
+        {
+          "id": "product:cfml-loans:standard-loans",
+          "name": "Standard Loans",
+          "rates": [
+            {
+              "id": "rate:cfml-loans:standard-loans:variable-floating",
+              "rate": 9.7,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2018,5 +2054,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-09-01T21:04:16.355Z"
+  "lastUpdated": "2024-09-01T23:04:12.894Z"
 }
