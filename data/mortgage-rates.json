@@ -1655,7 +1655,7 @@
           "rates": [
             {
               "id": "rate:cfml-loans:321-loans:variable-floating",
-              "rate": 6.75,
+              "rate": 6.7,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -1682,6 +1682,42 @@
               "rate": 9.7,
               "term": "Variable floating",
               "termInMonths": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "institution:general-finance",
+      "name": "General Finance",
+      "products": [
+        {
+          "id": "product:general-finance:short-term-bridging-1st-mortgages-from",
+          "name": "Short term bridging 1st mortgages ....from",
+          "rates": [
+            {
+              "id": "rate:general-finance:short-term-bridging-1st-mortgages-from:6-months",
+              "rate": 9.75,
+              "term": "6 months",
+              "termInMonths": 6
+            },
+            {
+              "id": "rate:general-finance:short-term-bridging-1st-mortgages-from:1-year",
+              "rate": 9.85,
+              "term": "1 year",
+              "termInMonths": 12
+            },
+            {
+              "id": "rate:general-finance:short-term-bridging-1st-mortgages-from:2-years",
+              "rate": 9.95,
+              "term": "2 years",
+              "termInMonths": 24
+            },
+            {
+              "id": "rate:general-finance:short-term-bridging-1st-mortgages-from:3-years",
+              "rate": 9.95,
+              "term": "3 years",
+              "termInMonths": 36
             }
           ]
         }
@@ -2054,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-09-02T02:24:10.237Z"
+  "lastUpdated": "2024-09-02T04:05:33.745Z"
 }
