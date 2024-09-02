@@ -1367,25 +1367,25 @@
           "rates": [
             {
               "id": "rate:wairarapa:residential:variable-floating",
-              "rate": 8.6,
+              "rate": 8.5,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:wairarapa:residential:1-year",
-              "rate": 6.8,
+              "rate": 6.65,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:wairarapa:residential:18-months",
-              "rate": 6.6,
+              "rate": 6.4,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:wairarapa:residential:2-years",
-              "rate": 6.5,
+              "rate": 5.99,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2054,5 +2054,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-09-01T23:04:12.894Z"
+  "lastUpdated": "2024-09-02T02:24:10.237Z"
 }
