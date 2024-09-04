@@ -431,19 +431,19 @@
             },
             {
               "id": "rate:china-construction-bank:non-standard:1-year",
-              "rate": 7.45,
+              "rate": 7.59,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:china-construction-bank:non-standard:18-months",
-              "rate": 6.95,
+              "rate": 7.29,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:china-construction-bank:non-standard:2-years",
-              "rate": 6.95,
+              "rate": 7.19,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -461,31 +461,31 @@
           "rates": [
             {
               "id": "rate:china-construction-bank:standard:6-months",
-              "rate": 6.89,
+              "rate": 6.99,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:china-construction-bank:standard:1-year",
-              "rate": 6.45,
+              "rate": 6.85,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:china-construction-bank:standard:18-months",
-              "rate": 5.99,
+              "rate": 6.49,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:china-construction-bank:standard:2-years",
-              "rate": 5.99,
+              "rate": 6.34,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:china-construction-bank:standard:3-years",
-              "rate": 5.89,
+              "rate": 5.99,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-09-02T04:05:33.745Z"
+  "lastUpdated": "2024-09-04T00:17:40.369Z"
 }
