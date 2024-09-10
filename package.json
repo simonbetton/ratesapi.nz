@@ -9,23 +9,23 @@
     "@hono/swagger-ui": "^0.2.2",
     "@hono/zod-openapi": "^0.11.1",
     "cheerio": "1.0.0-rc.12",
-    "hono": "^4.5.5",
-    "ora": "^8.0.1",
+    "hono": "^4.5.11",
+    "ora": "^8.1.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240806.0",
+    "@cloudflare/workers-types": "^4.20240903.0",
     "@total-typescript/ts-reset": "^0.5.1",
     "@typescript-eslint/eslint-plugin": "7.9.0",
-    "@typescript-eslint/parser": "^8.0.1",
-    "eslint": "^9.9.0",
+    "@typescript-eslint/parser": "^8.5.0",
+    "eslint": "^9.10.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-import": "^2.30.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "husky": "^9.1.4",
-    "pino": "^9.3.2",
+    "husky": "^9.1.5",
+    "pino": "^9.4.0",
     "pino-pretty": "^11.2.2",
-    "wrangler": "^3.70.0"
+    "wrangler": "^3.75.0"
   },
   "lint-staged": {
     "*": "prettier --ignore-unknown --write"
