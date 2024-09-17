@@ -1769,7 +1769,7 @@
           "rates": [
             {
               "id": "rate:paraloan:for-people-with-physical-disabilitiesfrom:3-years",
-              "rate": 5.09,
+              "rate": 4.23,
               "term": "3 years",
               "termInMonths": 36
             }
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-09-16T20:04:42.343Z"
+  "lastUpdated": "2024-09-17T20:04:29.490Z"
 }
