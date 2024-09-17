@@ -959,13 +959,13 @@
           "rates": [
             {
               "id": "rate:paraloan:for-people-with-physical-disabilities:secured:from",
-              "rate": 10.3,
+              "rate": 8.5,
               "plan": "Secured",
               "condition": "From"
             },
             {
               "id": "rate:paraloan:for-people-with-physical-disabilities:unsecured:from-limited-to-10000",
-              "rate": 12.9,
+              "rate": 10.6,
               "plan": "Unsecured",
               "condition": "From (limited to $10,000)"
             }
@@ -1082,5 +1082,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-08-26T00:17:19.415Z"
+  "lastUpdated": "2024-09-17T19:04:28.318Z"
 }
