@@ -1517,25 +1517,25 @@
             },
             {
               "id": "rate:unity:residential:6-months",
-              "rate": 6.9,
+              "rate": 6.85,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:unity:residential:1-year",
-              "rate": 6.7,
+              "rate": 6.45,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:unity:residential:18-months",
-              "rate": 6.69,
+              "rate": 5.99,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:unity:residential:2-years",
-              "rate": 6.49,
+              "rate": 5.89,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-09-17T20:04:29.490Z"
+  "lastUpdated": "2024-09-17T23:05:11.824Z"
 }
