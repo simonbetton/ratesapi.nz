@@ -1115,7 +1115,7 @@
             },
             {
               "id": "rate:tsb-bank:special:18-months",
-              "rate": 6.65,
+              "rate": 6.25,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-09-18T02:23:39.436Z"
+  "lastUpdated": "2024-09-18T03:05:19.525Z"
 }
