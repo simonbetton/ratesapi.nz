@@ -1169,7 +1169,7 @@
             },
             {
               "id": "rate:westpac:standard:1-year",
-              "rate": 7.05,
+              "rate": 6.89,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1217,7 +1217,7 @@
             },
             {
               "id": "rate:westpac:special:1-year",
-              "rate": 6.45,
+              "rate": 6.29,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-09-19T21:04:31.339Z"
+  "lastUpdated": "2024-09-19T23:05:00.418Z"
 }
