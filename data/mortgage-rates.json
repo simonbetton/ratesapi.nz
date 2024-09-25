@@ -869,19 +869,19 @@
             },
             {
               "id": "rate:kookmin:standard:6-months",
-              "rate": 8.6,
+              "rate": 7.6,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:kookmin:standard:1-year",
-              "rate": 8.6,
+              "rate": 7.6,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:kookmin:standard:2-years",
-              "rate": 8.9,
+              "rate": 7.6,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-09-22T20:04:29.877Z"
+  "lastUpdated": "2024-09-25T20:04:51.303Z"
 }
