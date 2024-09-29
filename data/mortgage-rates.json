@@ -1049,43 +1049,43 @@
             },
             {
               "id": "rate:tsb-bank:standard:6-months",
-              "rate": 7.69,
+              "rate": 7.65,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:tsb-bank:standard:1-year",
-              "rate": 7.25,
+              "rate": 7.09,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:tsb-bank:standard:18-months",
-              "rate": 7.05,
+              "rate": 6.89,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:tsb-bank:standard:2-years",
-              "rate": 6.79,
+              "rate": 6.59,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:tsb-bank:standard:3-years",
-              "rate": 6.69,
+              "rate": 6.59,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:tsb-bank:standard:4-years",
-              "rate": 6.69,
+              "rate": 6.49,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:tsb-bank:standard:5-years",
-              "rate": 6.69,
+              "rate": 6.49,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -1103,43 +1103,43 @@
             },
             {
               "id": "rate:tsb-bank:special:6-months",
-              "rate": 6.89,
+              "rate": 6.85,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:tsb-bank:special:1-year",
-              "rate": 6.45,
+              "rate": 6.29,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:tsb-bank:special:18-months",
-              "rate": 6.25,
+              "rate": 6.09,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:tsb-bank:special:2-years",
-              "rate": 5.99,
+              "rate": 5.79,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:tsb-bank:special:3-years",
-              "rate": 5.89,
+              "rate": 5.79,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:tsb-bank:special:4-years",
-              "rate": 5.89,
+              "rate": 5.69,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:tsb-bank:special:5-years",
-              "rate": 5.89,
+              "rate": 5.69,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-09-27T02:27:10.811Z"
+  "lastUpdated": "2024-09-29T21:04:16.041Z"
 }
