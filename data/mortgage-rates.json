@@ -1343,13 +1343,13 @@
             },
             {
               "id": "rate:nelson:residential:1-year",
-              "rate": 6.85,
+              "rate": 6.69,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:nelson:residential:2-years",
-              "rate": 6.39,
+              "rate": 6.19,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1409,13 +1409,13 @@
             },
             {
               "id": "rate:first-cu:special:1-year",
-              "rate": 6.75,
+              "rate": 6.6,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:first-cu:special:2-years",
-              "rate": 6.35,
+              "rate": 6.1,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1433,13 +1433,13 @@
             },
             {
               "id": "rate:first-cu:standard:1-year",
-              "rate": 7.35,
+              "rate": 7.2,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:first-cu:standard:2-years",
-              "rate": 6.95,
+              "rate": 6.7,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-09-29T21:04:16.041Z"
+  "lastUpdated": "2024-09-30T21:04:19.860Z"
 }
