@@ -1523,7 +1523,7 @@
             },
             {
               "id": "rate:unity:residential:1-year",
-              "rate": 6.45,
+              "rate": 6.29,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1535,7 +1535,7 @@
             },
             {
               "id": "rate:unity:residential:2-years",
-              "rate": 5.89,
+              "rate": 5.79,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-01T06:06:07.638Z"
+  "lastUpdated": "2024-10-01T21:05:15.672Z"
 }
