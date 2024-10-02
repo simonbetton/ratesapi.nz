@@ -353,19 +353,19 @@
             },
             {
               "id": "rate:bnz:standard:6-months",
-              "rate": 6.85,
+              "rate": 6.75,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bnz:standard:1-year",
-              "rate": 6.29,
+              "rate": 6.19,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bnz:standard:18-months",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-02T01:31:48.672Z"
+  "lastUpdated": "2024-10-02T19:04:08.695Z"
 }
