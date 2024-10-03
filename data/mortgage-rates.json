@@ -677,7 +677,7 @@
           "rates": [
             {
               "id": "rate:heartland-bank:reverse-mortgage:variable-floating",
-              "rate": 10.5,
+              "rate": 10.25,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-02T19:04:08.695Z"
+  "lastUpdated": "2024-10-03T22:04:20.498Z"
 }
