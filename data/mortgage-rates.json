@@ -1373,19 +1373,19 @@
             },
             {
               "id": "rate:wairarapa:residential:1-year",
-              "rate": 6.65,
+              "rate": 6.5,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:wairarapa:residential:18-months",
-              "rate": 6.4,
+              "rate": 6.2,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:wairarapa:residential:2-years",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-04T22:04:24.531Z"
+  "lastUpdated": "2024-10-06T21:04:15.285Z"
 }
