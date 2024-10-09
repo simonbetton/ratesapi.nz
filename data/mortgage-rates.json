@@ -1211,7 +1211,7 @@
           "rates": [
             {
               "id": "rate:westpac:special:6-months",
-              "rate": 3.75,
+              "rate": 6.75,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -1919,7 +1919,7 @@
           "rates": [
             {
               "id": "rate:simplicity:member-home-loan:variable-floating",
-              "rate": 6.4,
+              "rate": 6.15,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-09T02:27:02.849Z"
+  "lastUpdated": "2024-10-09T04:05:24.106Z"
 }
