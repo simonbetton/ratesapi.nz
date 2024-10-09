@@ -119,7 +119,7 @@
           "rates": [
             {
               "id": "rate:asb:standard:variable-floating",
-              "rate": 8.39,
+              "rate": 7.89,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -347,7 +347,7 @@
           "rates": [
             {
               "id": "rate:bnz:standard:variable-floating",
-              "rate": 8.44,
+              "rate": 7.94,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -515,7 +515,7 @@
           "rates": [
             {
               "id": "rate:co-operative-bank:owner-occupied:variable-floating",
-              "rate": 8.15,
+              "rate": 7.65,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -569,7 +569,7 @@
           "rates": [
             {
               "id": "rate:co-operative-bank:standard:variable-floating",
-              "rate": 8.15,
+              "rate": 7.65,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-08T19:03:50.733Z"
+  "lastUpdated": "2024-10-09T01:31:47.304Z"
 }
