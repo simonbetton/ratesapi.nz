@@ -464,6 +464,294 @@
       ]
     },
     {
+      "id": "issuer:anz",
+      "name": "ANZ",
+      "plans": [
+        {
+          "id": "plan:anz:low-rate",
+          "name": "Low Rate",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": null,
+          "balanceTransferRate": 1.99,
+          "balanceTransferPeriod": "24 months",
+          "cashAdvanceRate": 20.95,
+          "purchaseRate": 13.9
+        },
+        {
+          "id": "plan:anz:airpoints-visa",
+          "name": "Airpoints Visa",
+          "interestFreePeriodInMonths": 44,
+          "primaryFeeNZD": 65,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": null,
+          "cashAdvanceRate": 20.95,
+          "purchaseRate": 20.95
+        },
+        {
+          "id": "plan:anz:airpoints-visa-platinum",
+          "name": "Airpoints Visa Platinum",
+          "interestFreePeriodInMonths": 44,
+          "primaryFeeNZD": 150,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": null,
+          "cashAdvanceRate": 20.95,
+          "purchaseRate": 20.95
+        },
+        {
+          "id": "plan:anz:cashback",
+          "name": "CashBack",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": 40,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": null,
+          "cashAdvanceRate": 20.95,
+          "purchaseRate": 20.95
+        },
+        {
+          "id": "plan:anz:cashback-platinum",
+          "name": "CashBack Platinum",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": 80,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": null,
+          "cashAdvanceRate": 20.95,
+          "purchaseRate": 20.95
+        }
+      ]
+    },
+    {
+      "id": "issuer:asb",
+      "name": "ASB",
+      "plans": [
+        {
+          "id": "plan:asb:visa-light",
+          "name": "Visa Light",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": null,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": "6 months",
+          "cashAdvanceRate": 22.95,
+          "purchaseRate": 13.5
+        },
+        {
+          "id": "plan:asb:rewards",
+          "name": "Rewards",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": 40,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": "6 months",
+          "cashAdvanceRate": 22.95,
+          "purchaseRate": 20.95
+        },
+        {
+          "id": "plan:asb:gold",
+          "name": "Gold",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": 80,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": "6 months",
+          "cashAdvanceRate": 22.95,
+          "purchaseRate": 20.95
+        },
+        {
+          "id": "plan:asb:platinum",
+          "name": "Platinum",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": 80,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": "6 months",
+          "cashAdvanceRate": 22.95,
+          "purchaseRate": 19.95
+        }
+      ]
+    },
+    {
+      "id": "issuer:bnz",
+      "name": "BNZ",
+      "plans": [
+        {
+          "id": "plan:bnz:advantage-classic",
+          "name": "Advantage Classic",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": 40,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": null,
+          "cashAdvanceRate": 22.95,
+          "purchaseRate": 20.95
+        },
+        {
+          "id": "plan:bnz:lite-card",
+          "name": "Lite Card",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": 30,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": null,
+          "cashAdvanceRate": 22.95,
+          "purchaseRate": 13.45
+        },
+        {
+          "id": "plan:bnz:advantage-visa-platinum",
+          "name": "Advantage Visa Platinum",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": 90,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": null,
+          "cashAdvanceRate": 18.95,
+          "purchaseRate": 18.95
+        }
+      ]
+    },
+    {
+      "id": "issuer:gem-visa",
+      "name": "GEM Visa",
+      "plans": [
+        {
+          "id": "plan:gem-visa:gem-visa-less-than-25000",
+          "name": "Gem Visa (<$250.00)",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": 55,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": null,
+          "cashAdvanceRate": 27.99,
+          "purchaseRate": 27.99
+        },
+        {
+          "id": "plan:gem-visa:gem-visa-greater-than-25000",
+          "name": "Gem Visa (>$250.00)",
+          "interestFreePeriodInMonths": 180,
+          "primaryFeeNZD": 55,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": null,
+          "cashAdvanceRate": 27.99,
+          "purchaseRate": 27.99
+        }
+      ]
+    },
+    {
+      "id": "issuer:kiwibank",
+      "name": "Kiwibank",
+      "plans": [
+        {
+          "id": "plan:kiwibank:low-rate",
+          "name": "Low Rate",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": 30,
+          "balanceTransferRate": 1.99,
+          "balanceTransferPeriod": "6 months",
+          "cashAdvanceRate": 9.95,
+          "purchaseRate": 9.95
+        },
+        {
+          "id": "plan:kiwibank:platinum",
+          "name": "Platinum",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": 80,
+          "balanceTransferRate": 1.99,
+          "balanceTransferPeriod": "6 months",
+          "cashAdvanceRate": 13.95,
+          "purchaseRate": 13.95
+        },
+        {
+          "id": "plan:kiwibank:zero",
+          "name": "Zero",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": null,
+          "balanceTransferRate": 1.99,
+          "balanceTransferPeriod": "6 months",
+          "cashAdvanceRate": 13.95,
+          "purchaseRate": 13.95
+        },
+        {
+          "id": "plan:kiwibank:air-nz-airpoints-low-fee",
+          "name": "Air NZ Airpoints Low Fee",
+          "interestFreePeriodInMonths": 44,
+          "primaryFeeNZD": 50,
+          "balanceTransferRate": 1.99,
+          "balanceTransferPeriod": "6 months",
+          "cashAdvanceRate": 16.9,
+          "purchaseRate": 16.9
+        },
+        {
+          "id": "plan:kiwibank:air-nz-airpoints-standard",
+          "name": "Air NZ Airpoints Standard",
+          "interestFreePeriodInMonths": 44,
+          "primaryFeeNZD": 50,
+          "balanceTransferRate": 1.99,
+          "balanceTransferPeriod": "6 months",
+          "cashAdvanceRate": 22.95,
+          "purchaseRate": 20.95
+        },
+        {
+          "id": "plan:kiwibank:air-nz-airpoints-platinum",
+          "name": "Air NZ Airpoints Platinum",
+          "interestFreePeriodInMonths": 44,
+          "primaryFeeNZD": 180,
+          "balanceTransferRate": 1.99,
+          "balanceTransferPeriod": "6 months",
+          "cashAdvanceRate": 22.95,
+          "purchaseRate": 20.95
+        }
+      ]
+    },
+    {
+      "id": "issuer:sbs-bank",
+      "name": "SBS Bank",
+      "plans": [
+        {
+          "id": "plan:sbs-bank:sbs-visa",
+          "name": "SBS Visa",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": null,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": null,
+          "cashAdvanceRate": 22.65,
+          "purchaseRate": 19.65
+        }
+      ]
+    },
+    {
+      "id": "issuer:the-warehouse",
+      "name": "The Warehouse",
+      "plans": [
+        {
+          "id": "plan:the-warehouse:purple-visa",
+          "name": "Purple Visa",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": null,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": null,
+          "cashAdvanceRate": 29.4,
+          "purchaseRate": 26.65
+        },
+        {
+          "id": "plan:the-warehouse:warehouse-money",
+          "name": "Warehouse Money",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": null,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": null,
+          "cashAdvanceRate": 22.95,
+          "purchaseRate": 19.95
+        }
+      ]
+    },
+    {
+      "id": "issuer:warehouse-money",
+      "name": "Warehouse Money",
+      "plans": [
+        {
+          "id": "plan:warehouse-money:warehouse-money",
+          "name": "Warehouse Money",
+          "interestFreePeriodInMonths": 55,
+          "primaryFeeNZD": null,
+          "balanceTransferRate": null,
+          "balanceTransferPeriod": null,
+          "cashAdvanceRate": 22.95,
+          "purchaseRate": 19.95
+        }
+      ]
+    },
+    {
       "id": "issuer:asb",
       "name": "ASB",
       "plans": [
@@ -658,5 +946,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-09T08:06:03.205Z"
+  "lastUpdated": "2024-10-09T09:05:20.724Z"
 }
