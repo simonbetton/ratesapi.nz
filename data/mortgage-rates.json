@@ -11,7 +11,7 @@
           "rates": [
             {
               "id": "rate:anz:standard:variable-floating",
-              "rate": 8.39,
+              "rate": 7.89,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -335,7 +335,7 @@
           "rates": [
             {
               "id": "rate:bnz:totalmoney:variable-floating",
-              "rate": 8.44,
+              "rate": 7.94,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -1043,7 +1043,7 @@
           "rates": [
             {
               "id": "rate:tsb-bank:standard:variable-floating",
-              "rate": 9.19,
+              "rate": 8.69,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -1097,7 +1097,7 @@
           "rates": [
             {
               "id": "rate:tsb-bank:special:variable-floating",
-              "rate": 8.39,
+              "rate": 7.89,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -1157,49 +1157,49 @@
           "rates": [
             {
               "id": "rate:westpac:standard:variable-floating",
-              "rate": 8.39,
+              "rate": 7.89,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:westpac:standard:6-months",
-              "rate": 7.45,
+              "rate": 7.35,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:westpac:standard:1-year",
-              "rate": 6.89,
+              "rate": 6.79,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:westpac:standard:18-months",
-              "rate": 6.59,
+              "rate": 6.49,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:westpac:standard:2-years",
-              "rate": 6.39,
+              "rate": 6.29,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:westpac:standard:3-years",
-              "rate": 6.39,
+              "rate": 6.29,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:westpac:standard:4-years",
-              "rate": 6.29,
+              "rate": 6.19,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:westpac:standard:5-years",
-              "rate": 6.29,
+              "rate": 6.19,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -1211,43 +1211,43 @@
           "rates": [
             {
               "id": "rate:westpac:special:6-months",
-              "rate": 6.85,
+              "rate": 3.75,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:westpac:special:1-year",
-              "rate": 6.29,
+              "rate": 6.19,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:westpac:special:18-months",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:westpac:special:2-years",
-              "rate": 5.79,
+              "rate": 5.69,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:westpac:special:3-years",
-              "rate": 5.79,
+              "rate": 5.69,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:westpac:special:4-years",
-              "rate": 5.69,
+              "rate": 5.59,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:westpac:special:5-years",
-              "rate": 5.69,
+              "rate": 5.59,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-09T01:31:47.304Z"
+  "lastUpdated": "2024-10-09T02:27:02.849Z"
 }
