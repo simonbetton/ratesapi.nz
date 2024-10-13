@@ -677,7 +677,7 @@
           "rates": [
             {
               "id": "rate:heartland-bank:reverse-mortgage:variable-floating",
-              "rate": 10.25,
+              "rate": 9.89,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -1463,13 +1463,13 @@
             },
             {
               "id": "rate:police-cu:standard:1-year",
-              "rate": 6.35,
+              "rate": 6.19,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:police-cu:standard:2-years",
-              "rate": 5.79,
+              "rate": 5.69,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1487,13 +1487,13 @@
             },
             {
               "id": "rate:police-cu:shared-ownership:1-year",
-              "rate": 6.95,
+              "rate": 6.79,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:police-cu:shared-ownership:2-years",
-              "rate": 6.39,
+              "rate": 6.29,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2090,5 +2090,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-10T22:04:23.712Z"
+  "lastUpdated": "2024-10-13T20:04:43.319Z"
 }
