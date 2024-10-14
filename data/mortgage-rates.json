@@ -17,19 +17,19 @@
             },
             {
               "id": "rate:anz:standard:6-months",
-              "rate": 7.35,
+              "rate": 7.1,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:anz:standard:1-year",
-              "rate": 6.79,
+              "rate": 6.59,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:anz:standard:18-months",
-              "rate": 6.49,
+              "rate": 6.39,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -65,19 +65,19 @@
           "rates": [
             {
               "id": "rate:anz:special:6-months",
-              "rate": 6.75,
+              "rate": 6.5,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:anz:special:1-year",
-              "rate": 6.19,
+              "rate": 5.99,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:anz:special:18-months",
-              "rate": 5.89,
+              "rate": 5.79,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -196,14 +196,20 @@
               "termInMonths": null
             },
             {
+              "id": "rate:bank-of-baroda:standard:6-months",
+              "rate": 6.99,
+              "term": "6 months",
+              "termInMonths": 6
+            },
+            {
               "id": "rate:bank-of-baroda:standard:1-year",
-              "rate": 6.89,
+              "rate": 6.59,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bank-of-baroda:standard:2-years",
-              "rate": 6.49,
+              "rate": 6.19,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -353,13 +359,13 @@
             },
             {
               "id": "rate:bnz:standard:6-months",
-              "rate": 6.75,
+              "rate": 6.49,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bnz:standard:1-year",
-              "rate": 6.19,
+              "rate": 5.99,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -371,25 +377,25 @@
             },
             {
               "id": "rate:bnz:standard:2-years",
-              "rate": 5.79,
+              "rate": 5.69,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bnz:standard:3-years",
-              "rate": 5.79,
+              "rate": 5.69,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:bnz:standard:4-years",
-              "rate": 5.69,
+              "rate": 5.59,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:bnz:standard:5-years",
-              "rate": 5.69,
+              "rate": 5.59,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2090,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-14T03:11:34.041Z"
+  "lastUpdated": "2024-10-14T05:04:53.230Z"
 }
