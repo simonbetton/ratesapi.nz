@@ -1169,13 +1169,13 @@
             },
             {
               "id": "rate:westpac:standard:6-months",
-              "rate": 7.35,
+              "rate": 7.05,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:westpac:standard:1-year",
-              "rate": 6.79,
+              "rate": 6.59,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1187,13 +1187,13 @@
             },
             {
               "id": "rate:westpac:standard:2-years",
-              "rate": 6.29,
+              "rate": 6.25,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:westpac:standard:3-years",
-              "rate": 6.29,
+              "rate": 6.25,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -1217,13 +1217,13 @@
           "rates": [
             {
               "id": "rate:westpac:special:6-months",
-              "rate": 6.75,
+              "rate": 6.45,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:westpac:special:1-year",
-              "rate": 6.19,
+              "rate": 5.99,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1235,13 +1235,13 @@
             },
             {
               "id": "rate:westpac:special:2-years",
-              "rate": 5.69,
+              "rate": 5.65,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:westpac:special:3-years",
-              "rate": 5.69,
+              "rate": 5.65,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-16T20:05:02.647Z"
+  "lastUpdated": "2024-10-16T22:04:43.384Z"
 }

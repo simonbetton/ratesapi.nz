@@ -533,13 +533,13 @@
           "rates": [
             {
               "id": "rate:mtf-finance:vehicles-loan:secured:from",
-              "rate": 11.45,
+              "rate": 10.99,
               "plan": "Secured",
               "condition": "From"
             },
             {
               "id": "rate:mtf-finance:vehicles-loan:secured:to",
-              "rate": 23.7,
+              "rate": 22.99,
               "plan": "Secured",
               "condition": "To"
             }
@@ -782,5 +782,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-09-17T19:04:31.678Z"
+  "lastUpdated": "2024-10-16T22:04:49.579Z"
 }
