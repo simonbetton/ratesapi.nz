@@ -527,19 +527,19 @@
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:6-months",
-              "rate": 6.75,
+              "rate": 6.39,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:1-year",
-              "rate": 6.19,
+              "rate": 5.99,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:18-months",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -581,19 +581,19 @@
             },
             {
               "id": "rate:co-operative-bank:standard:6-months",
-              "rate": 7.25,
+              "rate": 6.89,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:co-operative-bank:standard:1-year",
-              "rate": 6.69,
+              "rate": 6.49,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:co-operative-bank:standard:18-months",
-              "rate": 6.49,
+              "rate": 6.39,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -629,7 +629,7 @@
           "rates": [
             {
               "id": "rate:co-operative-bank:first-home-buyer-special:1-year",
-              "rate": 5.99,
+              "rate": 5.79,
               "term": "1 year",
               "termInMonths": 12
             }
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-16T22:04:43.384Z"
+  "lastUpdated": "2024-10-17T03:09:13.572Z"
 }
