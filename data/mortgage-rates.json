@@ -1409,7 +1409,7 @@
           "rates": [
             {
               "id": "rate:first-cu:special:variable-floating",
-              "rate": 8.5,
+              "rate": 7.99,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -1433,7 +1433,7 @@
           "rates": [
             {
               "id": "rate:first-cu:standard:variable-floating",
-              "rate": 8.5,
+              "rate": 7.99,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-17T03:09:13.572Z"
+  "lastUpdated": "2024-10-17T23:05:05.483Z"
 }
