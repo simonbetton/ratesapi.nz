@@ -905,7 +905,7 @@
           "rates": [
             {
               "id": "rate:sbs-bank:residential:variable-floating",
-              "rate": 8.49,
+              "rate": 7.99,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -1019,7 +1019,7 @@
           "rates": [
             {
               "id": "rate:sbs-bank:construction-lending-for-fhb:variable-floating",
-              "rate": 5.94,
+              "rate": 5.44,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -1031,7 +1031,7 @@
           "rates": [
             {
               "id": "rate:sbs-bank:unwind-reverse-equity:variable-floating",
-              "rate": 9.85,
+              "rate": 9.75,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-17T23:05:05.483Z"
+  "lastUpdated": "2024-10-18T02:27:35.166Z"
 }
