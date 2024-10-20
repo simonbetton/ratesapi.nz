@@ -1379,13 +1379,13 @@
             },
             {
               "id": "rate:wairarapa:residential:1-year",
-              "rate": 6.5,
+              "rate": 6.35,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:wairarapa:residential:18-months",
-              "rate": 6.2,
+              "rate": 6.1,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -1613,7 +1613,7 @@
           "rates": [
             {
               "id": "rate:avanti-finance:near-prime:variable-floating",
-              "rate": 8.9,
+              "rate": 8.4,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-20T20:04:26.055Z"
+  "lastUpdated": "2024-10-20T21:04:18.368Z"
 }
