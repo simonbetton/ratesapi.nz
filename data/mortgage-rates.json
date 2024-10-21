@@ -1649,7 +1649,7 @@
           "rates": [
             {
               "id": "rate:cfml-loans:home-loans:variable-floating",
-              "rate": 6.45,
+              "rate": 6.2,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-21T08:06:19.684Z"
+  "lastUpdated": "2024-10-21T20:04:52.331Z"
 }
