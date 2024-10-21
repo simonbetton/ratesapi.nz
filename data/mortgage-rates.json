@@ -431,31 +431,31 @@
             },
             {
               "id": "rate:china-construction-bank:non-standard:6-months",
-              "rate": 7.59,
+              "rate": 7.1,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:china-construction-bank:non-standard:1-year",
-              "rate": 7.45,
+              "rate": 6.99,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:china-construction-bank:non-standard:18-months",
-              "rate": 6.95,
+              "rate": 6.79,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:china-construction-bank:non-standard:2-years",
-              "rate": 6.95,
+              "rate": 6.69,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:china-construction-bank:non-standard:3-years",
-              "rate": 6.85,
+              "rate": 6.69,
               "term": "3 years",
               "termInMonths": 36
             }
@@ -467,31 +467,31 @@
           "rates": [
             {
               "id": "rate:china-construction-bank:standard:6-months",
-              "rate": 6.89,
+              "rate": 6.5,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:china-construction-bank:standard:1-year",
-              "rate": 6.45,
+              "rate": 5.99,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:china-construction-bank:standard:18-months",
-              "rate": 5.99,
+              "rate": 5.79,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:china-construction-bank:standard:2-years",
-              "rate": 5.99,
+              "rate": 5.69,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:china-construction-bank:standard:3-years",
-              "rate": 5.89,
+              "rate": 5.69,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-20T23:04:44.628Z"
+  "lastUpdated": "2024-10-21T02:28:42.318Z"
 }
