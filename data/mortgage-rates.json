@@ -1649,7 +1649,7 @@
           "rates": [
             {
               "id": "rate:cfml-loans:home-loans:variable-floating",
-              "rate": 6.95,
+              "rate": 6.45,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -1661,7 +1661,7 @@
           "rates": [
             {
               "id": "rate:cfml-loans:321-loans:variable-floating",
-              "rate": 6.7,
+              "rate": 6.2,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -1673,7 +1673,7 @@
           "rates": [
             {
               "id": "rate:cfml-loans:prime-loans:variable-floating",
-              "rate": 8.75,
+              "rate": 8.25,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -1685,7 +1685,7 @@
           "rates": [
             {
               "id": "rate:cfml-loans:standard-loans:variable-floating",
-              "rate": 9.7,
+              "rate": 9.2,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-21T02:28:42.318Z"
+  "lastUpdated": "2024-10-21T08:06:19.684Z"
 }
