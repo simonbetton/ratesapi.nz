@@ -1055,7 +1055,7 @@
             },
             {
               "id": "rate:tsb-bank:standard:6-months",
-              "rate": 7.55,
+              "rate": 7.25,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -1109,7 +1109,7 @@
             },
             {
               "id": "rate:tsb-bank:special:6-months",
-              "rate": 6.75,
+              "rate": 6.45,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-23T00:18:55.196Z"
+  "lastUpdated": "2024-10-24T20:05:16.347Z"
 }
