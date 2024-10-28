@@ -653,7 +653,7 @@
             },
             {
               "id": "rate:heartland-bank:residential:1-year",
-              "rate": 5.99,
+              "rate": 5.59,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -767,13 +767,13 @@
             },
             {
               "id": "rate:kiwibank:standard:6-months",
-              "rate": 7.55,
+              "rate": 7.39,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:kiwibank:standard:1-year",
-              "rate": 6.89,
+              "rate": 6.69,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -809,13 +809,13 @@
           "rates": [
             {
               "id": "rate:kiwibank:special:6-months",
-              "rate": 6.65,
+              "rate": 6.49,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:kiwibank:special:1-year",
-              "rate": 5.99,
+              "rate": 5.79,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1307,19 +1307,19 @@
           "rates": [
             {
               "id": "rate:heretaunga:residential:variable-floating",
-              "rate": 8.9,
+              "rate": 8.6,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:heretaunga:residential:1-year",
-              "rate": 7,
+              "rate": 6.75,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:heretaunga:residential:2-years",
-              "rate": 6.5,
+              "rate": 6.4,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-28T20:05:05.770Z"
+  "lastUpdated": "2024-10-28T21:04:28.064Z"
 }
