@@ -1517,7 +1517,7 @@
           "rates": [
             {
               "id": "rate:unity:residential:variable-floating",
-              "rate": 8.64,
+              "rate": 7.64,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-29T05:04:51.152Z"
+  "lastUpdated": "2024-10-29T21:04:25.554Z"
 }
