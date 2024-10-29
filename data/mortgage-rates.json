@@ -653,7 +653,7 @@
             },
             {
               "id": "rate:heartland-bank:residential:1-year",
-              "rate": 5.59,
+              "rate": 5.65,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-29T00:19:32.261Z"
+  "lastUpdated": "2024-10-29T05:04:51.152Z"
 }
