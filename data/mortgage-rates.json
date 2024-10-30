@@ -1379,7 +1379,7 @@
             },
             {
               "id": "rate:wairarapa:residential:1-year",
-              "rate": 6.35,
+              "rate": 6.19,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1391,7 +1391,7 @@
             },
             {
               "id": "rate:wairarapa:residential:2-years",
-              "rate": 5.89,
+              "rate": 5.79,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1835,7 +1835,7 @@
           "rates": [
             {
               "id": "rate:resimac:standard-lvr-less-than-80:variable-floating",
-              "rate": 8.59,
+              "rate": 8.09,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -1877,7 +1877,7 @@
           "rates": [
             {
               "id": "rate:resimac:standard-lvr-less-than-90:variable-floating",
-              "rate": 9.59,
+              "rate": 9.09,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-29T21:04:25.554Z"
+  "lastUpdated": "2024-10-30T02:27:47.669Z"
 }
