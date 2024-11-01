@@ -1337,7 +1337,7 @@
           "rates": [
             {
               "id": "rate:nelson:residential:variable-floating",
-              "rate": 8.44,
+              "rate": 8.1,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -1349,13 +1349,19 @@
             },
             {
               "id": "rate:nelson:residential:1-year",
-              "rate": 6.39,
+              "rate": 6.19,
               "term": "1 year",
               "termInMonths": 12
             },
             {
+              "id": "rate:nelson:residential:18-months",
+              "rate": 5.95,
+              "term": "18 months",
+              "termInMonths": 18
+            },
+            {
               "id": "rate:nelson:residential:2-years",
-              "rate": 6.09,
+              "rate": 5.79,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2096,5 +2102,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-30T02:27:47.669Z"
+  "lastUpdated": "2024-11-01T02:30:55.633Z"
 }
