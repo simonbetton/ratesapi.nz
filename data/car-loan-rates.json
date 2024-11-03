@@ -293,7 +293,7 @@
           "rates": [
             {
               "id": "rate:finance-now:personal-loan:secured:from",
-              "rate": 12.95,
+              "rate": 11.95,
               "plan": "Secured",
               "condition": "From"
             },
@@ -782,5 +782,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-10-20T21:04:23.186Z"
+  "lastUpdated": "2024-11-03T09:05:01.108Z"
 }
