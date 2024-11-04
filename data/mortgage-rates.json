@@ -1061,13 +1061,13 @@
             },
             {
               "id": "rate:tsb-bank:standard:1-year",
-              "rate": 6.79,
+              "rate": 6.49,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:tsb-bank:standard:18-months",
-              "rate": 6.79,
+              "rate": 6.69,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -1115,13 +1115,13 @@
             },
             {
               "id": "rate:tsb-bank:special:1-year",
-              "rate": 5.99,
+              "rate": 5.69,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:tsb-bank:special:18-months",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-01T05:05:11.599Z"
+  "lastUpdated": "2024-11-04T21:04:27.420Z"
 }
