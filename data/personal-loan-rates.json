@@ -338,93 +338,93 @@
       ]
     },
     {
-      "id": "institution:unity",
-      "name": "Unity",
+      "id": "institution:unitymoney",
+      "name": "UnityMoney",
       "products": [
         {
-          "id": "product:unity:personal-loan",
+          "id": "product:unitymoney:personal-loan",
           "name": "Personal Loan",
           "rates": [
             {
-              "id": "rate:unity:personal-loan:secured:blue-from",
+              "id": "rate:unitymoney:personal-loan:secured:blue-from",
               "rate": 13.9,
               "plan": "Secured",
               "condition": "Blue, from"
             },
             {
-              "id": "rate:unity:personal-loan:secured:blue-to",
+              "id": "rate:unitymoney:personal-loan:secured:blue-to",
               "rate": 15.9,
               "plan": "Secured",
               "condition": "Blue, to"
             },
             {
-              "id": "rate:unity:personal-loan:secured:green-from",
+              "id": "rate:unitymoney:personal-loan:secured:green-from",
               "rate": 9.9,
               "plan": "Secured",
               "condition": "Green, from"
             },
             {
-              "id": "rate:unity:personal-loan:secured:green-to",
+              "id": "rate:unitymoney:personal-loan:secured:green-to",
               "rate": 11.9,
               "plan": "Secured",
               "condition": "Green, to"
             },
             {
-              "id": "rate:unity:personal-loan:secured:orange",
+              "id": "rate:unitymoney:personal-loan:secured:orange",
               "rate": 21.9,
               "plan": "Secured",
               "condition": "Orange"
             },
             {
-              "id": "rate:unity:personal-loan:secured:yellow-from",
+              "id": "rate:unitymoney:personal-loan:secured:yellow-from",
               "rate": 17.9,
               "plan": "Secured",
               "condition": "Yellow, from"
             },
             {
-              "id": "rate:unity:personal-loan:secured:yellow-to",
+              "id": "rate:unitymoney:personal-loan:secured:yellow-to",
               "rate": 19.9,
               "plan": "Secured",
               "condition": "Yellow, to"
             },
             {
-              "id": "rate:unity:personal-loan:unsecured:blue-from",
+              "id": "rate:unitymoney:personal-loan:unsecured:blue-from",
               "rate": 16.9,
               "plan": "Unsecured",
               "condition": "Blue, from"
             },
             {
-              "id": "rate:unity:personal-loan:unsecured:blue-to",
+              "id": "rate:unitymoney:personal-loan:unsecured:blue-to",
               "rate": 18.9,
               "plan": "Unsecured",
               "condition": "Blue, to"
             },
             {
-              "id": "rate:unity:personal-loan:unsecured:green-from",
+              "id": "rate:unitymoney:personal-loan:unsecured:green-from",
               "rate": 12.9,
               "plan": "Unsecured",
               "condition": "Green, from"
             },
             {
-              "id": "rate:unity:personal-loan:unsecured:green-to",
+              "id": "rate:unitymoney:personal-loan:unsecured:green-to",
               "rate": 14.9,
               "plan": "Unsecured",
               "condition": "Green, to"
             },
             {
-              "id": "rate:unity:personal-loan:unsecured:orange",
+              "id": "rate:unitymoney:personal-loan:unsecured:orange",
               "rate": 24.9,
               "plan": "Unsecured",
               "condition": "Orange"
             },
             {
-              "id": "rate:unity:personal-loan:unsecured:yellow-from",
+              "id": "rate:unitymoney:personal-loan:unsecured:yellow-from",
               "rate": 20.9,
               "plan": "Unsecured",
               "condition": "Yellow, from"
             },
             {
-              "id": "rate:unity:personal-loan:unsecured:yellow-to",
+              "id": "rate:unitymoney:personal-loan:unsecured:yellow-to",
               "rate": 22.9,
               "plan": "Unsecured",
               "condition": "Yellow, to"
@@ -1082,5 +1082,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-03T09:04:59.943Z"
+  "lastUpdated": "2024-11-19T22:04:33.167Z"
 }

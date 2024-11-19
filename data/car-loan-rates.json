@@ -164,21 +164,21 @@
       ]
     },
     {
-      "id": "institution:unity",
-      "name": "Unity",
+      "id": "institution:unitymoney",
+      "name": "UnityMoney",
       "products": [
         {
-          "id": "product:unity:personal-loan",
+          "id": "product:unitymoney:personal-loan",
           "name": "Personal Loan",
           "rates": [
             {
-              "id": "rate:unity:personal-loan:secured:from",
+              "id": "rate:unitymoney:personal-loan:secured:from",
               "rate": 13.95,
               "plan": "Secured",
               "condition": "From"
             },
             {
-              "id": "rate:unity:personal-loan:secured:premium-rate-from",
+              "id": "rate:unitymoney:personal-loan:secured:premium-rate-from",
               "rate": 9.9,
               "plan": "Secured",
               "condition": "Premium rate from"
@@ -782,5 +782,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-03T09:05:01.108Z"
+  "lastUpdated": "2024-11-19T22:04:36.057Z"
 }
