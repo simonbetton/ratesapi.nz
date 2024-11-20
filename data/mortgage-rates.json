@@ -3,7 +3,7 @@
   "data": [
     {
       "id": "institution:kookmin-leaving-soon",
-      "name": "Kookmin (leaving soon)",
+      "name": "Kookmin      leaving soon",
       "products": [
         {
           "id": "product:kookmin-leaving-soon:standard",
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-20T19:04:17.356Z"
+  "lastUpdated": "2024-11-20T20:05:04.999Z"
 }
