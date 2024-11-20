@@ -2,33 +2,33 @@
   "type": "MortgageRates",
   "data": [
     {
-      "id": "institution:kookmin-leaving-soon",
-      "name": "Kookmin      leaving soon",
+      "id": "institution:kookmin",
+      "name": "Kookmin",
       "products": [
         {
-          "id": "product:kookmin-leaving-soon:standard",
+          "id": "product:kookmin:standard",
           "name": "Standard",
           "rates": [
             {
-              "id": "rate:kookmin-leaving-soon:standard:variable-floating",
+              "id": "rate:kookmin:standard:variable-floating",
               "rate": 9,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
-              "id": "rate:kookmin-leaving-soon:standard:6-months",
+              "id": "rate:kookmin:standard:6-months",
               "rate": 7.6,
               "term": "6 months",
               "termInMonths": 6
             },
             {
-              "id": "rate:kookmin-leaving-soon:standard:1-year",
+              "id": "rate:kookmin:standard:1-year",
               "rate": 7.6,
               "term": "1 year",
               "termInMonths": 12
             },
             {
-              "id": "rate:kookmin-leaving-soon:standard:2-years",
+              "id": "rate:kookmin:standard:2-years",
               "rate": 7.6,
               "term": "2 years",
               "termInMonths": 24
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-20T20:05:04.999Z"
+  "lastUpdated": "2024-11-20T21:04:17.673Z"
 }
