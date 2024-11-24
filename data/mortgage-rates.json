@@ -1277,7 +1277,7 @@
             },
             {
               "id": "rate:heretaunga:residential:1-year",
-              "rate": 6.75,
+              "rate": 6.65,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -2060,5 +2060,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-21T01:32:07.478Z"
+  "lastUpdated": "2024-11-24T21:04:04.541Z"
 }
