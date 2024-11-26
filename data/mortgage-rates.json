@@ -17,31 +17,31 @@
             },
             {
               "id": "rate:anz:standard:6-months",
-              "rate": 7.1,
+              "rate": 6.84,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:anz:standard:1-year",
-              "rate": 6.59,
+              "rate": 6.39,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:anz:standard:18-months",
-              "rate": 6.39,
+              "rate": 6.19,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:anz:standard:2-years",
-              "rate": 6.29,
+              "rate": 6.19,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:anz:standard:3-years",
-              "rate": 6.29,
+              "rate": 6.19,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -65,31 +65,31 @@
           "rates": [
             {
               "id": "rate:anz:special:6-months",
-              "rate": 6.5,
+              "rate": 6.24,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:anz:special:1-year",
-              "rate": 5.99,
+              "rate": 5.79,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:anz:special:18-months",
-              "rate": 5.79,
+              "rate": 5.59,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:anz:special:2-years",
-              "rate": 5.69,
+              "rate": 5.59,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:anz:special:3-years",
-              "rate": 5.69,
+              "rate": 5.59,
               "term": "3 years",
               "termInMonths": 36
             }
@@ -2060,5 +2060,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-24T21:04:04.541Z"
+  "lastUpdated": "2024-11-26T05:04:59.365Z"
 }
