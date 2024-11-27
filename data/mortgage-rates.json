@@ -521,7 +521,7 @@
           "rates": [
             {
               "id": "rate:co-operative-bank:owner-occupied:variable-floating",
-              "rate": 7.65,
+              "rate": 6.95,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2060,5 +2060,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-27T04:05:48.876Z"
+  "lastUpdated": "2024-11-27T05:04:55.353Z"
 }
