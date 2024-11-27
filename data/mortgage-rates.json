@@ -11,7 +11,7 @@
           "rates": [
             {
               "id": "rate:anz:standard:variable-floating",
-              "rate": 7.89,
+              "rate": 7.39,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -341,7 +341,7 @@
           "rates": [
             {
               "id": "rate:bnz:totalmoney:variable-floating",
-              "rate": 7.94,
+              "rate": 7.54,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -353,7 +353,7 @@
           "rates": [
             {
               "id": "rate:bnz:standard:variable-floating",
-              "rate": 7.94,
+              "rate": 7.44,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -1013,7 +1013,7 @@
           "rates": [
             {
               "id": "rate:tsb-bank:standard:variable-floating",
-              "rate": 8.69,
+              "rate": 8.19,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -1067,7 +1067,7 @@
           "rates": [
             {
               "id": "rate:tsb-bank:special:variable-floating",
-              "rate": 7.89,
+              "rate": 7.39,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2060,5 +2060,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-27T01:32:24.033Z"
+  "lastUpdated": "2024-11-27T02:30:59.242Z"
 }
