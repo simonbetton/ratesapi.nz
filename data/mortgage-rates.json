@@ -1271,13 +1271,13 @@
           "rates": [
             {
               "id": "rate:heretaunga:residential:variable-floating",
-              "rate": 8.6,
+              "rate": 8.15,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:heretaunga:residential:1-year",
-              "rate": 6.65,
+              "rate": 6.55,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -2060,5 +2060,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-27T20:05:15.905Z"
+  "lastUpdated": "2024-11-27T22:04:39.264Z"
 }
