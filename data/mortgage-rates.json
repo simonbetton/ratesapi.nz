@@ -851,7 +851,7 @@
           "rates": [
             {
               "id": "rate:kiwibank:offset-mortgage:variable-floating",
-              "rate": 7.75,
+              "rate": 7.25,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2060,5 +2060,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-27T05:04:55.353Z"
+  "lastUpdated": "2024-11-27T20:05:15.905Z"
 }
