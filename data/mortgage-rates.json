@@ -119,7 +119,7 @@
           "rates": [
             {
               "id": "rate:asb:standard:variable-floating",
-              "rate": 7.89,
+              "rate": 7.39,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -575,7 +575,7 @@
           "rates": [
             {
               "id": "rate:co-operative-bank:standard:variable-floating",
-              "rate": 7.65,
+              "rate": 6.95,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -761,7 +761,7 @@
           "rates": [
             {
               "id": "rate:kiwibank:standard:variable-floating",
-              "rate": 7.75,
+              "rate": 7.25,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2060,5 +2060,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-26T05:04:59.365Z"
+  "lastUpdated": "2024-11-27T01:32:24.033Z"
 }
