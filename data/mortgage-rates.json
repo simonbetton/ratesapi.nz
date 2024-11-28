@@ -983,7 +983,7 @@
           "rates": [
             {
               "id": "rate:sbs-bank:construction-lending-for-fhb:variable-floating",
-              "rate": 5.44,
+              "rate": 4.94,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2060,5 +2060,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-27T23:04:43.362Z"
+  "lastUpdated": "2024-11-28T00:20:29.667Z"
 }
