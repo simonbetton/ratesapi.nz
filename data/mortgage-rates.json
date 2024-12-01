@@ -125,31 +125,31 @@
             },
             {
               "id": "rate:asb:standard:6-months",
-              "rate": 6.39,
+              "rate": 6.19,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:asb:standard:1-year",
-              "rate": 5.99,
+              "rate": 5.79,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:asb:standard:18-months",
-              "rate": 5.79,
+              "rate": 5.59,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:asb:standard:2-years",
-              "rate": 5.69,
+              "rate": 5.49,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:asb:standard:3-years",
-              "rate": 5.69,
+              "rate": 5.59,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -1433,13 +1433,13 @@
             },
             {
               "id": "rate:police-cu:standard:1-year",
-              "rate": 5.99,
+              "rate": 5.79,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:police-cu:standard:2-years",
-              "rate": 5.69,
+              "rate": 5.59,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1457,13 +1457,13 @@
             },
             {
               "id": "rate:police-cu:shared-ownership:1-year",
-              "rate": 6.59,
+              "rate": 6.39,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:police-cu:shared-ownership:2-years",
-              "rate": 6.29,
+              "rate": 6.19,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1943,31 +1943,31 @@
             },
             {
               "id": "rate:aia:standard-go:6-months",
-              "rate": 6.39,
+              "rate": 6.19,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:aia:standard-go:1-year",
-              "rate": 5.99,
+              "rate": 5.79,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:aia:standard-go:18-months",
-              "rate": 5.79,
+              "rate": 5.59,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:aia:standard-go:2-years",
-              "rate": 5.69,
+              "rate": 5.49,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:aia:standard-go:3-years",
-              "rate": 5.69,
+              "rate": 5.59,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -2060,5 +2060,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-29T01:32:18.947Z"
+  "lastUpdated": "2024-12-01T18:05:23.002Z"
 }
