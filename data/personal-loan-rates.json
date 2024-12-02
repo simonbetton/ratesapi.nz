@@ -538,15 +538,15 @@
           "name": "Personal Loan",
           "rates": [
             {
-              "id": "rate:avanti-finance:personal-loan:secured:from",
-              "rate": 10.25,
-              "plan": "Secured",
+              "id": "rate:avanti-finance:personal-loan:unsecured:from",
+              "rate": 14.95,
+              "plan": "Unsecured",
               "condition": "From"
             },
             {
-              "id": "rate:avanti-finance:personal-loan:secured:to",
-              "rate": 21.3,
-              "plan": "Secured",
+              "id": "rate:avanti-finance:personal-loan:unsecured:to",
+              "rate": 27.95,
+              "plan": "Unsecured",
               "condition": "To"
             }
           ]
@@ -1082,5 +1082,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-19T22:04:33.167Z"
+  "lastUpdated": "2024-12-02T20:04:30.952Z"
 }
