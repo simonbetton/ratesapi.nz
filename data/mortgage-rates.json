@@ -875,25 +875,25 @@
             },
             {
               "id": "rate:sbs-bank:residential:6-months",
-              "rate": 7.2,
+              "rate": 6.84,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:sbs-bank:residential:1-year",
-              "rate": 6.75,
+              "rate": 6.49,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:sbs-bank:residential:18-months",
-              "rate": 6.39,
+              "rate": 6.19,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:sbs-bank:residential:2-years",
-              "rate": 6.29,
+              "rate": 6.09,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -923,25 +923,25 @@
           "rates": [
             {
               "id": "rate:sbs-bank:special:6-months",
-              "rate": 6.6,
+              "rate": 6.24,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:sbs-bank:special:1-year",
-              "rate": 6.15,
+              "rate": 5.89,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:sbs-bank:special:18-months",
-              "rate": 5.79,
+              "rate": 5.59,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:sbs-bank:special:2-years",
-              "rate": 5.69,
+              "rate": 5.49,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -971,7 +971,7 @@
           "rates": [
             {
               "id": "rate:sbs-bank:first-home-combo:1-year",
-              "rate": 5.15,
+              "rate": 4.89,
               "term": "1 year",
               "termInMonths": 12
             }
@@ -1337,25 +1337,25 @@
           "rates": [
             {
               "id": "rate:wairarapa:residential:variable-floating",
-              "rate": 8.1,
+              "rate": 7.7,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:wairarapa:residential:1-year",
-              "rate": 6.05,
+              "rate": 5.95,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:wairarapa:residential:18-months",
-              "rate": 5.95,
+              "rate": 5.85,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:wairarapa:residential:2-years",
-              "rate": 5.79,
+              "rate": 5.75,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2060,5 +2060,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-12-05T21:04:44.269Z"
+  "lastUpdated": "2024-12-05T23:04:53.446Z"
 }
