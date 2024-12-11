@@ -1298,27 +1298,27 @@
       ]
     },
     {
-      "id": "institution:heretaunga",
-      "name": "Heretaunga",
+      "id": "institution:heretaunga-bldg-socy",
+      "name": "Heretaunga Bldg Socy",
       "products": [
         {
-          "id": "product:heretaunga:residential",
+          "id": "product:heretaunga-bldg-socy:residential",
           "name": "Residential",
           "rates": [
             {
-              "id": "rate:heretaunga:residential:variable-floating",
+              "id": "rate:heretaunga-bldg-socy:residential:variable-floating",
               "rate": 8.15,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
-              "id": "rate:heretaunga:residential:1-year",
+              "id": "rate:heretaunga-bldg-socy:residential:1-year",
               "rate": 6.55,
               "term": "1 year",
               "termInMonths": 12
             },
             {
-              "id": "rate:heretaunga:residential:2-years",
+              "id": "rate:heretaunga-bldg-socy:residential:2-years",
               "rate": 6.4,
               "term": "2 years",
               "termInMonths": 24
@@ -1328,33 +1328,33 @@
       ]
     },
     {
-      "id": "institution:nelson",
-      "name": "Nelson",
+      "id": "institution:nelson-bldg-socy",
+      "name": "Nelson Bldg Socy",
       "products": [
         {
-          "id": "product:nelson:residential",
+          "id": "product:nelson-bldg-socy:residential",
           "name": "Residential",
           "rates": [
             {
-              "id": "rate:nelson:residential:variable-floating",
+              "id": "rate:nelson-bldg-socy:residential:variable-floating",
               "rate": 7.94,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
-              "id": "rate:nelson:residential:6-months",
+              "id": "rate:nelson-bldg-socy:residential:6-months",
               "rate": 6.64,
               "term": "6 months",
               "termInMonths": 6
             },
             {
-              "id": "rate:nelson:residential:1-year",
+              "id": "rate:nelson-bldg-socy:residential:1-year",
               "rate": 5.75,
               "term": "1 year",
               "termInMonths": 12
             },
             {
-              "id": "rate:nelson:residential:2-years",
+              "id": "rate:nelson-bldg-socy:residential:2-years",
               "rate": 5.99,
               "term": "2 years",
               "termInMonths": 24
@@ -1364,33 +1364,33 @@
       ]
     },
     {
-      "id": "institution:wairarapa",
-      "name": "Wairarapa",
+      "id": "institution:wairarapa-bldg-socy",
+      "name": "Wairarapa Bldg Socy",
       "products": [
         {
-          "id": "product:wairarapa:residential",
+          "id": "product:wairarapa-bldg-socy:residential",
           "name": "Residential",
           "rates": [
             {
-              "id": "rate:wairarapa:residential:variable-floating",
+              "id": "rate:wairarapa-bldg-socy:residential:variable-floating",
               "rate": 7.7,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
-              "id": "rate:wairarapa:residential:1-year",
+              "id": "rate:wairarapa-bldg-socy:residential:1-year",
               "rate": 5.95,
               "term": "1 year",
               "termInMonths": 12
             },
             {
-              "id": "rate:wairarapa:residential:18-months",
+              "id": "rate:wairarapa-bldg-socy:residential:18-months",
               "rate": 5.85,
               "term": "18 months",
               "termInMonths": 18
             },
             {
-              "id": "rate:wairarapa:residential:2-years",
+              "id": "rate:wairarapa-bldg-socy:residential:2-years",
               "rate": 5.75,
               "term": "2 years",
               "termInMonths": 24
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-12-11T20:05:12.907Z"
+  "lastUpdated": "2024-12-11T22:04:47.311Z"
 }

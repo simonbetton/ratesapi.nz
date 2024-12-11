@@ -278,15 +278,15 @@
       ]
     },
     {
-      "id": "institution:nelson",
-      "name": "Nelson",
+      "id": "institution:nelson-bldg-socy",
+      "name": "Nelson Bldg Socy",
       "products": [
         {
-          "id": "product:nelson:personal-loan",
+          "id": "product:nelson-bldg-socy:personal-loan",
           "name": "Personal Loan",
           "rates": [
             {
-              "id": "rate:nelson:personal-loan:secured",
+              "id": "rate:nelson-bldg-socy:personal-loan:secured",
               "rate": 16,
               "plan": "Secured",
               "condition": null
@@ -1082,5 +1082,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-12-02T20:04:30.952Z"
+  "lastUpdated": "2024-12-11T22:04:49.088Z"
 }
