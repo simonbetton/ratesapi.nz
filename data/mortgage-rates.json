@@ -527,7 +527,7 @@
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:6-months",
-              "rate": 6.19,
+              "rate": 6.09,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -581,7 +581,7 @@
             },
             {
               "id": "rate:co-operative-bank:standard:6-months",
-              "rate": 6.69,
+              "rate": 6.59,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-12-09T21:04:40.656Z"
+  "lastUpdated": "2024-12-11T01:32:28.969Z"
 }
