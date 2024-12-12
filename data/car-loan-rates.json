@@ -128,6 +128,24 @@
       ]
     },
     {
+      "id": "institution:squirrel-money",
+      "name": "Squirrel Money",
+      "products": [
+        {
+          "id": "product:squirrel-money:vehicle-loans",
+          "name": "Vehicle Loans",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:vehicle-loans:secured",
+              "rate": 8.95,
+              "plan": "Secured",
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "institution:first-cu",
       "name": "First CU",
       "products": [
@@ -782,5 +800,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-11-19T22:04:36.057Z"
+  "lastUpdated": "2024-12-12T23:05:06.438Z"
 }

@@ -278,6 +278,96 @@
       ]
     },
     {
+      "id": "institution:squirrel-money",
+      "name": "Squirrel Money",
+      "products": [
+        {
+          "id": "product:squirrel-money:credit-grade-a",
+          "name": "Credit Grade A",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:credit-grade-a:unsecured",
+              "rate": 8.95,
+              "plan": "Unsecured",
+              "condition": null
+            }
+          ]
+        },
+        {
+          "id": "product:squirrel-money:credit-grade-b",
+          "name": "Credit Grade B",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:credit-grade-b:unsecured",
+              "rate": 11.45,
+              "plan": "Unsecured",
+              "condition": null
+            }
+          ]
+        },
+        {
+          "id": "product:squirrel-money:credit-grade-c",
+          "name": "Credit Grade C",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:credit-grade-c:unsecured",
+              "rate": 12.95,
+              "plan": "Unsecured",
+              "condition": null
+            }
+          ]
+        },
+        {
+          "id": "product:squirrel-money:credit-grade-d",
+          "name": "Credit Grade D",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:credit-grade-d:unsecured",
+              "rate": 15.95,
+              "plan": "Unsecured",
+              "condition": null
+            }
+          ]
+        },
+        {
+          "id": "product:squirrel-money:homeowners-loan-1-year",
+          "name": "Homeowner's loan; 1 Year",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:homeowners-loan-1-year:unsecured",
+              "rate": 8,
+              "plan": "Unsecured",
+              "condition": null
+            }
+          ]
+        },
+        {
+          "id": "product:squirrel-money:homeowners-loan-2-3-years",
+          "name": "Homeowner's loan; 2 - 3 Years",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:homeowners-loan-2-3-years:unsecured",
+              "rate": 8,
+              "plan": "Unsecured",
+              "condition": null
+            }
+          ]
+        },
+        {
+          "id": "product:squirrel-money:homeowners-loan-5-7-years",
+          "name": "Homeowner's loan; 5 - 7 Years",
+          "rates": [
+            {
+              "id": "rate:squirrel-money:homeowners-loan-5-7-years:unsecured",
+              "rate": 7.75,
+              "plan": "Unsecured",
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "institution:nelson-bldg-socy",
       "name": "Nelson Bldg Socy",
       "products": [
@@ -1082,5 +1172,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-12-12T16:05:26.722Z"
+  "lastUpdated": "2024-12-12T23:05:04.088Z"
 }
