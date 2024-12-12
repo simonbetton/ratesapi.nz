@@ -1313,13 +1313,13 @@
             },
             {
               "id": "rate:heretaunga-bldg-socy:residential:1-year",
-              "rate": 6.55,
+              "rate": 6.5,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:heretaunga-bldg-socy:residential:2-years",
-              "rate": 6.4,
+              "rate": 6.3,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-12-11T22:04:47.311Z"
+  "lastUpdated": "2024-12-12T01:32:39.317Z"
 }
