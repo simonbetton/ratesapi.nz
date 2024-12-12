@@ -182,6 +182,90 @@
       ]
     },
     {
+      "id": "institution:bnz",
+      "name": "BNZ",
+      "products": [
+        {
+          "id": "product:bnz:totalmoney",
+          "name": "TotalMoney",
+          "rates": [
+            {
+              "id": "rate:bnz:totalmoney:variable-floating",
+              "rate": 7.54,
+              "term": "Variable floating",
+              "termInMonths": null
+            }
+          ]
+        },
+        {
+          "id": "product:bnz:standard",
+          "name": "Standard",
+          "rates": [
+            {
+              "id": "rate:bnz:standard:variable-floating",
+              "rate": 7.44,
+              "term": "Variable floating",
+              "termInMonths": null
+            },
+            {
+              "id": "rate:bnz:standard:6-months",
+              "rate": 5.99,
+              "term": "6 months",
+              "termInMonths": 6
+            },
+            {
+              "id": "rate:bnz:standard:1-year",
+              "rate": 5.79,
+              "term": "1 year",
+              "termInMonths": 12
+            },
+            {
+              "id": "rate:bnz:standard:18-months",
+              "rate": 5.59,
+              "term": "18 months",
+              "termInMonths": 18
+            },
+            {
+              "id": "rate:bnz:standard:2-years",
+              "rate": 5.59,
+              "term": "2 years",
+              "termInMonths": 24
+            },
+            {
+              "id": "rate:bnz:standard:3-years",
+              "rate": 5.69,
+              "term": "3 years",
+              "termInMonths": 36
+            },
+            {
+              "id": "rate:bnz:standard:4-years",
+              "rate": 5.79,
+              "term": "4 years",
+              "termInMonths": 48
+            },
+            {
+              "id": "rate:bnz:standard:5-years",
+              "rate": 5.89,
+              "term": "5 years",
+              "termInMonths": 60
+            }
+          ]
+        },
+        {
+          "id": "product:bnz:green-home-loan-top-ups",
+          "name": "Green Home Loan top-ups",
+          "rates": [
+            {
+              "id": "rate:bnz:green-home-loan-top-ups:3-years",
+              "rate": 1,
+              "term": "3 years",
+              "termInMonths": 36
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "institution:bank-of-baroda",
       "name": "Bank of Baroda",
       "products": [
@@ -326,90 +410,6 @@
               "rate": 5.49,
               "term": "5 years",
               "termInMonths": 60
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "institution:bnz",
-      "name": "BNZ",
-      "products": [
-        {
-          "id": "product:bnz:totalmoney",
-          "name": "TotalMoney",
-          "rates": [
-            {
-              "id": "rate:bnz:totalmoney:variable-floating",
-              "rate": 7.54,
-              "term": "Variable floating",
-              "termInMonths": null
-            }
-          ]
-        },
-        {
-          "id": "product:bnz:standard",
-          "name": "Standard",
-          "rates": [
-            {
-              "id": "rate:bnz:standard:variable-floating",
-              "rate": 7.44,
-              "term": "Variable floating",
-              "termInMonths": null
-            },
-            {
-              "id": "rate:bnz:standard:6-months",
-              "rate": 5.99,
-              "term": "6 months",
-              "termInMonths": 6
-            },
-            {
-              "id": "rate:bnz:standard:1-year",
-              "rate": 5.79,
-              "term": "1 year",
-              "termInMonths": 12
-            },
-            {
-              "id": "rate:bnz:standard:18-months",
-              "rate": 5.59,
-              "term": "18 months",
-              "termInMonths": 18
-            },
-            {
-              "id": "rate:bnz:standard:2-years",
-              "rate": 5.59,
-              "term": "2 years",
-              "termInMonths": 24
-            },
-            {
-              "id": "rate:bnz:standard:3-years",
-              "rate": 5.69,
-              "term": "3 years",
-              "termInMonths": 36
-            },
-            {
-              "id": "rate:bnz:standard:4-years",
-              "rate": 5.79,
-              "term": "4 years",
-              "termInMonths": 48
-            },
-            {
-              "id": "rate:bnz:standard:5-years",
-              "rate": 5.89,
-              "term": "5 years",
-              "termInMonths": 60
-            }
-          ]
-        },
-        {
-          "id": "product:bnz:green-home-loan-top-ups",
-          "name": "Green Home Loan top-ups",
-          "rates": [
-            {
-              "id": "rate:bnz:green-home-loan-top-ups:3-years",
-              "rate": 1,
-              "term": "3 years",
-              "termInMonths": 36
             }
           ]
         }
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-12-12T02:31:43.578Z"
+  "lastUpdated": "2024-12-12T16:05:23.349Z"
 }
