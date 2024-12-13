@@ -1031,7 +1031,7 @@
           "rates": [
             {
               "id": "rate:sbs-bank:unwind-reverse-equity:variable-floating",
-              "rate": 9.75,
+              "rate": 9.39,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-12-12T16:05:23.349Z"
+  "lastUpdated": "2024-12-13T03:19:14.716Z"
 }
