@@ -24,7 +24,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "husky": "^9.1.6",
     "pino": "^9.5.0",
-    "pino-pretty": "^11.3.0",
+    "pino-pretty": "^13.0.0",
     "wrangler": "^3.83.0"
   },
   "lint-staged": {
