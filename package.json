@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241022.0",
-    "@total-typescript/ts-reset": "^0.5.1",
+    "@total-typescript/ts-reset": "^0.6.1",
     "@typescript-eslint/eslint-plugin": "7.9.0",
     "@typescript-eslint/parser": "^8.12.2",
     "eslint": "^9.13.0",
