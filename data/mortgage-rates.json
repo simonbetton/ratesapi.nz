@@ -311,7 +311,7 @@
           "rates": [
             {
               "id": "rate:bank-of-china:standard:variable-floating",
-              "rate": 9.39,
+              "rate": 8.89,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -365,7 +365,7 @@
           "rates": [
             {
               "id": "rate:bank-of-china:special:variable-floating",
-              "rate": 7.49,
+              "rate": 6.99,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-12-13T03:19:14.716Z"
+  "lastUpdated": "2024-12-16T19:04:06.164Z"
 }
