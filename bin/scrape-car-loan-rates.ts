@@ -1,4 +1,5 @@
-import { load, type CheerioAPI, type Element } from "cheerio";
+import { load, type CheerioAPI } from "cheerio";
+import { type Element } from "domhandler";
 import ora from "ora";
 import CarLoanRatesFromJson from "../data/car-loan-rates.json";
 import { generateId } from "../src/lib/generate-id";

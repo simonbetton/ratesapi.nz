@@ -48,6 +48,24 @@ bun run dev
 
 #### 🚀 Deploy to Cloudflare Workers
 
+First, create your worker via the Cloudflare dashboard by following these steps:
+
+- Log in to the Cloudflare dashboard and select your account.
+- Select Workers & Pages > Create application.
+- Select Create Worker > Deploy.
+
+Then, deploy the worker using the following command:
+
 ```zsh
 bun run deploy
+```
+
+#### 🔩 Scrape data
+
+Check out the available scripts within `./bin` to scrape and save data.
+
+e.g.
+
+```zsh
+bun run bin/scrape-mortgage-rates.ts
 ```

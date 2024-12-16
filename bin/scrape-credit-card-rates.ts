@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
-import { load, type CheerioAPI, type Element } from "cheerio";
+import { load, type CheerioAPI } from "cheerio";
+import { type Element } from "domhandler";
 import ora from "ora";
 import CreditCardRatesFromJson from "../data/credit-card-rates.json";
 import { generateId } from "../src/lib/generate-id";
