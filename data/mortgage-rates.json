@@ -1835,13 +1835,13 @@
           "rates": [
             {
               "id": "rate:resimac:standard-lvr-less-than-80:variable-floating",
-              "rate": 8.09,
+              "rate": 7.59,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:resimac:standard-lvr-less-than-80:1-year",
-              "rate": 6.7,
+              "rate": 6.55,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1877,13 +1877,13 @@
           "rates": [
             {
               "id": "rate:resimac:standard-lvr-less-than-90:variable-floating",
-              "rate": 9.09,
+              "rate": 8.59,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:resimac:standard-lvr-less-than-90:1-year",
-              "rate": 7.7,
+              "rate": 7.55,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-12-16T19:04:06.164Z"
+  "lastUpdated": "2024-12-17T02:31:28.909Z"
 }
