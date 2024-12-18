@@ -869,7 +869,7 @@
           "rates": [
             {
               "id": "rate:kookmin:standard:variable-floating",
-              "rate": 9,
+              "rate": 8.5,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-12-17T02:31:28.909Z"
+  "lastUpdated": "2024-12-18T19:04:20.694Z"
 }
