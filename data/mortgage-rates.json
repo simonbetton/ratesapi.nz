@@ -1364,33 +1364,33 @@
       ]
     },
     {
-      "id": "institution:wairarapa-bldg-socy",
-      "name": "Wairarapa Bldg Socy",
+      "id": "institution:wairarapa-bldg-society",
+      "name": "Wairarapa Bldg Society",
       "products": [
         {
-          "id": "product:wairarapa-bldg-socy:residential",
+          "id": "product:wairarapa-bldg-society:residential",
           "name": "Residential",
           "rates": [
             {
-              "id": "rate:wairarapa-bldg-socy:residential:variable-floating",
+              "id": "rate:wairarapa-bldg-society:residential:variable-floating",
               "rate": 7.7,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
-              "id": "rate:wairarapa-bldg-socy:residential:1-year",
+              "id": "rate:wairarapa-bldg-society:residential:1-year",
               "rate": 5.95,
               "term": "1 year",
               "termInMonths": 12
             },
             {
-              "id": "rate:wairarapa-bldg-socy:residential:18-months",
+              "id": "rate:wairarapa-bldg-society:residential:18-months",
               "rate": 5.85,
               "term": "18 months",
               "termInMonths": 18
             },
             {
-              "id": "rate:wairarapa-bldg-socy:residential:2-years",
+              "id": "rate:wairarapa-bldg-society:residential:2-years",
               "rate": 5.75,
               "term": "2 years",
               "termInMonths": 24
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-12-18T19:04:20.694Z"
+  "lastUpdated": "2025-01-06T23:04:41.541Z"
 }
