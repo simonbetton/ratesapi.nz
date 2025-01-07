@@ -726,24 +726,6 @@
       "name": "Toyota Financial Services",
       "products": [
         {
-          "id": "product:toyota-financial-services:classic-choices",
-          "name": "Classic / Choices",
-          "rates": [
-            {
-              "id": "rate:toyota-financial-services:classic-choices:secured:from",
-              "rate": 8.25,
-              "plan": "Secured",
-              "condition": "From"
-            },
-            {
-              "id": "rate:toyota-financial-services:classic-choices:secured:to",
-              "rate": 13.95,
-              "plan": "Secured",
-              "condition": "To"
-            }
-          ]
-        },
-        {
           "id": "product:toyota-financial-services:marine-loan",
           "name": "Marine Loan",
           "rates": [
@@ -756,6 +738,24 @@
             {
               "id": "rate:toyota-financial-services:marine-loan:secured:to",
               "rate": 15.95,
+              "plan": "Secured",
+              "condition": "To"
+            }
+          ]
+        },
+        {
+          "id": "product:toyota-financial-services:classic-choices",
+          "name": "Classic / Choices",
+          "rates": [
+            {
+              "id": "rate:toyota-financial-services:classic-choices:secured:from",
+              "rate": 8.25,
+              "plan": "Secured",
+              "condition": "From"
+            },
+            {
+              "id": "rate:toyota-financial-services:classic-choices:secured:to",
+              "rate": 13.95,
               "plan": "Secured",
               "condition": "To"
             }
@@ -800,5 +800,5 @@
       ]
     }
   ],
-  "lastUpdated": "2024-12-12T23:05:06.438Z"
+  "lastUpdated": "2025-01-07T08:05:58.606Z"
 }

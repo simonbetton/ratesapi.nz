@@ -126,6 +126,18 @@
       "name": "Heartland Bank",
       "products": [
         {
+          "id": "product:heartland-bank:youchoose-overdraft",
+          "name": "YouChoose Overdraft",
+          "rates": [
+            {
+              "id": "rate:heartland-bank:youchoose-overdraft:unsecured",
+              "rate": 10,
+              "plan": "Unsecured",
+              "condition": null
+            }
+          ]
+        },
+        {
           "id": "product:heartland-bank:personal-loan",
           "name": "Personal Loan",
           "rates": [
@@ -140,18 +152,6 @@
               "rate": 15.95,
               "plan": "Unsecured",
               "condition": "To"
-            }
-          ]
-        },
-        {
-          "id": "product:heartland-bank:youchoose-overdraft",
-          "name": "YouChoose Overdraft",
-          "rates": [
-            {
-              "id": "rate:heartland-bank:youchoose-overdraft:unsecured",
-              "rate": 10,
-              "plan": "Unsecured",
-              "condition": null
             }
           ]
         }
@@ -1172,5 +1172,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-01-07T04:05:35.409Z"
+  "lastUpdated": "2025-01-07T08:05:56.602Z"
 }
