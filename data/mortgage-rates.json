@@ -1328,33 +1328,33 @@
       ]
     },
     {
-      "id": "institution:nelson-bldg-socy",
-      "name": "Nelson Bldg Socy",
+      "id": "institution:nelson-bldg-society",
+      "name": "Nelson Bldg Society",
       "products": [
         {
-          "id": "product:nelson-bldg-socy:residential",
+          "id": "product:nelson-bldg-society:residential",
           "name": "Residential",
           "rates": [
             {
-              "id": "rate:nelson-bldg-socy:residential:variable-floating",
+              "id": "rate:nelson-bldg-society:residential:variable-floating",
               "rate": 7.94,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
-              "id": "rate:nelson-bldg-socy:residential:6-months",
+              "id": "rate:nelson-bldg-society:residential:6-months",
               "rate": 6.64,
               "term": "6 months",
               "termInMonths": 6
             },
             {
-              "id": "rate:nelson-bldg-socy:residential:1-year",
+              "id": "rate:nelson-bldg-society:residential:1-year",
               "rate": 5.75,
               "term": "1 year",
               "termInMonths": 12
             },
             {
-              "id": "rate:nelson-bldg-socy:residential:2-years",
+              "id": "rate:nelson-bldg-society:residential:2-years",
               "rate": 5.99,
               "term": "2 years",
               "termInMonths": 24
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-01-06T23:04:41.541Z"
+  "lastUpdated": "2025-01-07T03:10:06.398Z"
 }
