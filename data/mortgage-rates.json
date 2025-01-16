@@ -1169,7 +1169,7 @@
             },
             {
               "id": "rate:westpac:standard:6-months",
-              "rate": 6.79,
+              "rate": 6.59,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -1217,7 +1217,7 @@
           "rates": [
             {
               "id": "rate:westpac:special:6-months",
-              "rate": 6.19,
+              "rate": 5.99,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-01-15T01:31:33.062Z"
+  "lastUpdated": "2025-01-16T02:23:18.986Z"
 }
