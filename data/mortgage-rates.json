@@ -1739,25 +1739,25 @@
           "rates": [
             {
               "id": "rate:liberty-financial:residential:variable-floating",
-              "rate": 8.15,
+              "rate": 7.65,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:liberty-financial:residential:1-year",
-              "rate": 8.05,
+              "rate": 7.55,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:liberty-financial:residential:2-years",
-              "rate": 7.75,
+              "rate": 7.25,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:liberty-financial:residential:3-years",
-              "rate": 7.7,
+              "rate": 7.2,
               "term": "3 years",
               "termInMonths": 36
             }
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-01-16T20:04:45.382Z"
+  "lastUpdated": "2025-01-19T23:04:34.041Z"
 }
