@@ -317,25 +317,25 @@
             },
             {
               "id": "rate:bank-of-china:standard:6-months",
-              "rate": 7.19,
+              "rate": 6.95,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bank-of-china:standard:1-year",
-              "rate": 6.79,
+              "rate": 6.55,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bank-of-china:standard:18-months",
-              "rate": 6.59,
+              "rate": 6.35,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bank-of-china:standard:2-years",
-              "rate": 6.49,
+              "rate": 6.39,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -371,25 +371,25 @@
             },
             {
               "id": "rate:bank-of-china:special:6-months",
-              "rate": 6.19,
+              "rate": 5.95,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bank-of-china:special:1-year",
-              "rate": 5.79,
+              "rate": 5.55,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bank-of-china:special:18-months",
-              "rate": 5.59,
+              "rate": 5.35,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bank-of-china:special:2-years",
-              "rate": 5.49,
+              "rate": 5.39,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-01-24T02:24:09.239Z"
+  "lastUpdated": "2025-01-26T20:04:42.862Z"
 }
