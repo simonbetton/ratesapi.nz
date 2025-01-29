@@ -215,7 +215,7 @@
             },
             {
               "id": "rate:bnz:standard:1-year",
-              "rate": 5.59,
+              "rate": 5.55,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -233,19 +233,19 @@
             },
             {
               "id": "rate:bnz:standard:3-years",
-              "rate": 5.69,
+              "rate": 5.59,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:bnz:standard:4-years",
-              "rate": 5.79,
+              "rate": 5.69,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:bnz:standard:5-years",
-              "rate": 5.89,
+              "rate": 5.79,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2096,5 +2096,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-01-28T19:04:02.456Z"
+  "lastUpdated": "2025-01-29T19:03:57.707Z"
 }
