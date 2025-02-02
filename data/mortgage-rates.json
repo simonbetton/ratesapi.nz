@@ -131,19 +131,19 @@
             },
             {
               "id": "rate:asb:standard:1-year",
-              "rate": 5.59,
+              "rate": 5.54,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:asb:standard:18-months",
-              "rate": 5.39,
+              "rate": 5.34,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:asb:standard:2-years",
-              "rate": 5.49,
+              "rate": 5.29,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -713,13 +713,13 @@
             },
             {
               "id": "rate:icbc:special:1-year",
-              "rate": 5.79,
+              "rate": 5.55,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:icbc:special:18-months",
-              "rate": 5.59,
+              "rate": 5.39,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -1313,13 +1313,13 @@
             },
             {
               "id": "rate:heretaunga-bldg-socy:residential:1-year",
-              "rate": 6.5,
+              "rate": 6.35,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:heretaunga-bldg-socy:residential:2-years",
-              "rate": 6.3,
+              "rate": 6.2,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1404,30 +1404,6 @@
       "name": "First CU",
       "products": [
         {
-          "id": "product:first-cu:special",
-          "name": "Special",
-          "rates": [
-            {
-              "id": "rate:first-cu:special:variable-floating",
-              "rate": 7.69,
-              "term": "Variable floating",
-              "termInMonths": null
-            },
-            {
-              "id": "rate:first-cu:special:1-year",
-              "rate": 5.99,
-              "term": "1 year",
-              "termInMonths": 12
-            },
-            {
-              "id": "rate:first-cu:special:2-years",
-              "rate": 5.89,
-              "term": "2 years",
-              "termInMonths": 24
-            }
-          ]
-        },
-        {
           "id": "product:first-cu:standard",
           "name": "Standard",
           "rates": [
@@ -1450,6 +1426,30 @@
               "termInMonths": 24
             }
           ]
+        },
+        {
+          "id": "product:first-cu:special",
+          "name": "Special",
+          "rates": [
+            {
+              "id": "rate:first-cu:special:variable-floating",
+              "rate": 7.69,
+              "term": "Variable floating",
+              "termInMonths": null
+            },
+            {
+              "id": "rate:first-cu:special:1-year",
+              "rate": 5.99,
+              "term": "1 year",
+              "termInMonths": 12
+            },
+            {
+              "id": "rate:first-cu:special:2-years",
+              "rate": 5.89,
+              "term": "2 years",
+              "termInMonths": 24
+            }
+          ]
         }
       ]
     },
@@ -1468,6 +1468,12 @@
               "termInMonths": null
             },
             {
+              "id": "rate:police-cu:standard:6-months",
+              "rate": 5.99,
+              "term": "6 months",
+              "termInMonths": 6
+            },
+            {
               "id": "rate:police-cu:standard:1-year",
               "rate": 5.59,
               "term": "1 year",
@@ -1475,7 +1481,7 @@
             },
             {
               "id": "rate:police-cu:standard:2-years",
-              "rate": 5.39,
+              "rate": 5.35,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1492,6 +1498,12 @@
               "termInMonths": null
             },
             {
+              "id": "rate:police-cu:shared-ownership:6-months",
+              "rate": 6.59,
+              "term": "6 months",
+              "termInMonths": 6
+            },
+            {
               "id": "rate:police-cu:shared-ownership:1-year",
               "rate": 6.19,
               "term": "1 year",
@@ -1499,7 +1511,7 @@
             },
             {
               "id": "rate:police-cu:shared-ownership:2-years",
-              "rate": 5.99,
+              "rate": 5.95,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1985,19 +1997,19 @@
             },
             {
               "id": "rate:aia:standard-go:1-year",
-              "rate": 5.59,
+              "rate": 5.54,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:aia:standard-go:18-months",
-              "rate": 5.39,
+              "rate": 5.34,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:aia:standard-go:2-years",
-              "rate": 5.49,
+              "rate": 5.29,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -2096,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-02T20:04:32.883Z"
+  "lastUpdated": "2025-02-02T21:04:04.273Z"
 }
