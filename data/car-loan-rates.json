@@ -107,7 +107,7 @@
           "rates": [
             {
               "id": "rate:westpac:evs-and-e-bikes:secured-by-car",
-              "rate": 6.99,
+              "rate": 7.99,
               "plan": "Secured by car",
               "condition": null
             }
@@ -800,5 +800,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-01-07T08:05:58.606Z"
+  "lastUpdated": "2025-02-04T20:04:56.578Z"
 }

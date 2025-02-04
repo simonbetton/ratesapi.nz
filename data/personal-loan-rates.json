@@ -274,6 +274,18 @@
               "condition": "To"
             }
           ]
+        },
+        {
+          "id": "product:westpac:debt-consolidation-loan-special",
+          "name": "Debt Consolidation Loan Special",
+          "rates": [
+            {
+              "id": "rate:westpac:debt-consolidation-loan-special:secured",
+              "rate": 11.95,
+              "plan": "Secured",
+              "condition": null
+            }
+          ]
         }
       ]
     },
@@ -1172,5 +1184,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-01-07T08:05:56.602Z"
+  "lastUpdated": "2025-02-04T20:04:55.942Z"
 }
