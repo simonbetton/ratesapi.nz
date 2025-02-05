@@ -1175,31 +1175,31 @@
             },
             {
               "id": "rate:westpac:standard:1-year",
-              "rate": 6.19,
+              "rate": 6.14,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:westpac:standard:18-months",
-              "rate": 5.99,
+              "rate": 5.94,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:westpac:standard:2-years",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:westpac:standard:3-years",
-              "rate": 6.19,
+              "rate": 5.59,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:westpac:standard:4-years",
-              "rate": 6.19,
+              "rate": 6.09,
               "term": "4 years",
               "termInMonths": 48
             },
@@ -1223,31 +1223,31 @@
             },
             {
               "id": "rate:westpac:special:1-year",
-              "rate": 5.59,
+              "rate": 5.54,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:westpac:special:18-months",
-              "rate": 5.39,
+              "rate": 5.34,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:westpac:special:2-years",
-              "rate": 5.39,
+              "rate": 5.29,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:westpac:special:3-years",
-              "rate": 5.59,
+              "rate": 4.99,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:westpac:special:4-years",
-              "rate": 5.59,
+              "rate": 5.49,
               "term": "4 years",
               "termInMonths": 48
             },
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-04T21:04:12.054Z"
+  "lastUpdated": "2025-02-05T02:25:23.084Z"
 }
