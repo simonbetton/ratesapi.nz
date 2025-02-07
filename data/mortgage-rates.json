@@ -1475,13 +1475,13 @@
             },
             {
               "id": "rate:police-cu:standard:1-year",
-              "rate": 5.59,
+              "rate": 5.54,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:police-cu:standard:2-years",
-              "rate": 5.35,
+              "rate": 5.29,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-05T02:25:23.084Z"
+  "lastUpdated": "2025-02-07T00:19:17.183Z"
 }
