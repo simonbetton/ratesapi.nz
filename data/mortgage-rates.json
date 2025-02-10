@@ -1985,7 +1985,7 @@
           "rates": [
             {
               "id": "rate:aia:standard-go:variable-floating",
-              "rate": 7.39,
+              "rate": 7.49,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-09T20:04:23.943Z"
+  "lastUpdated": "2025-02-10T04:05:29.677Z"
 }
