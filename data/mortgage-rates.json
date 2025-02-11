@@ -125,19 +125,19 @@
             },
             {
               "id": "rate:asb:standard:6-months",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:asb:standard:1-year",
-              "rate": 5.54,
+              "rate": 5.49,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:asb:standard:18-months",
-              "rate": 5.34,
+              "rate": 5.19,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -1991,19 +1991,19 @@
             },
             {
               "id": "rate:aia:standard-go:6-months",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:aia:standard-go:1-year",
-              "rate": 5.54,
+              "rate": 5.49,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:aia:standard-go:18-months",
-              "rate": 5.34,
+              "rate": 5.19,
               "term": "18 months",
               "termInMonths": 18
             },
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-10T04:05:29.677Z"
+  "lastUpdated": "2025-02-11T19:04:04.718Z"
 }
