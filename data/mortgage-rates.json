@@ -1115,7 +1115,7 @@
             },
             {
               "id": "rate:tsb-bank:special:1-year",
-              "rate": 5.59,
+              "rate": 5.35,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-14T00:19:14.228Z"
+  "lastUpdated": "2025-02-16T19:04:27.684Z"
 }
