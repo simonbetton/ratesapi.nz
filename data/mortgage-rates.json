@@ -209,7 +209,7 @@
             },
             {
               "id": "rate:bnz:standard:6-months",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-17T20:04:45.174Z"
+  "lastUpdated": "2025-02-18T02:25:23.900Z"
 }
