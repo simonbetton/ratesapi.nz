@@ -647,7 +647,7 @@
           "rates": [
             {
               "id": "rate:heartland-bank:residential:variable-floating",
-              "rate": 6.99,
+              "rate": 6.49,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-19T02:26:18.478Z"
+  "lastUpdated": "2025-02-19T03:08:00.529Z"
 }
