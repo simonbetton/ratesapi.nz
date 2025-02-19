@@ -119,7 +119,7 @@
           "rates": [
             {
               "id": "rate:asb:standard:variable-floating",
-              "rate": 7.39,
+              "rate": 6.89,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -191,7 +191,7 @@
           "rates": [
             {
               "id": "rate:bnz:totalmoney:variable-floating",
-              "rate": 7.54,
+              "rate": 7.04,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -203,7 +203,7 @@
           "rates": [
             {
               "id": "rate:bnz:standard:variable-floating",
-              "rate": 7.44,
+              "rate": 6.94,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -575,7 +575,7 @@
           "rates": [
             {
               "id": "rate:co-operative-bank:standard:variable-floating",
-              "rate": 6.95,
+              "rate": 6.45,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -761,7 +761,7 @@
           "rates": [
             {
               "id": "rate:kiwibank:standard:variable-floating",
-              "rate": 7.25,
+              "rate": 6.75,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -851,7 +851,7 @@
           "rates": [
             {
               "id": "rate:kiwibank:offset-mortgage:variable-floating",
-              "rate": 7.25,
+              "rate": 6.75,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -1163,7 +1163,7 @@
           "rates": [
             {
               "id": "rate:westpac:standard:variable-floating",
-              "rate": 7.39,
+              "rate": 6.79,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -1223,7 +1223,7 @@
             },
             {
               "id": "rate:westpac:special:1-year",
-              "rate": 5.54,
+              "rate": 5.49,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-18T02:25:23.900Z"
+  "lastUpdated": "2025-02-19T01:31:53.433Z"
 }
