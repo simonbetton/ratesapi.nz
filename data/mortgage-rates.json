@@ -1643,7 +1643,7 @@
           "rates": [
             {
               "id": "rate:basecorp-finance:standard-from:variable-floating",
-              "rate": 8.35,
+              "rate": 7.85,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-20T22:04:26.616Z"
+  "lastUpdated": "2025-02-20T23:04:41.024Z"
 }
