@@ -707,43 +707,43 @@
             },
             {
               "id": "rate:icbc:special:6-months",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:icbc:special:1-year",
-              "rate": 5.55,
+              "rate": 5.29,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:icbc:special:18-months",
-              "rate": 5.39,
+              "rate": 5.19,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:icbc:special:2-years",
-              "rate": 5.59,
+              "rate": 4.99,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:icbc:special:3-years",
-              "rate": 5.59,
+              "rate": 5.39,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:icbc:special:4-years",
-              "rate": 5.59,
+              "rate": 5.49,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:icbc:special:5-years",
-              "rate": 5.59,
+              "rate": 5.49,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -767,19 +767,19 @@
             },
             {
               "id": "rate:kiwibank:standard:6-months",
-              "rate": 6.89,
+              "rate": 6.69,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:kiwibank:standard:1-year",
-              "rate": 6.45,
+              "rate": 6.09,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:kiwibank:standard:2-years",
-              "rate": 6.19,
+              "rate": 6.09,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -809,19 +809,19 @@
           "rates": [
             {
               "id": "rate:kiwibank:special:6-months",
-              "rate": 5.99,
+              "rate": 5.79,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:kiwibank:special:1-year",
-              "rate": 5.55,
+              "rate": 5.19,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:kiwibank:special:2-years",
-              "rate": 5.29,
+              "rate": 5.19,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -1379,19 +1379,19 @@
             },
             {
               "id": "rate:wairarapa-bldg-society:residential:1-year",
-              "rate": 5.79,
+              "rate": 5.49,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:wairarapa-bldg-society:residential:18-months",
-              "rate": 5.69,
+              "rate": 5.39,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:wairarapa-bldg-society:residential:2-years",
-              "rate": 5.59,
+              "rate": 5.29,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-20T05:04:47.513Z"
+  "lastUpdated": "2025-02-20T22:04:26.616Z"
 }
