@@ -1007,7 +1007,7 @@
           "rates": [
             {
               "id": "rate:sbs-bank:first-home-combo:1-year",
-              "rate": 4.44,
+              "rate": 4.69,
               "term": "1 year",
               "termInMonths": 12
             }
@@ -1019,7 +1019,7 @@
           "rates": [
             {
               "id": "rate:sbs-bank:construction-lending-for-fhb:variable-floating",
-              "rate": 4.94,
+              "rate": 4.44,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-20T04:05:31.579Z"
+  "lastUpdated": "2025-02-20T05:04:47.513Z"
 }
