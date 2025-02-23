@@ -131,7 +131,7 @@
             },
             {
               "id": "rate:asb:standard:1-year",
-              "rate": 5.49,
+              "rate": 5.25,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -143,13 +143,13 @@
             },
             {
               "id": "rate:asb:standard:2-years",
-              "rate": 5.29,
+              "rate": 4.99,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:asb:standard:3-years",
-              "rate": 5.59,
+              "rate": 5.35,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -1343,19 +1343,19 @@
             },
             {
               "id": "rate:nelson-bldg-society:residential:6-months",
-              "rate": 6.39,
+              "rate": 6.09,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:nelson-bldg-society:residential:1-year",
-              "rate": 5.55,
+              "rate": 5.35,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:nelson-bldg-society:residential:2-years",
-              "rate": 5.84,
+              "rate": 5.29,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1475,13 +1475,13 @@
             },
             {
               "id": "rate:police-cu:standard:1-year",
-              "rate": 5.54,
+              "rate": 5.39,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:police-cu:standard:2-years",
-              "rate": 5.29,
+              "rate": 5.09,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1499,7 +1499,7 @@
             },
             {
               "id": "rate:police-cu:shared-ownership:6-months",
-              "rate": 6.59,
+              "rate": 6.49,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -1997,7 +1997,7 @@
             },
             {
               "id": "rate:aia:standard-go:1-year",
-              "rate": 5.49,
+              "rate": 5.25,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -2009,13 +2009,13 @@
             },
             {
               "id": "rate:aia:standard-go:2-years",
-              "rate": 5.29,
+              "rate": 4.99,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:aia:standard-go:3-years",
-              "rate": 5.59,
+              "rate": 5.35,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-20T23:04:41.024Z"
+  "lastUpdated": "2025-02-23T20:04:37.615Z"
 }
