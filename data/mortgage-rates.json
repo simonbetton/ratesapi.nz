@@ -1463,13 +1463,13 @@
           "rates": [
             {
               "id": "rate:police-cu:standard:variable-floating",
-              "rate": 7.89,
+              "rate": 6.39,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:police-cu:standard:6-months",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -1493,7 +1493,7 @@
           "rates": [
             {
               "id": "rate:police-cu:shared-ownership:variable-floating",
-              "rate": 7.89,
+              "rate": 6.39,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -1505,13 +1505,13 @@
             },
             {
               "id": "rate:police-cu:shared-ownership:1-year",
-              "rate": 6.19,
+              "rate": 5.99,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:police-cu:shared-ownership:2-years",
-              "rate": 5.95,
+              "rate": 5.69,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-24T04:05:49.463Z"
+  "lastUpdated": "2025-02-24T05:05:05.569Z"
 }
