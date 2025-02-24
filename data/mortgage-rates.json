@@ -209,31 +209,31 @@
             },
             {
               "id": "rate:bnz:standard:6-months",
-              "rate": 5.89,
+              "rate": 5.79,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bnz:standard:1-year",
-              "rate": 5.55,
+              "rate": 5.29,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bnz:standard:18-months",
-              "rate": 5.39,
+              "rate": 5.19,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bnz:standard:2-years",
-              "rate": 5.29,
+              "rate": 4.99,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bnz:standard:3-years",
-              "rate": 5.59,
+              "rate": 5.29,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -275,25 +275,25 @@
           "rates": [
             {
               "id": "rate:bank-of-baroda:standard:variable-floating",
-              "rate": 8.4,
+              "rate": 7.89,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:bank-of-baroda:standard:6-months",
-              "rate": 6.49,
+              "rate": 6.19,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bank-of-baroda:standard:1-year",
-              "rate": 5.99,
+              "rate": 5.59,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bank-of-baroda:standard:2-years",
-              "rate": 5.79,
+              "rate": 5.29,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -653,25 +653,25 @@
             },
             {
               "id": "rate:heartland-bank:residential:1-year",
-              "rate": 5.49,
+              "rate": 5.25,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:heartland-bank:residential:18-months",
-              "rate": 5.39,
+              "rate": 5.19,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:heartland-bank:residential:2-years",
-              "rate": 5.39,
+              "rate": 5.19,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:heartland-bank:residential:3-years",
-              "rate": 5.45,
+              "rate": 5.35,
               "term": "3 years",
               "termInMonths": 36
             }
@@ -1937,7 +1937,7 @@
           "rates": [
             {
               "id": "rate:simplicity:member-home-loan:variable-floating",
-              "rate": 5.75,
+              "rate": 5.49,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-24T05:05:05.569Z"
+  "lastUpdated": "2025-02-24T19:04:02.866Z"
 }
