@@ -1625,7 +1625,7 @@
           "rates": [
             {
               "id": "rate:avanti-finance:near-prime:variable-floating",
-              "rate": 7.9,
+              "rate": 7.4,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-24T19:04:02.866Z"
+  "lastUpdated": "2025-02-24T23:04:26.536Z"
 }
