@@ -209,31 +209,31 @@
             },
             {
               "id": "rate:bnz:standard:6-months",
-              "rate": 5.89,
+              "rate": 5.79,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bnz:standard:1-year",
-              "rate": 5.55,
+              "rate": 5.29,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bnz:standard:18-months",
-              "rate": 5.39,
+              "rate": 5.19,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bnz:standard:2-years",
-              "rate": 5.29,
+              "rate": 4.99,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bnz:standard:3-years",
-              "rate": 5.59,
+              "rate": 5.29,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -275,25 +275,25 @@
           "rates": [
             {
               "id": "rate:bank-of-baroda:standard:variable-floating",
-              "rate": 8.4,
+              "rate": 7.89,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:bank-of-baroda:standard:6-months",
-              "rate": 6.49,
+              "rate": 6.19,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bank-of-baroda:standard:1-year",
-              "rate": 5.99,
+              "rate": 5.59,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bank-of-baroda:standard:2-years",
-              "rate": 5.79,
+              "rate": 5.29,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -317,43 +317,43 @@
             },
             {
               "id": "rate:bank-of-china:standard:6-months",
-              "rate": 6.85,
+              "rate": 6.65,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bank-of-china:standard:1-year",
-              "rate": 6.49,
+              "rate": 6.25,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bank-of-china:standard:18-months",
-              "rate": 6.35,
+              "rate": 5.99,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bank-of-china:standard:2-years",
-              "rate": 6.25,
+              "rate": 6.15,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bank-of-china:standard:3-years",
-              "rate": 6.49,
+              "rate": 6.15,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:bank-of-china:standard:4-years",
-              "rate": 6.49,
+              "rate": 6.35,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:bank-of-china:standard:5-years",
-              "rate": 6.49,
+              "rate": 6.35,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -371,43 +371,43 @@
             },
             {
               "id": "rate:bank-of-china:special:6-months",
-              "rate": 5.85,
+              "rate": 5.65,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:bank-of-china:special:1-year",
-              "rate": 5.49,
+              "rate": 5.25,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:bank-of-china:special:18-months",
-              "rate": 5.35,
+              "rate": 4.99,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:bank-of-china:special:2-years",
-              "rate": 5.25,
+              "rate": 5.15,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:bank-of-china:special:3-years",
-              "rate": 5.49,
+              "rate": 5.15,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:bank-of-china:special:4-years",
-              "rate": 5.49,
+              "rate": 5.35,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:bank-of-china:special:5-years",
-              "rate": 5.49,
+              "rate": 5.35,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -653,25 +653,25 @@
             },
             {
               "id": "rate:heartland-bank:residential:1-year",
-              "rate": 5.49,
+              "rate": 5.25,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:heartland-bank:residential:18-months",
-              "rate": 5.39,
+              "rate": 5.19,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:heartland-bank:residential:2-years",
-              "rate": 5.39,
+              "rate": 5.19,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:heartland-bank:residential:3-years",
-              "rate": 5.45,
+              "rate": 5.35,
               "term": "3 years",
               "termInMonths": 36
             }
@@ -1169,25 +1169,25 @@
             },
             {
               "id": "rate:westpac:standard:6-months",
-              "rate": 6.59,
+              "rate": 6.49,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:westpac:standard:1-year",
-              "rate": 6.09,
+              "rate": 5.89,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:westpac:standard:18-months",
-              "rate": 5.89,
+              "rate": 5.79,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:westpac:standard:2-years",
-              "rate": 5.89,
+              "rate": 5.59,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -1217,25 +1217,25 @@
           "rates": [
             {
               "id": "rate:westpac:special:6-months",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:westpac:special:1-year",
-              "rate": 5.49,
+              "rate": 5.29,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:westpac:special:18-months",
-              "rate": 5.29,
+              "rate": 5.19,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:westpac:special:2-years",
-              "rate": 5.29,
+              "rate": 4.99,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -1463,13 +1463,13 @@
           "rates": [
             {
               "id": "rate:police-cu:standard:variable-floating",
-              "rate": 7.89,
+              "rate": 6.39,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:police-cu:standard:6-months",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -1493,7 +1493,7 @@
           "rates": [
             {
               "id": "rate:police-cu:shared-ownership:variable-floating",
-              "rate": 7.89,
+              "rate": 6.39,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -1505,13 +1505,13 @@
             },
             {
               "id": "rate:police-cu:shared-ownership:1-year",
-              "rate": 6.19,
+              "rate": 5.99,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:police-cu:shared-ownership:2-years",
-              "rate": 5.95,
+              "rate": 5.69,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1625,7 +1625,7 @@
           "rates": [
             {
               "id": "rate:avanti-finance:near-prime:variable-floating",
-              "rate": 7.9,
+              "rate": 7.4,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -1937,7 +1937,7 @@
           "rates": [
             {
               "id": "rate:simplicity:member-home-loan:variable-floating",
-              "rate": 5.75,
+              "rate": 5.49,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-23T20:04:37.615Z"
+  "lastUpdated": "2025-02-24T23:04:26.536Z"
 }
