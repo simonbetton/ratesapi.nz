@@ -1951,23 +1951,23 @@
       "products": [
         {
           "id": "product:xceda-finance:short-term-bridge-mortgage-loans-from",
-          "name": "Short-term & bridge mortgage loans from",
+          "name": "Short-term & Bridge mortgage loans from",
           "rates": [
             {
               "id": "rate:xceda-finance:short-term-bridge-mortgage-loans-from:6-months",
-              "rate": 9.95,
+              "rate": 8.95,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:xceda-finance:short-term-bridge-mortgage-loans-from:1-year",
-              "rate": 9.95,
+              "rate": 8.95,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:xceda-finance:short-term-bridge-mortgage-loans-from:2-years",
-              "rate": 9.95,
+              "rate": 8.95,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-24T23:04:26.536Z"
+  "lastUpdated": "2025-02-25T21:04:34.196Z"
 }
