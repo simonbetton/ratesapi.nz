@@ -1529,31 +1529,31 @@
           "rates": [
             {
               "id": "rate:unitymoney:residential:variable-floating",
-              "rate": 7.64,
+              "rate": 6.89,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:unitymoney:residential:6-months",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:unitymoney:residential:1-year",
-              "rate": 5.59,
+              "rate": 5.29,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:unitymoney:residential:18-months",
-              "rate": 5.39,
+              "rate": 5.19,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:unitymoney:residential:2-years",
-              "rate": 5.49,
+              "rate": 4.99,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1565,7 +1565,7 @@
           "rates": [
             {
               "id": "rate:unitymoney:first-home-buyer-special:1-year",
-              "rate": 4.99,
+              "rate": 4.69,
               "term": "1 year",
               "termInMonths": 12
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-26T03:10:14.522Z"
+  "lastUpdated": "2025-02-26T20:05:03.554Z"
 }
