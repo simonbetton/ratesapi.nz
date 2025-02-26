@@ -431,31 +431,31 @@
             },
             {
               "id": "rate:china-construction-bank:non-standard:6-months",
-              "rate": 6.59,
+              "rate": 6.49,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:china-construction-bank:non-standard:1-year",
-              "rate": 6.57,
+              "rate": 6.29,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:china-construction-bank:non-standard:18-months",
-              "rate": 6.39,
+              "rate": 6.19,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:china-construction-bank:non-standard:2-years",
-              "rate": 6.44,
+              "rate": 5.99,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:china-construction-bank:non-standard:3-years",
-              "rate": 6.59,
+              "rate": 6.29,
               "term": "3 years",
               "termInMonths": 36
             }
@@ -467,43 +467,43 @@
           "rates": [
             {
               "id": "rate:china-construction-bank:standard:6-months",
-              "rate": 5.99,
+              "rate": 5.89,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:china-construction-bank:standard:1-year",
-              "rate": 5.57,
+              "rate": 5.29,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:china-construction-bank:standard:18-months",
-              "rate": 5.39,
+              "rate": 5.19,
               "term": "18 months",
               "termInMonths": 18
             },
             {
               "id": "rate:china-construction-bank:standard:2-years",
-              "rate": 5.44,
+              "rate": 4.99,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:china-construction-bank:standard:3-years",
-              "rate": 5.59,
+              "rate": 5.29,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:china-construction-bank:standard:4-years",
-              "rate": 6.4,
+              "rate": 5.99,
               "term": "4 years",
               "termInMonths": 48
             },
             {
               "id": "rate:china-construction-bank:standard:5-years",
-              "rate": 6.4,
+              "rate": 5.99,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -1583,31 +1583,31 @@
           "rates": [
             {
               "id": "rate:kainga-ora-hnz:residential:variable-floating",
-              "rate": 7.39,
+              "rate": 6.89,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:kainga-ora-hnz:residential:1-year",
-              "rate": 5.79,
+              "rate": 5.29,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:kainga-ora-hnz:residential:2-years",
-              "rate": 5.59,
+              "rate": 4.99,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:kainga-ora-hnz:residential:3-years",
-              "rate": 5.69,
+              "rate": 5.35,
               "term": "3 years",
               "termInMonths": 36
             },
             {
               "id": "rate:kainga-ora-hnz:residential:5-years",
-              "rate": 5.89,
+              "rate": 5.79,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-26T21:04:28.895Z"
+  "lastUpdated": "2025-02-26T23:04:41.790Z"
 }
