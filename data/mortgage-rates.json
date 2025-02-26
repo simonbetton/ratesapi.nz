@@ -1409,19 +1409,19 @@
           "rates": [
             {
               "id": "rate:first-cu:standard:variable-floating",
-              "rate": 7.69,
+              "rate": 7.19,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:first-cu:standard:1-year",
-              "rate": 6.49,
+              "rate": 5.99,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:first-cu:standard:2-years",
-              "rate": 6.19,
+              "rate": 5.69,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1433,19 +1433,19 @@
           "rates": [
             {
               "id": "rate:first-cu:special:variable-floating",
-              "rate": 7.69,
+              "rate": 7.19,
               "term": "Variable floating",
               "termInMonths": null
             },
             {
               "id": "rate:first-cu:special:1-year",
-              "rate": 5.79,
+              "rate": 5.49,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:first-cu:special:2-years",
-              "rate": 5.69,
+              "rate": 5.39,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-26T20:05:03.554Z"
+  "lastUpdated": "2025-02-26T21:04:28.895Z"
 }
