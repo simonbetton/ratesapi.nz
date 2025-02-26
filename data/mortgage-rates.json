@@ -629,7 +629,7 @@
           "rates": [
             {
               "id": "rate:co-operative-bank:first-home-buyer-special:1-year",
-              "rate": 5.39,
+              "rate": 5.19,
               "term": "1 year",
               "termInMonths": 12
             }
@@ -683,7 +683,7 @@
           "rates": [
             {
               "id": "rate:heartland-bank:reverse-mortgage:variable-floating",
-              "rate": 9.39,
+              "rate": 8.89,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-26T02:27:52.694Z"
+  "lastUpdated": "2025-02-26T03:10:14.522Z"
 }
