@@ -425,7 +425,7 @@
           "rates": [
             {
               "id": "rate:china-construction-bank:non-standard:variable-floating",
-              "rate": 8.14,
+              "rate": 7.39,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-26T23:04:41.790Z"
+  "lastUpdated": "2025-02-27T01:32:04.786Z"
 }
