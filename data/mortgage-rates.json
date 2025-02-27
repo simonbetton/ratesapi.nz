@@ -1343,19 +1343,19 @@
             },
             {
               "id": "rate:nelson-bldg-society:residential:6-months",
-              "rate": 6.09,
+              "rate": 5.99,
               "term": "6 months",
               "termInMonths": 6
             },
             {
               "id": "rate:nelson-bldg-society:residential:1-year",
-              "rate": 5.35,
+              "rate": 5.24,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:nelson-bldg-society:residential:2-years",
-              "rate": 5.29,
+              "rate": 5.24,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-27T01:32:04.786Z"
+  "lastUpdated": "2025-02-27T19:04:05.130Z"
 }
