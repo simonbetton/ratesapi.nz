@@ -1373,7 +1373,7 @@
           "rates": [
             {
               "id": "rate:wairarapa-bldg-society:residential:variable-floating",
-              "rate": 7.7,
+              "rate": 7.2,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-27T19:04:05.130Z"
+  "lastUpdated": "2025-02-27T23:04:40.057Z"
 }
