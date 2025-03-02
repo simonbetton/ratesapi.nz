@@ -1061,7 +1061,7 @@
             },
             {
               "id": "rate:tsb-bank:standard:1-year",
-              "rate": 6.15,
+              "rate": 5.99,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1073,13 +1073,13 @@
             },
             {
               "id": "rate:tsb-bank:standard:2-years",
-              "rate": 6.09,
+              "rate": 5.79,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:tsb-bank:standard:3-years",
-              "rate": 6.39,
+              "rate": 6.19,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -1115,7 +1115,7 @@
             },
             {
               "id": "rate:tsb-bank:special:1-year",
-              "rate": 5.35,
+              "rate": 5.19,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -1127,13 +1127,13 @@
             },
             {
               "id": "rate:tsb-bank:special:2-years",
-              "rate": 5.29,
+              "rate": 4.99,
               "term": "2 years",
               "termInMonths": 24
             },
             {
               "id": "rate:tsb-bank:special:3-years",
-              "rate": 5.59,
+              "rate": 5.39,
               "term": "3 years",
               "termInMonths": 36
             },
@@ -1475,13 +1475,13 @@
             },
             {
               "id": "rate:police-cu:standard:1-year",
-              "rate": 5.39,
+              "rate": 5.29,
               "term": "1 year",
               "termInMonths": 12
             },
             {
               "id": "rate:police-cu:standard:2-years",
-              "rate": 5.09,
+              "rate": 4.99,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -1937,7 +1937,7 @@
           "rates": [
             {
               "id": "rate:simplicity:member-home-loan:variable-floating",
-              "rate": 5.49,
+              "rate": 4.95,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-02-27T23:04:40.057Z"
+  "lastUpdated": "2025-03-02T20:04:38.877Z"
 }
