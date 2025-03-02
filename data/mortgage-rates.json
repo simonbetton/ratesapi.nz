@@ -1391,7 +1391,7 @@
             },
             {
               "id": "rate:wairarapa-bldg-society:residential:2-years",
-              "rate": 5.29,
+              "rate": 5.19,
               "term": "2 years",
               "termInMonths": 24
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-03-02T22:04:19.520Z"
+  "lastUpdated": "2025-03-02T23:04:17.735Z"
 }
