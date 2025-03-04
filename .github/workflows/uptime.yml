@@ -23,7 +23,7 @@ jobs:
           node-version: '20'
       
       - name: Install dependencies
-        run: npm install -g axios
+        run: npm install axios
 
       - name: Check API Endpoints
         id: health-check
