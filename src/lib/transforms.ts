@@ -16,3 +16,7 @@ export function toTitleFormat(str: string | null) {
 
   return result;
 }
+
+export function getCurrentTimestamp(): string {
+  return new Date().toISOString();
+}

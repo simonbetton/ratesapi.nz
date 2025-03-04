@@ -2,6 +2,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { type Bindings } from "hono/types";
 import unValidatedMortgageRates from "../../../data/mortgage-rates.json";
 import { termsOfUse } from "../../lib/terms-of-use";
+import { getCurrentTimestamp } from "../../lib/transforms";
 import { MortgageRates } from "../../models/mortgage-rates";
 import { getMortgageRatesByInstitutionRoute } from "./getMortgageRatesByInstitution";
 import { listMortgageRatesRoute } from "./listMortgageRates";
@@ -32,12 +33,14 @@ routes.openapi(listMortgageRatesRoute, (c) => {
       ...validatedMortgageRates,
       data: filteredMortgageRates,
       termsOfUse: termsOfUse(),
+      timestamp: getCurrentTimestamp(),
     });
   }
 
   return c.json({
     ...validatedMortgageRates,
     termsOfUse: termsOfUse(),
+    timestamp: getCurrentTimestamp(),
   });
 });
 
@@ -79,6 +82,7 @@ routes.openapi(getMortgageRatesByInstitutionRoute, (c) => {
         },
       ],
       termsOfUse: termsOfUse(),
+      timestamp: getCurrentTimestamp(),
     });
   }
 
@@ -86,6 +90,7 @@ routes.openapi(getMortgageRatesByInstitutionRoute, (c) => {
     ...validatedMortgageRates,
     data: [singleInstitution],
     termsOfUse: termsOfUse(),
+    timestamp: getCurrentTimestamp(),
   });
 });
 

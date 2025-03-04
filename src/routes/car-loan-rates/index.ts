@@ -2,6 +2,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { type Bindings } from "hono/types";
 import unValidatedCarLoanRates from "../../../data/car-loan-rates.json";
 import { termsOfUse } from "../../lib/terms-of-use";
+import { getCurrentTimestamp } from "../../lib/transforms";
 import { CarLoanRates } from "../../models/car-loan-rates";
 import { getCarLoanRatesByInstitutionRoute } from "./getCarLoanRatesByInstitution";
 import { listCarLoanRatesRoute } from "./listCarLoanRates";
@@ -14,6 +15,7 @@ routes.openapi(listCarLoanRatesRoute, (c) => {
   return c.json({
     ...validatedCarLoanRates,
     termsOfUse: termsOfUse(),
+    timestamp: getCurrentTimestamp(),
   });
 });
 
@@ -39,6 +41,7 @@ routes.openapi(getCarLoanRatesByInstitutionRoute, (c) => {
     ...validatedCarLoanRates,
     data: [singleInstitution],
     termsOfUse: termsOfUse(),
+    timestamp: getCurrentTimestamp(),
   });
 });
 

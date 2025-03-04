@@ -53,7 +53,7 @@ app.use(
   prettyJSON(),
   cache({
     cacheName: "rates-api",
-    cacheControl: "public, max-age=300, must-revalidate",
+    cacheControl: "public, max-age=5, must-revalidate",
   }),
 );
 
