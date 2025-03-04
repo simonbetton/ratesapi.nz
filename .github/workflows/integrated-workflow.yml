@@ -1,0 +1,111 @@
+name: Data Update and Deployment
+
+on:
+  schedule:
+    - cron: "0 * * * *" # Runs every hour
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    outputs:
+      changes_detected: ${{ steps.git-check.outputs.changes }}
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run scrapers
+        run: |
+          echo "Running all scrapers..."
+          bun run bin/scrape-mortgage-rates.ts
+          bun run bin/scrape-personal-loan-rates.ts
+          bun run bin/scrape-car-loan-rates.ts
+          bun run bin/scrape-credit-card-rates.ts
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
+
+      - name: Upload data artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: data-files
+          path: data/*.json
+          retention-days: 1
+
+      - name: Commit changes
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "Auto-commit changes at $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          git push
+
+  deploy:
+    needs: scrape
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        if: needs.scrape.outputs.changes_detected == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
+      - name: Download data artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: data-files
+          path: data/
+        if: needs.scrape.outputs.changes_detected == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+        if: needs.scrape.outputs.changes_detected == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+        if: needs.scrape.outputs.changes_detected == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+        if: needs.scrape.outputs.changes_detected == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: deploy --minify src/index.ts
+        if: needs.scrape.outputs.changes_detected == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
