@@ -713,7 +713,7 @@
             },
             {
               "id": "rate:icbc:special:1-year",
-              "rate": 5.29,
+              "rate": 5.05,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-03-04T02:28:48.339Z"
+  "lastUpdated": "2025-03-04T21:04:22.354Z"
 }
