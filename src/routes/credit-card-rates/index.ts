@@ -2,6 +2,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { type Bindings } from "hono/types";
 import unValidatedCreditCardRates from "../../../data/credit-card-rates.json";
 import { termsOfUse } from "../../lib/terms-of-use";
+import { getCurrentTimestamp } from "../../lib/transforms";
 import { CreditCardRates } from "../../models/credit-card-rates";
 import { getCreditCardRatesIssuerRoute } from "./getCreditCardRatesIssuer";
 import { listCreditCardRatesRoute } from "./listCreditCardRates";
@@ -16,6 +17,7 @@ routes.openapi(listCreditCardRatesRoute, (c) => {
   return c.json({
     ...validatedCreditCardRates,
     termsOfUse: termsOfUse(),
+    timestamp: getCurrentTimestamp(),
   });
 });
 
@@ -43,6 +45,7 @@ routes.openapi(getCreditCardRatesIssuerRoute, (c) => {
     ...validatedCreditCardRates,
     data: [singleIssuer],
     termsOfUse: termsOfUse(),
+    timestamp: getCurrentTimestamp(),
   });
 });
 

@@ -28,6 +28,10 @@ export const listMortgageRatesRoute = createRoute({
         "application/json": {
           schema: MortgageRates.extend({
             termsOfUse: z.string().openapi({}),
+            timestamp: z.string().openapi({
+              description: "Current server timestamp",
+              example: "2025-03-04T02:30:00.000Z",
+            }),
           }),
         },
       },

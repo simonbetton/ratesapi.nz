@@ -2,6 +2,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { type Bindings } from "hono/types";
 import unValidatedPersonalLoanRates from "../../../data/personal-loan-rates.json";
 import { termsOfUse } from "../../lib/terms-of-use";
+import { getCurrentTimestamp } from "../../lib/transforms";
 import { PersonalLoanRates } from "../../models/personal-loan-rates";
 import { getPersonalLoanRatesByInstitutionRoute } from "./getPersonalLoanRatesByInstitution";
 import { listPersonalLoanRatesRoute } from "./listPersonalLoanRates";
@@ -16,6 +17,7 @@ routes.openapi(listPersonalLoanRatesRoute, (c) => {
   return c.json({
     ...validatedPersonalLoanRates,
     termsOfUse: termsOfUse(),
+    timestamp: getCurrentTimestamp(),
   });
 });
 
@@ -43,6 +45,7 @@ routes.openapi(getPersonalLoanRatesByInstitutionRoute, (c) => {
     ...validatedPersonalLoanRates,
     data: [singleInstitution],
     termsOfUse: termsOfUse(),
+    timestamp: getCurrentTimestamp(),
   });
 });
 

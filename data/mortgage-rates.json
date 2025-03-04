@@ -1337,7 +1337,7 @@
           "rates": [
             {
               "id": "rate:nelson-bldg-society:residential:variable-floating",
-              "rate": 7.94,
+              "rate": 7.44,
               "term": "Variable floating",
               "termInMonths": null
             },
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-03-02T23:04:17.735Z"
+  "lastUpdated": "2025-03-04T02:28:48.339Z"
 }
