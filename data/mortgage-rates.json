@@ -527,7 +527,7 @@
             },
             {
               "id": "rate:co-operative-bank:owner-occupied:6-months",
-              "rate": 5.79,
+              "rate": 5.69,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -581,7 +581,7 @@
             },
             {
               "id": "rate:co-operative-bank:standard:6-months",
-              "rate": 6.29,
+              "rate": 6.19,
               "term": "6 months",
               "termInMonths": 6
             },
@@ -713,7 +713,7 @@
             },
             {
               "id": "rate:icbc:special:1-year",
-              "rate": 5.29,
+              "rate": 5.05,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-03-04T02:28:48.339Z"
+  "lastUpdated": "2025-03-05T01:32:05.919Z"
 }
