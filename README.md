@@ -15,6 +15,8 @@
 <p align="center">
   <a href="#setup">Setup</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="#api-endpoints">API Endpoints</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="#monitoring">Monitoring</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://github.com/simonbetton/ratesapi.nz">GitHub</a>
@@ -72,6 +74,36 @@ e.g.
 bun run bin/scrape-mortgage-rates.ts
 ```
 
+<a id="api-endpoints"></a>
+
+## API Endpoints
+
+The API exposes the following endpoint categories:
+
+- **Mortgage Rates**: `/api/v1/mortgage-rates`
+  - List all mortgage rates
+  - Get rates by institution
+
+- **Personal Loan Rates**: `/api/v1/personal-loan-rates`
+  - List all personal loan rates
+  - Get rates by institution
+
+- **Car Loan Rates**: `/api/v1/car-loan-rates`
+  - List all car loan rates
+  - Get rates by institution
+
+- **Credit Card Rates**: `/api/v1/credit-card-rates`
+  - List all credit card rates
+  - Get rates by issuer
+
+All endpoints support CORS and return JSON responses with a 5-second cache control.
+
+### API Documentation
+
+- OpenAPI documentation is available at: `/api/v1/doc`
+- Swagger UI is available in development mode at the root URL
+- Production redirects to: [https://docs.ratesapi.nz](https://docs.ratesapi.nz)
+
 <a id="monitoring"></a>
 
 ## Monitoring
@@ -120,3 +152,34 @@ If you're using an organization with restricted permissions, ensure that:
 2. Create the required labels in your repository:
    - Go to repository Issues > Labels
    - Create "incident" and "high-priority" labels if they don't exist
+
+## Development
+
+### Technologies Used
+
+- [Bun](https://bun.sh/): A fast JavaScript runtime and package manager
+- [Hono](https://hono.dev/): A lightweight, fast web framework
+- [Cloudflare Workers](https://workers.cloudflare.com/): Serverless JavaScript runtime
+- [Zod](https://zod.dev/): TypeScript-first schema validation
+- [OpenAPI/Swagger](https://swagger.io/): API documentation generation
+- [Cheerio](https://cheerio.js.org/): HTML parsing for web scraping
+
+### Code Structure
+
+- `src/`: Main application code
+  - `index.ts`: Entry point with Hono application setup
+  - `models/`: Schema definitions for API data types
+  - `routes/`: API endpoint implementations
+  - `lib/`: Utility functions and helpers
+
+- `bin/`: Scraper scripts to collect rates data
+  - Separate scripts for mortgage, personal loan, car loan, and credit card rates
+
+- `data/`: JSON files containing scraped rate information
+
+### Development Environment
+
+- TypeScript for type safety
+- ESLint and Prettier for code quality
+- Husky for Git hooks
+- Wrangler for local development and deployment to Cloudflare
