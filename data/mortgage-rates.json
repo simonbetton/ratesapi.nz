@@ -516,60 +516,6 @@
       "name": "Co-operative Bank",
       "products": [
         {
-          "id": "product:co-operative-bank:owner-occupied",
-          "name": "Owner Occupied",
-          "rates": [
-            {
-              "id": "rate:co-operative-bank:owner-occupied:variable-floating",
-              "rate": 6.45,
-              "term": "Variable floating",
-              "termInMonths": null
-            },
-            {
-              "id": "rate:co-operative-bank:owner-occupied:6-months",
-              "rate": 5.69,
-              "term": "6 months",
-              "termInMonths": 6
-            },
-            {
-              "id": "rate:co-operative-bank:owner-occupied:1-year",
-              "rate": 5.29,
-              "term": "1 year",
-              "termInMonths": 12
-            },
-            {
-              "id": "rate:co-operative-bank:owner-occupied:18-months",
-              "rate": 5.29,
-              "term": "18 months",
-              "termInMonths": 18
-            },
-            {
-              "id": "rate:co-operative-bank:owner-occupied:2-years",
-              "rate": 5.19,
-              "term": "2 years",
-              "termInMonths": 24
-            },
-            {
-              "id": "rate:co-operative-bank:owner-occupied:3-years",
-              "rate": 5.49,
-              "term": "3 years",
-              "termInMonths": 36
-            },
-            {
-              "id": "rate:co-operative-bank:owner-occupied:4-years",
-              "rate": 5.79,
-              "term": "4 years",
-              "termInMonths": 48
-            },
-            {
-              "id": "rate:co-operative-bank:owner-occupied:5-years",
-              "rate": 5.89,
-              "term": "5 years",
-              "termInMonths": 60
-            }
-          ]
-        },
-        {
           "id": "product:co-operative-bank:standard",
           "name": "Standard",
           "rates": [
@@ -618,6 +564,60 @@
             {
               "id": "rate:co-operative-bank:standard:5-years",
               "rate": 6.39,
+              "term": "5 years",
+              "termInMonths": 60
+            }
+          ]
+        },
+        {
+          "id": "product:co-operative-bank:owner-occupied",
+          "name": "Owner Occupied",
+          "rates": [
+            {
+              "id": "rate:co-operative-bank:owner-occupied:variable-floating",
+              "rate": 6.45,
+              "term": "Variable floating",
+              "termInMonths": null
+            },
+            {
+              "id": "rate:co-operative-bank:owner-occupied:6-months",
+              "rate": 5.69,
+              "term": "6 months",
+              "termInMonths": 6
+            },
+            {
+              "id": "rate:co-operative-bank:owner-occupied:1-year",
+              "rate": 5.29,
+              "term": "1 year",
+              "termInMonths": 12
+            },
+            {
+              "id": "rate:co-operative-bank:owner-occupied:18-months",
+              "rate": 5.29,
+              "term": "18 months",
+              "termInMonths": 18
+            },
+            {
+              "id": "rate:co-operative-bank:owner-occupied:2-years",
+              "rate": 5.19,
+              "term": "2 years",
+              "termInMonths": 24
+            },
+            {
+              "id": "rate:co-operative-bank:owner-occupied:3-years",
+              "rate": 5.49,
+              "term": "3 years",
+              "termInMonths": 36
+            },
+            {
+              "id": "rate:co-operative-bank:owner-occupied:4-years",
+              "rate": 5.79,
+              "term": "4 years",
+              "termInMonths": 48
+            },
+            {
+              "id": "rate:co-operative-bank:owner-occupied:5-years",
+              "rate": 5.89,
               "term": "5 years",
               "termInMonths": 60
             }
@@ -1800,36 +1800,36 @@
       "name": "Pepper Money",
       "products": [
         {
-          "id": "product:pepper-money:essential",
-          "name": "Essential",
+          "id": "product:pepper-money:prime",
+          "name": "Prime",
           "rates": [
             {
-              "id": "rate:pepper-money:essential:variable-floating",
-              "rate": 8.29,
+              "id": "rate:pepper-money:prime:variable-floating",
+              "rate": 7.34,
               "term": "Variable floating",
               "termInMonths": null
             }
           ]
         },
         {
-          "id": "product:pepper-money:easy",
-          "name": "Easy",
+          "id": "product:pepper-money:near-prime",
+          "name": "Near Prime",
           "rates": [
             {
-              "id": "rate:pepper-money:easy:variable-floating",
-              "rate": 8.69,
+              "id": "rate:pepper-money:near-prime:variable-floating",
+              "rate": 8.19,
               "term": "Variable floating",
               "termInMonths": null
             }
           ]
         },
         {
-          "id": "product:pepper-money:advantage",
-          "name": "Advantage",
+          "id": "product:pepper-money:specialist",
+          "name": "Specialist",
           "rates": [
             {
-              "id": "rate:pepper-money:advantage:variable-floating",
-              "rate": 10.49,
+              "id": "rate:pepper-money:specialist:variable-floating",
+              "rate": 9.44,
               "term": "Variable floating",
               "termInMonths": null
             }
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-03-05T01:32:05.919Z"
+  "lastUpdated": "2025-03-05T20:05:06.578Z"
 }
