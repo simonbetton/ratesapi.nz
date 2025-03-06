@@ -323,7 +323,7 @@
             },
             {
               "id": "rate:bank-of-china:standard:1-year",
-              "rate": 6.25,
+              "rate": 5.99,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -335,7 +335,7 @@
             },
             {
               "id": "rate:bank-of-china:standard:2-years",
-              "rate": 6.15,
+              "rate": 5.99,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -377,7 +377,7 @@
             },
             {
               "id": "rate:bank-of-china:special:1-year",
-              "rate": 5.25,
+              "rate": 4.99,
               "term": "1 year",
               "termInMonths": 12
             },
@@ -389,7 +389,7 @@
             },
             {
               "id": "rate:bank-of-china:special:2-years",
-              "rate": 5.15,
+              "rate": 4.99,
               "term": "2 years",
               "termInMonths": 24
             },
@@ -2108,5 +2108,5 @@
       ]
     }
   ],
-  "lastUpdated": "2025-03-05T20:05:06.578Z"
+  "lastUpdated": "2025-03-06T19:04:09.669Z"
 }
