@@ -8,7 +8,7 @@ ENVIRONMENT = "production"
 [[d1_databases]]
 binding = "RATESAPI_DB"
 database_name = "ratesapi-data"
-database_id = "5f90b332-adef-41de-9dbf-a9a7050ccd45" # Replace with your development D1 database ID
+database_id = "a1156f15-7043-4616-98de-c5f2d2d3ac63"
 
 # Development environment configuration
 [env.development]
@@ -19,4 +19,4 @@ ENVIRONMENT = "development"
 [[env.development.d1_databases]]
 binding = "RATESAPI_DB"
 database_name = "ratesapi-data"
-database_id = "5f90b332-adef-41de-9dbf-a9a7050ccd45" # Replace with your development D1 database ID
+database_id = "a1156f15-7043-4616-98de-c5f2d2d3ac63"
