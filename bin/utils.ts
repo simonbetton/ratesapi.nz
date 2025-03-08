@@ -1,5 +1,6 @@
 import { D1Database } from '@cloudflare/workers-types';
 import ora from "ora";
+import { fromSavableJson, toSavableJson } from '../src/lib/data-loader';
 import { type CarLoanRates } from "../src/models/car-loan-rates";
 import { type CreditCardRates } from "../src/models/credit-card-rates";
 import { type MortgageRates } from "../src/models/mortgage-rates";
@@ -24,7 +25,7 @@ export function hasDataChanged(
 
 /**
  * Gets a connection to the D1 database
- * 
+ *
  * Note: This function is intended for CI/GitHub Actions environments.
  * For local development, use `wrangler d1 execute` commands directly.
  */
@@ -57,70 +58,70 @@ export async function saveToD1(
   // Check environment variables
   const envCheck = ora("Checking environment").start();
   envCheck.info(`CI=${process.env.CI}, GITHUB_ACTIONS=${process.env.GITHUB_ACTIONS}, D1_DATABASE_NAME=${process.env.D1_DATABASE_NAME ? "set" : "not set"}`).stop();
-  
+
   // Check for D1_DATABASE_NAME and CI environment
   const isCI = process.env.CI === "true" || !!process.env.GITHUB_ACTIONS;
-  
+
   if (!isCI) {
     const skipSpinner = ora("Checking CI environment").start();
     skipSpinner.warn("Skipping D1 database update in local development mode").stop();
     return false;
   }
-  
+
   const ciSpinner = ora("Running in CI environment").start();
   ciSpinner.succeed("Proceeding with D1 database update").stop();
-  
+
   // Check for database NAME
   if (!process.env.D1_DATABASE_NAME) {
     const noDbSpinner = ora("Checking D1 database ID").start();
     noDbSpinner.fail("D1_DATABASE_NAME not set. Set this environment variable to enable database updates").stop();
     return false;
   }
-  
+
   try {
     const timestamp = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
-    
+
     // Prepare data for insertion
     const prepareSpinner = ora("Preparing data for D1").start();
-    const jsonData = JSON.stringify(data).replace(/"/g, '\\"'); // Escape double quotes for SQL
-    prepareSpinner.succeed(`Data prepared for SQL insertion (${jsonData.length} characters)`).stop();
-    
+    const jsonData = toSavableJson(data);
+    prepareSpinner.succeed(`Data prepared for SQL insertion (${jsonData.length} characters, base64 encoded)`).stop();
+
     // Import child_process for CLI commands
     const { execSync } = await import('child_process');
-    
+
     // Test D1 access first
     const testSpinner = ora("Testing D1 database access").start();
     const testResult = execSync(
       `npx wrangler d1 execute ${process.env.D1_DATABASE_NAME} --command="SELECT count(*) FROM sqlite_master"`
     ).toString();
     testSpinner.succeed(`D1 access test successful: ${testResult.trim()}`).stop();
-    
+
     // Save to historical_data table
     const historySpinner = ora(`Saving historical data for ${dataType}`).start();
     execSync(
       `npx wrangler d1 execute ${process.env.D1_DATABASE_NAME} --command="INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES ('${dataType}', '${timestamp}', '${jsonData}')"`
     );
     historySpinner.succeed(`Historical data saved for ${dataType} on ${timestamp}`).stop();
-    
+
     // Update latest_data table
     const latestSpinner = ora(`Updating latest data for ${dataType}`).start();
     execSync(
       `npx wrangler d1 execute ${process.env.D1_DATABASE_NAME} --command="INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES ('${dataType}', '${jsonData}', CURRENT_TIMESTAMP)"`
     );
     latestSpinner.succeed(`Latest data updated for ${dataType}`).stop();
-    
+
     // Verify the data was saved
     const verifySpinner = ora("Verifying data was saved").start();
     const verifyResult = execSync(
       `npx wrangler d1 execute ${process.env.D1_DATABASE_NAME} --command="SELECT data_type, last_updated FROM latest_data WHERE data_type='${dataType}'"`
     ).toString();
     verifySpinner.succeed(`Verification successful: ${verifyResult.trim()}`).stop();
-    
+
     return true;
   } catch (error) {
     const errorSpinner = ora("Saving to D1 database").start();
     errorSpinner.fail(`Failed to save data to D1 database: ${error}`).stop();
-    
+
     // Log the error for debugging
     if (error instanceof Error && error.stack) {
       const stackSpinner = ora("Error details").start();
@@ -139,36 +140,36 @@ export async function loadFromD1<T extends SupportedModels>(
   // Check for D1_DATABASE_NAME and CI environment
   const envCheck = ora("Checking D1 environment").start();
   const isCI = !!process.env.CI || !!process.env.GITHUB_ACTIONS;
-  
+
   // Check if D1 database is available
   if (!isCI || !process.env.D1_DATABASE_NAME) {
     envCheck.warn("Running in local development mode without D1 access").stop();
     return null;
   }
-  
+
   envCheck.succeed("D1 access available").stop();
-  
+
   // In CI environment with D1_DATABASE_NAME, try database
   try {
     const { execSync } = await import('child_process');
-    
+
     // Query the latest data from D1
     const loadSpinner = ora(`Loading latest data for ${dataType} from D1`).start();
     const result = execSync(
       `npx wrangler d1 execute ${process.env.D1_DATABASE_NAME} --command="SELECT data FROM latest_data WHERE data_type = '${dataType}'" --json`
     ).toString();
-    
-    const parsedResult = JSON.parse(result);
-    if (parsedResult.results && parsedResult.results.length > 0) {
-      loadSpinner.succeed(`Data loaded from D1 database for ${dataType}`).stop();
-      return JSON.parse(parsedResult.results[0].data) as T;
+
+    loadSpinner.succeed(`Data loaded from D1 database for ${dataType}`).stop();
+
+    try {
+      return fromSavableJson(result) as T;
+    } catch (decodeError) {
+      throw new Error('Failed to decode base64 data');
     }
-    
-    loadSpinner.warn(`No data found in D1 for ${dataType}`).stop();
   } catch (error) {
     const errorSpinner = ora("D1 database connection").start();
     errorSpinner.fail(`Database connection failed: ${error}`).stop();
   }
-  
+
   return null;
 }

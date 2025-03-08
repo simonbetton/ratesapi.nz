@@ -1,8 +1,6 @@
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { cache } from "hono/cache";
 import { cors } from "hono/cors";
-import { prettyJSON } from "hono/pretty-json";
 import { Institution, Issuer, Plan, Product, Rate } from "./models";
 import {
   carLoanRatesRoutes,
@@ -46,14 +44,14 @@ const app = new OpenAPIHono<{ Bindings: Environment }>({
   },
 });
 
-app.use(
-  "*",
-  prettyJSON(),
-  cache({
-    cacheName: "rates-api",
-    cacheControl: "public, max-age=5, must-revalidate",
-  }),
-);
+// app.use(
+//   "*",
+//   prettyJSON(),
+//   cache({
+//     cacheName: "rates-api",
+//     cacheControl: "public, max-age=5, must-revalidate",
+//   }),
+// );
 
 app.use(
   "/api/v1/*",

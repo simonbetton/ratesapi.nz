@@ -16,18 +16,20 @@ type DataType = "mortgage-rates" | "car-loan-rates" | "credit-card-rates" | "per
  * Loads the latest data from D1 database
  */
 export async function loadLatestData<T extends SupportedModels>(
-  dataType: DataType, 
+  dataType: DataType,
   db: D1Database
 ): Promise<T> {
   try {
     const stmt = db.prepare('SELECT data FROM latest_data WHERE data_type = ?');
     const result = await stmt.bind(dataType).first<{ data: string }>();
-    
+
     if (!result) {
       throw new Error(`No data found for ${dataType}`);
     }
-    
-    return JSON.parse(result.data) as T;
+
+    console.log('Loaded latest data for', dataType);
+
+    return fromSavableJson(result.data) as T;
   } catch (error) {
     throw new Error(`Failed to load ${dataType} data: ${error}`);
   }
@@ -37,22 +39,32 @@ export async function loadLatestData<T extends SupportedModels>(
  * Loads data for a specific date from the D1 database
  */
 export async function loadHistoricalData<T extends SupportedModels>(
-  dataType: DataType, 
+  dataType: DataType,
   date: string,
   db: D1Database
 ): Promise<T | null> {
   try {
     const stmt = db.prepare('SELECT data FROM historical_data WHERE data_type = ? AND date = ?');
     const result = await stmt.bind(dataType, date).first<{ data: string }>();
-    
+
     if (!result) {
       return null;
     }
-    
-    return JSON.parse(result.data) as T;
+
+    console.log('Loaded historical data for', dataType, date);
+
+    return fromSavableJson(result.data) as T;
   } catch (error) {
     throw new Error(`Failed to load historical ${dataType} data for ${date}: ${error}`);
   }
+}
+
+export function toSavableJson(json: Record<string, any>) {
+  return btoa(JSON.stringify(json));
+}
+
+export function fromSavableJson(json: string) {
+  return JSON.parse(atob(json));
 }
 
 /**
@@ -65,7 +77,7 @@ export async function getAvailableDates(
   try {
     const stmt = db.prepare('SELECT date FROM historical_data WHERE data_type = ? ORDER BY date ASC');
     const results = await stmt.bind(dataType).all<{ date: string }>();
-    
+
     return results.results.map(row => row.date);
   } catch (error) {
     console.error(`Failed to get available dates for ${dataType}:`, error);
@@ -87,13 +99,13 @@ export async function loadTimeSeriesData<T extends SupportedModels>(
       'SELECT date, data FROM historical_data WHERE data_type = ? AND date >= ? AND date <= ? ORDER BY date ASC'
     );
     const results = await stmt.bind(dataType, startDate, endDate).all<{ date: string, data: string }>();
-    
+
     const timeSeries: Record<string, T> = {};
-    
+
     for (const row of results.results) {
-      timeSeries[row.date] = JSON.parse(row.data) as T;
+      timeSeries[row.date] = fromSavableJson(row.data) as T;
     }
-    
+
     return timeSeries;
   } catch (error) {
     console.error(`Failed to load time series data for ${dataType}:`, error);
@@ -111,14 +123,14 @@ export async function saveHistoricalData<T extends SupportedModels>(
   db: D1Database
 ): Promise<void> {
   try {
-    const dataJson = JSON.stringify(data);
-    
+    const dataJson = toSavableJson(data);
+
     // Insert or replace historical data
     const stmt = db.prepare(
       'INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES (?, ?, ?)'
     );
     await stmt.bind(dataType, date, dataJson).run();
-    
+
     // Also update latest_data
     const latestStmt = db.prepare(
       'INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES (?, ?, CURRENT_TIMESTAMP)'
