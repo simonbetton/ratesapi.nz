@@ -41,16 +41,16 @@ jobs:
           npx wrangler d1 execute ratesapi-data --command="SELECT name FROM sqlite_master WHERE type='table';"
 
       - name: Run the scraper script for mortgage rates
-        run: D1_DATABASE_NAME=ratesapi-data bun run bin/scrape-mortgage-rates.ts
+        run: D1_DATABASE_NAME="ratesapi-data --remote" bun run bin/scrape-mortgage-rates.ts
         
       - name: Run the scraper script for personal loan rates
-        run: D1_DATABASE_NAME=ratesapi-data bun run bin/scrape-personal-loan-rates.ts
+        run: D1_DATABASE_NAME="ratesapi-data --remote" bun run bin/scrape-personal-loan-rates.ts
  
       - name: Run the scraper script for car loan rates
-        run: D1_DATABASE_NAME=ratesapi-data bun run bin/scrape-car-loan-rates.ts
+        run: D1_DATABASE_NAME="ratesapi-data --remote" bun run bin/scrape-car-loan-rates.ts
 
       - name: Run the scraper script for credit card rates
-        run: D1_DATABASE_NAME=ratesapi-data bun run bin/scrape-credit-card-rates.ts
+        run: D1_DATABASE_NAME="ratesapi-data --remote" bun run bin/scrape-credit-card-rates.ts
  
       - name: Check for changes
         id: git-check
