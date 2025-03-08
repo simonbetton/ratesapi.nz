@@ -60,7 +60,7 @@ This application uses Cloudflare D1 for data storage. To set up the database:
 npx wrangler d1 create ratesapi-data
 ```
 
-2. Update your `wrangler.toml` with the database ID (replace the example.toml file if needed):
+2. Update your `wrangler.toml` with the database ID (replace the wrangler.toml file to suit):
 
 ```toml
 [[d1_databases]]
@@ -103,7 +103,7 @@ To run with D1 database support, provide the database ID:
 
 ```zsh
 # Replace with your D1 database ID from wrangler.toml
-D1_DATABASE_ID="your-database-id" bun run bin/scrape-mortgage-rates.ts
+D1_DATABASE_NAME="your-database-name" bun run bin/scrape-mortgage-rates.ts
 ```
 
 When running without a D1 database ID, the scripts will not store data but will still show what would be scraped:
@@ -166,9 +166,8 @@ The automated workflow:
 
 For the automated data collection and database updates to work, you'll need to add the following secrets to your GitHub repository:
 
-1. `D1_DATABASE_ID`: Your Cloudflare D1 database ID (found in wrangler.toml)
-2. `CLOUDFLARE_API_TOKEN`: A Cloudflare API token with D1 write permissions
-3. `CLOUDFLARE_ACCOUNT_ID`: Your Cloudflare account ID
+1. `CLOUDFLARE_API_TOKEN`: A Cloudflare API token with D1 write permissions
+2. `CLOUDFLARE_ACCOUNT_ID`: Your Cloudflare account ID
 
 To add these secrets:
 1. Go to your repository's Settings > Secrets and variables > Actions
@@ -200,8 +199,8 @@ You can manually update the D1 database in two ways:
 # Replace DATABASE_NAME with your database name from wrangler.toml (e.g. "ratesapi-data")
 npx wrangler d1 execute DATABASE_NAME --file=./schema.sql
 
-# Then run the scraper scripts with D1_DATABASE_ID set
-D1_DATABASE_ID="your-database-id" bun run bin/scrape-mortgage-rates.ts
+# Then run the scraper scripts with D1_DATABASE_NAME set
+D1_DATABASE_name="your-database-name" bun run bin/scrape-mortgage-rates.ts
 ```
 
 This is useful for initial seeding of a new database or manual updates when needed.
@@ -209,8 +208,8 @@ This is useful for initial seeding of a new database or manual updates when need
 ### Local Development vs. GitHub Actions
 
 - **Local Development**: 
-  - Scripts display scraped data but don't store it without D1_DATABASE_ID
-  - D1 operations are skipped to avoid connection errors when no database ID is provided
+  - Scripts display scraped data but don't store it without D1_DATABASE_NAME
+  - D1 operations are skipped to avoid connection errors when no database name is provided
 
 - **GitHub Actions (CI Environment)**:
   - D1 database is used as the exclusive data source 

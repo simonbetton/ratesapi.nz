@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: "true"
-      D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
@@ -36,31 +35,23 @@ jobs:
           
       - name: Verify D1 database access
         run: |
-          echo "Verifying D1 database access for database ID: $D1_DATABASE_ID"
+          echo "Verifying D1 database access for database: ratesapi-data"
           npx wrangler d1 list
           echo "Testing database connectivity:"
-          npx wrangler d1 execute $D1_DATABASE_ID --command="SELECT name FROM sqlite_master WHERE type='table';"
+          npx wrangler d1 execute ratesapi-data --command="SELECT name FROM sqlite_master WHERE type='table';"
 
       - name: Run the scraper script for mortgage rates
-        run: bun run bin/scrape-mortgage-rates.ts
-        env:
-          D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
-
+        run: D1_DATABASE_NAME=ratesapi-data bun run bin/scrape-mortgage-rates.ts
+        
       - name: Run the scraper script for personal loan rates
-        run: bun run bin/scrape-personal-loan-rates.ts
-        env:
-          D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
-
+        run: D1_DATABASE_NAME=ratesapi-data bun run bin/scrape-personal-loan-rates.ts
+ 
       - name: Run the scraper script for car loan rates
-        run: bun run bin/scrape-car-loan-rates.ts
-        env:
-          D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
+        run: D1_DATABASE_NAME=ratesapi-data bun run bin/scrape-car-loan-rates.ts
 
       - name: Run the scraper script for credit card rates
-        run: bun run bin/scrape-credit-card-rates.ts
-        env:
-          D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
-
+        run: D1_DATABASE_NAME=ratesapi-data bun run bin/scrape-credit-card-rates.ts
+ 
       - name: Check for changes
         id: git-check
         run: |
@@ -79,9 +70,9 @@ jobs:
           
           # Verify the data was saved
           echo "Verifying data was saved..."
-          npx wrangler d1 execute $D1_DATABASE_ID --command="SELECT data_type, last_updated FROM latest_data"
+          npx wrangler d1 execute ratesapi-data --command="SELECT data_type, last_updated FROM latest_data"
           echo "Verifying historical data was saved..."
-          npx wrangler d1 execute $D1_DATABASE_ID --command="SELECT data_type, date, COUNT(*) as count FROM historical_data GROUP BY data_type, date ORDER BY date DESC LIMIT 10"
+          npx wrangler d1 execute ratesapi-data --command="SELECT data_type, date, COUNT(*) as count FROM historical_data GROUP BY data_type, date ORDER BY date DESC LIMIT 10"
 
       - name: Commit changes
         if: steps.git-check.outputs.changes == 'true'
