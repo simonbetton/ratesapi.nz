@@ -28,18 +28,47 @@ jobs:
       - name: Check API Endpoints
         id: health-check
         run: |
+          # Get today's date and a date from last week for testing date ranges
+          TODAY=$(date +'%Y-%m-%d')
+          LAST_WEEK=$(date -d "7 days ago" +'%Y-%m-%d')
+          
           # Define endpoints to check
           declare -a endpoints=(
+            # Base endpoints
             "https://ratesapi.nz"
             "https://ratesapi.nz/api/v1/mortgage-rates"
             "https://ratesapi.nz/api/v1/personal-loan-rates"
             "https://ratesapi.nz/api/v1/car-loan-rates"
             "https://ratesapi.nz/api/v1/credit-card-rates"
+            
+            # Institution/issuer specific endpoints
             "https://ratesapi.nz/api/v1/mortgage-rates/institution:anz"
             "https://ratesapi.nz/api/v1/personal-loan-rates/institution:asb"
             "https://ratesapi.nz/api/v1/car-loan-rates/institution:asb"
             "https://ratesapi.nz/api/v1/credit-card-rates/issuer:amex"
+            
+            # Documentation
             "https://ratesapi.nz/api/v1/doc"
+            
+            # Basic Time Series API endpoints
+            "https://ratesapi.nz/api/v1/mortgage-rates/time-series"
+            "https://ratesapi.nz/api/v1/personal-loan-rates/time-series"
+            "https://ratesapi.nz/api/v1/car-loan-rates/time-series"
+            "https://ratesapi.nz/api/v1/credit-card-rates/time-series"
+            
+            # Time Series with institution/issuer parameters
+            "https://ratesapi.nz/api/v1/mortgage-rates/time-series?institutionId=institution:anz" 
+            "https://ratesapi.nz/api/v1/personal-loan-rates/time-series?institutionId=institution:asb"
+            "https://ratesapi.nz/api/v1/car-loan-rates/time-series?institutionId=institution:asb"
+            "https://ratesapi.nz/api/v1/credit-card-rates/time-series?issuerId=issuer:amex"
+            
+            # Time Series with date parameters
+            "https://ratesapi.nz/api/v1/mortgage-rates/time-series?startDate=${LAST_WEEK}&endDate=${TODAY}"
+            "https://ratesapi.nz/api/v1/mortgage-rates/time-series?date=${TODAY}"
+            
+            # Time Series with combined filters
+            "https://ratesapi.nz/api/v1/mortgage-rates/time-series?startDate=${LAST_WEEK}&endDate=${TODAY}&institutionId=institution:anz"
+            "https://ratesapi.nz/api/v1/mortgage-rates/time-series?institutionId=institution:anz&termInMonths=12"
           )
           
           # Track failed endpoints

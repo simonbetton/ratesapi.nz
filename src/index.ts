@@ -11,9 +11,7 @@ import {
   personalLoanRatesRoutes,
 } from "./routes";
 
-type Environment = {
-  ENVIRONMENT: string;
-};
+import { Environment } from './lib/environment';
 
 const app = new OpenAPIHono<{ Bindings: Environment }>({
   defaultHook: (result, c) => {

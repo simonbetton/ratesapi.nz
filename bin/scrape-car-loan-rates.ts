@@ -1,7 +1,6 @@
 import { load, type CheerioAPI } from "cheerio";
 import { type Element } from "domhandler";
 import ora from "ora";
-import CarLoanRatesFromJson from "../data/car-loan-rates.json";
 import { generateId } from "../src/lib/generate-id";
 import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
 import { isTruthy } from "../src/lib/is-truthy";
@@ -12,13 +11,12 @@ import {
   type Product,
   type Rate,
 } from "../src/models/car-loan-rates";
-import { hasDataChanged, saveDataToFile } from "./utils";
+import { hasDataChanged, loadFromD1, saveToD1 } from "./utils";
 
 const config: {
   tableSelector: string;
   tableColumnHeaders: string[];
   alternativeSpecialProductNames: string[];
-  outputFilePath: string;
 } = {
   tableSelector: "#interest_financial_datatable tbody tr",
   tableColumnHeaders: [
@@ -28,13 +26,26 @@ const config: {
     "Interest rate %",
   ],
   alternativeSpecialProductNames: [],
-  outputFilePath: "data/car-loan-rates.json",
 };
 
 const log = createLogger("scrape-car-loan-rates");
 const interestScraperAPI = InterestScraperAPI();
 
+// The main function to scrape and save car loan rates
 async function main() {
+  // Load current rates from D1
+  let currentRates: CarLoanRates | null = null;
+  const loading = ora("Loading current data from D1").start();
+  try {
+    currentRates = await loadFromD1<CarLoanRates>("car-loan-rates");
+    loading.succeed("Loaded current data").stop();
+  } catch (error) {
+    loading.fail("Failed to load current data").stop();
+    log.error({ error }, "Failed to load current data");
+    // Continue with the process even if loading fails
+  }
+
+  // Scrape new data
   let data: string = "";
   const gather = ora("Scraping car loan rates").start();
   try {
@@ -43,13 +54,14 @@ async function main() {
       throw new Error(`Failed to fetch car loan rates`);
     }
     data = response;
-    gather.succeed("Scraped car loan rates\n").stop();
+    gather.succeed("Scraped car loan rates").stop();
   } catch (error) {
-    gather.fail("Failed to scrape car loan rates\n").stop();
+    gather.fail("Failed to scrape car loan rates").stop();
     log.error({ error }, "Failed to scrape car loan rates");
     return;
   }
 
+  // Extract and validate data
   let validatedModel: CarLoanRates;
   const handle = ora("Extracting and Validating").start();
   try {
@@ -59,7 +71,7 @@ async function main() {
       type: "CarLoanRates",
       data: unvalidatedData,
       lastUpdated: new Date().toISOString(),
-    }) as CarLoanRates; // We have to cast because Zod type inference does not create string literal types from .regex(). It's safe here because
+    }) as CarLoanRates;
     handle.succeed("Extracted and Validated").stop();
   } catch (error) {
     handle.fail("Failed to extract and/or validate").stop();
@@ -68,21 +80,22 @@ async function main() {
   }
 
   // Check if the rates have changed
-  // If they haven't, don't save to file
-  // TODO: Fix this `as CarLoanRates` type casting
-  if (!hasDataChanged(validatedModel, CarLoanRatesFromJson as CarLoanRates)) {
+  if (currentRates && !hasDataChanged(validatedModel, currentRates)) {
     const noChange = ora("No changes detected").start();
     noChange.succeed("No changes detected").stop();
     return;
   }
 
-  const save = ora("Saving to file").start();
+  // Save new data to D1 database
+  const saveDb = ora("Saving data to D1").start();
   try {
-    saveDataToFile(validatedModel, config);
-    save.succeed("Saved to local file").stop();
+    // Save to D1 database
+    const saved = await saveToD1(validatedModel, "car-loan-rates");
+    
+    saveDb.succeed(saved ? "Data saved to D1 database" : "Failed to save to D1").stop();
   } catch (error) {
-    save.fail("Failed to save to local file").stop();
-    log.error({ error }, "Failed to save to local file");
+    saveDb.fail("Failed to save data").stop();
+    log.error({ error }, "Failed to save data");
     return;
   }
 }

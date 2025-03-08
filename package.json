@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "wrangler dev --env development --port 8787 src/index.ts",
+    "dev": "wrangler dev --env development src/index.ts",
     "deploy": "wrangler deploy --minify src/index.ts",
     "prepare": "husky",
     "test": "echo \"No test specified\" && exit 0"
@@ -16,6 +16,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250303.0",
     "@total-typescript/ts-reset": "^0.6.1",
+    "@types/node": "^22.13.9",
     "@typescript-eslint/eslint-plugin": "8.25.0",
     "@typescript-eslint/parser": "^8.26.0",
     "domhandler": "^5.0.3",
