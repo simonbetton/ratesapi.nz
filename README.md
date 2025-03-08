@@ -97,7 +97,7 @@ bun run deploy
 
 #### 🔩 Scrape data
 
-Check out the available scripts within `./bin` to scrape and save data. The data will be stored both locally and in the D1 database.
+Check out the available scripts within `./bin` to scrape and save data. The data is stored in the D1 database.
 
 To run with D1 database support, provide the database ID:
 
@@ -106,7 +106,7 @@ To run with D1 database support, provide the database ID:
 D1_DATABASE_ID="your-database-id" bun run bin/scrape-mortgage-rates.ts
 ```
 
-Or simply run without D1 database support (files only):
+When running without a D1 database ID, the scripts will not store data but will still show what would be scraped:
 
 ```zsh
 bun run bin/scrape-mortgage-rates.ts
@@ -150,20 +150,17 @@ All endpoints support CORS and return JSON responses with a 5-second cache contr
 
 ## Automated Data Collection
 
-Data is collected hourly via GitHub Actions and stored in both:
-1. Local JSON files in the repository
-2. Cloudflare D1 database for API access
+Data is collected hourly via GitHub Actions and stored in the Cloudflare D1 database for API access.
 
 ### How Data Collection Works
 
 The automated workflow:
 1. Scrapes data from the source websites
 2. Validates the data against the schema
-3. Stores the data in JSON files in the repository
-4. Detects if the data has changed
-5. If changes are detected:
-   - Uploads the data to the D1 database
-   - Commits the changes to the repository
+3. Detects if the data has changed
+4. If changes are detected:
+   - Stores the data in the D1 database
+   - Commits the workflow changes to the repository
 
 ### Required GitHub Secrets
 
@@ -181,10 +178,10 @@ To add these secrets:
 ### Data Flow
 
 1. **Scraper Scripts**: Each rate type has a dedicated scraper script that:
-   - Loads current data (from D1 in CI environments, from local files in development)
+   - Loads current data from the D1 database
    - Scrapes new data from source websites
    - Compares the data to detect changes
-   - Saves data to both the D1 database (in CI environments) and local JSON files
+   - Saves data to the D1 database when changes are detected
    
 2. **API Routes**: The API routes:
    - Load data from the D1 database
@@ -193,7 +190,7 @@ To add these secrets:
 
 ### Manual Database Update
 
-You can manually update the D1 database from local JSON files in two ways:
+You can manually update the D1 database in two ways:
 
 1. **Using GitHub Actions**: The easiest approach is to push your changes to GitHub and let the workflow update the database automatically.
 
@@ -203,8 +200,8 @@ You can manually update the D1 database from local JSON files in two ways:
 # Replace DATABASE_NAME with your database name from wrangler.toml (e.g. "ratesapi-data")
 npx wrangler d1 execute DATABASE_NAME --file=./schema.sql
 
-# Then import data from local JSON files (for each data type)
-npx wrangler d1 execute DATABASE_NAME --command="INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES ('mortgage-rates', '$(cat data/mortgage-rates.json | sed 's/\"/\\"/g')', CURRENT_TIMESTAMP)"
+# Then run the scraper scripts with D1_DATABASE_ID set
+D1_DATABASE_ID="your-database-id" bun run bin/scrape-mortgage-rates.ts
 ```
 
 This is useful for initial seeding of a new database or manual updates when needed.
@@ -212,14 +209,13 @@ This is useful for initial seeding of a new database or manual updates when need
 ### Local Development vs. GitHub Actions
 
 - **Local Development**: 
-  - Scripts use local JSON files as the primary data source
-  - D1 operations are skipped to avoid connection errors
-  - JSON files serve as fallback when database is unavailable
+  - Scripts display scraped data but don't store it without D1_DATABASE_ID
+  - D1 operations are skipped to avoid connection errors when no database ID is provided
 
 - **GitHub Actions (CI Environment)**:
-  - D1 database is used as the primary data source 
+  - D1 database is used as the exclusive data source 
   - Updates are made directly to the D1 database
-  - JSON files are still maintained for compatibility
+  - All data storage operations are performed on D1
 
 ## Monitoring
 
@@ -292,10 +288,7 @@ If you're using an organization with restricted permissions, ensure that:
 - `bin/`: Scraper scripts to collect rates data
   - Separate scripts for mortgage, personal loan, car loan, and credit card rates
 
-- `data/`: JSON files containing scraped rate information (also stored in D1)
-  - `history/`: Historical snapshots by date
-
-- `schema.sql`: D1 database schema definition
+- `schema.sql`: D1 database schema definition for storing all rate information
 
 ### Development Environment
 
