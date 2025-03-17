@@ -27,7 +27,7 @@
     "husky": "^9.1.7",
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0",
-    "wrangler": "^3.114.0"
+    "wrangler": "^4.0.0"
   },
   "lint-staged": {
     "*": "prettier --ignore-unknown --write"
