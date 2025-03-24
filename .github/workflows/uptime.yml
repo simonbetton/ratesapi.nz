@@ -2,8 +2,8 @@ name: API Uptime Monitoring
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # Run every 15 minutes
-  workflow_dispatch:  # Allow manual triggering
+    - cron: "*/15 * * * *" # Run every 15 minutes
+  workflow_dispatch: # Allow manual triggering
 
 # Required permissions for creating issues and using labels
 permissions:
@@ -20,8 +20,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      
+          node-version: "20"
+
       - name: Install dependencies
         run: npm install axios
 
@@ -31,7 +31,7 @@ jobs:
           # Get today's date and a date from last week for testing date ranges
           TODAY=$(date +'%Y-%m-%d')
           LAST_WEEK=$(date -d "7 days ago" +'%Y-%m-%d')
-          
+
           # Define endpoints to check
           declare -a endpoints=(
             # Base endpoints
@@ -40,89 +40,114 @@ jobs:
             "https://ratesapi.nz/api/v1/personal-loan-rates"
             "https://ratesapi.nz/api/v1/car-loan-rates"
             "https://ratesapi.nz/api/v1/credit-card-rates"
-            
+
             # Institution/issuer specific endpoints
             "https://ratesapi.nz/api/v1/mortgage-rates/institution:anz"
             "https://ratesapi.nz/api/v1/personal-loan-rates/institution:asb"
             "https://ratesapi.nz/api/v1/car-loan-rates/institution:asb"
             "https://ratesapi.nz/api/v1/credit-card-rates/issuer:amex"
-            
+
             # Documentation
             "https://ratesapi.nz/api/v1/doc"
-            
+
             # Basic Time Series API endpoints
             "https://ratesapi.nz/api/v1/mortgage-rates/time-series"
             "https://ratesapi.nz/api/v1/personal-loan-rates/time-series"
             "https://ratesapi.nz/api/v1/car-loan-rates/time-series"
             "https://ratesapi.nz/api/v1/credit-card-rates/time-series"
-            
+
             # Time Series with institution/issuer parameters
-            "https://ratesapi.nz/api/v1/mortgage-rates/time-series?institutionId=institution:anz" 
+            "https://ratesapi.nz/api/v1/mortgage-rates/time-series?institutionId=institution:anz"
             "https://ratesapi.nz/api/v1/personal-loan-rates/time-series?institutionId=institution:asb"
             "https://ratesapi.nz/api/v1/car-loan-rates/time-series?institutionId=institution:asb"
             "https://ratesapi.nz/api/v1/credit-card-rates/time-series?issuerId=issuer:amex"
-            
+
             # Time Series with date parameters
             "https://ratesapi.nz/api/v1/mortgage-rates/time-series?startDate=${LAST_WEEK}&endDate=${TODAY}"
             "https://ratesapi.nz/api/v1/mortgage-rates/time-series?date=${TODAY}"
-            
+
             # Time Series with combined filters
             "https://ratesapi.nz/api/v1/mortgage-rates/time-series?startDate=${LAST_WEEK}&endDate=${TODAY}&institutionId=institution:anz"
             "https://ratesapi.nz/api/v1/mortgage-rates/time-series?institutionId=institution:anz&termInMonths=12"
           )
-          
+
           # Track failed endpoints
           failed_endpoints=""
           status=0
-          
+
           # Check each endpoint
           for endpoint in "${endpoints[@]}"; do
             echo "Checking $endpoint"
-            
-            response=$(node -e "
-              const axios = require('axios');
-              axios.get('$endpoint', { 
-                headers: { 'User-Agent': 'RatesAPI-Monitor/1.0' }
-              })
-                .then(res => {
-                  console.log(JSON.stringify({
-                    status: res.status,
-                    ok: res.status >= 200 && res.status < 300
-                  }));
-                  process.exit(0);
+
+            # Retry logic with maximum retry time of 10 seconds, 500ms delay between retries
+            max_retry_time=10  # seconds
+            retry_delay=0.5    # seconds
+            start_time=$(date +%s)
+            success=false
+            attempt=1
+
+            while [[ $(( $(date +%s) - $start_time )) -lt $max_retry_time && "$success" == "false" ]]; do
+              response=$(node -e "
+                const axios = require('axios');
+                axios.get('$endpoint', {
+                  headers: { 'User-Agent': 'RatesAPI-Monitor/1.0' }
                 })
-                .catch(err => {
-                  console.log(JSON.stringify({
-                    status: err.response ? err.response.status : 0,
-                    ok: false,
-                    message: err.message
-                  }));
-                  process.exit(1);
-                });
-            " || echo '{"status":0,"ok":false,"message":"Request failed"}')
-            
-            # Parse response
-            ok=$(echo $response | jq -r '.ok')
-            
-            if [[ "$ok" != "true" ]]; then
+                  .then(res => {
+                    console.log(JSON.stringify({
+                      status: res.status,
+                      ok: res.status >= 200 && res.status < 300
+                    }));
+                    process.exit(0);
+                  })
+                  .catch(err => {
+                    console.log(JSON.stringify({
+                      status: err.response ? err.response.status : 0,
+                      ok: false,
+                      message: err.message
+                    }));
+                    process.exit(1);
+                  });
+              " || echo '{"status":0,"ok":false,"message":"Request failed"}')
+
+              # Parse response
+              ok=$(echo $response | jq -r '.ok')
+
+              if [[ "$ok" == "true" ]]; then
+                success=true
+                echo "✅ Success: $endpoint (attempt $attempt)"
+                break
+              else
+                # Only show retry message if we're not going to exceed the max retry time
+                current_time=$(date +%s)
+                time_spent=$(( $current_time - $start_time ))
+                time_left=$(( $max_retry_time - $time_spent ))
+
+                if [[ $time_left -gt 0 ]]; then
+                  echo "⚠️ Failed: $endpoint - Retrying in ${retry_delay}s (${time_spent}s/${max_retry_time}s elapsed)"
+                  sleep $retry_delay
+                  attempt=$((attempt + 1))
+                fi
+              fi
+            done
+
+            # If we exit the loop and success is still false, endpoint is considered failed
+            if [[ "$success" != "true" ]]; then
               status=1
               failed_endpoints+="- $endpoint\n"
-              echo "❌ Failed: $endpoint"
-            else
-              echo "✅ Success: $endpoint"
+              echo "❌ Failed after retries: $endpoint"
             fi
           done
-          
+
           # Set output for other steps
           echo "FAILED_ENDPOINTS<<EOF" >> $GITHUB_ENV
           echo -e "$failed_endpoints" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-          
+
           # Fail the job if any endpoint failed
           exit $status
 
       # No longer needed as we have a single notification step that handles everything
-      
+
       - name: Create Issue and Notify Team
         if: ${{ failure() }}
         uses: actions/github-script@v6
@@ -131,7 +156,7 @@ jobs:
           script: |
             const failedEndpoints = process.env.FAILED_ENDPOINTS || 'Unknown endpoints';
             const timestamp = new Date().toISOString();
-            
+
             // Create a new issue with team members mentioned
             const issue = await github.rest.issues.create({
               owner: context.repo.owner,
@@ -140,5 +165,5 @@ jobs:
               body: `@${{ github.repository_owner }} One or more API endpoints failed health check.\n\nFailed endpoints:\n${failedEndpoints}\n\nTimestamp: ${timestamp}\n\n[View workflow run](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID})`,
               labels: ['incident', 'high-priority']
             });
-            
+
             console.log(`Created issue #${issue.data.number}: ${issue.data.html_url}`);
