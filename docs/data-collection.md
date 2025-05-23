@@ -50,7 +50,7 @@ You can manually update the D1 database in two ways:
 npx wrangler d1 execute DATABASE_NAME --file=./schema.sql
 
 # Then run the scraper scripts with D1_DATABASE_NAME set
-D1_DATABASE_name="your-database-name" bun run bin/scrape-mortgage-rates.ts
+D1_DATABASE_NAME="your-database-name" bun run bin/scrape-mortgage-rates.ts
 ```
 
 This is useful for initial seeding of a new database or manual updates when needed.
