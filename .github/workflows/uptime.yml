@@ -60,7 +60,7 @@ jobs:
           exit $script_exit_code
 
       - name: Create Issue and Notify Team
-        if: steps.health-check.outcome == 'failure'
+        if: failure()
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

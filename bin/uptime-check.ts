@@ -3,7 +3,7 @@
 import { createHttpClient } from "../src/lib/http-client";
 
 const LAST_WEEK = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
-const TODAY = new Date().toISOString().split("T")[0];
+const YESTERDAY = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split("T")[0];
 
 const endpoints = [
   // Base endpoints
@@ -34,11 +34,11 @@ const endpoints = [
   "v1/credit-card-rates/time-series?issuerId=issuer:amex",
 
   // Time Series with date parameters
-  `v1/mortgage-rates/time-series?startDate=${LAST_WEEK}&endDate=${TODAY}`,
-  `v1/mortgage-rates/time-series?date=${TODAY}`,
+  `v1/mortgage-rates/time-series?startDate=${LAST_WEEK}&endDate=${YESTERDAY}`,
+  `v1/mortgage-rates/time-series?date=${YESTERDAY}`,
 
   // Time Series with combined filters
-  `v1/mortgage-rates/time-series?startDate=${LAST_WEEK}&endDate=${TODAY}&institutionId=institution:anz`,
+  `v1/mortgage-rates/time-series?startDate=${LAST_WEEK}&endDate=${YESTERDAY}&institutionId=institution:anz`,
   `v1/mortgage-rates/time-series?institutionId=institution:anz&termInMonths=12`,
 ];
 
@@ -74,7 +74,7 @@ async function main() {
         console.error(`❌ ${endpoint} - Failed: ${errorDetails}`);
       }
     } catch (error: any) {
-      errorDetails = error.message || String(error);
+      errorDetails = error.message ?? String(error);
       console.error(`❌ ${endpoint} - Error: ${errorDetails}`);
     }
 
