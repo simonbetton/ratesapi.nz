@@ -72,8 +72,7 @@ async function main() {
       data: unvalidatedData,
       lastUpdated: new Date().toISOString(),
     }) as CarLoanRates;
-    handle.succeed("Extracted and Validated").stop();
-  } catch (error) {
+    handle.succeed(`Extracted and Validated ${validatedModel.data.length} results`).stop();  } catch (error) {
     handle.fail("Failed to extract and/or validate").stop();
     log.error({ error }, "Failed to extract and/or validate");
     throw error;
@@ -91,7 +90,7 @@ async function main() {
   try {
     // Save to D1 database
     const saved = await saveToD1(validatedModel, "car-loan-rates");
-    
+
     saveDb.succeed(saved ? "Data saved to D1 database" : "Failed to save to D1").stop();
   } catch (error) {
     saveDb.fail("Failed to save data").stop();

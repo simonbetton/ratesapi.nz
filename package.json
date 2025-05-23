@@ -3,7 +3,13 @@
     "dev": "wrangler dev --env development src/index.ts",
     "deploy": "wrangler deploy --minify src/index.ts",
     "prepare": "husky",
-    "test": "echo \"No test specified\" && exit 0"
+    "test": "echo \"No test specified\" && exit 0",
+    "scrape:mortgage": "bun run bin/scrape-mortgage-rates.ts",
+    "scrape:personal": "bun run bin/scrape-personal-loan-rates.ts",
+    "scrape:car": "bun run bin/scrape-car-loan-rates.ts",
+    "scrape:credit": "bun run bin/scrape-credit-card-rates.ts",
+    "scrape:all": "bun run bin/scrape-mortgage-rates.ts && bun run bin/scrape-personal-loan-rates.ts && bun run bin/scrape-car-loan-rates.ts && bun run bin/scrape-credit-card-rates.ts",
+    "check-uptime": "bun run bin/uptime-check.ts"
   },
   "dependencies": {
     "@hono/swagger-ui": "^0.5.1",
