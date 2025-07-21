@@ -14,7 +14,7 @@
   "dependencies": {
     "@hono/swagger-ui": "^0.5.1",
     "@hono/zod-openapi": "^0.19.6",
-    "cheerio": "1.0.0",
+    "cheerio": "1.1.1",
     "hono": "^4.7.10",
     "ora": "^8.2.0",
     "zod": "^3.25.23"
