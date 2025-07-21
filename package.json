@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@hono/swagger-ui": "^0.5.1",
-    "@hono/zod-openapi": "^0.19.6",
+    "@hono/zod-openapi": "^1.0.2",
     "cheerio": "1.0.0",
     "hono": "^4.7.10",
     "ora": "^8.2.0",
