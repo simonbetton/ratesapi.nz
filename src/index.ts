@@ -5,6 +5,7 @@ import { Institution, Issuer, Plan, Product, Rate } from "./models";
 import {
   carLoanRatesRoutes,
   creditCardRatesRoutes,
+  mcpRoutes,
   mortgageRatesRoutes,
   personalLoanRatesRoutes,
 } from "./routes";
@@ -66,6 +67,7 @@ app.route("/api/v1/mortgage-rates", mortgageRatesRoutes);
 app.route("/api/v1/personal-loan-rates", personalLoanRatesRoutes);
 app.route("/api/v1/car-loan-rates", carLoanRatesRoutes);
 app.route("/api/v1/credit-card-rates", creditCardRatesRoutes);
+app.route("/api/v1/mcp", mcpRoutes);
 
 // Models
 app.openAPIRegistry.register("Institution", Institution);
