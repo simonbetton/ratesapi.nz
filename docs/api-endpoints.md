@@ -22,6 +22,36 @@ The API exposes the following endpoint categories:
   - Get rates by issuer
   - Get historical rates time series
 
+- **MCP (Model Context Protocol)**: `/api/v1/mcp`
+  - JSON-RPC endpoint exposing MCP tools for the rates API
+  - Methods: `initialize`, `tools/list`, `tools/call`, `ping`
+
+Example MCP request (list tools):
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/list"
+}
+```
+
+Example MCP request (call tool):
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/call",
+  "params": {
+    "name": "list_mortgage_rates",
+    "arguments": {
+      "termInMonths": "12"
+    }
+  }
+}
+```
+
 All endpoints support CORS and return JSON responses with a 5-second cache control.
 
 ## API Documentation
