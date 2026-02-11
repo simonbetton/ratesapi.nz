@@ -1,5 +1,8 @@
 name: Deploy to Vercel and Convex
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
