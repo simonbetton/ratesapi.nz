@@ -28,10 +28,10 @@
     "noEmit": true,
 
     "lib": ["ESNext", "DOM"],
-    "types": ["@cloudflare/workers-types", "hono", "@hono/zod-openapi"],
+    "types": ["node", "hono", "@hono/zod-openapi"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "typeRoots": ["./node_modules"],
+    "typeRoots": ["./node_modules/@types", "./node_modules"],
 
     "noErrorTruncation": true // TLDR - Don't truncate errors (useful for debugging)
   }

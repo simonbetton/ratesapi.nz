@@ -1,20 +1,19 @@
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { type Context, type Next } from "hono";
 import { cors } from "hono/cors";
 import { Institution, Issuer, Plan, Product, Rate } from "./models";
 import {
+  aggregatesRoutes,
   carLoanRatesRoutes,
   creditCardRatesRoutes,
   mcpRoutes,
   mortgageRatesRoutes,
   personalLoanRatesRoutes,
 } from "./routes";
-
-import { Environment } from './lib/environment';
-
-const app = new OpenAPIHono<{ Bindings: Environment }>({
+const app = new OpenAPIHono({
   defaultHook: (result, c) => {
-    const environment: string | undefined = c.env?.ENVIRONMENT ?? undefined;
+    const environment: string | undefined = process.env.ENVIRONMENT ?? undefined;
 
     if (environment === "production") {
       // eslint-disable-next-line no-console
@@ -67,6 +66,7 @@ app.route("/api/v1/mortgage-rates", mortgageRatesRoutes);
 app.route("/api/v1/personal-loan-rates", personalLoanRatesRoutes);
 app.route("/api/v1/car-loan-rates", carLoanRatesRoutes);
 app.route("/api/v1/credit-card-rates", creditCardRatesRoutes);
+app.route("/api/v1/aggregates", aggregatesRoutes);
 app.route("/api/v1/mcp", mcpRoutes);
 
 // Models
@@ -98,16 +98,19 @@ app.doc31("/api/v1/doc", {
   ],
 });
 
-// Swagger UI - only in development – production redirects to the documentation
-app.get("/", async (c, next) => {
-  const environment: string | undefined = c.env?.ENVIRONMENT ?? undefined;
+// Swagger UI - only in development; production redirects to docs.
+const renderHome = async (c: Context, next: Next) => {
+  const environment: string | undefined = process.env.ENVIRONMENT ?? undefined;
 
   if (environment === "production") {
     return c.redirect("https://docs.ratesapi.nz");
   }
-  // Serve SwaggerUI in non-production (or other environments)
-  return swaggerUI<{ Bindings: Environment }>({ url: "/api/v1/doc" })(c, next);
-});
+  // Serve Swagger UI in non-production (or other environments).
+  return swaggerUI({ url: "/api/v1/doc" })(c, next);
+};
+
+app.get("/", renderHome);
+app.get("/api", renderHome);
 
 // eslint-disable-next-line import/no-default-export
 export default app;

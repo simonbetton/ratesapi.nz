@@ -1,0 +1,14 @@
+{
+  "framework": null,
+  "functions": {
+    "api/[[...route]].ts": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/api"
+    }
+  ]
+}

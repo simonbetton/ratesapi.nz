@@ -39,7 +39,7 @@ export const getMortgageRatesTimeSeriesRoute = createRoute({
       content: {
         "application/json": {
           schema: z.object({
-            type: z.literal("MortgageRatesTimeSeries").openapi({}),
+            type: z.string().openapi({ example: "MortgageRatesTimeSeries" }),
             timeSeries: z.record(z.string(), MortgageRates).openapi({
               description: "Time series data keyed by date in YYYY-MM-DD format",
             }),
@@ -49,12 +49,28 @@ export const getMortgageRatesTimeSeriesRoute = createRoute({
             termsOfUse: z.string().openapi({}),
             timestamp: z.string().openapi({
               description: "Current server timestamp",
-              example: "2025-03-04T02:30:00.000Z",
+              example: "2026-03-04T02:30:00.000Z",
             }),
           }),
         },
       },
       description: "Retrieve mortgage rates time series data",
+    },
+    400: {
+      content: {
+        "application/json": {
+          schema: GenericApiError,
+        },
+      },
+      description: "Invalid date parameters provided",
+    },
+    404: {
+      content: {
+        "application/json": {
+          schema: GenericApiError,
+        },
+      },
+      description: "No data found for the specified date(s) or institution",
     },
     500: {
       content: {

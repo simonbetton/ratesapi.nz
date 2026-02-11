@@ -1,18 +1,18 @@
 import { z } from "@hono/zod-openapi";
-import { Institution as InstitutionSchema } from "./institution";
-import { Product as ProductSchema } from "./product";
-import { type RateId, Rate as RateSchema } from "./rate";
+import * as InstitutionModel from "./institution";
+import * as ProductModel from "./product";
+import * as RateModel from "./rate";
 
-export const PersonalLoanRates = z
+const PersonalLoanRatesSchema = z
   .object({
     type: z.literal("PersonalLoanRates"),
     data: z
       .array(
-        InstitutionSchema.extend({
+        InstitutionModel.Institution.extend({
           products: z.array(
-            ProductSchema.extend({
+            ProductModel.Product.extend({
               rates: z.array(
-                RateSchema.extend({
+                RateModel.Rate.extend({
                   plan: z
                     .string()
                     .nullable()
@@ -38,18 +38,14 @@ export const PersonalLoanRates = z
   })
   .strict();
 
+export const PersonalLoanRates = PersonalLoanRatesSchema;
+
 export type Rate = z.infer<
-  typeof PersonalLoanRates
+  typeof PersonalLoanRatesSchema
 >["data"][number]["products"][number]["rates"][number] & {
-  id: RateId;
+  id: RateModel.RateId;
 };
 
-export type PersonalLoanRates = {
-  data: (InstitutionSchema & {
-    products: (ProductSchema & {
-      rates: Rate[];
-    })[];
-  })[];
-};
+export type PersonalLoanRates = z.infer<typeof PersonalLoanRatesSchema>;
 export type Institution = PersonalLoanRates["data"][number];
 export type Product = PersonalLoanRates["data"][number]["products"][number];

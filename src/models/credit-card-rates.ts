@@ -1,8 +1,7 @@
 import { z } from "@hono/zod-openapi";
 import { Issuer } from "./issuer";
-import { type Plan } from "./plan";
 
-export const CreditCardRates = z
+const CreditCardRatesSchema = z
   .object({
     type: z.literal("CreditCardRates"),
     data: z.array(Issuer).openapi("CarLoanRates"),
@@ -12,8 +11,6 @@ export const CreditCardRates = z
   })
   .strict();
 
-export type CreditCardRates = {
-  data: (Issuer & {
-    plans: Plan[];
-  })[];
-};
+export const CreditCardRates = CreditCardRatesSchema;
+
+export type CreditCardRates = z.infer<typeof CreditCardRatesSchema>;

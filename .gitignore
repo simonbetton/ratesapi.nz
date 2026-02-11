@@ -1,4 +1,9 @@
 node_modules
 dist
-.wrangler
 .dev.vars
+.env.local
+.wrangler
+.convex
+.vercel
+tsconfig.tsbuildinfo
+convex/_generated

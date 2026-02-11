@@ -1,31 +1,41 @@
 import { z } from "@hono/zod-openapi";
-import { Institution as InstitutionSchema } from "./institution";
-import { Product as ProductSchema } from "./product";
-import { type RateId, Rate as RateSchema } from "./rate";
+import * as InstitutionModel from "./institution";
+import * as ProductModel from "./product";
+import * as RateModel from "./rate";
 
-export const RateTerm = {
-  VARIABLE_FLOATING: "Variable floating",
-  "6_MONTHS": "6 months",
-  "18_MONTHS": "18 months",
-  "1_YEAR": "1 year",
-  "2_YEARS": "2 years",
-  "3_YEARS": "3 years",
-  "4_YEARS": "4 years",
-  "5_YEARS": "5 years",
-} as const;
-export type RateTerm = (typeof RateTerm)[keyof typeof RateTerm];
+const RATE_TERMS = [
+  "Variable floating",
+  "6 months",
+  "18 months",
+  "1 year",
+  "2 years",
+  "3 years",
+  "4 years",
+  "5 years",
+] satisfies readonly [
+  "Variable floating",
+  "6 months",
+  "18 months",
+  "1 year",
+  "2 years",
+  "3 years",
+  "4 years",
+  "5 years",
+];
 
-export const MortgageRates = z
+export type RateTerm = (typeof RATE_TERMS)[number];
+
+const MortgageRatesSchema = z
   .object({
     type: z.literal("MortgageRates"),
     data: z
       .array(
-        InstitutionSchema.extend({
+        InstitutionModel.Institution.extend({
           products: z.array(
-            ProductSchema.extend({
+            ProductModel.Product.extend({
               rates: z.array(
-                RateSchema.extend({
-                  term: z.nativeEnum(RateTerm).openapi({
+                RateModel.Rate.extend({
+                  term: z.enum(RATE_TERMS).openapi({
                     examples: ["6 months", "3 years"],
                   }),
                   termInMonths: z
@@ -47,23 +57,19 @@ export const MortgageRates = z
   })
   .strict();
 
+export const MortgageRates = MortgageRatesSchema;
+
 // Why must this be external? 🤷
 export type Rate = z.infer<
-  typeof MortgageRates
+  typeof MortgageRatesSchema
 >["data"][number]["products"][number]["rates"][number] & {
-  id: RateId;
+  id: RateModel.RateId;
 };
 
-export type MortgageRates = {
-  data: (InstitutionSchema & {
-    products: (ProductSchema & {
-      rates: Rate[];
-    })[];
-  })[];
-};
+export type MortgageRates = z.infer<typeof MortgageRatesSchema>;
 export type Institution = MortgageRates["data"][number];
 export type Product = MortgageRates["data"][number]["products"][number];
 
 export function isRateTerm(term: string): term is RateTerm {
-  return Object.values(RateTerm).includes(term as RateTerm);
+  return RATE_TERMS.some((candidate) => candidate === term);
 }

@@ -20,7 +20,7 @@ export const TimeSeriesDateParameter = z.object({
         in: "query",
       },
       description: "Date in YYYY-MM-DD format for historical data",
-      example: "2025-03-01",
+      example: "2026-03-01",
     }),
   startDate: z
     .string()
@@ -32,7 +32,7 @@ export const TimeSeriesDateParameter = z.object({
         in: "query",
       },
       description: "Start date in YYYY-MM-DD format for time series range",
-      example: "2025-01-01",
+      example: "2026-01-01",
     }),
   endDate: z
     .string()
@@ -44,6 +44,6 @@ export const TimeSeriesDateParameter = z.object({
         in: "query",
       },
       description: "End date in YYYY-MM-DD format for time series range",
-      example: "2025-03-01",
+      example: "2026-03-01",
     }),
 });

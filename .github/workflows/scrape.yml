@@ -1,84 +1,63 @@
-name: Hourly Scraping and Database Updates
+name: Hourly Scraping and Convex Ingestion
 
 on:
   schedule:
-    - cron: "0 * * * *" # Runs every hour
-  push:
-    branches:
-      - main
-  workflow_dispatch: # Allows manual triggering
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: scrape-hourly
+  cancel-in-progress: false
 
 jobs:
-  run-scripts:
+  scrape-and-ingest:
     runs-on: ubuntu-latest
     env:
+      ALLOW_SUSPICIOUS_DATA: "false"
       CI: "true"
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CONVEX_INGEST_SECRET: ${{ secrets.CONVEX_INGEST_SECRET }}
+      CONVEX_URL: ${{ secrets.CONVEX_URL }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Login to Cloudflare
-        run: npx wrangler login
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          
-      - name: Verify D1 database access
+      - name: Run scrapers with retry
         run: |
-          echo "Verifying D1 database access for database: ratesapi-data"
-          npx wrangler d1 list
-          echo "Testing database connectivity:"
-          npx wrangler d1 execute ratesapi-data --command="SELECT name FROM sqlite_master WHERE type='table';"
+          set -euo pipefail
 
-      - name: Run the scraper script for mortgage rates
-        run: D1_DATABASE_NAME="ratesapi-data --remote" bun run bin/scrape-mortgage-rates.ts
-        
-      - name: Run the scraper script for personal loan rates
-        run: D1_DATABASE_NAME="ratesapi-data --remote" bun run bin/scrape-personal-loan-rates.ts
- 
-      - name: Run the scraper script for car loan rates
-        run: D1_DATABASE_NAME="ratesapi-data --remote" bun run bin/scrape-car-loan-rates.ts
+          run_with_retry() {
+            local command="$1"
+            local max_attempts=3
+            local attempt=1
 
-      - name: Run the scraper script for credit card rates
-        run: D1_DATABASE_NAME="ratesapi-data --remote" bun run bin/scrape-credit-card-rates.ts
- 
-      - name: Check for changes
-        id: git-check
-        run: |
-          git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
+            while true; do
+              echo "Attempt ${attempt}/${max_attempts}: ${command}"
+              if eval "$command"; then
+                return 0
+              fi
 
-      # Verify D1 database updates are working
-      - name: Force save to D1 database
-        if: steps.git-check.outputs.changes == 'true'
-        run: |
-          TODAY=$(date -u +"%Y-%m-%d")
-          echo "Forcing save of data to D1 database to ensure it's working..."
-          
-          # Save rates data to latest_data and historical_data tables
-          echo "Saving rates data to D1 database..."
-          bun run bin/force-update-d1.ts
-          
-          # Verify the data was saved
-          echo "Verifying data was saved..."
-          npx wrangler d1 execute ratesapi-data --command="SELECT data_type, last_updated FROM latest_data"
-          echo "Verifying historical data was saved..."
-          npx wrangler d1 execute ratesapi-data --command="SELECT data_type, date, COUNT(*) as count FROM historical_data GROUP BY data_type, date ORDER BY date DESC LIMIT 10"
+              if [ "$attempt" -ge "$max_attempts" ]; then
+                echo "Command failed after ${max_attempts} attempts: ${command}" >&2
+                return 1
+              fi
 
-      - name: Commit changes
-        if: steps.git-check.outputs.changes == 'true'
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add -A
-          git commit -m "Auto-commit changes at $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-          git push
+              sleep_seconds=$(( attempt * 20 ))
+              echo "Retrying in ${sleep_seconds}s..."
+              sleep "$sleep_seconds"
+              attempt=$(( attempt + 1 ))
+            done
+          }
+
+          run_with_retry "bun run bin/scrape-mortgage-rates.ts"
+          run_with_retry "bun run bin/scrape-personal-loan-rates.ts"
+          run_with_retry "bun run bin/scrape-car-loan-rates.ts"
+          run_with_retry "bun run bin/scrape-credit-card-rates.ts"

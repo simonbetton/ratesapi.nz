@@ -25,6 +25,8 @@ jobs:
 
       - name: Check API Endpoints
         id: health-check
+        env:
+          UPTIME_BASE_URL: ${{ secrets.UPTIME_BASE_URL }}
         run: |
           # Ensure the script exists (optional but good practice)
           if [ ! -f bin/uptime-check.ts ]; then

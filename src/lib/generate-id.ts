@@ -1,20 +1,23 @@
 import { isTruthy } from "./is-truthy";
 
-const Prefix = {
-  INSTITUTION: "institution",
-  PRODUCT: "product",
-  RATE: "rate",
-  ISSUER: "issuer",
-  PLAN: "plan",
-} as const;
+type Prefix = "institution" | "product" | "rate" | "issuer" | "plan";
+type Args<TPrefix extends Prefix> = [TPrefix, ...string[]];
 
-type Prefix = (typeof Prefix)[keyof typeof Prefix];
-type Args = [Prefix, ...string[]];
+const PREFIXES: Prefix[] = [
+  "institution",
+  "product",
+  "rate",
+  "issuer",
+  "plan",
+];
 
 /**
  * Generates an ID based on the provided arguments.
  */
-export function generateId<T extends Prefix>(args: Args): `${T}:${string}` {
+export function generateId<TPrefix extends Prefix>(
+  args: Args<TPrefix>,
+): `${TPrefix}:${string}` {
+  const prefix = args[0];
   const str = args
     .map((arg) => {
       return arg
@@ -30,13 +33,25 @@ export function generateId<T extends Prefix>(args: Args): `${T}:${string}` {
     .filter(isTruthy)
     .join(":");
 
-  if (!Object.values(Prefix).some((prefix) => str.startsWith(prefix))) {
+  if (!PREFIXES.some((candidate) => str.startsWith(candidate))) {
     throw new Error(
-      `The generated ID must start with one of the following prefixes: ${Object.values(
-        Prefix,
-      ).join(", ")}`,
+      `The generated ID must start with one of the following prefixes: ${PREFIXES.join(
+        ", ",
+      )}`,
     );
   }
 
-  return str as `${T}:${string}`;
+  if (!isPrefixedId(prefix, str)) {
+    throw new Error(`Generated ID does not match expected prefix "${prefix}"`);
+  }
+
+  return str;
+}
+
+function isPrefixedId<TPrefix extends Prefix>(
+  prefix: TPrefix,
+  value: string,
+): value is `${TPrefix}:${string}` {
+  const prefixWithDelimiter = `${prefix}:`;
+  return value.startsWith(prefixWithDelimiter) && value.length > prefixWithDelimiter.length;
 }
