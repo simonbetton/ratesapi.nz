@@ -1,16 +1,59 @@
-import { D1Database } from '@cloudflare/workers-types';
 import ora from "ora";
-import { fromSavableJson, toSavableJson } from '../src/lib/data-loader';
-import { type CarLoanRates } from "../src/models/car-loan-rates";
-import { type CreditCardRates } from "../src/models/credit-card-rates";
-import { type MortgageRates } from "../src/models/mortgage-rates";
-import { type PersonalLoanRates } from "../src/models/personal-loan-rates";
 
-type SupportedModels =
-  | MortgageRates
-  | PersonalLoanRates
-  | CarLoanRates
-  | CreditCardRates;
+import { createConvexClient } from "../src/lib/convex-client";
+import { CONVEX_FUNCTIONS } from "../src/lib/convex-functions";
+import { type DataType, modelTypeForDataType } from "../src/lib/data-types";
+import { hashJson } from "../src/lib/hash";
+import {
+  computeDailyAggregate,
+  type DailyAggregate,
+} from "../src/lib/rate-aggregates";
+import {
+  isCarLoanModel,
+  isCreditCardModel,
+  isMortgageModel,
+  isPersonalLoanModel,
+  parseModelByDataType,
+  readLastUpdated,
+  type CarLoanRatesModel,
+  type CreditCardRatesModel,
+  type MortgageRatesModel,
+  type PersonalLoanRatesModel,
+  type SupportedRatesModel,
+} from "../src/lib/rates-models";
+
+type SupportedModels = SupportedRatesModel;
+
+type QualitySummary = {
+  entities: number;
+  products: number;
+  ratePoints: number;
+};
+
+const QUALITY_GUARDRAILS: Record<
+  DataType,
+  {
+    minEntities: number;
+    minRatePoints: number;
+  }
+> = {
+  "mortgage-rates": {
+    minEntities: 8,
+    minRatePoints: 80,
+  },
+  "personal-loan-rates": {
+    minEntities: 6,
+    minRatePoints: 20,
+  },
+  "car-loan-rates": {
+    minEntities: 6,
+    minRatePoints: 20,
+  },
+  "credit-card-rates": {
+    minEntities: 4,
+    minRatePoints: 25,
+  },
+};
 
 export function hasDataChanged(
   newData: SupportedModels,
@@ -19,157 +62,303 @@ export function hasDataChanged(
   return JSON.stringify(newData.data) !== JSON.stringify(oldData.data);
 }
 
-// saveDataToFile function has been removed as we're using D1 for data storage now
+export async function saveToConvex(
+  data: MortgageRatesModel,
+  dataType: "mortgage-rates",
+  previousData?: MortgageRatesModel | null,
+): Promise<boolean>;
+export async function saveToConvex(
+  data: PersonalLoanRatesModel,
+  dataType: "personal-loan-rates",
+  previousData?: PersonalLoanRatesModel | null,
+): Promise<boolean>;
+export async function saveToConvex(
+  data: CarLoanRatesModel,
+  dataType: "car-loan-rates",
+  previousData?: CarLoanRatesModel | null,
+): Promise<boolean>;
+export async function saveToConvex(
+  data: CreditCardRatesModel,
+  dataType: "credit-card-rates",
+  previousData?: CreditCardRatesModel | null,
+): Promise<boolean>;
+export async function saveToConvex(
+  data: SupportedModels,
+  dataType: DataType,
+  previousData?: SupportedModels | null,
+): Promise<boolean> {
+  const envCheck = ora("Checking Convex environment").start();
 
-// forceUpdateD1FromLocalFiles has been removed as we're no longer using the file system for data storage
+  const ingestSecret = process.env.CONVEX_INGEST_SECRET;
 
-/**
- * Gets a connection to the D1 database
- *
- * Note: This function is intended for CI/GitHub Actions environments.
- * For local development, use `wrangler d1 execute` commands directly.
- */
-export async function getD1Connection(): Promise<D1Database | null> {
-  const connectionSpinner = ora("Checking D1 database connection").start();
+  if (!ingestSecret) {
+    envCheck.fail(
+      "CONVEX_INGEST_SECRET is required to write to Convex. Skipping save.",
+    );
+    return false;
+  }
+
+  envCheck.succeed("Convex environment is configured").stop();
+
+  const qualityCheck = ora("Running data quality checks").start();
+  const qualityResult = validateDataQuality(dataType, data, previousData);
+
+  if (!qualityResult.ok) {
+    qualityCheck.fail(qualityResult.reason).stop();
+
+    if (process.env.ALLOW_SUSPICIOUS_DATA === "true") {
+      const override = ora("ALLOW_SUSPICIOUS_DATA override enabled").start();
+      override.warn("Proceeding despite failed quality checks").stop();
+    } else {
+      return false;
+    }
+  } else {
+    qualityCheck.succeed("Data quality checks passed").stop();
+  }
+
   try {
-    if (!process.env.D1_DATABASE_NAME) {
-      connectionSpinner.warn("D1_DATABASE_NAME not set in environment variables").stop();
-      return null;
+    const client = createConvexClient();
+    const scrapedAt = new Date().toISOString();
+    const snapshotDate = scrapedAt.split("T")[0];
+
+    if (!snapshotDate) {
+      throw new Error("Unable to derive snapshot date");
     }
 
-    // For now, this is a placeholder. In GitHub Actions, we'll use
-    // wrangler CLI commands directly rather than programmatic access.
-    connectionSpinner.info("D1 database connections are only supported in GitHub Actions environment").stop();
-    return null;
-  } catch (error) {
-    connectionSpinner.fail(`Failed to connect to D1 database: ${error}`).stop();
-    return null;
-  }
-}
-
-/**
- * Directly save data to D1 using wrangler CLI
- * This is the preferred method for saving data in CI environments
- */
-export async function saveToD1(
-  data: SupportedModels,
-  dataType: "mortgage-rates" | "car-loan-rates" | "credit-card-rates" | "personal-loan-rates"
-): Promise<boolean> {
-  // Check environment variables
-  const envCheck = ora("Checking environment").start();
-  envCheck.info(`CI=${process.env.CI}, GITHUB_ACTIONS=${process.env.GITHUB_ACTIONS}, D1_DATABASE_NAME=${process.env.D1_DATABASE_NAME ? "set" : "not set"}`).stop();
-
-  // Check for D1_DATABASE_NAME and CI environment
-  const isCI = process.env.CI === "true" || !!process.env.GITHUB_ACTIONS;
-
-  if (!isCI) {
-    const skipSpinner = ora("Checking CI environment").start();
-    skipSpinner.warn("Skipping D1 database update in local development mode").stop();
-    return false;
-  }
-
-  const ciSpinner = ora("Running in CI environment").start();
-  ciSpinner.succeed("Proceeding with D1 database update").stop();
-
-  // Check for database NAME
-  if (!process.env.D1_DATABASE_NAME) {
-    const noDbSpinner = ora("Checking D1 database ID").start();
-    noDbSpinner.fail("D1_DATABASE_NAME not set. Set this environment variable to enable database updates").stop();
-    return false;
-  }
-
-  try {
-    const timestamp = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
-
-    // Prepare data for insertion
-    const prepareSpinner = ora("Preparing data for D1").start();
-    const jsonData = toSavableJson(data);
-    prepareSpinner.succeed(`Data prepared for SQL insertion (${jsonData.length} characters, base64 encoded)`).stop();
-
-    // Import child_process for CLI commands
-    const { execSync } = await import('child_process');
-
-    // Test D1 access first
-    const testSpinner = ora("Testing D1 database access").start();
-    const testResult = execSync(
-      `npx wrangler d1 execute ${process.env.D1_DATABASE_NAME} --command="SELECT count(*) FROM sqlite_master"`
-    ).toString();
-    testSpinner.succeed(`D1 access test successful: ${testResult.trim()}`).stop();
-
-    // Save to historical_data table
-    const historySpinner = ora(`Saving historical data for ${dataType}`).start();
-    execSync(
-      `npx wrangler d1 execute ${process.env.D1_DATABASE_NAME} --command="INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES ('${dataType}', '${timestamp}', '${jsonData}')"`
+    const aggregate: DailyAggregate = computeDailyAggregate(
+      dataType,
+      data,
+      scrapedAt,
     );
-    historySpinner.succeed(`Historical data saved for ${dataType} on ${timestamp}`).stop();
+    const payloadHash = hashJson(data);
 
-    // Update latest_data table
-    const latestSpinner = ora(`Updating latest data for ${dataType}`).start();
-    execSync(
-      `npx wrangler d1 execute ${process.env.D1_DATABASE_NAME} --command="INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES ('${dataType}', '${jsonData}', CURRENT_TIMESTAMP)"`
-    );
-    latestSpinner.succeed(`Latest data updated for ${dataType}`).stop();
+    const saveSpinner = ora("Saving snapshot and aggregates to Convex").start();
 
-    // Verify the data was saved
-    const verifySpinner = ora("Verifying data was saved").start();
-    const verifyResult = execSync(
-      `npx wrangler d1 execute ${process.env.D1_DATABASE_NAME} --command="SELECT data_type, last_updated FROM latest_data WHERE data_type='${dataType}'"`
-    ).toString();
-    verifySpinner.succeed(`Verification successful: ${verifyResult.trim()}`).stop();
+    await client.mutation(CONVEX_FUNCTIONS.upsertSnapshot, {
+      aggregate,
+      dataType,
+      ingestSecret,
+      modelType: modelTypeForDataType(dataType),
+      payload: data,
+      payloadHash,
+      recordCount: aggregate.totals.ratePoints,
+      scrapedAt,
+      snapshotDate,
+      sourceLastUpdated: readLastUpdated(data, scrapedAt),
+    });
+
+    saveSpinner
+      .succeed(
+        `Saved ${dataType} snapshot for ${snapshotDate} to Convex (${aggregate.totals.ratePoints} points)`,
+      )
+      .stop();
 
     return true;
   } catch (error) {
-    const errorSpinner = ora("Saving to D1 database").start();
-    errorSpinner.fail(`Failed to save data to D1 database: ${error}`).stop();
+    const errorSpinner = ora("Saving snapshot to Convex").start();
+    errorSpinner.fail(`Failed to save to Convex: ${error}`).stop();
 
-    // Log the error for debugging
     if (error instanceof Error && error.stack) {
       const stackSpinner = ora("Error details").start();
       stackSpinner.fail(`Error stack: ${error.stack}`).stop();
     }
+
     return false;
   }
 }
 
-/**
- * Load data from D1 database
- */
-export async function loadFromD1<T extends SupportedModels>(
-  dataType: "mortgage-rates" | "car-loan-rates" | "credit-card-rates" | "personal-loan-rates"
-): Promise<T | null> {
-  // Check for D1_DATABASE_NAME and CI environment
-  const envCheck = ora("Checking D1 environment").start();
-  const isCI = !!process.env.CI || !!process.env.GITHUB_ACTIONS;
+export async function loadFromConvex(
+  dataType: "mortgage-rates",
+): Promise<MortgageRatesModel | null>;
+export async function loadFromConvex(
+  dataType: "personal-loan-rates",
+): Promise<PersonalLoanRatesModel | null>;
+export async function loadFromConvex(
+  dataType: "car-loan-rates",
+): Promise<CarLoanRatesModel | null>;
+export async function loadFromConvex(
+  dataType: "credit-card-rates",
+): Promise<CreditCardRatesModel | null>;
+export async function loadFromConvex(
+  dataType: DataType,
+): Promise<SupportedModels | null> {
+  const envCheck = ora("Checking Convex read environment").start();
 
-  // Check if D1 database is available
-  if (!isCI || !process.env.D1_DATABASE_NAME) {
-    envCheck.warn("Running in local development mode without D1 access").stop();
+  if (!process.env.CONVEX_URL) {
+    envCheck.warn("CONVEX_URL not set; skipping Convex read").stop();
     return null;
   }
 
-  envCheck.succeed("D1 access available").stop();
+  envCheck.succeed("Convex read environment available").stop();
 
-  // In CI environment with D1_DATABASE_NAME, try database
   try {
-    const { execSync } = await import('child_process');
+    const client = createConvexClient();
+    const loadSpinner = ora(`Loading latest ${dataType} data from Convex`).start();
+    const result = await client.query(
+      CONVEX_FUNCTIONS.getLatestByDataType,
+      {
+        dataType,
+      },
+    );
 
-    // Query the latest data from D1
-    const loadSpinner = ora(`Loading latest data for ${dataType} from D1`).start();
-    const result = execSync(
-      `npx wrangler d1 execute ${process.env.D1_DATABASE_NAME} --command="SELECT data FROM latest_data WHERE data_type = '${dataType}'" --json`
-    ).toString();
-
-    loadSpinner.succeed(`Data loaded from D1 database for ${dataType}`).stop();
-
-    try {
-      return fromSavableJson(result) as T;
-    } catch (decodeError) {
-      throw new Error('Failed to decode base64 data');
+    if (!result) {
+      loadSpinner.warn(`No existing ${dataType} snapshot found in Convex`).stop();
+      return null;
     }
+
+    const parsed = parseModelByDataType(dataType, result);
+    loadSpinner.succeed(`Loaded ${dataType} data from Convex`).stop();
+    return parsed;
   } catch (error) {
-    const errorSpinner = ora("D1 database connection").start();
-    errorSpinner.fail(`Database connection failed: ${error}`).stop();
+    const errorSpinner = ora("Convex read").start();
+    errorSpinner.fail(`Failed to load from Convex: ${error}`).stop();
+    return null;
+  }
+}
+
+function summarizeDataset(dataType: DataType, data: SupportedModels): QualitySummary {
+  if (!isModelValidForDataType(dataType, data)) {
+    throw new Error(`Model type ${data.type} does not match data type ${dataType}`);
   }
 
-  return null;
+  if (isCreditCardModel(data)) {
+    const products = data.data.reduce(
+      (sum, issuer) => sum + issuer.plans.length,
+      0,
+    );
+    const ratePoints = data.data.reduce((sum, issuer) => {
+      return (
+        sum +
+        issuer.plans.reduce((planSum, plan) => {
+          const points = [
+            plan.purchaseRate,
+            plan.cashAdvanceRate,
+            plan.balanceTransferRate,
+          ].filter((value) => typeof value === "number" && Number.isFinite(value));
+
+          return planSum + points.length;
+        }, 0)
+      );
+    }, 0);
+
+    return {
+      entities: data.data.length,
+      products,
+      ratePoints,
+    };
+  }
+
+  const products = data.data.reduce(
+    (sum, institution) => sum + institution.products.length,
+    0,
+  );
+  const ratePoints = data.data.reduce((sum, institution) => {
+    return (
+      sum +
+      institution.products.reduce(
+        (productSum, product) => productSum + product.rates.length,
+        0,
+      )
+    );
+  }, 0);
+
+  return {
+    entities: data.data.length,
+    products,
+    ratePoints,
+  };
+}
+
+function validateDataQuality(
+  dataType: DataType,
+  nextData: SupportedModels,
+  previousData?: SupportedModels | null,
+): {
+  ok: boolean;
+  reason: string;
+} {
+  if (!isModelValidForDataType(dataType, nextData)) {
+    return {
+      ok: false,
+      reason: `Quality guardrail failed: payload type ${nextData.type} does not match ${dataType}`,
+    };
+  }
+
+  if (previousData && !isModelValidForDataType(dataType, previousData)) {
+    return {
+      ok: false,
+      reason:
+        `Quality guardrail failed: previous payload type ${previousData.type} does not match ${dataType}`,
+    };
+  }
+
+  const baseline = QUALITY_GUARDRAILS[dataType];
+  const nextSummary = summarizeDataset(dataType, nextData);
+
+  if (nextSummary.entities < baseline.minEntities) {
+    return {
+      ok: false,
+      reason:
+        `Quality guardrail failed: ${dataType} has ${nextSummary.entities} entities ` +
+        `(minimum ${baseline.minEntities})`,
+    };
+  }
+
+  if (nextSummary.ratePoints < baseline.minRatePoints) {
+    return {
+      ok: false,
+      reason:
+        `Quality guardrail failed: ${dataType} has ${nextSummary.ratePoints} rate points ` +
+        `(minimum ${baseline.minRatePoints})`,
+    };
+  }
+
+  if (previousData) {
+    const prevSummary = summarizeDataset(dataType, previousData);
+
+    if (
+      prevSummary.ratePoints > 0 &&
+      nextSummary.ratePoints < Math.floor(prevSummary.ratePoints * 0.55)
+    ) {
+      return {
+        ok: false,
+        reason:
+          `Quality guardrail failed: ${dataType} rate points dropped from ` +
+          `${prevSummary.ratePoints} to ${nextSummary.ratePoints}`,
+      };
+    }
+
+    if (
+      prevSummary.entities > 0 &&
+      nextSummary.entities < Math.floor(prevSummary.entities * 0.55)
+    ) {
+      return {
+        ok: false,
+        reason:
+          `Quality guardrail failed: ${dataType} entities dropped from ` +
+          `${prevSummary.entities} to ${nextSummary.entities}`,
+      };
+    }
+  }
+
+  return {
+    ok: true,
+    reason: "ok",
+  };
+}
+
+function isModelValidForDataType(
+  dataType: DataType,
+  model: SupportedModels,
+): boolean {
+  switch (dataType) {
+    case "mortgage-rates":
+      return isMortgageModel(model);
+    case "personal-loan-rates":
+      return isPersonalLoanModel(model);
+    case "car-loan-rates":
+      return isCarLoanModel(model);
+    case "credit-card-rates":
+      return isCreditCardModel(model);
+  }
 }

@@ -12,7 +12,7 @@ import {
   type Rate,
   type RateTerm,
 } from "../src/models/mortgage-rates";
-import { hasDataChanged, loadFromD1, saveToD1 } from "./utils";
+import { hasDataChanged, loadFromConvex, saveToConvex } from "./utils";
 
 const config: {
   tableSelector: string;
@@ -42,11 +42,11 @@ const interestScraperAPI = InterestScraperAPI();
 
 // The main function to scrape and save mortgage rates
 async function main() {
-  // Load current rates from D1
+  // Load current rates from Convex
   let currentRates: MortgageRates | null = null;
-  const loading = ora("Loading current data from D1").start();
+  const loading = ora("Loading current data from Convex").start();
   try {
-    currentRates = await loadFromD1<MortgageRates>("mortgage-rates");
+    currentRates = await loadFromConvex("mortgage-rates");
     loading.succeed("Loaded current data").stop();
   } catch (error) {
     loading.fail("Failed to load current data").stop();
@@ -80,7 +80,7 @@ async function main() {
       type: "MortgageRates",
       data: unvalidatedData,
       lastUpdated: new Date().toISOString(),
-    }) as MortgageRates;
+    });
     handle.succeed(`Extracted and Validated ${validatedModel.data.length} results`).stop();
   } catch (error) {
     handle.fail("Failed to extract and/or validate").stop();
@@ -95,20 +95,27 @@ async function main() {
     return;
   }
 
-  // Save new data to D1 database
-  const saveDb = ora("Saving data to D1").start();
+  // Save new data to Convex
+  const saveDb = ora("Saving data to Convex").start();
   try {
-    // Save to D1 database
-    const saved = await saveToD1(validatedModel, "mortgage-rates");
+    // Save to Convex
+    const saved = await saveToConvex(validatedModel, "mortgage-rates", currentRates);
 
-    saveDb.succeed(saved ? "Data saved to D1 database" : "Failed to save to D1").stop();
+    if (!saved) {
+      throw new Error("Convex save failed");
+    }
+
+    saveDb.succeed("Data saved to Convex").stop();
   } catch (error) {
     saveDb.fail("Failed to save data").stop();
     console.error("Failed to save data", error);
-    return;
+    throw error;
   }
 }
-main().catch(console.error);
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
 
 function getModelExtractedFromDOM($: CheerioAPI): Institution[] {
   const institutions: Institution[] = [];
@@ -234,7 +241,9 @@ function normalizeProductName(name: string) {
   return name;
 }
 
-function sortProductRatesByTermInMonths(rates: Rate[]) {
+function sortProductRatesByTermInMonths(
+  rates: Array<{ termInMonths: number | null }>,
+) {
   rates.sort((a, b) => {
     return (a.termInMonths ?? 0) - (b.termInMonths ?? 0);
   });

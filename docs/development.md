@@ -1,51 +1,61 @@
 # Development
 
-## Technologies Used
+## Technologies
 
-- [Bun](https://bun.sh/): A fast JavaScript runtime and package manager
-- [Hono](https://hono.dev/): A lightweight, fast web framework
-- [Cloudflare Workers](https://workers.cloudflare.com/): Serverless JavaScript runtime
-- [Cloudflare D1](https://developers.cloudflare.com/d1/): Serverless SQL database
-- [Zod](https://zod.dev/): TypeScript-first schema validation
-- [OpenAPI/Swagger](https://swagger.io/): API documentation generation
-- [Cheerio](https://cheerio.js.org/): HTML parsing for web scraping
+- Bun
+- Hono
+- Convex
+- Vercel
+- Zod
+- OpenAPI/Swagger
+- Cheerio
 
-## Code Structure
+## Code structure
 
-- `src/`: Main application code
-  - `index.ts`: Entry point with Hono application setup
-  - `models/`: Schema definitions for API data types
-  - `routes/`: API endpoint implementations
-  - `lib/`: Utility functions and helpers
-    - `data-loader.ts`: Functions for D1 database interactions
+- `src/`: API, models, shared libs
+- `api/[[...route]].ts`: Vercel function entrypoint
+- `convex/`: Convex schema + server functions
+- `bin/`: scrapers, migration and operational scripts
+- `.github/workflows/`: deploy, scrape, uptime automation
 
-- `bin/`: Scraper scripts to collect rates data
-  - Separate scripts for mortgage, personal loan, car loan, and credit card rates
+## Runtime model
 
-- `schema.sql`: D1 database schema definition for storing all rate information
+- Vercel serves Hono API endpoints.
+- API reads from Convex via `ConvexHttpClient`.
+- Scrapers ingest snapshots into Convex.
+- Convex stores both raw snapshots and aggregates for time-series use cases.
 
-## Development Environment
+## Local workflow
 
-- TypeScript for type safety
-- ESLint and Prettier for code quality
-- Husky for Git hooks
-- Wrangler for local development and deployment to Cloudflare
-- D1 database for persistent data storage
+```zsh
+bun install
+bun run dev
+```
 
-## Database Structure
+`bun run dev` starts Convex and then runs the API server via `convex dev --run-sh`.
+If you need to pin this project to a local Convex dev deployment, run:
 
-The application uses Cloudflare D1 with the following tables:
+```zsh
+bun run convex:configure-local
+```
 
-1. `historical_data`: Stores snapshots of rates data by date
-   - `id`: Auto-incrementing primary key
-   - `data_type`: Type of data (mortgage-rates, car-loan-rates, etc.)
-   - `date`: ISO format date (YYYY-MM-DD)
-   - `data`: JSON string containing the full data snapshot
-   - `created_at`: Timestamp when the record was created
+If you only want the API process, use:
 
-2. `latest_data`: Stores the most recent version of each data type
-   - `data_type`: Primary key, type of data
-   - `data`: JSON string containing the full data
-   - `last_updated`: Timestamp of last update
+```zsh
+bun run dev:api
+```
 
-Indexes are created on `data_type` and `date` fields for query performance optimization.
+In `dev:api` mode, `CONVEX_URL` must already be set.
+
+## Data model summary
+
+Convex tables:
+
+1. `rateSnapshots`
+   - Daily snapshot by `dataType` + `snapshotDate`
+2. `latestRateData`
+   - Latest snapshot per `dataType`
+3. `dailyRateAggregates`
+   - Daily aggregate metrics per `dataType` + date
+4. `ingestionRuns`
+   - Ingestion audit trail

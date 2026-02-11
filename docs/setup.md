@@ -1,77 +1,120 @@
 # Setup
 
-## 📦 Install dependencies
+## 1. Install dependencies
 
 ```zsh
-bun i
+bun install
 ```
 
-## 🏗️ Run locally
+## 2. Configure environment variables
 
-Run the development server locally. Then, access `http://localhost:8787` in your web browser.
+Create your local env file:
+
+```zsh
+cp .env.local.example .env.local
+```
+
+Required variables:
+
+- `CONVEX_INGEST_SECRET`
+- `ENVIRONMENT` (`development` or `production`)
+
+`CONVEX_URL` is injected automatically when using `bun run dev`.
+If you run the API without Convex (`bun run dev:api`) or run scraper scripts directly, set `CONVEX_URL` explicitly.
+
+## 3. Start local development
 
 ```zsh
 bun run dev
 ```
 
-## 📊 Set up Cloudflare D1 Database
-
-This application uses Cloudflare D1 for data storage. To set up the database:
-
-1. Create a D1 database using the Cloudflare Dashboard or Wrangler CLI:
+This runs Convex and the API together.
+On first run, Convex CLI may prompt you to configure/select a dev deployment.
+To force a local Convex dev deployment, run once:
 
 ```zsh
-npx wrangler d1 create ratesapi-data
+bun run convex:configure-local
 ```
 
-2. Update your `wrangler.toml` with the database ID (replace the wrangler.toml file to suit):
-
-```toml
-[[d1_databases]]
-binding = "RATESAPI_DB"
-database_name = "ratesapi-data"
-database_id = "your-database-id-here"
-```
-
-3. Create database tables using the schema:
+## 4. Deploy Convex schema/functions
 
 ```zsh
-npx wrangler d1 execute ratesapi-data --file=schema.sql
+npx convex deploy
 ```
 
-For development environment:
+## 5. Run scrapers
+
+For local or production deployment targets:
 
 ```zsh
-npx wrangler d1 execute ratesapi-data --file=schema.sql --env=development
+bun run scrape:mortgage
+bun run scrape:personal
+bun run scrape:car
+bun run scrape:credit
 ```
 
-## 🚀 Deploy to Cloudflare Workers
-
-First, create your worker via the Cloudflare dashboard by following these steps:
-
-- Log in to the Cloudflare dashboard and select your account.
-- Select Workers & Pages > Create application.
-- Select Create Worker > Deploy.
-
-Then, deploy the worker using the following command:
+or run all:
 
 ```zsh
-bun run deploy
+bun run scrape:all
 ```
 
-## 🔩 Scrape data
+## 6. Migrate legacy D1 data (one-time)
 
-Check out the available scripts within `./bin` to scrape and save data. The data is stored in the D1 database.
-
-To run with D1 database support, provide the database ID:
+Easy path (uses `.env.local` and syncs the ingest secret first):
 
 ```zsh
-# Replace with your D1 database ID from wrangler.toml
-D1_DATABASE_NAME="your-database-name" bun run bin/scrape-mortgage-rates.ts
+bun run local:migrate:d1
 ```
 
-When running without a D1 database ID, the scripts will not store data but will still show what would be scraped:
+If your historical dataset is large:
 
 ```zsh
-bun run bin/scrape-mortgage-rates.ts
+bun run local:migrate:d1:small
 ```
+
+Direct from Cloudflare D1 (manual env vars):
+
+```zsh
+CLOUDFLARE_D1_DATABASE="ratesapi-data" bun run migrate:d1
+```
+
+The script uses Wrangler to query `historical_data` and `latest_data`, then writes to Convex.
+This default path uses remote D1 access and does not require `wrangler.toml`.
+
+Optional explicit mode flags:
+
+```zsh
+bun run migrate:d1 -- --d1 ratesapi-data --remote
+```
+
+`--local` requires a Wrangler configuration with a matching D1 binding.
+For very large datasets, tune page size:
+
+```zsh
+D1_MIGRATION_PAGE_SIZE=100 bun run migrate:d1 -- --d1 ratesapi-data --remote
+```
+
+From existing JSON exports:
+
+```zsh
+bun run migrate:d1 ./exports/historical_data.json ./exports/latest_data.json
+```
+
+This migrates historical snapshots and latest records into Convex.
+
+## 7. Deploy to production
+
+Deployments are automated via GitHub Actions:
+
+- `.github/workflows/deploy.yml` deploys Convex + Vercel on `main`
+- `.github/workflows/scrape.yml` runs hourly ingestion
+
+Required repository secrets:
+
+- `CONVEX_DEPLOY_KEY`
+- `CONVEX_URL`
+- `CONVEX_INGEST_SECRET`
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`

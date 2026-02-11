@@ -1,11 +1,12 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
+import type { Context } from "hono";
 import {
   getAvailableDates,
   loadHistoricalData,
   loadLatestData,
+  NoDataFoundError,
   loadTimeSeriesData
 } from "../../lib/data-loader";
-import { Environment } from "../../lib/environment";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
 import { MortgageRates } from "../../models/mortgage-rates";
@@ -13,16 +14,17 @@ import { getMortgageRatesByInstitutionRoute } from "./getMortgageRatesByInstitut
 import { getMortgageRatesTimeSeriesRoute } from "./getMortgageRatesTimeSeries";
 import { listMortgageRatesRoute } from "./listMortgageRates";
 
-const routes = new OpenAPIHono<{ Bindings: Environment }>();
+const routes = new OpenAPIHono();
+
+function respondOk<T>(c: Context, payload: T) {
+  return c.json(payload, 200);
+}
 
 // Route: `GET /mortgage-rates`
 routes.openapi(listMortgageRatesRoute, async (c) => {
   const { termInMonths } = c.req.valid("query");
-  const db = c.env.RATESAPI_DB;
-  
   try {
-    // Get data from D1 database
-    const mortgageRates = await loadLatestData<MortgageRates>("mortgage-rates", db);
+    const mortgageRates = await loadLatestData("mortgage-rates");
 
     if (termInMonths) {
       const filteredMortgageRates = mortgageRates.data.map(
@@ -39,7 +41,7 @@ routes.openapi(listMortgageRatesRoute, async (c) => {
         }),
       );
 
-      return c.json({
+      return respondOk(c, {
         ...mortgageRates,
         data: filteredMortgageRates,
         termsOfUse: termsOfUse(),
@@ -47,12 +49,27 @@ routes.openapi(listMortgageRatesRoute, async (c) => {
       });
     }
 
-    return c.json({
+    return respondOk(c, {
       ...mortgageRates,
       termsOfUse: termsOfUse(),
       timestamp: getCurrentTimestamp(),
     });
   } catch (error) {
+    if (error instanceof NoDataFoundError) {
+      const timestamp = getCurrentTimestamp();
+      const emptyRates: MortgageRates = {
+        type: "MortgageRates",
+        data: [],
+        lastUpdated: timestamp,
+      };
+
+      return respondOk(c, {
+        ...emptyRates,
+        termsOfUse: termsOfUse(),
+        timestamp,
+      });
+    }
+
     console.error("Error loading mortgage rates:", error);
     return c.json(
       {
@@ -67,10 +84,8 @@ routes.openapi(listMortgageRatesRoute, async (c) => {
 // Route: `GET /mortgage-rates/time-series`
 routes.openapi(getMortgageRatesTimeSeriesRoute, async (c) => {
   const { date, startDate, endDate, institutionId, termInMonths } = c.req.valid("query");
-  const db = c.env.RATESAPI_DB;
-  
   try {
-    const availableDates = await getAvailableDates("mortgage-rates", db);
+    const availableDates = await getAvailableDates("mortgage-rates");
     
     // Check if we have any historical data
     if (availableDates.length === 0) {
@@ -85,7 +100,7 @@ routes.openapi(getMortgageRatesTimeSeriesRoute, async (c) => {
 
     // Case 1: Single date requested
     if (date) {
-      const historicalData = await loadHistoricalData<MortgageRates>("mortgage-rates", date, db);
+      const historicalData = await loadHistoricalData("mortgage-rates", date);
       
       if (!historicalData) {
         return c.json(
@@ -149,7 +164,7 @@ routes.openapi(getMortgageRatesTimeSeriesRoute, async (c) => {
         }
       }
       
-      return c.json({
+      return respondOk(c, {
         type: "MortgageRatesTimeSeries",
         timeSeries: { [date]: filteredData },
         availableDates,
@@ -170,11 +185,10 @@ routes.openapi(getMortgageRatesTimeSeriesRoute, async (c) => {
         );
       }
       
-      const timeSeriesData = await loadTimeSeriesData<MortgageRates>(
+      const timeSeriesData = await loadTimeSeriesData(
         "mortgage-rates",
         startDate,
-        endDate,
-        db
+        endDate
       );
       
       if (Object.keys(timeSeriesData).length === 0) {
@@ -245,7 +259,7 @@ routes.openapi(getMortgageRatesTimeSeriesRoute, async (c) => {
           );
         }
         
-        return c.json({
+        return respondOk(c, {
           type: "MortgageRatesTimeSeries",
           timeSeries: filteredTimeSeries,
           availableDates,
@@ -254,7 +268,7 @@ routes.openapi(getMortgageRatesTimeSeriesRoute, async (c) => {
         });
       }
       
-      return c.json({
+      return respondOk(c, {
         type: "MortgageRatesTimeSeries",
         timeSeries: timeSeriesData,
         availableDates,
@@ -264,13 +278,12 @@ routes.openapi(getMortgageRatesTimeSeriesRoute, async (c) => {
     }
     
     // Case 3: No date parameters provided, return all available dates
-    return c.json({
+    return respondOk(c, {
       type: "MortgageRatesTimeSeries",
       timeSeries: {},
       availableDates,
       termsOfUse: termsOfUse(),
       timestamp: getCurrentTimestamp(),
-      message: "Please specify a date or date range to retrieve time series data",
     });
   } catch (error) {
     console.error("Error retrieving time series data:", error);
@@ -288,11 +301,8 @@ routes.openapi(getMortgageRatesTimeSeriesRoute, async (c) => {
 routes.openapi(getMortgageRatesByInstitutionRoute, async (c) => {
   const { institutionId } = c.req.valid("param");
   const { termInMonths } = c.req.valid("query");
-  const db = c.env.RATESAPI_DB;
-  
   try {
-    // Get data from D1 database
-    const mortgageRates = await loadLatestData<MortgageRates>("mortgage-rates", db);
+    const mortgageRates = await loadLatestData("mortgage-rates");
     
     const singleInstitution = mortgageRates.data.find(
       (i) => i.id.toLowerCase() === institutionId.toLowerCase(),
@@ -318,7 +328,7 @@ routes.openapi(getMortgageRatesByInstitutionRoute, async (c) => {
         }))
         .filter((product) => product.rates.length > 0);
 
-      return c.json({
+      return respondOk(c, {
         ...mortgageRates,
         data: [
           {
@@ -331,13 +341,23 @@ routes.openapi(getMortgageRatesByInstitutionRoute, async (c) => {
       });
     }
 
-    return c.json({
+    return respondOk(c, {
       ...mortgageRates,
       data: [singleInstitution],
       termsOfUse: termsOfUse(),
       timestamp: getCurrentTimestamp(),
     });
   } catch (error) {
+    if (error instanceof NoDataFoundError) {
+      return c.json(
+        {
+          code: 404,
+          message: "No mortgage rates available yet",
+        },
+        404,
+      );
+    }
+
     console.error("Error loading mortgage rates for institution:", error);
     return c.json(
       {

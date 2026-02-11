@@ -42,8 +42,10 @@ const endpoints = [
   `v1/mortgage-rates/time-series?institutionId=institution:anz&termInMonths=12`,
 ];
 
+const apiBaseUrl = process.env.UPTIME_BASE_URL || "https://ratesapi.nz/api/";
+
 const httpClient = createHttpClient("UptimeCheck", {
-  prefixUrl: "https://ratesapi.nz/api/",
+  prefixUrl: apiBaseUrl,
   headers: {
     "User-Agent": "RatesAPI/UptimeCheck",
   },

@@ -8,6 +8,7 @@ type RetryOptions = {
 
 type FetchOptions = RequestInit & {
   retryOptions?: RetryOptions;
+  timeoutMs?: number;
 };
 
 type DefaultFetchOptions = FetchOptions & {
@@ -37,10 +38,20 @@ export function createHttpClient(
     let retries = retryOptions?.retries ?? 0;
     const retryDelay = retryOptions?.retryDelay ?? 0;
     const retryOn = retryOptions?.retryOn ?? [];
+    const timeoutMs = mergedOptions.timeoutMs ?? 15000;
 
     const executeFetch = async (): Promise<Response> => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => {
+        controller.abort(`Request timeout after ${timeoutMs}ms`);
+      }, timeoutMs);
+
       try {
-        const response = await fetch(composedUrl, mergedOptions);
+        const response = await fetch(composedUrl, {
+          ...mergedOptions,
+          signal: controller.signal,
+        });
+        clearTimeout(timeout);
 
         // Log the request
         log.debug(
@@ -65,6 +76,8 @@ export function createHttpClient(
 
         throw new Error(`Request failed with status ${response.status}`);
       } catch (error) {
+        clearTimeout(timeout);
+
         if (retries > 0) {
           log.info(`${name}: Retrying due to error: ${error}`);
           retries -= 1;

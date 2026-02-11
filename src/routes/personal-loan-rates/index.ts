@@ -1,11 +1,12 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
+import type { Context } from "hono";
 import {
   getAvailableDates,
   loadHistoricalData,
   loadLatestData,
+  NoDataFoundError,
   loadTimeSeriesData
 } from "../../lib/data-loader";
-import { Environment } from "../../lib/environment";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
 import { PersonalLoanRates } from "../../models/personal-loan-rates";
@@ -13,22 +14,39 @@ import { getPersonalLoanRatesByInstitutionRoute } from "./getPersonalLoanRatesBy
 import { getPersonalLoanRatesTimeSeriesRoute } from "./getPersonalLoanRatesTimeSeries";
 import { listPersonalLoanRatesRoute } from "./listPersonalLoanRates";
 
-const routes = new OpenAPIHono<{ Bindings: Environment }>();
+const routes = new OpenAPIHono();
+
+function respondOk<T>(c: Context, payload: T) {
+  return c.json(payload, 200);
+}
 
 // Route: `GET /personal-loan-rates`
 routes.openapi(listPersonalLoanRatesRoute, async (c) => {
-  const db = c.env.RATESAPI_DB;
-
   try {
-    // Get data from D1 database
-    const personalLoanRates = await loadLatestData<PersonalLoanRates>("personal-loan-rates", db);
+    // Get data from Convex
+    const personalLoanRates = await loadLatestData("personal-loan-rates");
 
-    return c.json({
+    return respondOk(c, {
       ...personalLoanRates,
       termsOfUse: termsOfUse(),
       timestamp: getCurrentTimestamp(),
     });
   } catch (error) {
+    if (error instanceof NoDataFoundError) {
+      const timestamp = getCurrentTimestamp();
+      const emptyRates: PersonalLoanRates = {
+        type: "PersonalLoanRates",
+        data: [],
+        lastUpdated: timestamp,
+      };
+
+      return respondOk(c, {
+        ...emptyRates,
+        termsOfUse: termsOfUse(),
+        timestamp,
+      });
+    }
+
     console.error("Error loading personal loan rates:", error);
     return c.json(
       {
@@ -43,10 +61,8 @@ routes.openapi(listPersonalLoanRatesRoute, async (c) => {
 // Route: `GET /personal-loan-rates/time-series`
 routes.openapi(getPersonalLoanRatesTimeSeriesRoute, async (c) => {
   const { date, startDate, endDate, institutionId } = c.req.valid("query");
-  const db = c.env.RATESAPI_DB;
-
   try {
-    const availableDates = await getAvailableDates("personal-loan-rates", db);
+    const availableDates = await getAvailableDates("personal-loan-rates");
 
     // Check if we have any historical data
     if (availableDates.length === 0) {
@@ -61,7 +77,7 @@ routes.openapi(getPersonalLoanRatesTimeSeriesRoute, async (c) => {
 
     // Case 1: Single date requested
     if (date) {
-      const historicalData = await loadHistoricalData<PersonalLoanRates>("personal-loan-rates", date, db);
+      const historicalData = await loadHistoricalData("personal-loan-rates", date);
 
       if (!historicalData) {
         return c.json(
@@ -95,7 +111,7 @@ routes.openapi(getPersonalLoanRatesTimeSeriesRoute, async (c) => {
         }
       }
 
-      return c.json({
+      return respondOk(c, {
         type: "PersonalLoanRatesTimeSeries",
         timeSeries: { [date]: filteredData },
         availableDates,
@@ -116,11 +132,10 @@ routes.openapi(getPersonalLoanRatesTimeSeriesRoute, async (c) => {
         );
       }
 
-      const timeSeriesData = await loadTimeSeriesData<PersonalLoanRates>(
+      const timeSeriesData = await loadTimeSeriesData(
         "personal-loan-rates",
         startDate,
-        endDate,
-        db
+        endDate
       );
 
       if (Object.keys(timeSeriesData).length === 0) {
@@ -162,7 +177,7 @@ routes.openapi(getPersonalLoanRatesTimeSeriesRoute, async (c) => {
           );
         }
 
-        return c.json({
+        return respondOk(c, {
           type: "PersonalLoanRatesTimeSeries",
           timeSeries: filteredTimeSeries,
           availableDates,
@@ -171,7 +186,7 @@ routes.openapi(getPersonalLoanRatesTimeSeriesRoute, async (c) => {
         });
       }
 
-      return c.json({
+      return respondOk(c, {
         type: "PersonalLoanRatesTimeSeries",
         timeSeries: timeSeriesData,
         availableDates,
@@ -181,13 +196,12 @@ routes.openapi(getPersonalLoanRatesTimeSeriesRoute, async (c) => {
     }
 
     // Case 3: No date parameters provided, return all available dates
-    return c.json({
+    return respondOk(c, {
       type: "PersonalLoanRatesTimeSeries",
       timeSeries: {},
       availableDates,
       termsOfUse: termsOfUse(),
       timestamp: getCurrentTimestamp(),
-      message: "Please specify a date or date range to retrieve time series data",
     });
   } catch (error) {
     console.error("Error retrieving time series data:", error);
@@ -204,11 +218,9 @@ routes.openapi(getPersonalLoanRatesTimeSeriesRoute, async (c) => {
 // Route: `GET /personal-loan-rates/{institutionId}`
 routes.openapi(getPersonalLoanRatesByInstitutionRoute, async (c) => {
   const { institutionId } = c.req.valid("param");
-  const db = c.env.RATESAPI_DB;
-
   try {
-    // Get data from D1 database
-    const personalLoanRates = await loadLatestData<PersonalLoanRates>("personal-loan-rates", db);
+    // Get data from Convex
+    const personalLoanRates = await loadLatestData("personal-loan-rates");
 
     const singleInstitution = personalLoanRates.data.find(
       (i) => i.id.toLowerCase() === institutionId.toLowerCase(),
@@ -224,13 +236,23 @@ routes.openapi(getPersonalLoanRatesByInstitutionRoute, async (c) => {
       );
     }
 
-    return c.json({
+    return respondOk(c, {
       ...personalLoanRates,
       data: [singleInstitution],
       termsOfUse: termsOfUse(),
       timestamp: getCurrentTimestamp(),
     });
   } catch (error) {
+    if (error instanceof NoDataFoundError) {
+      return c.json(
+        {
+          code: 404,
+          message: "No personal loan rates available yet",
+        },
+        404,
+      );
+    }
+
     console.error("Error loading personal loan rates for institution:", error);
     return c.json(
       {

@@ -9,7 +9,17 @@ export type InterestScraperAPI = {
 
 export function InterestScraperAPI(): InterestScraperAPI {
   const httpClient = createHttpClient("InterestScraperAPI", {
+    headers: {
+      "User-Agent":
+        "ratesapi.nz scraper (+https://ratesapi.nz; contact: ops@ratesapi.nz)",
+    },
     prefixUrl: "https://www.interest.co.nz/",
+    retryOptions: {
+      retries: 3,
+      retryDelay: 1500,
+      retryOn: [408, 429, 500, 502, 503, 504],
+    },
+    timeoutMs: 20000,
   });
 
   async function getCarLoanRatesPage(): Promise<string | undefined> {

@@ -1,11 +1,12 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
+import type { Context } from "hono";
 import {
   getAvailableDates,
   loadHistoricalData,
   loadLatestData,
+  NoDataFoundError,
   loadTimeSeriesData
 } from "../../lib/data-loader";
-import { Environment } from "../../lib/environment";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
 import { CreditCardRates } from "../../models/credit-card-rates";
@@ -13,22 +14,39 @@ import { getCreditCardRatesIssuerRoute } from "./getCreditCardRatesIssuer";
 import { getCreditCardRatesTimeSeriesRoute } from "./getCreditCardRatesTimeSeries";
 import { listCreditCardRatesRoute } from "./listCreditCardRates";
 
-const routes = new OpenAPIHono<{ Bindings: Environment }>();
+const routes = new OpenAPIHono();
+
+function respondOk<T>(c: Context, payload: T) {
+  return c.json(payload, 200);
+}
 
 // Route: `GET /credit-card-rates`
 routes.openapi(listCreditCardRatesRoute, async (c) => {
-  const db = c.env.RATESAPI_DB;
-
   try {
-    // Get data from D1 database
-    const creditCardRates = await loadLatestData<CreditCardRates>("credit-card-rates", db);
+    // Get data from Convex
+    const creditCardRates = await loadLatestData("credit-card-rates");
 
-    return c.json({
+    return respondOk(c, {
       ...creditCardRates,
       termsOfUse: termsOfUse(),
       timestamp: getCurrentTimestamp(),
     });
   } catch (error) {
+    if (error instanceof NoDataFoundError) {
+      const timestamp = getCurrentTimestamp();
+      const emptyRates: CreditCardRates = {
+        type: "CreditCardRates",
+        data: [],
+        lastUpdated: timestamp,
+      };
+
+      return respondOk(c, {
+        ...emptyRates,
+        termsOfUse: termsOfUse(),
+        timestamp,
+      });
+    }
+
     console.error("Error loading credit card rates:", error);
     return c.json(
       {
@@ -43,10 +61,8 @@ routes.openapi(listCreditCardRatesRoute, async (c) => {
 // Route: `GET /credit-card-rates/time-series`
 routes.openapi(getCreditCardRatesTimeSeriesRoute, async (c) => {
   const { date, startDate, endDate, issuerId } = c.req.valid("query");
-  const db = c.env.RATESAPI_DB;
-
   try {
-    const availableDates = await getAvailableDates("credit-card-rates", db);
+    const availableDates = await getAvailableDates("credit-card-rates");
 
     // Check if we have any historical data
     if (availableDates.length === 0) {
@@ -61,7 +77,7 @@ routes.openapi(getCreditCardRatesTimeSeriesRoute, async (c) => {
 
     // Case 1: Single date requested
     if (date) {
-      const historicalData = await loadHistoricalData<CreditCardRates>("credit-card-rates", date, db);
+      const historicalData = await loadHistoricalData("credit-card-rates", date);
 
       if (!historicalData) {
         return c.json(
@@ -95,7 +111,7 @@ routes.openapi(getCreditCardRatesTimeSeriesRoute, async (c) => {
         }
       }
 
-      return c.json({
+      return respondOk(c, {
         type: "CreditCardRatesTimeSeries",
         timeSeries: { [date]: filteredData },
         availableDates,
@@ -116,11 +132,10 @@ routes.openapi(getCreditCardRatesTimeSeriesRoute, async (c) => {
         );
       }
 
-      const timeSeriesData = await loadTimeSeriesData<CreditCardRates>(
+      const timeSeriesData = await loadTimeSeriesData(
         "credit-card-rates",
         startDate,
-        endDate,
-        db
+        endDate
       );
 
       if (Object.keys(timeSeriesData).length === 0) {
@@ -162,7 +177,7 @@ routes.openapi(getCreditCardRatesTimeSeriesRoute, async (c) => {
           );
         }
 
-        return c.json({
+        return respondOk(c, {
           type: "CreditCardRatesTimeSeries",
           timeSeries: filteredTimeSeries,
           availableDates,
@@ -171,7 +186,7 @@ routes.openapi(getCreditCardRatesTimeSeriesRoute, async (c) => {
         });
       }
 
-      return c.json({
+      return respondOk(c, {
         type: "CreditCardRatesTimeSeries",
         timeSeries: timeSeriesData,
         availableDates,
@@ -181,13 +196,12 @@ routes.openapi(getCreditCardRatesTimeSeriesRoute, async (c) => {
     }
 
     // Case 3: No date parameters provided, return all available dates
-    return c.json({
+    return respondOk(c, {
       type: "CreditCardRatesTimeSeries",
       timeSeries: {},
       availableDates,
       termsOfUse: termsOfUse(),
       timestamp: getCurrentTimestamp(),
-      message: "Please specify a date or date range to retrieve time series data",
     });
   } catch (error) {
     console.error("Error retrieving time series data:", error);
@@ -204,11 +218,9 @@ routes.openapi(getCreditCardRatesTimeSeriesRoute, async (c) => {
 // Route: `GET /credit-card-rates/{issuerId}`
 routes.openapi(getCreditCardRatesIssuerRoute, async (c) => {
   const { issuerId } = c.req.valid("param");
-  const db = c.env.RATESAPI_DB;
-
   try {
-    // Get data from D1 database
-    const creditCardRates = await loadLatestData<CreditCardRates>("credit-card-rates", db);
+    // Get data from Convex
+    const creditCardRates = await loadLatestData("credit-card-rates");
 
     const singleIssuer = creditCardRates.data.find(
       (i) => i.id.toLowerCase() === issuerId.toLowerCase(),
@@ -224,13 +236,23 @@ routes.openapi(getCreditCardRatesIssuerRoute, async (c) => {
       );
     }
 
-    return c.json({
+    return respondOk(c, {
       ...creditCardRates,
       data: [singleIssuer],
       termsOfUse: termsOfUse(),
       timestamp: getCurrentTimestamp(),
     });
   } catch (error) {
+    if (error instanceof NoDataFoundError) {
+      return c.json(
+        {
+          code: 404,
+          message: "No credit card rates available yet",
+        },
+        404,
+      );
+    }
+
     console.error("Error loading credit card rates for issuer:", error);
     return c.json(
       {

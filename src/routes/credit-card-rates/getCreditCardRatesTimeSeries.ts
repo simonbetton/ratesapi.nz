@@ -28,7 +28,7 @@ export const getCreditCardRatesTimeSeriesRoute = createRoute({
       content: {
         "application/json": {
           schema: z.object({
-            type: z.literal("CreditCardRatesTimeSeries").openapi({}),
+            type: z.string().openapi({ example: "CreditCardRatesTimeSeries" }),
             timeSeries: z.record(z.string(), CreditCardRates).openapi({
               description: "Time series data keyed by date in YYYY-MM-DD format",
             }),
@@ -38,7 +38,7 @@ export const getCreditCardRatesTimeSeriesRoute = createRoute({
             termsOfUse: z.string().openapi({}),
             timestamp: z.string().openapi({
               description: "Current server timestamp",
-              example: "2025-03-04T02:30:00.000Z",
+              example: "2026-03-04T02:30:00.000Z",
             }),
           }),
         },

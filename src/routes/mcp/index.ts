@@ -1,6 +1,5 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { Context } from "hono";
-import { Environment } from "../../lib/environment";
+import type { Context } from "hono";
 
 type JsonRpcId = string | number | null;
 
@@ -110,17 +109,17 @@ const MCP_TOOLS: McpTool[] = [
         date: {
           type: "string",
           description: "Date in YYYY-MM-DD format for historical data.",
-          examples: ["2025-03-01"],
+          examples: ["2026-03-01"],
         },
         startDate: {
           type: "string",
           description: "Start date in YYYY-MM-DD format for time series.",
-          examples: ["2025-01-01"],
+          examples: ["2026-01-01"],
         },
         endDate: {
           type: "string",
           description: "End date in YYYY-MM-DD format for time series.",
-          examples: ["2025-03-01"],
+          examples: ["2026-03-01"],
         },
         institutionId: {
           type: "string",
@@ -170,17 +169,17 @@ const MCP_TOOLS: McpTool[] = [
         date: {
           type: "string",
           description: "Date in YYYY-MM-DD format for historical data.",
-          examples: ["2025-03-01"],
+          examples: ["2026-03-01"],
         },
         startDate: {
           type: "string",
           description: "Start date in YYYY-MM-DD format for time series.",
-          examples: ["2025-01-01"],
+          examples: ["2026-01-01"],
         },
         endDate: {
           type: "string",
           description: "End date in YYYY-MM-DD format for time series.",
-          examples: ["2025-03-01"],
+          examples: ["2026-03-01"],
         },
         institutionId: {
           type: "string",
@@ -225,17 +224,17 @@ const MCP_TOOLS: McpTool[] = [
         date: {
           type: "string",
           description: "Date in YYYY-MM-DD format for historical data.",
-          examples: ["2025-03-01"],
+          examples: ["2026-03-01"],
         },
         startDate: {
           type: "string",
           description: "Start date in YYYY-MM-DD format for time series.",
-          examples: ["2025-01-01"],
+          examples: ["2026-01-01"],
         },
         endDate: {
           type: "string",
           description: "End date in YYYY-MM-DD format for time series.",
-          examples: ["2025-03-01"],
+          examples: ["2026-03-01"],
         },
         institutionId: {
           type: "string",
@@ -280,17 +279,17 @@ const MCP_TOOLS: McpTool[] = [
         date: {
           type: "string",
           description: "Date in YYYY-MM-DD format for historical data.",
-          examples: ["2025-03-01"],
+          examples: ["2026-03-01"],
         },
         startDate: {
           type: "string",
           description: "Start date in YYYY-MM-DD format for time series.",
-          examples: ["2025-01-01"],
+          examples: ["2026-01-01"],
         },
         endDate: {
           type: "string",
           description: "End date in YYYY-MM-DD format for time series.",
-          examples: ["2025-03-01"],
+          examples: ["2026-03-01"],
         },
         issuerId: {
           type: "string",
@@ -303,7 +302,7 @@ const MCP_TOOLS: McpTool[] = [
   },
 ];
 
-const routes = new OpenAPIHono<{ Bindings: Environment }>();
+const routes = new OpenAPIHono();
 
 routes.post("/", async (c) => {
   let body: JsonRpcRequest;
@@ -410,7 +409,7 @@ function toJsonRpcError(error: unknown): JsonRpcError {
 async function handleMethod(
   method: string,
   params: unknown,
-  c: Context<{ Bindings: Environment }>
+  c: Context
 ) {
   switch (method) {
     case "initialize":
@@ -438,7 +437,7 @@ async function handleMethod(
 
 async function handleToolCall(
   params: unknown,
-  c: Context<{ Bindings: Environment }>
+  c: Context
 ) {
   if (!isRecord(params)) {
     throw new JsonRpcErrorResponse(-32602, "Invalid params");
@@ -456,7 +455,8 @@ async function handleToolCall(
   }
 
   try {
-    const result = await callTool(name, (args ?? {}) as Record<string, unknown>, c);
+    const resolvedArgs = args ?? {};
+    const result = await callTool(name, resolvedArgs, c);
 
     return {
       content: [
@@ -494,7 +494,7 @@ async function handleToolCall(
 async function callTool(
   name: string,
   args: Record<string, unknown>,
-  c: Context<{ Bindings: Environment }>
+  c: Context
 ) {
   switch (name) {
     case "list_mortgage_rates":
@@ -573,7 +573,7 @@ async function callTool(
 }
 
 async function fetchApi(
-  c: Context<{ Bindings: Environment }>,
+  c: Context,
   pathname: string,
   query?: Record<string, string | undefined>
 ) {

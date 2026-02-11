@@ -5,7 +5,7 @@ import ora from "ora";
 import { generateId } from "../src/lib/generate-id";
 import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
 import { CreditCardRates, type Issuer, type Plan } from "../src/models";
-import { hasDataChanged, loadFromD1, saveToD1 } from "./utils";
+import { hasDataChanged, loadFromConvex, saveToConvex } from "./utils";
 
 const config: {
   tableSelector: string;
@@ -30,11 +30,11 @@ const interestScraperAPI = InterestScraperAPI();
 
 // The main function to scrape and save credit card rates
 async function main() {
-  // Load current rates from D1
+  // Load current rates from Convex
   let currentRates: CreditCardRates | null = null;
-  const loading = ora("Loading current data from D1").start();
+  const loading = ora("Loading current data from Convex").start();
   try {
-    currentRates = await loadFromD1<CreditCardRates>("credit-card-rates");
+    currentRates = await loadFromConvex("credit-card-rates");
     loading.succeed("Loaded current data").stop();
   } catch (error) {
     loading.fail("Failed to load current data").stop();
@@ -68,8 +68,9 @@ async function main() {
       type: "CreditCardRates",
       data: unvalidatedData,
       lastUpdated: new Date().toISOString(),
-    }) as CreditCardRates;
-    handle.succeed(`Extracted and Validated ${validatedModel.data.length} results`).stop();  } catch (error) {
+    });
+    handle.succeed(`Extracted and Validated ${validatedModel.data.length} results`).stop();
+  } catch (error) {
     handle.fail("Failed to extract and/or validate").stop();
     console.error("Failed to extract and/or validate", error);
     throw error;
@@ -82,20 +83,27 @@ async function main() {
     return;
   }
 
-  // Save new data to D1 database
-  const saveDb = ora("Saving data to D1").start();
+  // Save new data to Convex
+  const saveDb = ora("Saving data to Convex").start();
   try {
-    // Save to D1 database
-    const saved = await saveToD1(validatedModel, "credit-card-rates");
+    // Save to Convex
+    const saved = await saveToConvex(validatedModel, "credit-card-rates", currentRates);
 
-    saveDb.succeed(saved ? "Data saved to D1 database" : "Failed to save to D1").stop();
+    if (!saved) {
+      throw new Error("Convex save failed");
+    }
+
+    saveDb.succeed("Data saved to Convex").stop();
   } catch (error) {
     saveDb.fail("Failed to save data").stop();
     console.error("Failed to save data", error);
-    return;
+    throw error;
   }
 }
-main().catch(console.error);
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
 
 function getModelExtractedFromDOM($: CheerioAPI): Issuer[] {
   const issuers: Issuer[] = [];

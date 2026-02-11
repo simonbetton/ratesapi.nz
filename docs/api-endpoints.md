@@ -22,6 +22,10 @@ The API exposes the following endpoint categories:
   - Get rates by issuer
   - Get historical rates time series
 
+- **Aggregates**: `/api/v1/aggregates/{dataType}`
+  - Get daily aggregate metrics by date
+  - Get aggregate time series by date range
+
 - **MCP (Model Context Protocol)**: `/api/v1/mcp`
   - JSON-RPC endpoint exposing MCP tools for the rates API
   - Methods: `initialize`, `tools/list`, `tools/call`, `ping`
@@ -52,7 +56,7 @@ Example MCP request (call tool):
 }
 ```
 
-All endpoints support CORS and return JSON responses with a 5-second cache control.
+All endpoints support CORS and return JSON responses.
 
 ## API Documentation
 
