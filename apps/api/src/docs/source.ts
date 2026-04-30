@@ -541,12 +541,14 @@ The project uses Cloudflare D1, a serverless SQL database built on SQLite, for c
 
 ### Local Development with D1
 
-\`\`\`bash
-# Install Wrangler CLI if not already installed
-npm install -g wrangler
+\`bun run dev\` uses the remote D1 binding for the development environment, so
+local API requests have current data by default.
 
-# Create a local D1 database
-wrangler d1 create ratesapi-data-local
+For offline local D1 development, apply the schema and seed data first:
+
+\`\`\`bash
+bun run db:init:local
+D1_DATABASE_NAME="ratesapi-data" D1_LOCAL="true" bun run scrape:all
 \`\`\`
 
 ## Development Tips

@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { type TSchema } from "elysia";
 import ora from "ora";
 import {
@@ -17,6 +18,10 @@ type D1Target = {
 type D1RunOptions = {
   json?: boolean;
 };
+
+const wranglerConfigPath = fileURLToPath(
+  new URL("../wrangler.toml", import.meta.url),
+);
 
 export function hasDataChanged(
   newData: SupportedModels,
@@ -39,16 +44,6 @@ export async function saveToD1(
       `CI=${process.env.CI}, GITHUB_ACTIONS=${process.env.GITHUB_ACTIONS}, D1_DATABASE_NAME=${process.env.D1_DATABASE_NAME ? "set" : "not set"}`,
     )
     .stop();
-
-  const isCI = process.env.CI === "true" || Boolean(process.env.GITHUB_ACTIONS);
-
-  if (!isCI) {
-    const skipSpinner = ora("Checking CI environment").start();
-    skipSpinner
-      .warn("Skipping D1 database update in local development mode")
-      .stop();
-    return false;
-  }
 
   const target = getD1Target();
 
@@ -207,6 +202,8 @@ function runWranglerD1(
     "d1",
     "execute",
     target.databaseName,
+    "--config",
+    wranglerConfigPath,
     ...target.flags,
     "--command",
     command,

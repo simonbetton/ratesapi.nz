@@ -22,3 +22,4 @@ ENVIRONMENT = "development"
 binding = "RATESAPI_DB"
 database_name = "ratesapi-data"
 database_id = "a1156f15-7043-4616-98de-c5f2d2d3ac63"
+remote = true

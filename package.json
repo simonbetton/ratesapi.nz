@@ -6,6 +6,7 @@
     "deploy:docs": "bun run --cwd apps/docs deploy",
     "deploy:dry-run": "wrangler deploy --config apps/api/wrangler.toml --dry-run --env=\"\" --minify",
     "build:docs": "bun run --cwd apps/docs build:cloudflare",
+    "db:init:local": "bun run apps/api/bin/init-local-d1.ts",
     "typecheck:docs": "tsc -p apps/docs/tsconfig.json --noEmit",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",

@@ -47,19 +47,29 @@ You can manually update the D1 database in two ways:
 
 ```bash
 # Replace DATABASE_NAME with your database name from apps/api/wrangler.toml (e.g. "ratesapi-data")
-npx wrangler d1 execute DATABASE_NAME --file=./apps/api/schema.sql
+npx wrangler d1 execute DATABASE_NAME --config apps/api/wrangler.toml --file=./apps/api/schema.sql
 
 # Then run the scraper scripts with D1_DATABASE_NAME set
 D1_DATABASE_NAME="your-database-name" bun run apps/api/bin/scrape-mortgage-rates.ts
+```
+
+By default, `bun run dev` uses the remote D1 binding so local API requests have
+current data. For fully local/offline API development, initialize the local D1
+database and seed it with scraper output:
+
+```bash
+bun run db:init:local
+D1_DATABASE_NAME="ratesapi-data" D1_LOCAL="true" bun run scrape:all
 ```
 
 This is useful for initial seeding of a new database or manual updates when needed.
 
 ## Local Development vs. GitHub Actions
 
-- **Local Development**: 
+- **Local Development**:
+  - `bun run dev` uses the remote D1 binding configured in `apps/api/wrangler.toml`
   - Scripts display scraped data but don't store it without D1_DATABASE_NAME
-  - D1 operations are skipped to avoid connection errors when no database name is provided
+  - Set `D1_DATABASE_NAME="ratesapi-data"` and `D1_LOCAL="true"` to write to the same local D1 database used by `bun run dev`
 
 - **GitHub Actions (CI Environment)**:
   - D1 database is used as the exclusive data source 

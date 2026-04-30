@@ -36,13 +36,15 @@ database_id = "your-database-id-here"
 3. Create database tables using the schema:
 
 ```zsh
-npx wrangler d1 execute ratesapi-data --file=apps/api/schema.sql
+npx wrangler d1 execute ratesapi-data --config apps/api/wrangler.toml --remote --file=apps/api/schema.sql
 ```
 
-For development environment:
+By default, `bun run dev` uses the remote development D1 binding so local API requests have current data.
+If you want an offline Miniflare database instead, initialise the local database and seed it:
 
 ```zsh
-npx wrangler d1 execute ratesapi-data --file=apps/api/schema.sql --env=development
+bun run db:init:local
+bun run scrape:all:local
 ```
 
 ## 🚀 Deploy to Cloudflare Workers
@@ -61,16 +63,22 @@ bun run deploy
 
 ## 🔩 Scrape data
 
-Check out the available scripts within `./bin` to scrape and save data. The data is stored in the D1 database.
+Check out the available scripts within `apps/api/bin` to scrape and save data. The data is stored in the D1 database.
 
 To run with D1 database support, provide the database ID:
 
 ```zsh
-# Replace with your D1 database ID from apps/api/wrangler.toml
-D1_DATABASE_NAME="your-database-name" bun run apps/api/bin/scrape-mortgage-rates.ts
+# Local Miniflare D1 used by `bun run dev`
+D1_DATABASE_NAME="ratesapi-data" D1_LOCAL=true bun run apps/api/bin/scrape-mortgage-rates.ts
 ```
 
-When running without a D1 database ID, the scripts will not store data but will still show what would be scraped:
+For the remote Cloudflare D1 database, use:
+
+```zsh
+D1_DATABASE_NAME="ratesapi-data" D1_REMOTE=true bun run apps/api/bin/scrape-mortgage-rates.ts
+```
+
+When running without a D1 database name, the scripts will not store data but will still show what would be scraped:
 
 ```zsh
 bun run apps/api/bin/scrape-mortgage-rates.ts
