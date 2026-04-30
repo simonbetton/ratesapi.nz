@@ -39,7 +39,7 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${escapeHtml(pageData.title)} | Rates API</title>
-    <meta name="description" content="${escapeHtml(pageData.description)}" />
+    <meta name="description" content="${escapeAttribute(pageData.description)}" />
     <style>
       :root {
         color-scheme: light dark;
