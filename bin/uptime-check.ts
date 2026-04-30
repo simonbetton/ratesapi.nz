@@ -2,8 +2,12 @@
 
 import { createHttpClient } from "../src/lib/http-client";
 
-const LAST_WEEK = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
-const YESTERDAY = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split("T")[0];
+const LAST_WEEK = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  .toISOString()
+  .split("T")[0];
+const YESTERDAY = new Date(new Date().setDate(new Date().getDate() - 1))
+  .toISOString()
+  .split("T")[0];
 
 const endpoints = [
   // Base endpoints
@@ -20,6 +24,7 @@ const endpoints = [
 
   // Documentation
   "v1/doc",
+  "v1/health",
 
   // Basic Time Series API endpoints
   "v1/mortgage-rates/time-series",
@@ -73,8 +78,8 @@ async function main() {
         errorDetails = `Status ${response.status}`;
         console.error(`❌ ${endpoint} - Failed: ${errorDetails}`);
       }
-    } catch (error: any) {
-      errorDetails = error.message ?? String(error);
+    } catch (error: unknown) {
+      errorDetails = error instanceof Error ? error.message : String(error);
       console.error(`❌ ${endpoint} - Error: ${errorDetails}`);
     }
 

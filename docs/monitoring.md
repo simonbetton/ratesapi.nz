@@ -14,6 +14,7 @@ The following endpoints are monitored:
 - Car loan rates (list and by institution)
 - Credit card rates (list and by issuer)
 - API documentation
+- API health and data freshness
 
 ## GitHub Notifications
 The notification system uses GitHub's built-in @mentions to alert team members. Users will receive notifications according to their GitHub notification preferences (email, web, mobile).

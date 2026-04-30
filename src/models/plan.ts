@@ -1,65 +1,46 @@
-import { z } from "@hono/zod-openapi";
-import { toTitleFormat } from "../lib/transforms";
+import { t } from "elysia";
 
-export type PlanId = `plan:${string}`;
-
-export const Plan = z
-  .object({
-    id: z
-      .string()
-      .regex(/^plan:/, "String must start with 'plan:'")
-      .openapi({
-        examples: ["plan:amex:airpoint-card"],
-      }),
-    name: z
-      .string()
-      .transform(toTitleFormat)
-      .openapi({
-        examples: ["Airpoint Card"],
-      }),
-    interestFreePeriodInMonths: z
-      .number()
-      .nullable()
-      .openapi({
+export const Plan = t.Object(
+  {
+    id: t.String({
+      pattern: "^plan:",
+      examples: ["plan:amex:airpoint-card"],
+    }),
+    name: t.String({
+      examples: ["Airpoint Card"],
+    }),
+    interestFreePeriodInMonths: t.Nullable(
+      t.Number({
         examples: [55, 90],
       }),
-    primaryFeeNZD: z
-      .number()
-      .nullable()
-      .openapi({
+    ),
+    primaryFeeNZD: t.Nullable(
+      t.Number({
         examples: [0.0, 149.0],
       }),
-    balanceTransferRate: z
-      .number()
-      .nullable()
-      .openapi({
+    ),
+    balanceTransferRate: t.Nullable(
+      t.Number({
         examples: [0.0, 5.95],
       }),
-    balanceTransferPeriod: z
-      .string()
-      .transform(toTitleFormat)
-      .nullable()
-      .openapi({
+    ),
+    balanceTransferPeriod: t.Nullable(
+      t.String({
         examples: ["6 months"],
       }),
-    cashAdvanceRate: z
-      .number()
-      .nullable()
-      .openapi({
+    ),
+    cashAdvanceRate: t.Nullable(
+      t.Number({
         examples: [0.0, 21.95],
       }),
-    purchaseRate: z
-      .number()
-      .nullable()
-      .openapi({
+    ),
+    purchaseRate: t.Nullable(
+      t.Number({
         examples: [0.0, 21.95],
       }),
-  })
-  .strict();
-// The inferred type from a Zod schema using .regex() for string patterns
-// would result in a generic string type when inferred.
-// To enforce the pattern and have a specific type for the id,
-// we intersect the inferred type with a literal type.
-export type Plan = z.infer<typeof Plan> & {
-  id: PlanId;
-};
+    ),
+  },
+  { additionalProperties: false },
+);
+
+export type Plan = typeof Plan.static;

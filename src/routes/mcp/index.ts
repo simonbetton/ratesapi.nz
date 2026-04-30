@@ -1,15 +1,29 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
-import { Context } from "hono";
-import { Environment } from "../../lib/environment";
+import { Elysia } from "elysia";
+import { type ApiResult } from "../../lib/api-result";
+import { type Environment } from "../../lib/environment";
+import { type GetEnv } from "../../lib/routing";
+import {
+  getCarLoanRatesByInstitution,
+  getCarLoanRatesTimeSeries,
+  listCarLoanRates,
+} from "../car-loan-rates";
+import {
+  getCreditCardRatesByIssuer,
+  getCreditCardRatesTimeSeries,
+  listCreditCardRates,
+} from "../credit-card-rates";
+import {
+  getMortgageRatesByInstitution,
+  getMortgageRatesTimeSeries,
+  listMortgageRates,
+} from "../mortgage-rates";
+import {
+  getPersonalLoanRatesByInstitution,
+  getPersonalLoanRatesTimeSeries,
+  listPersonalLoanRates,
+} from "../personal-loan-rates";
 
 type JsonRpcId = string | number | null;
-
-type JsonRpcRequest = {
-  jsonrpc?: string;
-  id?: JsonRpcId;
-  method?: string;
-  params?: unknown;
-};
 
 type JsonRpcError = {
   code: number;
@@ -303,61 +317,69 @@ const MCP_TOOLS: McpTool[] = [
   },
 ];
 
-const routes = new OpenAPIHono<{ Bindings: Environment }>();
+export function createMcpRoutes(getEnv: GetEnv) {
+  return new Elysia({ prefix: "/mcp" }).post(
+    "/",
+    async ({ request, status }) => {
+      let body: unknown;
 
-routes.post("/", async (c) => {
-  let body: JsonRpcRequest;
+      try {
+        body = await request.json();
+      } catch (error) {
+        const response: JsonRpcResponse = {
+          jsonrpc: "2.0",
+          id: null,
+          error: {
+            code: -32700,
+            message: "Parse error",
+            data: error instanceof Error ? error.message : undefined,
+          },
+        };
 
-  try {
-    body = await c.req.json();
-  } catch (error) {
-    const response: JsonRpcResponse = {
-      jsonrpc: "2.0",
-      id: null,
-      error: {
-        code: -32700,
-        message: "Parse error",
-        data: error instanceof Error ? error.message : undefined,
+        return status(400, response);
+      }
+
+      try {
+        const { id, hasId, method, params } = parseJsonRpcRequest(body);
+
+        const result = await handleMethod(method, params, getEnv);
+
+        if (!hasId) {
+          return status(204);
+        }
+
+        const response: JsonRpcResponse = {
+          jsonrpc: "2.0",
+          id,
+          result,
+        };
+
+        return response;
+      } catch (error) {
+        const { id, hasId } = parseRequestId(body);
+
+        if (!hasId) {
+          return status(204);
+        }
+
+        const response: JsonRpcResponse = {
+          jsonrpc: "2.0",
+          id,
+          error: toJsonRpcError(error),
+        };
+
+        return response;
+      }
+    },
+    {
+      detail: {
+        hide: true,
       },
-    };
+    },
+  );
+}
 
-    return c.json(response, 400);
-  }
-
-  try {
-    const { id, hasId, method, params } = parseJsonRpcRequest(body);
-
-    const result = await handleMethod(method, params, c);
-
-    if (!hasId) {
-      return c.body(null, 204);
-    }
-
-    const response: JsonRpcResponse = {
-      jsonrpc: "2.0",
-      id,
-      result,
-    };
-
-    return c.json(response);
-  } catch (error) {
-    const { id, hasId } = parseRequestId(body);
-
-    if (!hasId) {
-      return c.body(null, 204);
-    }
-
-    const response: JsonRpcResponse = {
-      jsonrpc: "2.0",
-      id,
-      error: toJsonRpcError(error),
-    };
-
-    return c.json(response);
-  }
-});
-
-function parseJsonRpcRequest(body: JsonRpcRequest) {
+function parseJsonRpcRequest(body: unknown) {
   if (!isRecord(body)) {
     throw new JsonRpcErrorResponse(-32600, "Invalid Request");
   }
@@ -380,15 +402,23 @@ function parseJsonRpcRequest(body: JsonRpcRequest) {
   };
 }
 
-function parseRequestId(body: JsonRpcRequest) {
-  const hasId = Object.prototype.hasOwnProperty.call(body, "id");
-  const id = hasId ? body.id ?? null : null;
+function parseRequestId(body: unknown) {
+  if (!isRecord(body)) {
+    return { id: null, hasId: false };
+  }
 
-  if (hasId && id !== null && typeof id !== "string" && typeof id !== "number") {
+  const hasId = Object.hasOwn(body, "id");
+  const id = hasId ? (body.id ?? null) : null;
+
+  if (id === null || typeof id === "string" || typeof id === "number") {
+    return { id, hasId };
+  }
+
+  if (hasId) {
     throw new JsonRpcErrorResponse(-32600, "Invalid Request");
   }
 
-  return { id, hasId };
+  return { id: null, hasId };
 }
 
 function toJsonRpcError(error: unknown): JsonRpcError {
@@ -407,11 +437,7 @@ function toJsonRpcError(error: unknown): JsonRpcError {
   };
 }
 
-async function handleMethod(
-  method: string,
-  params: unknown,
-  c: Context<{ Bindings: Environment }>
-) {
+async function handleMethod(method: string, params: unknown, getEnv: GetEnv) {
   switch (method) {
     case "initialize":
       return {
@@ -430,16 +456,13 @@ async function handleMethod(
         tools: MCP_TOOLS,
       };
     case "tools/call":
-      return handleToolCall(params, c);
+      return handleToolCall(params, getEnv);
     default:
       throw new JsonRpcErrorResponse(-32601, `Method not found: ${method}`);
   }
 }
 
-async function handleToolCall(
-  params: unknown,
-  c: Context<{ Bindings: Environment }>
-) {
+async function handleToolCall(params: unknown, getEnv: GetEnv) {
   if (!isRecord(params)) {
     throw new JsonRpcErrorResponse(-32602, "Invalid params");
   }
@@ -452,11 +475,14 @@ async function handleToolCall(
   }
 
   if (args !== undefined && !isRecord(args)) {
-    throw new JsonRpcErrorResponse(-32602, "Invalid params: arguments must be an object");
+    throw new JsonRpcErrorResponse(
+      -32602,
+      "Invalid params: arguments must be an object",
+    );
   }
 
   try {
-    const result = await callTool(name, (args ?? {}) as Record<string, unknown>, c);
+    const result = await callTool(name, args ?? {}, getEnv());
 
     return {
       content: [
@@ -480,7 +506,7 @@ async function handleToolCall(
                 body: error.body,
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -494,132 +520,106 @@ async function handleToolCall(
 async function callTool(
   name: string,
   args: Record<string, unknown>,
-  c: Context<{ Bindings: Environment }>
+  env: Environment,
 ) {
   switch (name) {
     case "list_mortgage_rates":
-      return fetchApi(c, "/api/v1/mortgage-rates", {
-        termInMonths: toOptionalString(args.termInMonths),
-      });
-    case "get_mortgage_rates_by_institution":
-      return fetchApi(
-        c,
-        `/api/v1/mortgage-rates/${encodeURIComponent(
-          toRequiredString(args.institutionId, "institutionId")
-        )}`,
-        {
+      return unwrapApiResult(
+        await listMortgageRates(env, {
           termInMonths: toOptionalString(args.termInMonths),
-        }
+        }),
+      );
+    case "get_mortgage_rates_by_institution":
+      return unwrapApiResult(
+        await getMortgageRatesByInstitution(
+          env,
+          {
+            institutionId: toRequiredString(
+              args.institutionId,
+              "institutionId",
+            ),
+          },
+          {
+            termInMonths: toOptionalString(args.termInMonths),
+          },
+        ),
       );
     case "get_mortgage_rates_time_series":
-      return fetchApi(c, "/api/v1/mortgage-rates/time-series", {
-        date: toOptionalString(args.date),
-        startDate: toOptionalString(args.startDate),
-        endDate: toOptionalString(args.endDate),
-        institutionId: toOptionalString(args.institutionId),
-        termInMonths: toOptionalString(args.termInMonths),
-      });
+      return unwrapApiResult(
+        await getMortgageRatesTimeSeries(env, {
+          date: toOptionalString(args.date),
+          startDate: toOptionalString(args.startDate),
+          endDate: toOptionalString(args.endDate),
+          institutionId: toOptionalString(args.institutionId),
+          termInMonths: toOptionalString(args.termInMonths),
+        }),
+      );
     case "list_personal_loan_rates":
-      return fetchApi(c, "/api/v1/personal-loan-rates");
+      return unwrapApiResult(await listPersonalLoanRates(env));
     case "get_personal_loan_rates_by_institution":
-      return fetchApi(
-        c,
-        `/api/v1/personal-loan-rates/${encodeURIComponent(
-          toRequiredString(args.institutionId, "institutionId")
-        )}`
+      return unwrapApiResult(
+        await getPersonalLoanRatesByInstitution(env, {
+          institutionId: toRequiredString(args.institutionId, "institutionId"),
+        }),
       );
     case "get_personal_loan_rates_time_series":
-      return fetchApi(c, "/api/v1/personal-loan-rates/time-series", {
-        date: toOptionalString(args.date),
-        startDate: toOptionalString(args.startDate),
-        endDate: toOptionalString(args.endDate),
-        institutionId: toOptionalString(args.institutionId),
-      });
+      return unwrapApiResult(
+        await getPersonalLoanRatesTimeSeries(env, {
+          date: toOptionalString(args.date),
+          startDate: toOptionalString(args.startDate),
+          endDate: toOptionalString(args.endDate),
+          institutionId: toOptionalString(args.institutionId),
+        }),
+      );
     case "list_car_loan_rates":
-      return fetchApi(c, "/api/v1/car-loan-rates");
+      return unwrapApiResult(await listCarLoanRates(env));
     case "get_car_loan_rates_by_institution":
-      return fetchApi(
-        c,
-        `/api/v1/car-loan-rates/${encodeURIComponent(
-          toRequiredString(args.institutionId, "institutionId")
-        )}`
+      return unwrapApiResult(
+        await getCarLoanRatesByInstitution(env, {
+          institutionId: toRequiredString(args.institutionId, "institutionId"),
+        }),
       );
     case "get_car_loan_rates_time_series":
-      return fetchApi(c, "/api/v1/car-loan-rates/time-series", {
-        date: toOptionalString(args.date),
-        startDate: toOptionalString(args.startDate),
-        endDate: toOptionalString(args.endDate),
-        institutionId: toOptionalString(args.institutionId),
-      });
+      return unwrapApiResult(
+        await getCarLoanRatesTimeSeries(env, {
+          date: toOptionalString(args.date),
+          startDate: toOptionalString(args.startDate),
+          endDate: toOptionalString(args.endDate),
+          institutionId: toOptionalString(args.institutionId),
+        }),
+      );
     case "list_credit_card_rates":
-      return fetchApi(c, "/api/v1/credit-card-rates");
+      return unwrapApiResult(await listCreditCardRates(env));
     case "get_credit_card_rates_by_issuer":
-      return fetchApi(
-        c,
-        `/api/v1/credit-card-rates/${encodeURIComponent(
-          toRequiredString(args.issuerId, "issuerId")
-        )}`
+      return unwrapApiResult(
+        await getCreditCardRatesByIssuer(env, {
+          issuerId: toRequiredString(args.issuerId, "issuerId"),
+        }),
       );
     case "get_credit_card_rates_time_series":
-      return fetchApi(c, "/api/v1/credit-card-rates/time-series", {
-        date: toOptionalString(args.date),
-        startDate: toOptionalString(args.startDate),
-        endDate: toOptionalString(args.endDate),
-        issuerId: toOptionalString(args.issuerId),
-      });
+      return unwrapApiResult(
+        await getCreditCardRatesTimeSeries(env, {
+          date: toOptionalString(args.date),
+          startDate: toOptionalString(args.startDate),
+          endDate: toOptionalString(args.endDate),
+          issuerId: toOptionalString(args.issuerId),
+        }),
+      );
     default:
       throw new JsonRpcErrorResponse(-32601, `Tool not found: ${name}`);
   }
 }
 
-async function fetchApi(
-  c: Context<{ Bindings: Environment }>,
-  pathname: string,
-  query?: Record<string, string | undefined>
-) {
-  const url = new URL(c.req.url);
-  url.pathname = pathname;
-  url.search = "";
-
-  if (query) {
-    for (const [key, value] of Object.entries(query)) {
-      if (value !== undefined) {
-        url.searchParams.set(key, value);
-      }
-    }
-  }
-
-  const response = await fetch(url.toString(), {
-    headers: {
-      accept: "application/json",
-    },
-  });
-
-  const body = await readJsonOrText(response);
-
-  if (!response.ok) {
+function unwrapApiResult(result: ApiResult) {
+  if (result.status < 200 || result.status >= 300) {
     throw new McpToolError(
-      `API request failed with status ${response.status}`,
-      response.status,
-      body
+      `API request failed with status ${result.status}`,
+      result.status,
+      result.body,
     );
   }
 
-  return body;
-}
-
-async function readJsonOrText(response: Response): Promise<unknown> {
-  const text = await response.text();
-
-  if (!text) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(text);
-  } catch {
-    return text;
-  }
+  return result.body;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -642,10 +642,11 @@ function toRequiredString(value: unknown, name: string): string {
   const normalized = toOptionalString(value);
 
   if (!normalized) {
-    throw new JsonRpcErrorResponse(-32602, `Invalid params: ${name} is required`);
+    throw new JsonRpcErrorResponse(
+      -32602,
+      `Invalid params: ${name} is required`,
+    );
   }
 
   return normalized;
 }
-
-export { routes };

@@ -1,5 +1,5 @@
 name = "ratesapi-nz"
-compatibility_date = "2023-12-01"
+compatibility_date = "2025-06-01"
 
 [vars]
 ENVIRONMENT = "production"

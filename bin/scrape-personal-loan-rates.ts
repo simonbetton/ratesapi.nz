@@ -1,13 +1,14 @@
-/* eslint-disable no-console */
-import { load, type CheerioAPI } from "cheerio";
+import { type CheerioAPI, load } from "cheerio";
 import { type Element } from "domhandler";
 import ora from "ora";
 import { generateId } from "../src/lib/generate-id";
 import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
 import { isTruthy } from "../src/lib/is-truthy";
+import { parseSchema } from "../src/lib/schema";
+import { toTitleFormat } from "../src/lib/transforms";
 import {
-  PersonalLoanRates,
   type Institution,
+  PersonalLoanRates,
   type Product,
   type Rate,
 } from "../src/models/personal-loan-rates";
@@ -36,7 +37,7 @@ async function main() {
   let currentRates: PersonalLoanRates | null = null;
   const loading = ora("Loading current data from D1").start();
   try {
-    currentRates = await loadFromD1<PersonalLoanRates>("personal-loan-rates");
+    currentRates = await loadFromD1("personal-loan-rates", PersonalLoanRates);
     loading.succeed("Loaded current data").stop();
   } catch (error) {
     loading.fail("Failed to load current data").stop();
@@ -66,12 +67,15 @@ async function main() {
   try {
     const $ = load(data);
     const unvalidatedData = getModelExtractedFromDOM($);
-    validatedModel = PersonalLoanRates.parse({
+    validatedModel = parseSchema(PersonalLoanRates, {
       type: "PersonalLoanRates",
       data: unvalidatedData,
       lastUpdated: new Date().toISOString(),
-    }) as PersonalLoanRates;
-    handle.succeed(`Extracted and Validated ${validatedModel.data.length} results`).stop();  } catch (error) {
+    });
+    handle
+      .succeed(`Extracted and Validated ${validatedModel.data.length} results`)
+      .stop();
+  } catch (error) {
     handle.fail("Failed to extract and/or validate").stop();
     console.error("Failed to extract and/or validate", error);
     throw error;
@@ -90,7 +94,9 @@ async function main() {
     // Save to D1 database
     const saved = await saveToD1(validatedModel, "personal-loan-rates");
 
-    saveDb.succeed(saved ? "Data saved to D1 database" : "Failed to save to D1").stop();
+    saveDb
+      .succeed(saved ? "Data saved to D1 database" : "Failed to save to D1")
+      .stop();
   } catch (error) {
     saveDb.fail("Failed to save data").stop();
     console.error("Failed to save data", error);
@@ -189,7 +195,7 @@ function getInstitutionName($: CheerioAPI, cell: Element): string {
 }
 
 function getProductName($: CheerioAPI, cells: Element[]): string {
-  return normalizeProductName($(cells[1]).text().trim());
+  return toTitleFormat(normalizeProductName($(cells[1]).text().trim())) ?? "";
 }
 
 function normalizeProductName(name: string) {

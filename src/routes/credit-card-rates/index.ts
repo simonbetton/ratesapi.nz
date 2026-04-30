@@ -1,245 +1,209 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
+import { Elysia, t } from "elysia";
 import {
-  getAvailableDates,
-  loadHistoricalData,
-  loadLatestData,
-  loadTimeSeriesData
-} from "../../lib/data-loader";
-import { Environment } from "../../lib/environment";
+  type ApiResult,
+  apiResult,
+  invalidRequestResult,
+  jsonResult,
+} from "../../lib/api-result";
+import { loadLatestData } from "../../lib/data-loader";
+import { getEntityTimeSeries } from "../../lib/entity-time-series";
+import { type Environment } from "../../lib/environment";
+import { createLogger } from "../../lib/logging";
+import { type GetEnv } from "../../lib/routing";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
+import {
+  GenericApiError,
+  TimeSeriesDateParameter,
+  validateTimeSeriesDateQuery,
+} from "../../models/api";
 import { CreditCardRates } from "../../models/credit-card-rates";
-import { getCreditCardRatesIssuerRoute } from "./getCreditCardRatesIssuer";
-import { getCreditCardRatesTimeSeriesRoute } from "./getCreditCardRatesTimeSeries";
-import { listCreditCardRatesRoute } from "./listCreditCardRates";
+import {
+  CreditCardRatesResponse,
+  CreditCardRatesTimeSeriesResponse,
+} from "../../models/responses";
 
-const routes = new OpenAPIHono<{ Bindings: Environment }>();
+type CreditCardTimeSeriesQuery = typeof CreditCardTimeSeriesQuery.static;
+type CreditCardIssuerParams = typeof CreditCardIssuerParams.static;
 
-// Route: `GET /credit-card-rates`
-routes.openapi(listCreditCardRatesRoute, async (c) => {
-  const db = c.env.RATESAPI_DB;
+const routesLog = createLogger("credit-card-rates-routes");
 
+const CreditCardTimeSeriesQuery = t.Object(
+  {
+    ...TimeSeriesDateParameter.properties,
+    issuerId: t.Optional(
+      t.String({
+        description: "Optional issuer ID to filter time series data",
+        examples: ["issuer:anz"],
+      }),
+    ),
+  },
+  { additionalProperties: false },
+);
+
+const CreditCardIssuerParams = t.Object(
+  {
+    issuerId: t.String({
+      examples: ["issuer:anz", "issuer:amex", "issuer:gem"],
+    }),
+  },
+  { additionalProperties: false },
+);
+
+export function creditCardRatesRoutes(getEnv: GetEnv) {
+  return new Elysia({ prefix: "/credit-card-rates" })
+    .get(
+      "/",
+      async () => {
+        const result = await listCreditCardRates(getEnv());
+        return jsonResult(result);
+      },
+      {
+        response: {
+          200: CreditCardRatesResponse,
+          500: GenericApiError,
+        },
+        detail: {
+          operationId: "listCreditCardRates",
+          tags: ["Credit Card Rates"],
+          summary: "List credit card rates",
+        },
+      },
+    )
+    .get(
+      "/time-series",
+      async ({ query }) => {
+        const result = await getCreditCardRatesTimeSeries(getEnv(), query);
+        return jsonResult(result);
+      },
+      {
+        query: CreditCardTimeSeriesQuery,
+        response: {
+          200: CreditCardRatesTimeSeriesResponse,
+          400: GenericApiError,
+          404: GenericApiError,
+          500: GenericApiError,
+        },
+        detail: {
+          operationId: "getCreditCardRatesTimeSeries",
+          tags: ["Credit Card Rates"],
+          summary: "Get credit card rates time series",
+        },
+      },
+    )
+    .get(
+      "/:issuerId",
+      async ({ params }) => {
+        const result = await getCreditCardRatesByIssuer(getEnv(), params);
+        return jsonResult(result);
+      },
+      {
+        params: CreditCardIssuerParams,
+        response: {
+          200: CreditCardRatesResponse,
+          404: GenericApiError,
+          500: GenericApiError,
+        },
+        detail: {
+          operationId: "getCreditCardRatesByIssuer",
+          tags: ["Credit Card Rates"],
+          summary: "Get credit card rates by issuer",
+        },
+      },
+    );
+}
+
+export async function listCreditCardRates(
+  env: Environment,
+): Promise<ApiResult> {
   try {
-    // Get data from D1 database
-    const creditCardRates = await loadLatestData<CreditCardRates>("credit-card-rates", db);
+    const creditCardRates = await loadLatestData(
+      "credit-card-rates",
+      env.RATESAPI_DB,
+      CreditCardRates,
+    );
 
-    return c.json({
+    return apiResult(200, {
       ...creditCardRates,
       termsOfUse: termsOfUse(),
       timestamp: getCurrentTimestamp(),
     });
   } catch (error) {
-    console.error("Error loading credit card rates:", error);
-    return c.json(
-      {
-        code: 500,
-        message: "An error occurred while retrieving credit card rates data",
-      },
-      500
-    );
-  }
-});
-
-// Route: `GET /credit-card-rates/time-series`
-routes.openapi(getCreditCardRatesTimeSeriesRoute, async (c) => {
-  const { date, startDate, endDate, issuerId } = c.req.valid("query");
-  const db = c.env.RATESAPI_DB;
-
-  try {
-    const availableDates = await getAvailableDates("credit-card-rates", db);
-
-    // Check if we have any historical data
-    if (availableDates.length === 0) {
-      return c.json(
-        {
-          code: 404,
-          message: "No historical data available",
-        },
-        404,
-      );
-    }
-
-    // Case 1: Single date requested
-    if (date) {
-      const historicalData = await loadHistoricalData<CreditCardRates>("credit-card-rates", date, db);
-
-      if (!historicalData) {
-        return c.json(
-          {
-            code: 404,
-            message: `No data available for date: ${date}`,
-          },
-          404,
-        );
-      }
-
-      let filteredData = historicalData;
-
-      // Apply issuerId filter if provided
-      if (issuerId) {
-        filteredData = {
-          ...filteredData,
-          data: filteredData.data.filter(
-            (iss) => iss.id.toLowerCase() === issuerId.toLowerCase()
-          ),
-        };
-
-        if (filteredData.data.length === 0) {
-          return c.json(
-            {
-              code: 404,
-              message: `Issuer not found for date: ${date}`,
-            },
-            404,
-          );
-        }
-      }
-
-      return c.json({
-        type: "CreditCardRatesTimeSeries",
-        timeSeries: { [date]: filteredData },
-        availableDates,
-        termsOfUse: termsOfUse(),
-        timestamp: getCurrentTimestamp(),
-      });
-    }
-
-    // Case 2: Date range requested
-    if (startDate && endDate) {
-      if (startDate > endDate) {
-        return c.json(
-          {
-            code: 400,
-            message: "Start date cannot be after end date",
-          },
-          400,
-        );
-      }
-
-      const timeSeriesData = await loadTimeSeriesData<CreditCardRates>(
-        "credit-card-rates",
-        startDate,
-        endDate,
-        db
-      );
-
-      if (Object.keys(timeSeriesData).length === 0) {
-        return c.json(
-          {
-            code: 404,
-            message: `No data available between ${startDate} and ${endDate}`,
-          },
-          404,
-        );
-      }
-
-      // Apply issuer filter if needed
-      if (issuerId) {
-        const filteredTimeSeries: Record<string, CreditCardRates> = {};
-
-        for (const [date, data] of Object.entries(timeSeriesData)) {
-          let filteredData = { ...data };
-
-          filteredData = {
-            ...filteredData,
-            data: filteredData.data.filter(
-              (iss) => iss.id.toLowerCase() === issuerId.toLowerCase()
-            ),
-          };
-
-          if (filteredData.data.length > 0) {
-            filteredTimeSeries[date] = filteredData;
-          }
-        }
-
-        if (Object.keys(filteredTimeSeries).length === 0) {
-          return c.json(
-            {
-              code: 404,
-              message: `No data found matching the specified issuer`,
-            },
-            404,
-          );
-        }
-
-        return c.json({
-          type: "CreditCardRatesTimeSeries",
-          timeSeries: filteredTimeSeries,
-          availableDates,
-          termsOfUse: termsOfUse(),
-          timestamp: getCurrentTimestamp(),
-        });
-      }
-
-      return c.json({
-        type: "CreditCardRatesTimeSeries",
-        timeSeries: timeSeriesData,
-        availableDates,
-        termsOfUse: termsOfUse(),
-        timestamp: getCurrentTimestamp(),
-      });
-    }
-
-    // Case 3: No date parameters provided, return all available dates
-    return c.json({
-      type: "CreditCardRatesTimeSeries",
-      timeSeries: {},
-      availableDates,
-      termsOfUse: termsOfUse(),
-      timestamp: getCurrentTimestamp(),
-      message: "Please specify a date or date range to retrieve time series data",
+    routesLog.error({ error }, "Error loading credit card rates");
+    return apiResult(500, {
+      code: 500,
+      message: "An error occurred while retrieving credit card rates data",
     });
-  } catch (error) {
-    console.error("Error retrieving time series data:", error);
-    return c.json(
-      {
-        code: 500,
-        message: "An error occurred while retrieving time series data",
-      },
-      500
-    );
   }
-});
+}
 
-// Route: `GET /credit-card-rates/{issuerId}`
-routes.openapi(getCreditCardRatesIssuerRoute, async (c) => {
-  const { issuerId } = c.req.valid("param");
-  const db = c.env.RATESAPI_DB;
+export async function getCreditCardRatesTimeSeries(
+  env: Environment,
+  query: CreditCardTimeSeriesQuery = {},
+): Promise<ApiResult> {
+  if (!validateTimeSeriesDateQuery(query)) {
+    return invalidRequestResult();
+  }
 
   try {
-    // Get data from D1 database
-    const creditCardRates = await loadLatestData<CreditCardRates>("credit-card-rates", db);
+    const result = await getEntityTimeSeries({
+      dataType: "credit-card-rates",
+      schema: CreditCardRates,
+      responseType: "CreditCardRatesTimeSeries",
+      entityName: "issuer",
+      entityId: query.issuerId,
+      date: query.date,
+      startDate: query.startDate,
+      endDate: query.endDate,
+      db: env.RATESAPI_DB,
+    });
+
+    return result.ok
+      ? apiResult(200, result.body)
+      : apiResult(result.status, result.body);
+  } catch (error) {
+    routesLog.error({ error }, "Error retrieving time series data");
+    return apiResult(500, {
+      code: 500,
+      message: "An error occurred while retrieving time series data",
+    });
+  }
+}
+
+export async function getCreditCardRatesByIssuer(
+  env: Environment,
+  params: CreditCardIssuerParams,
+): Promise<ApiResult> {
+  try {
+    const creditCardRates = await loadLatestData(
+      "credit-card-rates",
+      env.RATESAPI_DB,
+      CreditCardRates,
+    );
 
     const singleIssuer = creditCardRates.data.find(
-      (i) => i.id.toLowerCase() === issuerId.toLowerCase(),
+      (issuer) => issuer.id.toLowerCase() === params.issuerId.toLowerCase(),
     );
 
     if (!singleIssuer) {
-      return c.json(
-        {
-          code: 404,
-          message: "Issuer not found",
-        },
-        404,
-      );
+      return apiResult(404, {
+        code: 404,
+        message: "Issuer not found",
+      });
     }
 
-    return c.json({
+    return apiResult(200, {
       ...creditCardRates,
       data: [singleIssuer],
       termsOfUse: termsOfUse(),
       timestamp: getCurrentTimestamp(),
     });
   } catch (error) {
-    console.error("Error loading credit card rates for issuer:", error);
-    return c.json(
-      {
-        code: 500,
-        message: "An error occurred while retrieving issuer credit card rates data",
-      },
-      500
-    );
+    routesLog.error({ error }, "Error loading credit card rates for issuer");
+    return apiResult(500, {
+      code: 500,
+      message:
+        "An error occurred while retrieving issuer credit card rates data",
+    });
   }
-});
-
-export { routes };
+}

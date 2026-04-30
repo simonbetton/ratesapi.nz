@@ -1,20 +1,19 @@
 import { isTruthy } from "./is-truthy";
 
-const Prefix = {
-  INSTITUTION: "institution",
-  PRODUCT: "product",
-  RATE: "rate",
-  ISSUER: "issuer",
-  PLAN: "plan",
-} as const;
-
-type Prefix = (typeof Prefix)[keyof typeof Prefix];
+type Prefix = "institution" | "product" | "rate" | "issuer" | "plan";
 type Args = [Prefix, ...string[]];
+const PrefixValues: Prefix[] = [
+  "institution",
+  "product",
+  "rate",
+  "issuer",
+  "plan",
+];
 
 /**
  * Generates an ID based on the provided arguments.
  */
-export function generateId<T extends Prefix>(args: Args): `${T}:${string}` {
+export function generateId(args: Args): string {
   const str = args
     .map((arg) => {
       return arg
@@ -30,13 +29,13 @@ export function generateId<T extends Prefix>(args: Args): `${T}:${string}` {
     .filter(isTruthy)
     .join(":");
 
-  if (!Object.values(Prefix).some((prefix) => str.startsWith(prefix))) {
+  if (!PrefixValues.some((prefix) => str.startsWith(prefix))) {
     throw new Error(
-      `The generated ID must start with one of the following prefixes: ${Object.values(
-        Prefix,
-      ).join(", ")}`,
+      `The generated ID must start with one of the following prefixes: ${PrefixValues.join(
+        ", ",
+      )}`,
     );
   }
 
-  return str as `${T}:${string}`;
+  return str;
 }

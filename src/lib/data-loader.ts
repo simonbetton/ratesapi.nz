@@ -1,35 +1,46 @@
-import { D1Database } from '@cloudflare/workers-types';
-import { CarLoanRates } from "../models/car-loan-rates";
-import { CreditCardRates } from "../models/credit-card-rates";
-import { MortgageRates } from "../models/mortgage-rates";
-import { PersonalLoanRates } from "../models/personal-loan-rates";
+import { type TSchema } from "elysia";
+import { type CarLoanRates } from "../models/car-loan-rates";
+import { type CreditCardRates } from "../models/credit-card-rates";
+import { type MortgageRates } from "../models/mortgage-rates";
+import { type PersonalLoanRates } from "../models/personal-loan-rates";
+import { type Database } from "./environment";
+import { createLogger } from "./logging";
+import { parseSchema } from "./schema";
 
-type SupportedModels =
+export type SupportedModels =
   | MortgageRates
   | PersonalLoanRates
   | CarLoanRates
   | CreditCardRates;
 
-type DataType = "mortgage-rates" | "car-loan-rates" | "credit-card-rates" | "personal-loan-rates";
+export type DataType =
+  | "mortgage-rates"
+  | "car-loan-rates"
+  | "credit-card-rates"
+  | "personal-loan-rates";
+
+const log = createLogger("data-loader");
 
 /**
  * Loads the latest data from D1 database
  */
-export async function loadLatestData<T extends SupportedModels>(
+export async function loadLatestData<Schema extends TSchema>(
   dataType: DataType,
-  db: D1Database
-): Promise<T> {
+  db: Database,
+  schema: Schema,
+): Promise<Schema["static"]> {
   try {
-    const stmt = db.prepare('SELECT data FROM latest_data WHERE data_type = ?');
-    const result = await stmt.bind(dataType).first<{ data: string }>();
+    const stmt = db.prepare("SELECT data FROM latest_data WHERE data_type = ?");
+    const result = await stmt.bind(dataType).first();
+    const data = readStringField(result, "data");
 
-    if (!result) {
+    if (!data) {
       throw new Error(`No data found for ${dataType}`);
     }
 
-    console.log('Loaded latest data for', dataType);
+    log.info({ dataType }, "Loaded latest data");
 
-    return fromSavableJson(result.data) as T;
+    return parseSchema(schema, fromSavableJson(data));
   } catch (error) {
     throw new Error(`Failed to load ${dataType} data: ${error}`);
   }
@@ -38,32 +49,38 @@ export async function loadLatestData<T extends SupportedModels>(
 /**
  * Loads data for a specific date from the D1 database
  */
-export async function loadHistoricalData<T extends SupportedModels>(
+export async function loadHistoricalData<Schema extends TSchema>(
   dataType: DataType,
   date: string,
-  db: D1Database
-): Promise<T | null> {
+  db: Database,
+  schema: Schema,
+): Promise<Schema["static"] | null> {
   try {
-    const stmt = db.prepare('SELECT data FROM historical_data WHERE data_type = ? AND date = ?');
-    const result = await stmt.bind(dataType, date).first<{ data: string }>();
+    const stmt = db.prepare(
+      "SELECT data FROM historical_data WHERE data_type = ? AND date = ?",
+    );
+    const result = await stmt.bind(dataType, date).first();
+    const data = readStringField(result, "data");
 
-    if (!result) {
+    if (!data) {
       return null;
     }
 
-    console.log('Loaded historical data for', dataType, date);
+    log.info({ dataType, date }, "Loaded historical data");
 
-    return fromSavableJson(result.data) as T;
+    return parseSchema(schema, fromSavableJson(data));
   } catch (error) {
-    throw new Error(`Failed to load historical ${dataType} data for ${date}: ${error}`);
+    throw new Error(
+      `Failed to load historical ${dataType} data for ${date}: ${error}`,
+    );
   }
 }
 
-export function toSavableJson(json: Record<string, any>) {
+export function toSavableJson(json: unknown) {
   return btoa(JSON.stringify(json));
 }
 
-export function fromSavableJson(json: string) {
+export function fromSavableJson(json: string): unknown {
   return JSON.parse(atob(json));
 }
 
@@ -72,44 +89,56 @@ export function fromSavableJson(json: string) {
  */
 export async function getAvailableDates(
   dataType: DataType,
-  db: D1Database
+  db: Database,
 ): Promise<string[]> {
   try {
-    const stmt = db.prepare('SELECT date FROM historical_data WHERE data_type = ? ORDER BY date ASC');
-    const results = await stmt.bind(dataType).all<{ date: string }>();
+    const stmt = db.prepare(
+      "SELECT date FROM historical_data WHERE data_type = ? ORDER BY date ASC",
+    );
+    const results = await stmt.bind(dataType).all();
 
-    return results.results.map(row => row.date);
+    return results.results
+      .map((row) => readStringField(row, "date"))
+      .filter((date): date is string => date !== undefined);
   } catch (error) {
-    console.error(`Failed to get available dates for ${dataType}:`, error);
-    return [];
+    log.error({ dataType, error }, "Failed to get available dates");
+    throw new Error(`Failed to get available dates for ${dataType}: ${error}`);
   }
 }
 
 /**
  * Loads data for a range of dates
  */
-export async function loadTimeSeriesData<T extends SupportedModels>(
+export async function loadTimeSeriesData<Schema extends TSchema>(
   dataType: DataType,
   startDate: string,
   endDate: string,
-  db: D1Database
-): Promise<Record<string, T>> {
+  db: Database,
+  schema: Schema,
+): Promise<Record<string, Schema["static"]>> {
   try {
     const stmt = db.prepare(
-      'SELECT date, data FROM historical_data WHERE data_type = ? AND date >= ? AND date <= ? ORDER BY date ASC'
+      "SELECT date, data FROM historical_data WHERE data_type = ? AND date >= ? AND date <= ? ORDER BY date ASC",
     );
-    const results = await stmt.bind(dataType, startDate, endDate).all<{ date: string, data: string }>();
+    const results = await stmt.bind(dataType, startDate, endDate).all();
 
-    const timeSeries: Record<string, T> = {};
+    const timeSeries: Record<string, Schema["static"]> = {};
 
     for (const row of results.results) {
-      timeSeries[row.date] = fromSavableJson(row.data) as T;
+      const date = readStringField(row, "date");
+      const data = readStringField(row, "data");
+
+      if (date && data) {
+        timeSeries[date] = parseSchema(schema, fromSavableJson(data));
+      }
     }
 
     return timeSeries;
   } catch (error) {
-    console.error(`Failed to load time series data for ${dataType}:`, error);
-    return {};
+    log.error({ dataType, error }, "Failed to load time series data");
+    throw new Error(
+      `Failed to load time series data for ${dataType}: ${error}`,
+    );
   }
 }
 
@@ -120,23 +149,33 @@ export async function saveHistoricalData<T extends SupportedModels>(
   dataType: DataType,
   date: string,
   data: T,
-  db: D1Database
+  db: Database,
 ): Promise<void> {
   try {
     const dataJson = toSavableJson(data);
 
     // Insert or replace historical data
     const stmt = db.prepare(
-      'INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES (?, ?, ?)'
+      "INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES (?, ?, ?)",
     );
     await stmt.bind(dataType, date, dataJson).run();
 
     // Also update latest_data
     const latestStmt = db.prepare(
-      'INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES (?, ?, CURRENT_TIMESTAMP)'
+      "INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES (?, ?, CURRENT_TIMESTAMP)",
     );
     await latestStmt.bind(dataType, dataJson).run();
   } catch (error) {
-    throw new Error(`Failed to save historical data for ${dataType} on ${date}: ${error}`);
+    throw new Error(
+      `Failed to save historical data for ${dataType} on ${date}: ${error}`,
+    );
   }
+}
+
+function readStringField(
+  row: Record<string, unknown> | null,
+  field: string,
+): string | undefined {
+  const value = row?.[field];
+  return typeof value === "string" ? value : undefined;
 }
