@@ -24,7 +24,7 @@ This application uses Cloudflare D1 for data storage. To set up the database:
 npx wrangler d1 create ratesapi-data
 ```
 
-2. Update your `wrangler.toml` with the database ID (replace the wrangler.toml file to suit):
+2. Update your `apps/api/wrangler.toml` with the database ID (replace the apps/api/wrangler.toml file to suit):
 
 ```toml
 [[d1_databases]]
@@ -36,13 +36,13 @@ database_id = "your-database-id-here"
 3. Create database tables using the schema:
 
 ```zsh
-npx wrangler d1 execute ratesapi-data --file=schema.sql
+npx wrangler d1 execute ratesapi-data --file=apps/api/schema.sql
 ```
 
 For development environment:
 
 ```zsh
-npx wrangler d1 execute ratesapi-data --file=schema.sql --env=development
+npx wrangler d1 execute ratesapi-data --file=apps/api/schema.sql --env=development
 ```
 
 ## 🚀 Deploy to Cloudflare Workers
@@ -66,12 +66,12 @@ Check out the available scripts within `./bin` to scrape and save data. The data
 To run with D1 database support, provide the database ID:
 
 ```zsh
-# Replace with your D1 database ID from wrangler.toml
-D1_DATABASE_NAME="your-database-name" bun run bin/scrape-mortgage-rates.ts
+# Replace with your D1 database ID from apps/api/wrangler.toml
+D1_DATABASE_NAME="your-database-name" bun run apps/api/bin/scrape-mortgage-rates.ts
 ```
 
 When running without a D1 database ID, the scripts will not store data but will still show what would be scraped:
 
 ```zsh
-bun run bin/scrape-mortgage-rates.ts
+bun run apps/api/bin/scrape-mortgage-rates.ts
 ```

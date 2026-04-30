@@ -32,7 +32,7 @@
     "typeRoots": ["./node_modules"],
     "paths": {
       "@/*": ["./apps/docs/*"],
-      "@rates-api/*": ["./src/*"]
+      "@rates-api/*": ["./apps/api/src/*"]
     },
 
     "noErrorTruncation": true // TLDR - Don't truncate errors (useful for debugging)

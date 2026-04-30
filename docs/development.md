@@ -12,17 +12,17 @@
 
 ## Code Structure
 
-- `src/`: Main application code
+- `apps/api/src/`: API Worker application code
   - `index.ts`: Entry point with Hono application setup
   - `models/`: Schema definitions for API data types
   - `routes/`: API endpoint implementations
   - `lib/`: Utility functions and helpers
     - `data-loader.ts`: Functions for D1 database interactions
 
-- `bin/`: Scraper scripts to collect rates data
+- `apps/api/bin/`: Scraper scripts to collect rates data
   - Separate scripts for mortgage, personal loan, car loan, and credit card rates
 
-- `schema.sql`: D1 database schema definition for storing all rate information
+- `apps/api/schema.sql`: D1 database schema definition for storing all rate information
 
 ## Development Environment
 

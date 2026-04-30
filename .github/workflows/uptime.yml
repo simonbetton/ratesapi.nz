@@ -27,14 +27,14 @@ jobs:
         id: health-check
         run: |
           # Ensure the script exists (optional but good practice)
-          if [ ! -f bin/uptime-check.ts ]; then
-            echo "Error: bin/uptime-check.ts not found!" >&2
+          if [ ! -f apps/api/bin/uptime-check.ts ]; then
+            echo "Error: apps/api/bin/uptime-check.ts not found!" >&2
             exit 1
           fi
 
           # Run the Bun script and capture its output and exit code
           # We assume the script prints failure details to stdout on non-zero exit
-          script_output=$(bun run ./bin/uptime-check.ts)
+          script_output=$(bun run ./apps/api/bin/uptime-check.ts)
           script_exit_code=$?
 
           # Display the captured script output in the workflow logs

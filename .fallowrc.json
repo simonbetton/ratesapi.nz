@@ -1,12 +1,12 @@
 {
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
   "entry": [
-    "src/index.ts",
-    "bin/scrape-car-loan-rates.ts",
-    "bin/scrape-credit-card-rates.ts",
-    "bin/scrape-mortgage-rates.ts",
-    "bin/scrape-personal-loan-rates.ts",
-    "bin/uptime-check.ts"
+    "apps/api/src/index.ts",
+    "apps/api/bin/scrape-car-loan-rates.ts",
+    "apps/api/bin/scrape-credit-card-rates.ts",
+    "apps/api/bin/scrape-mortgage-rates.ts",
+    "apps/api/bin/scrape-personal-loan-rates.ts",
+    "apps/api/bin/uptime-check.ts"
   ],
   "ignorePatterns": [
     "node_modules/**",

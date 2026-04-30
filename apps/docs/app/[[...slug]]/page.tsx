@@ -1,4 +1,10 @@
 import {
+  extractTableOfContents,
+  renderEndpoint,
+  renderMarkdown,
+} from "@rates-api/docs/render";
+import { type DocsPageData, docsSource } from "@rates-api/docs/source";
+import {
   DocsBody,
   DocsDescription,
   DocsPage,
@@ -6,12 +12,6 @@ import {
 } from "fumadocs-ui/layouts/docs/page";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
-import {
-  extractTableOfContents,
-  renderEndpoint,
-  renderMarkdown,
-} from "../../../../src/docs/render";
-import { type DocsPageData, docsSource } from "../../../../src/docs/source";
 
 type PageProps = {
   params: Promise<{

@@ -9,7 +9,7 @@
     "noEmit": true,
     "paths": {
       "@/*": ["apps/docs/*"],
-      "@rates-api/*": ["src/*"]
+      "@rates-api/*": ["apps/api/src/*"]
     },
     "plugins": [{ "name": "next" }]
   },
@@ -18,7 +18,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "../../src/docs/**/*.ts"
+    "../../apps/api/src/docs/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

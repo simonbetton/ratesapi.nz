@@ -1,24 +1,24 @@
 import { describe, expect, test } from "bun:test";
-import { createApp } from "../src/app";
+import { createApp } from "../apps/api/src/app";
 import {
   type DataType,
   type SupportedModels,
   toSavableJson,
-} from "../src/lib/data-loader";
-import { type Environment } from "../src/lib/environment";
-import { parseSchema } from "../src/lib/schema";
-import { HealthResponse } from "../src/models/api";
-import { type CarLoanRates } from "../src/models/car-loan-rates";
-import { type CreditCardRates } from "../src/models/credit-card-rates";
-import { type MortgageRates } from "../src/models/mortgage-rates";
-import { type PersonalLoanRates } from "../src/models/personal-loan-rates";
+} from "../apps/api/src/lib/data-loader";
+import { type Environment } from "../apps/api/src/lib/environment";
+import { parseSchema } from "../apps/api/src/lib/schema";
+import { HealthResponse } from "../apps/api/src/models/api";
+import { type CarLoanRates } from "../apps/api/src/models/car-loan-rates";
+import { type CreditCardRates } from "../apps/api/src/models/credit-card-rates";
+import { type MortgageRates } from "../apps/api/src/models/mortgage-rates";
+import { type PersonalLoanRates } from "../apps/api/src/models/personal-loan-rates";
 import {
   CarLoanRatesResponse,
   CreditCardRatesResponse,
   MortgageRatesResponse,
   MortgageRatesTimeSeriesResponse,
   PersonalLoanRatesResponse,
-} from "../src/models/responses";
+} from "../apps/api/src/models/responses";
 
 type ListResponseType =
   | "MortgageRates"

@@ -471,12 +471,12 @@ This stack ensures high performance, global distribution, and excellent develope
 
 ## Repository Structure
 
-- \`src/\`: Main application code
-- \`src/index.ts\`: Worker entry point
-- \`src/models/\`: Schema definitions for API data types
-- \`src/routes/\`: API endpoint implementations
-- \`src/lib/\`: Utility functions and helpers
-- \`bin/\`: Scraper scripts to collect rates data
+- \`apps/api/src/\`: API Worker application code
+- \`apps/api/src/index.ts\`: Worker entry point
+- \`apps/api/src/models/\`: Schema definitions for API data types
+- \`apps/api/src/routes/\`: API endpoint implementations
+- \`apps/api/src/lib/\`: Utility functions and helpers
+- \`apps/api/bin/\`: Scraper scripts to collect rates data
 - \`docs/\`: Project documentation
 
 ## Getting Started
@@ -522,10 +522,10 @@ This starts the server at \`http://localhost:8787\`.
 
 ## Scraping Data
 
-The project includes scripts to scrape rate data from financial institution websites. These scripts are located in the \`bin/\` directory.
+The project includes scripts to scrape rate data from financial institution websites. These scripts are located in the \`apps/api/bin/\` directory.
 
 \`\`\`bash
-bun run bin/scrape-mortgage-rates.ts
+bun run apps/api/bin/scrape-mortgage-rates.ts
 \`\`\`
 
 Available scraper scripts:
@@ -551,9 +551,9 @@ wrangler d1 create ratesapi-data-local
 
 ## Development Tips
 
-- Add a new endpoint: Create a new route handler in \`src/routes/\`
-- Update data models: Modify schemas in \`src/models/\`
-- Enhance scrapers: Modify the scraper scripts in \`bin/\`
+- Add a new endpoint: Create a new route handler in \`apps/api/src/routes/\`
+- Update data models: Modify schemas in \`apps/api/src/models/\`
+- Enhance scrapers: Modify the scraper scripts in \`apps/api/bin/\`
 - Before submitting changes, test affected endpoints locally and ensure the project builds without errors`,
   },
   deployment: {
@@ -587,16 +587,16 @@ wrangler d1 create ratesapi-data-local
 
 \`\`\`bash
 wrangler login
-wrangler d1 execute ratesapi-data --file=./schema.sql
+wrangler d1 execute ratesapi-data --file=./apps/api/schema.sql
 \`\`\`
 
 ### 3. Configure Wrangler
 
-The \`wrangler.toml\` file controls Worker deployment and D1 bindings.
+The \`apps/api/wrangler.toml\` file controls API Worker deployment and D1 bindings.
 
 \`\`\`toml
 name = "rates-api"
-main = "src/index.ts"
+main = "src/index.ts" # relative to apps/api/wrangler.toml
 compatibility_date = "2025-06-01"
 
 [[d1_databases]]
@@ -629,7 +629,7 @@ In the Cloudflare dashboard, go to Workers & Pages, select your worker, then use
 
 - Caching: Adjust cache times based on freshness and performance needs.
 - Rate Limiting: Consider rate limiting if traffic is high or abuse prevention is needed.
-- Documentation: Keep the Worker-served documentation aligned with API changes.`,
+- Documentation: Keep the docs app aligned with API changes.`,
   },
   monitoring: {
     title: "Monitoring",

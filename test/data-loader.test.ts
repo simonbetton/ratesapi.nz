@@ -1,5 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { fromSavableJson, toSavableJson } from "../src/lib/data-loader";
+import {
+  fromSavableJson,
+  toSavableJson,
+} from "../apps/api/src/lib/data-loader";
 
 describe("data-loader serialization", () => {
   test("round-trips savable JSON without changing the object shape", () => {

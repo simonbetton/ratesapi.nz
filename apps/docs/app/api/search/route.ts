@@ -1,1 +1,1 @@
-export { GET } from "../../../../../src/docs/responses";
+export { GET } from "@rates-api/docs/responses";

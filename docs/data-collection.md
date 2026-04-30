@@ -46,11 +46,11 @@ You can manually update the D1 database in two ways:
 2. **Using Wrangler directly**: For manual updates, use the wrangler CLI directly:
 
 ```bash
-# Replace DATABASE_NAME with your database name from wrangler.toml (e.g. "ratesapi-data")
-npx wrangler d1 execute DATABASE_NAME --file=./schema.sql
+# Replace DATABASE_NAME with your database name from apps/api/wrangler.toml (e.g. "ratesapi-data")
+npx wrangler d1 execute DATABASE_NAME --file=./apps/api/schema.sql
 
 # Then run the scraper scripts with D1_DATABASE_NAME set
-D1_DATABASE_NAME="your-database-name" bun run bin/scrape-mortgage-rates.ts
+D1_DATABASE_NAME="your-database-name" bun run apps/api/bin/scrape-mortgage-rates.ts
 ```
 
 This is useful for initial seeding of a new database or manual updates when needed.

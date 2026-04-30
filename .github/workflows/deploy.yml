@@ -30,7 +30,7 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: deploy --minify src/index.ts
+          command: deploy --config apps/api/wrangler.toml --minify
 
       - name: Deploy docs Worker to Cloudflare
         run: bun run deploy:docs
