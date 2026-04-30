@@ -326,7 +326,7 @@ describe("v1 API contract", () => {
 
     const body = await response.text();
 
-    expect(body).toContain("Deploying to Cloudflare Workers");
+    expect(body).toContain("Deployment Steps");
     expect(body).toContain("bun run deploy");
   });
 
@@ -338,9 +338,9 @@ describe("v1 API contract", () => {
 
     const body = await response.text();
 
-    expect(body).toContain("# Rates API");
+    expect(body).toContain("# Introduction");
     expect(body).toContain("List Car Loan Rates");
-    expect(body).toContain("Local Development Setup");
+    expect(body).toContain("# Local Development");
   });
 
   test("exposes OpenAPI UI and JSON without documenting MCP", async () => {
