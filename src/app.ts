@@ -1,7 +1,7 @@
 import { openapi, toOpenAPISchema } from "@elysia/openapi";
 import { cors } from "@elysiajs/cors";
 import { Elysia, type ElysiaAdapter } from "elysia";
-import { renderDocsRoute, renderLlmsTxt } from "./docs/html";
+import { renderDocsRoute, renderDocsSearch, renderLlmsTxt } from "./docs/html";
 import { docsRoutes } from "./docs/source";
 import { createLogger } from "./lib/logging";
 import { type GetEnv } from "./lib/routing";
@@ -151,6 +151,11 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
       },
     )
     .get("/llms.txt", renderLlmsTxt)
+    .get("/api/search", ({ request }) => renderDocsSearch(request), {
+      detail: {
+        hide: true,
+      },
+    })
     .use(docsApp);
 
   return app;

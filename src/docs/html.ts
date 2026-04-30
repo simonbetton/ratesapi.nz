@@ -34,6 +34,10 @@ const htmlHeaders = {
   "cache-control": "public, max-age=300",
 };
 const fumadocsUiStylesheet = `https://cdn.jsdelivr.net/npm/fumadocs-ui@${fumadocsUiPackage.version}/dist/style.css`;
+const searchButtonClassName =
+  "inline-flex items-center justify-center rounded-md p-2 text-sm font-medium transition-colors duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fd-ring hover:bg-fd-accent hover:text-fd-accent-foreground";
+const fullSearchButtonClassName =
+  "inline-flex items-center gap-2 rounded-lg border bg-fd-secondary/50 p-1.5 ps-2 text-sm text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground";
 const docsLayoutOverrides = `
   .endpoint-summary {
     margin-bottom: 2rem;
@@ -58,6 +62,145 @@ const docsLayoutOverrides = `
     font-weight: 700;
     letter-spacing: 0.06em;
   }
+
+  #rates-mobile-sidebar,
+  #rates-docs-search {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+  }
+
+  #rates-mobile-sidebar {
+    display: none;
+  }
+
+  #rates-mobile-sidebar[data-open="true"],
+  #rates-docs-search[data-open="true"] {
+    pointer-events: auto;
+  }
+
+  [data-mobile-sidebar-overlay],
+  [data-docs-search-overlay] {
+    position: absolute;
+    inset: 0;
+    background: rgb(0 0 0 / 0.35);
+    opacity: 0;
+    transition: opacity 150ms ease;
+  }
+
+  #rates-mobile-sidebar[data-open="true"] [data-mobile-sidebar-overlay],
+  #rates-docs-search[data-open="true"] [data-docs-search-overlay] {
+    opacity: 1;
+  }
+
+  [data-mobile-sidebar-panel] {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    display: flex;
+    width: min(85vw, 380px);
+    transform: translateX(100%);
+    flex-direction: column;
+    overflow: auto;
+    border-inline-start: 1px solid var(--color-fd-border);
+    background: var(--color-fd-background);
+    color: var(--color-fd-foreground);
+    box-shadow: var(--shadow-lg);
+    transition: transform 150ms ease;
+  }
+
+  #rates-mobile-sidebar[data-open="true"] [data-mobile-sidebar-panel] {
+    transform: translateX(0);
+  }
+
+  [data-mobile-sidebar-header],
+  [data-docs-search-header] {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--color-fd-border);
+    padding: 1rem;
+  }
+
+  [data-mobile-sidebar-content] > * {
+    width: 100%;
+  }
+
+  [data-docs-search-dialog] {
+    position: relative;
+    margin: 10vh auto 0;
+    display: flex;
+    width: min(92vw, 42rem);
+    max-height: min(70vh, 36rem);
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--color-fd-border);
+    border-radius: 0.75rem;
+    background: var(--color-fd-popover, var(--color-fd-background));
+    color: var(--color-fd-popover-foreground, var(--color-fd-foreground));
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transform: translateY(-0.5rem);
+    transition:
+      opacity 150ms ease,
+      transform 150ms ease;
+  }
+
+  #rates-docs-search[data-open="true"] [data-docs-search-dialog] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  [data-docs-search-input] {
+    min-width: 0;
+    flex: 1;
+    background: transparent;
+    font-size: 1rem;
+    outline: none;
+  }
+
+  [data-docs-search-results] {
+    overflow: auto;
+    padding: 0.5rem;
+  }
+
+  [data-docs-search-item] {
+    display: block;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    text-decoration: none;
+  }
+
+  [data-docs-search-item]:hover,
+  [data-docs-search-item]:focus {
+    background: var(--color-fd-accent);
+    color: var(--color-fd-accent-foreground);
+    outline: none;
+  }
+
+  [data-docs-search-item-title] {
+    display: block;
+    font-weight: 600;
+  }
+
+  [data-docs-search-item-url],
+  [data-docs-search-empty] {
+    color: var(--color-fd-muted-foreground);
+    font-size: 0.875rem;
+  }
+
+  [data-docs-search-item-snippet] {
+    margin-top: 0.25rem;
+    color: var(--color-fd-muted-foreground);
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 767px) {
+    #rates-mobile-sidebar {
+      display: block;
+    }
+  }
 `;
 
 export function renderDocsRoute(pathname: string): Response | undefined {
@@ -77,6 +220,17 @@ export function renderLlmsTxt(): Response {
   return new Response(docsSource.getPages().map(toLlmsEntry).join("\n\n"), {
     headers: {
       "content-type": "text/plain; charset=utf-8",
+      "cache-control": "public, max-age=300",
+    },
+  });
+}
+
+export function renderDocsSearch(request: Request): Response {
+  const query = new URL(request.url).searchParams.get("query") ?? "";
+
+  return new Response(JSON.stringify(searchDocs(query)), {
+    headers: {
+      "content-type": "application/json; charset=utf-8",
       "cache-control": "public, max-age=300",
     },
   });
@@ -115,6 +269,12 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
           sidebar: {
             defaultOpenLevel: 3,
           },
+          slots: {
+            searchTrigger: {
+              sm: SearchTriggerButton,
+              full: FullSearchTriggerButton,
+            },
+          },
           links: [
             {
               type: "main",
@@ -122,7 +282,6 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
               url: "/openapi/json",
             },
           ],
-          searchToggle: { enabled: false },
           themeSwitch: { enabled: false },
         },
         createElement(
@@ -166,11 +325,390 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
         }),
         createElement("style", null, docsLayoutOverrides),
       ),
-      createElement("body", null, pageElement),
+      createElement(
+        "body",
+        null,
+        pageElement,
+        renderMobileSidebarShell(),
+        renderSearchDialogShell(),
+        createElement("script", {
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: static enhancement script for server-rendered docs interactivity.
+          dangerouslySetInnerHTML: {
+            __html: getDocsEnhancementScript(),
+          },
+        }),
+      ),
     ),
   );
 
   return `<!doctype html>${markup}`;
+}
+
+function SearchTriggerButton(): ReactNode {
+  return createElement(
+    "button",
+    {
+      type: "button",
+      className: `${searchButtonClassName} p-2`,
+      "data-docs-search-open": "",
+      "aria-label": "Open Search",
+    },
+    "Search",
+  );
+}
+
+function FullSearchTriggerButton(): ReactNode {
+  return createElement(
+    "button",
+    {
+      type: "button",
+      className: fullSearchButtonClassName,
+      "data-docs-search-open": "",
+      "aria-label": "Search documentation",
+    },
+    createElement("span", null, "Search"),
+    createElement(
+      "span",
+      { className: "ms-auto inline-flex gap-0.5" },
+      createElement(
+        "kbd",
+        { className: "rounded-md border bg-fd-background px-1.5" },
+        "Ctrl",
+      ),
+      createElement(
+        "kbd",
+        { className: "rounded-md border bg-fd-background px-1.5" },
+        "K",
+      ),
+    ),
+  );
+}
+
+function renderMobileSidebarShell(): ReactNode {
+  return createElement(
+    "div",
+    {
+      id: "rates-mobile-sidebar",
+      "data-open": "false",
+      "aria-hidden": "true",
+    },
+    createElement("div", { "data-mobile-sidebar-overlay": "" }),
+    createElement(
+      "aside",
+      {
+        "data-mobile-sidebar-panel": "",
+        role: "dialog",
+        "aria-modal": "true",
+        "aria-label": "Documentation navigation",
+      },
+      createElement(
+        "div",
+        { "data-mobile-sidebar-header": "" },
+        createElement("strong", null, "Rates API"),
+        createElement("span", { style: { flex: 1 } }),
+        createElement(
+          "button",
+          {
+            type: "button",
+            className: searchButtonClassName,
+            "data-mobile-sidebar-close": "",
+          },
+          "Close",
+        ),
+      ),
+      createElement("div", { "data-mobile-sidebar-content": "" }),
+    ),
+  );
+}
+
+function renderSearchDialogShell(): ReactNode {
+  return createElement(
+    "div",
+    {
+      id: "rates-docs-search",
+      "data-open": "false",
+      "aria-hidden": "true",
+    },
+    createElement("div", { "data-docs-search-overlay": "" }),
+    createElement(
+      "div",
+      {
+        "data-docs-search-dialog": "",
+        role: "dialog",
+        "aria-modal": "true",
+        "aria-label": "Search documentation",
+      },
+      createElement(
+        "div",
+        { "data-docs-search-header": "" },
+        createElement("input", {
+          type: "search",
+          placeholder: "Search documentation...",
+          "aria-label": "Search documentation",
+          "data-docs-search-input": "",
+        }),
+        createElement(
+          "button",
+          {
+            type: "button",
+            className: searchButtonClassName,
+            "data-docs-search-close": "",
+          },
+          "Close",
+        ),
+      ),
+      createElement("div", { "data-docs-search-results": "" }),
+    ),
+  );
+}
+
+type DocsSearchResult = {
+  id: string;
+  type: "page";
+  url: string;
+  content: string;
+  breadcrumbs?: string[];
+  snippet?: string;
+};
+
+function searchDocs(query: string): DocsSearchResult[] {
+  const normalizedQuery = normalizeSearchText(query);
+  const terms = normalizedQuery.split(" ").filter(Boolean);
+
+  return docsSource
+    .getPages()
+    .map((page) => {
+      const pageData = page.data as DocsPageData;
+      const searchableContent = [
+        pageData.title,
+        pageData.description,
+        pageData.endpoint?.path,
+        pageData.endpoint?.operationId,
+        pageData.markdown,
+      ]
+        .filter((value): value is string => typeof value === "string")
+        .join(" ");
+      const normalizedContent = normalizeSearchText(searchableContent);
+      const titleScore = scoreText(normalizeSearchText(pageData.title), terms);
+      const descriptionScore = scoreText(
+        normalizeSearchText(pageData.description ?? ""),
+        terms,
+      );
+      const endpointScore = scoreText(
+        normalizeSearchText(
+          [pageData.endpoint?.path, pageData.endpoint?.operationId]
+            .filter((value): value is string => typeof value === "string")
+            .join(" "),
+        ),
+        terms,
+      );
+      const contentScore = scoreText(normalizedContent, terms);
+      const score =
+        terms.length === 0
+          ? page.url === "/"
+            ? 2
+            : 1
+          : titleScore * 8 +
+            endpointScore * 6 +
+            descriptionScore * 4 +
+            contentScore;
+
+      return {
+        score,
+        result: {
+          id: page.url,
+          type: "page" as const,
+          url: page.url,
+          content: pageData.title,
+          breadcrumbs: page.slugs,
+          snippet: createSearchSnippet(searchableContent, terms),
+        },
+      };
+    })
+    .filter(({ score }) => score > 0)
+    .sort((left, right) => {
+      if (right.score !== left.score) {
+        return right.score - left.score;
+      }
+
+      return left.result.content.localeCompare(right.result.content);
+    })
+    .slice(0, 10)
+    .map(({ result }) => result);
+}
+
+function normalizeSearchText(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function scoreText(value: string, terms: string[]): number {
+  if (terms.length === 0) {
+    return 0;
+  }
+
+  return terms.reduce(
+    (score, term) => (value.includes(term) ? score + 1 : score),
+    0,
+  );
+}
+
+function createSearchSnippet(content: string, terms: string[]): string {
+  const compactContent = stripInlineMarkdown(content).replace(/\s+/g, " ");
+
+  if (terms.length === 0) {
+    return compactContent.slice(0, 160);
+  }
+
+  const normalizedContent = normalizeSearchText(compactContent);
+  const firstMatch = terms
+    .map((term) => normalizedContent.indexOf(term))
+    .filter((index) => index >= 0)
+    .sort((left, right) => left - right)[0];
+
+  if (firstMatch === undefined) {
+    return compactContent.slice(0, 160);
+  }
+
+  const start = Math.max(0, firstMatch - 60);
+  const end = Math.min(compactContent.length, firstMatch + 140);
+  const prefix = start > 0 ? "..." : "";
+  const suffix = end < compactContent.length ? "..." : "";
+
+  return `${prefix}${compactContent.slice(start, end)}${suffix}`;
+}
+
+function getDocsEnhancementScript(): string {
+  return `
+(() => {
+  const sidebar = document.getElementById("rates-mobile-sidebar");
+  const sidebarContent = sidebar?.querySelector("[data-mobile-sidebar-content]");
+  const sidebarSource = document.getElementById("nd-sidebar");
+  const search = document.getElementById("rates-docs-search");
+  const searchInput = search?.querySelector("[data-docs-search-input]");
+  const searchResults = search?.querySelector("[data-docs-search-results]");
+  let searchAbort;
+
+  function setDialogState(element, isOpen) {
+    if (!element) return;
+    element.dataset.open = String(isOpen);
+    element.setAttribute("aria-hidden", String(!isOpen));
+    document.documentElement.style.overflow = isOpen ? "hidden" : "";
+  }
+
+  function openSidebar() {
+    if (sidebarContent && sidebarSource && sidebarContent.childElementCount === 0) {
+      sidebarContent.append(...Array.from(sidebarSource.children).map((child) => child.cloneNode(true)));
+    }
+    setDialogState(sidebar, true);
+  }
+
+  function closeSidebar() {
+    setDialogState(sidebar, false);
+  }
+
+  function openSearch() {
+    setDialogState(search, true);
+    window.setTimeout(() => searchInput?.focus(), 0);
+    if (searchResults && searchResults.childElementCount === 0) {
+      renderSearchResults([]);
+    }
+  }
+
+  function closeSearch() {
+    setDialogState(search, false);
+  }
+
+  function escapeHtml(value) {
+    return value.replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[character]);
+  }
+
+  function renderSearchResults(items, isLoading = false) {
+    if (!searchResults) return;
+    if (isLoading) {
+      searchResults.innerHTML = '<p data-docs-search-empty>Searching...</p>';
+      return;
+    }
+    if (items.length === 0) {
+      searchResults.innerHTML = '<p data-docs-search-empty>Start typing to search the documentation.</p>';
+      return;
+    }
+    searchResults.innerHTML = items.map((item) => {
+      const snippet = item.snippet
+        ? '<p data-docs-search-item-snippet>' + escapeHtml(item.snippet) + '</p>'
+        : '';
+      return '<a data-docs-search-item href="' + escapeHtml(item.url) + '">' +
+        '<span data-docs-search-item-title>' + escapeHtml(item.content) + '</span>' +
+        '<span data-docs-search-item-url>' + escapeHtml(item.url) + '</span>' +
+        snippet +
+        '</a>';
+    }).join("");
+  }
+
+  async function runSearch(query) {
+    const trimmedQuery = query.trim();
+    if (trimmedQuery.length === 0) {
+      renderSearchResults([]);
+      return;
+    }
+    searchAbort?.abort();
+    searchAbort = new AbortController();
+    renderSearchResults([], true);
+    try {
+      const response = await fetch("/api/search?query=" + encodeURIComponent(trimmedQuery), {
+        signal: searchAbort.signal,
+      });
+      if (!response.ok) throw new Error(await response.text());
+      renderSearchResults(await response.json());
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      if (searchResults) {
+        searchResults.innerHTML = '<p data-docs-search-empty>Search failed. Please try again.</p>';
+      }
+    }
+  }
+
+  let searchTimer;
+  document.addEventListener("click", (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    if (!target) return;
+    if (target.closest('button[aria-label="Open Sidebar"]')) {
+      event.preventDefault();
+      openSidebar();
+    } else if (target.closest("[data-mobile-sidebar-close], [data-mobile-sidebar-overlay]")) {
+      closeSidebar();
+    } else if (target.closest("[data-docs-search-open], [data-search], [data-search-full]")) {
+      event.preventDefault();
+      openSearch();
+    } else if (target.closest("[data-docs-search-close], [data-docs-search-overlay]")) {
+      closeSearch();
+    }
+  });
+
+  searchInput?.addEventListener("input", () => {
+    window.clearTimeout(searchTimer);
+    searchTimer = window.setTimeout(() => runSearch(searchInput.value), 150);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeSidebar();
+      closeSearch();
+    } else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      openSearch();
+    }
+  });
+})();
+`;
 }
 
 function renderEndpoint(endpoint: DocsPageData["endpoint"]): ReactNode {
