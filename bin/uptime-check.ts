@@ -22,8 +22,7 @@ const endpoints = [
   "v1/car-loan-rates/institution:asb",
   "v1/credit-card-rates/issuer:amex",
 
-  // Documentation
-  "v1/doc",
+  // Health
   "v1/health",
 
   // Basic Time Series API endpoints

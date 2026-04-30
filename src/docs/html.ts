@@ -150,6 +150,12 @@ const docsLayoutOverrides = `
     width: 100%;
   }
 
+  [data-mobile-sidebar-content] {
+    min-height: 0;
+    flex: 1;
+    overflow: auto;
+  }
+
   [data-docs-search-dialog] {
     position: relative;
     margin: 10vh auto 0;
@@ -503,6 +509,7 @@ function getDocsEnhancementScript(): string {
   const sidebar = document.getElementById("rates-mobile-sidebar");
   const sidebarContent = sidebar?.querySelector("[data-mobile-sidebar-content]");
   const sidebarSource = document.getElementById("nd-sidebar");
+  const sidebarSourceViewport = sidebarSource?.querySelector("[data-radix-scroll-area-viewport] > div");
   const search = document.getElementById("rates-docs-search");
   const searchInput = search?.querySelector("[data-docs-search-input]");
   const searchResults = search?.querySelector("[data-docs-search-results]");
@@ -516,8 +523,8 @@ function getDocsEnhancementScript(): string {
   }
 
   function openSidebar() {
-    if (sidebarContent && sidebarSource && sidebarContent.childElementCount === 0) {
-      sidebarContent.append(...Array.from(sidebarSource.children).map((child) => child.cloneNode(true)));
+    if (sidebarContent && sidebarSourceViewport && sidebarContent.childElementCount === 0) {
+      sidebarContent.append(...Array.from(sidebarSourceViewport.children).map((child) => child.cloneNode(true)));
     }
     setDialogState(sidebar, true);
   }
@@ -536,6 +543,25 @@ function getDocsEnhancementScript(): string {
 
   function closeSearch() {
     setDialogState(search, false);
+  }
+
+  function toggleSidebarFolder(event, trigger) {
+    const folder = trigger.closest("[data-state]");
+    const contentId = trigger.getAttribute("aria-controls");
+    const content = contentId ? document.getElementById(contentId) : null;
+    const isOpen = trigger.getAttribute("aria-expanded") === "true";
+    const nextState = isOpen ? "closed" : "open";
+
+    event.preventDefault();
+    trigger.setAttribute("aria-expanded", String(!isOpen));
+    trigger.dataset.state = nextState;
+    if (folder) {
+      folder.dataset.state = nextState;
+    }
+    if (content) {
+      content.dataset.state = nextState;
+      content.hidden = isOpen;
+    }
   }
 
   function sanitizeSearchHtml(value) {
@@ -619,6 +645,11 @@ function getDocsEnhancementScript(): string {
       openSidebar();
     } else if (target.closest("[data-mobile-sidebar-close], [data-mobile-sidebar-overlay]")) {
       closeSidebar();
+    } else if (sidebar?.contains(target)) {
+      const sidebarFolderTrigger = target.closest("[data-mobile-sidebar-content] button[aria-expanded][aria-controls]");
+      if (sidebarFolderTrigger) {
+        toggleSidebarFolder(event, sidebarFolderTrigger);
+      }
     } else if (target.closest("[data-docs-search-open], [data-search], [data-search-full]")) {
       event.preventDefault();
       openSearch();

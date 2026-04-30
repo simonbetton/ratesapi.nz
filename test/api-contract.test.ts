@@ -307,6 +307,9 @@ describe("v1 API contract", () => {
     expect(body).toContain("rates-mobile-sidebar");
     expect(body).toContain("data-docs-search-open");
     expect(body).toContain("data-fumadocs-search-ui");
+    expect(body).toContain("[data-radix-scroll-area-viewport]");
+    expect(body).toContain("toggleSidebarFolder");
+    expect(body).toContain("button[aria-expanded][aria-controls]");
   });
 
   test("serves mirrored API reference pages", async () => {
