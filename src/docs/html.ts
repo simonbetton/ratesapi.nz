@@ -1,6 +1,6 @@
 import { FrameworkProvider, type Router } from "fumadocs-core/framework";
-import type { Root } from "fumadocs-core/page-tree";
-import type { TOCItemType } from "fumadocs-core/toc";
+import { type Root } from "fumadocs-core/page-tree";
+import { type TOCItemType } from "fumadocs-core/toc";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import {
   DocsBody,
@@ -10,11 +10,24 @@ import {
 } from "fumadocs-ui/layouts/docs/page";
 import fumadocsUiPackage from "fumadocs-ui/package.json";
 import { RootProvider } from "fumadocs-ui/provider/base";
-import { createElement, Fragment, type ReactNode } from "react";
+import {
+  type ComponentType,
+  createElement,
+  Fragment,
+  type ReactNode,
+} from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { type DocsPageData, docsSource } from "./source";
 
 type FumadocsPage = NonNullable<ReturnType<typeof docsSource.getPage>>;
+type StaticFrameworkProviderProps = {
+  usePathname: () => string;
+  useParams: () => Record<string, string | string[]>;
+  useRouter: () => Router;
+  children?: ReactNode;
+};
+const FumadocsFrameworkProvider =
+  FrameworkProvider as unknown as ComponentType<StaticFrameworkProviderProps>;
 
 const htmlHeaders = {
   "content-type": "text/html; charset=utf-8",
@@ -78,7 +91,7 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
     refresh() {},
   };
   const pageElement = createElement(
-    FrameworkProvider,
+    FumadocsFrameworkProvider,
     {
       usePathname: () => page.url,
       useParams: () => ({}),
@@ -99,6 +112,9 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
             url: "/",
           },
           githubUrl: "https://github.com/simonbetton/ratesapi.nz",
+          sidebar: {
+            defaultOpenLevel: 3,
+          },
           links: [
             {
               type: "main",
@@ -120,11 +136,7 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
             DocsBody,
             null,
             renderEndpoint(pageData.endpoint),
-            createElement("div", {
-              dangerouslySetInnerHTML: {
-                __html: renderMarkdown(pageData.markdown),
-              },
-            }),
+            ...renderMarkdown(pageData.markdown),
           ),
         ),
       ),
@@ -152,9 +164,7 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
           rel: "stylesheet",
           href: fumadocsUiStylesheet,
         }),
-        createElement("style", {
-          dangerouslySetInnerHTML: { __html: docsLayoutOverrides },
-        }),
+        createElement("style", null, docsLayoutOverrides),
       ),
       createElement("body", null, pageElement),
     ),
@@ -191,15 +201,20 @@ function renderEndpoint(endpoint: DocsPageData["endpoint"]): ReactNode {
       ? createElement(
           Fragment,
           null,
-          createElement("p", null, createElement("strong", null, "Parameters:")),
+          createElement(
+            "p",
+            null,
+            createElement("strong", null, "Parameters:"),
+          ),
           createElement(
             "ul",
             null,
             endpoint.parameters.map((parameter) =>
-              createElement("li", {
-                key: parameter,
-                dangerouslySetInnerHTML: { __html: formatInlineText(parameter) },
-              }),
+              createElement(
+                "li",
+                { key: parameter },
+                renderInlineText(parameter),
+              ),
             ),
           ),
         )
@@ -209,17 +224,14 @@ function renderEndpoint(endpoint: DocsPageData["endpoint"]): ReactNode {
       "ul",
       null,
       endpoint.responses.map((response) =>
-        createElement("li", {
-          key: response,
-          dangerouslySetInnerHTML: { __html: formatInlineText(response) },
-        }),
+        createElement("li", { key: response }, renderInlineText(response)),
       ),
     ),
   );
 }
 
-function renderMarkdown(markdown: string): string {
-  const blocks: string[] = [];
+function renderMarkdown(markdown: string): ReactNode[] {
+  const blocks: ReactNode[] = [];
   const lines = markdown.split("\n");
 
   for (let index = 0; index < lines.length; index += 1) {
@@ -233,11 +245,11 @@ function renderMarkdown(markdown: string): string {
     index = block.nextIndex;
   }
 
-  return blocks.join("\n");
+  return blocks;
 }
 
 type MarkdownBlock = {
-  html: string;
+  html: ReactNode;
   nextIndex: number;
 };
 
@@ -270,14 +282,19 @@ function readMarkdownBlock(
   const heading = /^(#{2,4})\s+(.+)$/.exec(line);
   if (heading) {
     const level = heading[1]?.length ?? 2;
+    const title = stripInlineMarkdown(heading[2] ?? "");
     return {
-      html: `<h${level}>${formatInlineText(heading[2] ?? "")}</h${level}>`,
+      html: createElement(
+        `h${level}`,
+        { id: toHeadingId(title), key: `${index}-${title}` },
+        renderInlineText(heading[2] ?? ""),
+      ),
       nextIndex: index,
     };
   }
 
   return {
-    html: `<p>${formatInlineText(line)}</p>`,
+    html: createElement("p", { key: index }, renderInlineText(line)),
     nextIndex: index,
   };
 }
@@ -296,7 +313,15 @@ function readCodeBlock(lines: string[], index: number): MarkdownBlock {
   }
 
   return {
-    html: `<pre><code${language ? ` data-language="${escapeAttribute(language)}"` : ""}>${escapeHtml(code.join("\n"))}</code></pre>`,
+    html: createElement(
+      "pre",
+      { key: index },
+      createElement(
+        "code",
+        language ? { "data-language": language } : null,
+        code.join("\n"),
+      ),
+    ),
     nextIndex,
   };
 }
@@ -337,7 +362,13 @@ function readListBlock(
   }
 
   return {
-    html: `<${tagName}>${items.map((item) => `<li>${formatInlineText(item)}</li>`).join("")}</${tagName}>`,
+    html: createElement(
+      tagName,
+      { key: index },
+      items.map((item) =>
+        createElement("li", { key: item }, renderInlineText(item)),
+      ),
+    ),
     nextIndex,
   };
 }
@@ -361,26 +392,24 @@ function toSlugs(pathname: string) {
 }
 
 function extractTableOfContents(markdown: string): TOCItemType[] {
-  return markdown
-    .split("\n")
-    .flatMap((line): TOCItemType[] => {
-      const heading = /^(#{2,4})\s+(.+)$/.exec(line);
+  return markdown.split("\n").flatMap((line): TOCItemType[] => {
+    const heading = /^(#{2,4})\s+(.+)$/.exec(line);
 
-      if (!heading) {
-        return [];
-      }
+    if (!heading) {
+      return [];
+    }
 
-      const depth = heading[1]?.length ?? 2;
-      const title = stripInlineMarkdown(heading[2] ?? "");
+    const depth = heading[1]?.length ?? 2;
+    const title = stripInlineMarkdown(heading[2] ?? "");
 
-      return [
-        {
-          title,
-          url: `#${toHeadingId(title)}`,
-          depth,
-        },
-      ];
-    });
+    return [
+      {
+        title,
+        url: `#${toHeadingId(title)}`,
+        depth,
+      },
+    ];
+  });
 }
 
 function stripInlineMarkdown(value: string): string {
@@ -397,18 +426,43 @@ function toHeadingId(value: string): string {
     .replace(/\s+/g, "-");
 }
 
-function formatInlineText(value: string): string {
-  return value
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label: string, href: string) => {
-      return `<a href="${escapeAttribute(href)}">${escapeHtml(label)}</a>`;
-    })
-    .split(/(<a [^>]+>.*?<\/a>)/g)
-    .map((part) => (part.startsWith("<a ") ? part : escapeHtml(part)))
-    .join("")
-    .replace(/`([^`]+)`/g, "<code>$1</code>");
+function renderInlineText(value: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  const pattern = /(\[([^\]]+)\]\(([^)]+)\)|`([^`]+)`)/g;
+  let lastIndex = 0;
+
+  for (const match of value.matchAll(pattern)) {
+    if (match.index > lastIndex) {
+      nodes.push(value.slice(lastIndex, match.index));
+    }
+
+    const linkLabel = match[2];
+    const linkHref = match[3];
+    const code = match[4];
+
+    if (linkLabel && linkHref) {
+      nodes.push(
+        createElement(
+          "a",
+          { href: linkHref, key: `${match.index}-link` },
+          linkLabel,
+        ),
+      );
+    } else if (code) {
+      nodes.push(createElement("code", { key: `${match.index}-code` }, code));
+    }
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < value.length) {
+    nodes.push(value.slice(lastIndex));
+  }
+
+  return nodes;
 }
 
-function renderTable(lines: string[]): string {
+function renderTable(lines: string[]): ReactNode {
   const rows = lines
     .filter((line) => !/^\|\s*-+/.test(line))
     .map((line) =>
@@ -420,26 +474,39 @@ function renderTable(lines: string[]): string {
   const [header, ...body] = rows;
 
   if (!header) {
-    return "";
+    return null;
   }
 
-  return `<table><thead><tr>${header
-    .map((cell) => `<th>${formatInlineText(cell)}</th>`)
-    .join("")}</tr></thead><tbody>${body
-    .map(
-      (row) =>
-        `<tr>${row.map((cell) => `<td>${formatInlineText(cell)}</td>`).join("")}</tr>`,
-    )
-    .join("")}</tbody></table>`;
-}
-
-function escapeAttribute(value: string): string {
-  return escapeHtml(value).replace(/"/g, "&quot;");
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+  return createElement(
+    "table",
+    { key: lines.join("\n") },
+    createElement(
+      "thead",
+      null,
+      createElement(
+        "tr",
+        null,
+        header.map((cell) =>
+          createElement("th", { key: cell }, renderInlineText(cell)),
+        ),
+      ),
+    ),
+    createElement(
+      "tbody",
+      null,
+      body.map((row, rowIndex) =>
+        createElement(
+          "tr",
+          { key: rowIndex },
+          row.map((cell, cellIndex) =>
+            createElement(
+              "td",
+              { key: `${rowIndex}-${cellIndex}` },
+              renderInlineText(cell),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
