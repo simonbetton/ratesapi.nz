@@ -1,5 +1,6 @@
 import { FrameworkProvider, type Router } from "fumadocs-core/framework";
 import { type Root } from "fumadocs-core/page-tree";
+import { createSearchAPI } from "fumadocs-core/search/server";
 import { type TOCItemType } from "fumadocs-core/toc";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import {
@@ -38,6 +39,28 @@ const searchButtonClassName =
   "inline-flex items-center justify-center rounded-md p-2 text-sm font-medium transition-colors duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fd-ring hover:bg-fd-accent hover:text-fd-accent-foreground";
 const fullSearchButtonClassName =
   "inline-flex items-center gap-2 rounded-lg border bg-fd-secondary/50 p-1.5 ps-2 text-sm text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground";
+const docsSearchApi = createSearchAPI("simple", {
+  language: "english",
+  indexes: docsSource.getPages().map((page) => {
+    const pageData = page.data as DocsPageData;
+
+    return {
+      title: pageData.title,
+      description: pageData.description,
+      breadcrumbs: page.slugs,
+      content: [
+        pageData.title,
+        pageData.description,
+        pageData.endpoint?.path,
+        pageData.endpoint?.operationId,
+        pageData.markdown,
+      ]
+        .filter((value): value is string => typeof value === "string")
+        .join("\n\n"),
+      url: page.url,
+    };
+  }),
+});
 const docsLayoutOverrides = `
   .endpoint-summary {
     margin-bottom: 2rem;
@@ -196,6 +219,24 @@ const docsLayoutOverrides = `
     font-size: 0.875rem;
   }
 
+  [data-docs-search-item] mark {
+    color: var(--color-fd-primary);
+    text-decoration: underline;
+    background: transparent;
+  }
+
+  [data-docs-search-item-breadcrumbs] {
+    display: inline-flex;
+    gap: 0.25rem;
+    color: var(--color-fd-muted-foreground);
+    font-size: 0.75rem;
+  }
+
+  [data-docs-search-item-type] {
+    color: var(--color-fd-muted-foreground);
+    font-size: 0.75rem;
+  }
+
   @media (max-width: 767px) {
     #rates-mobile-sidebar {
       display: block;
@@ -225,15 +266,8 @@ export function renderLlmsTxt(): Response {
   });
 }
 
-export function renderDocsSearch(request: Request): Response {
-  const query = new URL(request.url).searchParams.get("query") ?? "";
-
-  return new Response(JSON.stringify(searchDocs(query)), {
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "public, max-age=300",
-    },
-  });
+export function renderDocsSearch(request: Request): Promise<Response> {
+  return docsSearchApi.GET(request);
 }
 
 function renderDocsHtml(page: FumadocsPage, tree: Root): string {
@@ -434,6 +468,7 @@ function renderSearchDialogShell(): ReactNode {
       "div",
       {
         "data-docs-search-dialog": "",
+        "data-fumadocs-search-ui": "",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": "Search documentation",
@@ -460,124 +495,6 @@ function renderSearchDialogShell(): ReactNode {
       createElement("div", { "data-docs-search-results": "" }),
     ),
   );
-}
-
-type DocsSearchResult = {
-  id: string;
-  type: "page";
-  url: string;
-  content: string;
-  breadcrumbs?: string[];
-  snippet?: string;
-};
-
-function searchDocs(query: string): DocsSearchResult[] {
-  const normalizedQuery = normalizeSearchText(query);
-  const terms = normalizedQuery.split(" ").filter(Boolean);
-
-  return docsSource
-    .getPages()
-    .map((page) => {
-      const pageData = page.data as DocsPageData;
-      const searchableContent = [
-        pageData.title,
-        pageData.description,
-        pageData.endpoint?.path,
-        pageData.endpoint?.operationId,
-        pageData.markdown,
-      ]
-        .filter((value): value is string => typeof value === "string")
-        .join(" ");
-      const normalizedContent = normalizeSearchText(searchableContent);
-      const titleScore = scoreText(normalizeSearchText(pageData.title), terms);
-      const descriptionScore = scoreText(
-        normalizeSearchText(pageData.description ?? ""),
-        terms,
-      );
-      const endpointScore = scoreText(
-        normalizeSearchText(
-          [pageData.endpoint?.path, pageData.endpoint?.operationId]
-            .filter((value): value is string => typeof value === "string")
-            .join(" "),
-        ),
-        terms,
-      );
-      const contentScore = scoreText(normalizedContent, terms);
-      const score =
-        terms.length === 0
-          ? page.url === "/"
-            ? 2
-            : 1
-          : titleScore * 8 +
-            endpointScore * 6 +
-            descriptionScore * 4 +
-            contentScore;
-
-      return {
-        score,
-        result: {
-          id: page.url,
-          type: "page" as const,
-          url: page.url,
-          content: pageData.title,
-          breadcrumbs: page.slugs,
-          snippet: createSearchSnippet(searchableContent, terms),
-        },
-      };
-    })
-    .filter(({ score }) => score > 0)
-    .sort((left, right) => {
-      if (right.score !== left.score) {
-        return right.score - left.score;
-      }
-
-      return left.result.content.localeCompare(right.result.content);
-    })
-    .slice(0, 10)
-    .map(({ result }) => result);
-}
-
-function normalizeSearchText(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
-}
-
-function scoreText(value: string, terms: string[]): number {
-  if (terms.length === 0) {
-    return 0;
-  }
-
-  return terms.reduce(
-    (score, term) => (value.includes(term) ? score + 1 : score),
-    0,
-  );
-}
-
-function createSearchSnippet(content: string, terms: string[]): string {
-  const compactContent = stripInlineMarkdown(content).replace(/\s+/g, " ");
-
-  if (terms.length === 0) {
-    return compactContent.slice(0, 160);
-  }
-
-  const normalizedContent = normalizeSearchText(compactContent);
-  const firstMatch = terms
-    .map((term) => normalizedContent.indexOf(term))
-    .filter((index) => index >= 0)
-    .sort((left, right) => left - right)[0];
-
-  if (firstMatch === undefined) {
-    return compactContent.slice(0, 160);
-  }
-
-  const start = Math.max(0, firstMatch - 60);
-  const end = Math.min(compactContent.length, firstMatch + 140);
-  const prefix = start > 0 ? "..." : "";
-  const suffix = end < compactContent.length ? "..." : "";
-
-  return `${prefix}${compactContent.slice(start, end)}${suffix}`;
 }
 
 function getDocsEnhancementScript(): string {
@@ -621,7 +538,21 @@ function getDocsEnhancementScript(): string {
     setDialogState(search, false);
   }
 
-  function escapeHtml(value) {
+  function sanitizeSearchHtml(value) {
+    return value.replace(/<(?!\\/?mark\\b)[^>]*>/g, "").replace(/[&<>"']/g, (character) => {
+      if (character === "<" || character === ">") {
+        return character;
+      }
+
+      return ({
+      "&": "&amp;",
+      '"': "&quot;",
+      "'": "&#39;",
+      })[character];
+    });
+  }
+
+  function escapeAttribute(value) {
     return value.replace(/[&<>"']/g, (character) => ({
       "&": "&amp;",
       "<": "&lt;",
@@ -642,13 +573,16 @@ function getDocsEnhancementScript(): string {
       return;
     }
     searchResults.innerHTML = items.map((item) => {
-      const snippet = item.snippet
-        ? '<p data-docs-search-item-snippet>' + escapeHtml(item.snippet) + '</p>'
+      const breadcrumbs = Array.isArray(item.breadcrumbs) && item.breadcrumbs.length > 0
+        ? '<div data-docs-search-item-breadcrumbs>' + item.breadcrumbs.map(sanitizeSearchHtml).join(" › ") + '</div>'
         : '';
-      return '<a data-docs-search-item href="' + escapeHtml(item.url) + '">' +
-        '<span data-docs-search-item-title>' + escapeHtml(item.content) + '</span>' +
-        '<span data-docs-search-item-url>' + escapeHtml(item.url) + '</span>' +
-        snippet +
+      const itemType = item.type && item.type !== "page"
+        ? '<span data-docs-search-item-type>' + escapeAttribute(item.type) + '</span>'
+        : '';
+      return '<a data-docs-search-item href="' + escapeAttribute(item.url) + '">' +
+        breadcrumbs +
+        itemType +
+        '<div data-docs-search-item-title>' + sanitizeSearchHtml(item.content) + '</div>' +
         '</a>';
     }).join("");
   }

@@ -306,7 +306,7 @@ describe("v1 API contract", () => {
     expect(body).toContain("/api-reference/endpoint/mortgage-rates/list");
     expect(body).toContain("rates-mobile-sidebar");
     expect(body).toContain("data-docs-search-open");
-    expect(body).toContain("/api/search?query=");
+    expect(body).toContain("data-fumadocs-search-ui");
   });
 
   test("serves mirrored API reference pages", async () => {
@@ -359,9 +359,9 @@ describe("v1 API contract", () => {
 
     expect(body).toContainEqual(
       expect.objectContaining({
-        type: "page",
+        type: expect.stringMatching(/^(page|heading|text)$/),
         url: "/api-reference/endpoint/mortgage-rates/time-series",
-        content: "Mortgage Rates Time Series",
+        content: expect.stringContaining("Mortgage Rates Time Series"),
       }),
     );
   });
