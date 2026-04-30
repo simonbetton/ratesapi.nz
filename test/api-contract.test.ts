@@ -355,14 +355,20 @@ describe("v1 API contract", () => {
     expect(response.status).toBe(200);
     expect(response.headers.get("content-type")).toContain("application/json");
 
-    const body = await response.json();
+    const body = readSearchResults(await jsonBody(response));
+    const mortgageTimeSeriesResult = body.find(
+      (result) =>
+        result.url === "/api-reference/endpoint/mortgage-rates/time-series",
+    );
 
-    expect(body).toContainEqual(
+    expect(mortgageTimeSeriesResult).toEqual(
       expect.objectContaining({
         type: expect.stringMatching(/^(page|heading|text)$/),
         url: "/api-reference/endpoint/mortgage-rates/time-series",
-        content: expect.stringContaining("Mortgage Rates Time Series"),
       }),
+    );
+    expect(stripSearchHighlights(mortgageTimeSeriesResult?.content)).toContain(
+      "Mortgage Rates Time Series",
     );
   });
 
@@ -721,6 +727,34 @@ function isDataType(value: string): value is DataType {
 
 function readString(value: unknown): string | undefined {
   return typeof value === "string" ? value : undefined;
+}
+
+function readSearchResults(
+  value: unknown,
+): Array<{ content: string; type: string; url: string }> {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.flatMap((item) => {
+    if (!isRecord(item)) {
+      return [];
+    }
+
+    const content = readString(item.content);
+    const type = readString(item.type);
+    const url = readString(item.url);
+
+    if (!content || !type || !url) {
+      return [];
+    }
+
+    return [{ content, type, url }];
+  });
+}
+
+function stripSearchHighlights(value: string | undefined): string {
+  return value?.replaceAll(/<\/?mark>/g, "") ?? "";
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
