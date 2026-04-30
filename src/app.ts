@@ -1,6 +1,8 @@
 import { openapi, toOpenAPISchema } from "@elysia/openapi";
 import { cors } from "@elysiajs/cors";
 import { Elysia, type ElysiaAdapter } from "elysia";
+import { renderDocsRoute, renderLlmsTxt } from "./docs/html";
+import { docsRoutes } from "./docs/source";
 import { createLogger } from "./lib/logging";
 import { type GetEnv } from "./lib/routing";
 import {
@@ -101,6 +103,8 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
       },
     );
 
+  const docsApp = createDocsApp();
+
   const app = new Elysia({
     name: "rates-api",
     adapter: options.adapter,
@@ -146,20 +150,25 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
         },
       },
     )
-    .get("/", ({ request }) => {
-      const environment: string | undefined = getEnv().ENVIRONMENT ?? undefined;
-
-      if (environment === "production") {
-        return Response.redirect("https://docs.ratesapi.nz", 302);
-      }
-
-      return Response.redirect(new URL("/openapi", request.url), 302);
-    });
+    .get("/llms.txt", renderLlmsTxt)
+    .use(docsApp);
 
   return app;
 }
 
 export type App = ReturnType<typeof createApp>;
+
+function createDocsApp() {
+  return docsRoutes.reduce(
+    (routes, path) =>
+      routes.get(path, () => {
+        const docsResponse = renderDocsRoute(path);
+
+        return docsResponse ?? new Response("Not found", { status: 404 });
+      }),
+    new Elysia(),
+  );
+}
 
 function getOpenApiServers(request: Request, environment: string | undefined) {
   const origin = new URL(request.url).origin;

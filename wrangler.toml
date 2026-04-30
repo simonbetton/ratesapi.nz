@@ -1,5 +1,6 @@
 name = "ratesapi-nz"
 compatibility_date = "2025-06-01"
+compatibility_flags = ["nodejs_compat"]
 
 [vars]
 ENVIRONMENT = "production"
