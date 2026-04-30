@@ -48,6 +48,14 @@
           "suspicious": { "noConsole": "off" }
         }
       }
+    },
+    {
+      "includes": [
+        "apps/docs/app/**",
+        "apps/docs/next.config.mjs",
+        "apps/docs/open-next.config.ts"
+      ],
+      "linter": { "rules": { "style": { "noDefaultExport": "off" } } }
     }
   ]
 }

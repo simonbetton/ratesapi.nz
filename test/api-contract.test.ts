@@ -292,49 +292,24 @@ describe("v1 API contract", () => {
     });
   });
 
-  test("serves Fumadocs documentation from the root route", async () => {
+  test("leaves root documentation pages to the docs app", async () => {
     const response = await request("/");
 
-    expect(response.status).toBe(200);
-    expect(response.headers.get("content-type")).toContain("text/html");
-
-    const body = await response.text();
-
-    expect(body).toContain("Rates API");
-    expect(body).toContain("fumadocs-ui@");
-    expect(body).toContain("Historical Time Series");
-    expect(body).toContain("/api-reference/endpoint/mortgage-rates/list");
-    expect(body).toContain("rates-mobile-sidebar");
-    expect(body).toContain("data-docs-search-open");
-    expect(body).toContain("data-fumadocs-search-ui");
-    expect(body).toContain("[data-radix-scroll-area-viewport]");
-    expect(body).toContain("toggleSidebarFolder");
-    expect(body).toContain("button[aria-expanded][aria-controls]");
+    expect(response.status).toBe(404);
   });
 
-  test("serves mirrored API reference pages", async () => {
+  test("leaves API reference documentation pages to the docs app", async () => {
     const response = await request(
       "/api-reference/endpoint/mortgage-rates/time-series",
     );
 
-    expect(response.status).toBe(200);
-
-    const body = await response.text();
-
-    expect(body).toContain("Mortgage Rates Time Series");
-    expect(body).toContain("/api/v1/mortgage-rates/time-series");
-    expect(body).toContain("termInMonths");
+    expect(response.status).toBe(404);
   });
 
-  test("serves mirrored open-source documentation pages", async () => {
+  test("leaves open-source documentation pages to the docs app", async () => {
     const response = await request("/open-source/deployment");
 
-    expect(response.status).toBe(200);
-
-    const body = await response.text();
-
-    expect(body).toContain("Deployment Steps");
-    expect(body).toContain("bun run deploy");
+    expect(response.status).toBe(404);
   });
 
   test("exposes docs content for LLM clients", async () => {

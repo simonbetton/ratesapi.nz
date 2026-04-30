@@ -1,8 +1,7 @@
 import { openapi, toOpenAPISchema } from "@elysia/openapi";
 import { cors } from "@elysiajs/cors";
 import { Elysia, type ElysiaAdapter } from "elysia";
-import { renderDocsRoute, renderDocsSearch, renderLlmsTxt } from "./docs/html";
-import { docsRoutes } from "./docs/source";
+import { renderDocsSearch, renderLlmsTxt } from "./docs/responses";
 import { createLogger } from "./lib/logging";
 import { type GetEnv } from "./lib/routing";
 import {
@@ -103,8 +102,6 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
       },
     );
 
-  const docsApp = createDocsApp();
-
   const app = new Elysia({
     name: "rates-api",
     adapter: options.adapter,
@@ -155,25 +152,12 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
       detail: {
         hide: true,
       },
-    })
-    .use(docsApp);
+    });
 
   return app;
 }
 
 export type App = ReturnType<typeof createApp>;
-
-function createDocsApp() {
-  return docsRoutes.reduce(
-    (routes, path) =>
-      routes.get(path, () => {
-        const docsResponse = renderDocsRoute(path);
-
-        return docsResponse ?? new Response("Not found", { status: 404 });
-      }),
-    new Elysia(),
-  );
-}
 
 function getOpenApiServers(request: Request, environment: string | undefined) {
   const origin = new URL(request.url).origin;

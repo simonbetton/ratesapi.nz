@@ -1,12 +1,16 @@
 {
   "scripts": {
     "dev": "wrangler dev --env development src/index.ts",
+    "dev:docs": "bun run --cwd apps/docs dev",
     "deploy": "wrangler deploy --minify src/index.ts",
+    "deploy:docs": "bun run --cwd apps/docs deploy",
     "deploy:dry-run": "wrangler deploy --dry-run --env=\"\" --minify src/index.ts",
+    "build:docs": "bun run --cwd apps/docs build:cloudflare",
+    "typecheck:docs": "tsc -p apps/docs/tsconfig.json --noEmit",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
-    "check": "bun run lint && bun run typecheck && bun test",
+    "check": "bun run lint && bun run typecheck && bun run typecheck:docs && bun test",
     "prepare": "husky",
     "test": "bun test",
     "scrape:mortgage": "bun run bin/scrape-mortgage-rates.ts",
@@ -19,11 +23,13 @@
   "dependencies": {
     "@elysia/openapi": "^1.4.15",
     "@elysiajs/cors": "^1.4.2",
+    "@opennextjs/cloudflare": "^1.19.5",
     "@sinclair/typebox": "^0.34.49",
     "cheerio": "1.1.2",
     "elysia": "^1.4.28",
     "fumadocs-core": "^16.8.5",
     "fumadocs-ui": "^16.8.5",
+    "next": "^16.2.4",
     "ora": "^9.4.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"

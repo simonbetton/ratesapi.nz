@@ -1,6 +1,8 @@
 node_modules
 dist
 .wrangler
+.next
+.open-next
 .dev.vars
 .fallow/
 tsconfig.tsbuildinfo
