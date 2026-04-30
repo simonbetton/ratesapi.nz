@@ -1,4 +1,4 @@
-import { type Root } from "fumadocs-core/page-tree";
+import { type Node, type Root } from "fumadocs-core/page-tree";
 import { type DocsPageData, docsSource } from "./source";
 
 type FumadocsPage = NonNullable<ReturnType<typeof docsSource.getPage>>;
@@ -32,6 +32,8 @@ export function renderLlmsTxt(): Response {
 
 function renderDocsHtml(page: FumadocsPage, tree: Root): string {
   const pageData = page.data as DocsPageData;
+  const description =
+    pageData.description ?? pageData.markdown.split("\n")[0] ?? "";
 
   return `<!doctype html>
 <html lang="en">
@@ -39,7 +41,7 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${escapeHtml(pageData.title)} | Rates API</title>
-    <meta name="description" content="${escapeAttribute(pageData.description)}" />
+    <meta name="description" content="${escapeAttribute(description)}" />
     <style>
       :root {
         color-scheme: light dark;
@@ -90,7 +92,7 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
         gap: 2rem;
         grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr);
         margin: 0 auto;
-        max-width: 72rem;
+        max-width: 86rem;
         padding: 2rem;
       }
 
@@ -115,11 +117,16 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
         text-transform: uppercase;
       }
 
-      nav ul,
-      .links {
+      nav ul {
         list-style: none;
         margin: 0;
         padding: 0;
+      }
+
+      nav ul ul {
+        border-left: 1px solid var(--border);
+        margin-left: 0.75rem;
+        padding-left: 0.5rem;
       }
 
       nav a {
@@ -133,6 +140,15 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
         background: color-mix(in srgb, var(--accent) 12%, transparent);
         color: var(--accent);
         font-weight: 700;
+      }
+
+      .section-label {
+        color: var(--text);
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin: 0.75rem 0 0.25rem;
+        padding: 0.25rem 0.75rem;
       }
 
       main {
@@ -152,27 +168,74 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
         max-width: 42rem;
       }
 
-      .card {
+      .endpoint {
+        background: color-mix(in srgb, var(--accent) 8%, transparent);
         border: 1px solid var(--border);
         border-radius: 0.875rem;
-        margin: 1rem 0;
-        padding: 1rem;
+        margin: 0 0 2rem;
+        padding: 1rem 1.25rem;
       }
 
-      .card strong {
-        display: block;
-        font-size: 1rem;
+      .method {
+        background: var(--accent);
+        border-radius: 999px;
+        color: white;
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        margin-right: 0.5rem;
+        padding: 0.2rem 0.55rem;
       }
 
-      .card span,
       li {
         color: var(--muted);
+      }
+
+      h2,
+      h3,
+      h4 {
+        line-height: 1.2;
+        margin: 2rem 0 0.75rem;
+      }
+
+      table {
+        border-collapse: collapse;
+        display: block;
+        margin: 1rem 0;
+        overflow-x: auto;
+        width: 100%;
+      }
+
+      th,
+      td {
+        border: 1px solid var(--border);
+        padding: 0.65rem 0.75rem;
+        text-align: left;
+      }
+
+      th {
+        background: color-mix(in srgb, var(--muted) 10%, transparent);
+        color: var(--text);
+      }
+
+      pre {
+        background: #0f172a;
+        border-radius: 0.875rem;
+        color: #e2e8f0;
+        overflow-x: auto;
+        padding: 1rem;
       }
 
       code {
         background: color-mix(in srgb, var(--muted) 12%, transparent);
         border-radius: 0.375rem;
         padding: 0.1rem 0.35rem;
+      }
+
+      pre code {
+        background: transparent;
+        padding: 0;
       }
 
       @media (max-width: 760px) {
@@ -195,8 +258,9 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
       </nav>
       <main>
         <h1>${escapeHtml(pageData.title)}</h1>
-        <p class="description">${escapeHtml(pageData.description)}</p>
-        ${pageData.blocks.map(renderBlock).join("\n")}
+        ${description ? `<p class="description">${formatInlineText(description)}</p>` : ""}
+        ${renderEndpoint(pageData.endpoint)}
+        ${renderMarkdown(pageData.markdown)}
       </main>
     </div>
   </body>
@@ -204,56 +268,172 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
 }
 
 function renderNavigation(tree: Root, currentUrl: string): string {
-  return `<ul>${tree.children
-    .filter((node) => node.type === "page")
-    .map((node) => {
-      if (node.type !== "page") {
-        return "";
-      }
-
-      return `<li><a href="${escapeAttribute(node.url)}"${node.url === currentUrl ? ' aria-current="page"' : ""}>${escapeHtml(String(node.name))}</a></li>`;
-    })
-    .join("")}</ul>`;
+  return `<ul>${tree.children.map((node) => renderNavigationNode(node, currentUrl)).join("")}</ul>`;
 }
 
-function renderBlock(block: DocsPageData["blocks"][number]): string {
-  if (block.type === "paragraph") {
-    return `<p>${formatInlineText(block.text)}</p>`;
+function renderNavigationNode(node: Node, currentUrl: string): string {
+  if (node.type === "separator") {
+    return node.name
+      ? `<li><span class="section-label">${escapeHtml(String(node.name))}</span></li>`
+      : "";
   }
 
-  if (block.type === "list") {
-    return `<ul>${block.items.map((item) => `<li>${formatInlineText(item)}</li>`).join("")}</ul>`;
+  if (node.type === "folder") {
+    return `<li><span class="section-label">${escapeHtml(String(node.name))}</span><ul>${node.children
+      .map((child) => renderNavigationNode(child, currentUrl))
+      .join("")}</ul></li>`;
   }
 
-  return `<ul class="links">${block.links
-    .map(
-      (link) => `<li class="card">
-        <a href="${escapeAttribute(link.href)}"><strong>${escapeHtml(link.label)}</strong></a>
-        <span>${escapeHtml(link.description)}</span>
-      </li>`,
-    )
-    .join("")}</ul>`;
+  return `<li><a href="${escapeAttribute(node.url)}"${node.url === currentUrl ? ' aria-current="page"' : ""}>${escapeHtml(String(node.name))}</a></li>`;
+}
+
+function renderEndpoint(endpoint: DocsPageData["endpoint"]): string {
+  if (!endpoint) {
+    return "";
+  }
+
+  return `<section class="endpoint" aria-label="Endpoint summary">
+    <p><span class="method">${endpoint.method}</span><code>${escapeHtml(endpoint.path)}</code></p>
+    <p><strong>Operation:</strong> <code>${escapeHtml(endpoint.operationId)}</code></p>
+    ${endpoint.parameters ? `<p><strong>Parameters:</strong></p><ul>${endpoint.parameters.map((parameter) => `<li>${formatInlineText(parameter)}</li>`).join("")}</ul>` : ""}
+    <p><strong>Responses:</strong></p>
+    <ul>${endpoint.responses.map((response) => `<li>${formatInlineText(response)}</li>`).join("")}</ul>
+  </section>`;
+}
+
+function renderMarkdown(markdown: string): string {
+  const blocks: string[] = [];
+  const lines = markdown.split("\n");
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const block = readMarkdownBlock(lines, index);
+
+    if (!block) {
+      continue;
+    }
+
+    blocks.push(block.html);
+    index = block.nextIndex;
+  }
+
+  return blocks.join("\n");
+}
+
+type MarkdownBlock = {
+  html: string;
+  nextIndex: number;
+};
+
+function readMarkdownBlock(
+  lines: string[],
+  index: number,
+): MarkdownBlock | undefined {
+  const line = lines[index] ?? "";
+
+  if (line.trim().length === 0) {
+    return undefined;
+  }
+
+  if (line.startsWith("```")) {
+    return readCodeBlock(lines, index);
+  }
+
+  if (line.startsWith("|")) {
+    return readTableBlock(lines, index);
+  }
+
+  if (line.startsWith("- ")) {
+    return readListBlock(lines, index, "ul", (value) => value.startsWith("- "));
+  }
+
+  if (/^\d+\. /.test(line)) {
+    return readListBlock(lines, index, "ol", (value) => /^\d+\. /.test(value));
+  }
+
+  const heading = /^(#{2,4})\s+(.+)$/.exec(line);
+  if (heading) {
+    const level = heading[1]?.length ?? 2;
+    return {
+      html: `<h${level}>${formatInlineText(heading[2] ?? "")}</h${level}>`,
+      nextIndex: index,
+    };
+  }
+
+  return {
+    html: `<p>${formatInlineText(line)}</p>`,
+    nextIndex: index,
+  };
+}
+
+function readCodeBlock(lines: string[], index: number): MarkdownBlock {
+  const language = (lines[index] ?? "").slice(3).trim();
+  const code: string[] = [];
+  let nextIndex = index + 1;
+
+  while (
+    nextIndex < lines.length &&
+    !(lines[nextIndex] ?? "").startsWith("```")
+  ) {
+    code.push(lines[nextIndex] ?? "");
+    nextIndex += 1;
+  }
+
+  return {
+    html: `<pre><code${language ? ` data-language="${escapeAttribute(language)}"` : ""}>${escapeHtml(code.join("\n"))}</code></pre>`,
+    nextIndex,
+  };
+}
+
+function readTableBlock(lines: string[], index: number): MarkdownBlock {
+  const tableLines = [lines[index] ?? ""];
+  let nextIndex = index;
+
+  while (
+    nextIndex + 1 < lines.length &&
+    (lines[nextIndex + 1] ?? "").startsWith("|")
+  ) {
+    nextIndex += 1;
+    tableLines.push(lines[nextIndex] ?? "");
+  }
+
+  return {
+    html: renderTable(tableLines),
+    nextIndex,
+  };
+}
+
+function readListBlock(
+  lines: string[],
+  index: number,
+  tagName: "ol" | "ul",
+  isListItem: (value: string) => boolean,
+): MarkdownBlock {
+  const items = [toListItemText(lines[index] ?? "")];
+  let nextIndex = index;
+
+  while (
+    nextIndex + 1 < lines.length &&
+    isListItem(lines[nextIndex + 1] ?? "")
+  ) {
+    nextIndex += 1;
+    items.push(toListItemText(lines[nextIndex] ?? ""));
+  }
+
+  return {
+    html: `<${tagName}>${items.map((item) => `<li>${formatInlineText(item)}</li>`).join("")}</${tagName}>`,
+    nextIndex,
+  };
+}
+
+function toListItemText(value: string): string {
+  return value.replace(/^(-|\d+\.) /, "");
 }
 
 function toLlmsEntry(page: FumadocsPage): string {
   const pageData = page.data as DocsPageData;
-  const body = pageData.blocks
-    .map((block) => {
-      if (block.type === "paragraph") {
-        return block.text;
-      }
+  const description = pageData.description ? `\n\n${pageData.description}` : "";
 
-      if (block.type === "list") {
-        return block.items.map((item) => `- ${item}`).join("\n");
-      }
-
-      return block.links
-        .map((link) => `- [${link.label}](${link.href}): ${link.description}`)
-        .join("\n");
-    })
-    .join("\n\n");
-
-  return `# ${pageData.title}\n\n${pageData.description}\n\n${body}`;
+  return `# ${pageData.title}${description}\n\n${pageData.markdown}`;
 }
 
 function toSlugs(pathname: string) {
@@ -264,7 +444,39 @@ function toSlugs(pathname: string) {
 }
 
 function formatInlineText(value: string): string {
-  return escapeHtml(value).replace(/`([^`]+)`/g, "<code>$1</code>");
+  return value
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label: string, href: string) => {
+      return `<a href="${escapeAttribute(href)}">${escapeHtml(label)}</a>`;
+    })
+    .split(/(<a [^>]+>.*?<\/a>)/g)
+    .map((part) => (part.startsWith("<a ") ? part : escapeHtml(part)))
+    .join("")
+    .replace(/`([^`]+)`/g, "<code>$1</code>");
+}
+
+function renderTable(lines: string[]): string {
+  const rows = lines
+    .filter((line) => !/^\|\s*-+/.test(line))
+    .map((line) =>
+      line
+        .split("|")
+        .slice(1, -1)
+        .map((cell) => cell.trim()),
+    );
+  const [header, ...body] = rows;
+
+  if (!header) {
+    return "";
+  }
+
+  return `<table><thead><tr>${header
+    .map((cell) => `<th>${formatInlineText(cell)}</th>`)
+    .join("")}</tr></thead><tbody>${body
+    .map(
+      (row) =>
+        `<tr>${row.map((cell) => `<td>${formatInlineText(cell)}</td>`).join("")}</tr>`,
+    )
+    .join("")}</tbody></table>`;
 }
 
 function escapeAttribute(value: string): string {

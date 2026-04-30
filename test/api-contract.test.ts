@@ -301,19 +301,33 @@ describe("v1 API contract", () => {
     const body = await response.text();
 
     expect(body).toContain("Rates API");
-    expect(body).toContain("Fumadocs Core");
-    expect(body).toContain("/openapi");
+    expect(body).toContain("Historical Time Series");
+    expect(body).toContain("/api-reference/endpoint/mortgage-rates/list");
   });
 
-  test("serves Fumadocs child documentation pages", async () => {
-    const response = await request("/cloudflare-worker");
+  test("serves mirrored API reference pages", async () => {
+    const response = await request(
+      "/api-reference/endpoint/mortgage-rates/time-series",
+    );
 
     expect(response.status).toBe(200);
 
     const body = await response.text();
 
-    expect(body).toContain("Cloudflare Worker support");
-    expect(body).toContain("headless loader API");
+    expect(body).toContain("Mortgage Rates Time Series");
+    expect(body).toContain("/api/v1/mortgage-rates/time-series");
+    expect(body).toContain("termInMonths");
+  });
+
+  test("serves mirrored open-source documentation pages", async () => {
+    const response = await request("/open-source/deployment");
+
+    expect(response.status).toBe(200);
+
+    const body = await response.text();
+
+    expect(body).toContain("Deploying to Cloudflare Workers");
+    expect(body).toContain("bun run deploy");
   });
 
   test("exposes docs content for LLM clients", async () => {
@@ -325,7 +339,8 @@ describe("v1 API contract", () => {
     const body = await response.text();
 
     expect(body).toContain("# Rates API");
-    expect(body).toContain("Cloudflare Worker support");
+    expect(body).toContain("List Car Loan Rates");
+    expect(body).toContain("Local Development Setup");
   });
 
   test("exposes OpenAPI UI and JSON without documenting MCP", async () => {
