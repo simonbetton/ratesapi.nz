@@ -301,6 +301,7 @@ describe("v1 API contract", () => {
     const body = await response.text();
 
     expect(body).toContain("Rates API");
+    expect(body).toContain("fumadocs-ui@");
     expect(body).toContain("Historical Time Series");
     expect(body).toContain("/api-reference/endpoint/mortgage-rates/list");
   });

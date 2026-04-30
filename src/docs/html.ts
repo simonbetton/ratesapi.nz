@@ -1,4 +1,17 @@
-import { type Node, type Root } from "fumadocs-core/page-tree";
+import { FrameworkProvider, type Router } from "fumadocs-core/framework";
+import type { Root } from "fumadocs-core/page-tree";
+import type { TOCItemType } from "fumadocs-core/toc";
+import { DocsLayout } from "fumadocs-ui/layouts/docs";
+import {
+  DocsBody,
+  DocsDescription,
+  DocsPage,
+  DocsTitle,
+} from "fumadocs-ui/layouts/docs/page";
+import fumadocsUiPackage from "fumadocs-ui/package.json";
+import { RootProvider } from "fumadocs-ui/provider/base";
+import { createElement, Fragment, type ReactNode } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { type DocsPageData, docsSource } from "./source";
 
 type FumadocsPage = NonNullable<ReturnType<typeof docsSource.getPage>>;
@@ -7,6 +20,32 @@ const htmlHeaders = {
   "content-type": "text/html; charset=utf-8",
   "cache-control": "public, max-age=300",
 };
+const fumadocsUiStylesheet = `https://cdn.jsdelivr.net/npm/fumadocs-ui@${fumadocsUiPackage.version}/dist/style.css`;
+const docsLayoutOverrides = `
+  .endpoint-summary {
+    margin-bottom: 2rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-fd-border);
+    background: var(--color-fd-card);
+    padding: 1rem;
+  }
+
+  .endpoint-summary p {
+    margin: 0.5rem 0;
+  }
+
+  .endpoint-method {
+    display: inline-block;
+    margin-right: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-fd-primary);
+    color: var(--color-fd-primary-foreground);
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+`;
 
 export function renderDocsRoute(pathname: string): Response | undefined {
   const slugs = toSlugs(pathname);
@@ -34,271 +73,149 @@ function renderDocsHtml(page: FumadocsPage, tree: Root): string {
   const pageData = page.data as DocsPageData;
   const description =
     pageData.description ?? pageData.markdown.split("\n")[0] ?? "";
+  const router: Router = {
+    push() {},
+    refresh() {},
+  };
+  const pageElement = createElement(
+    FrameworkProvider,
+    {
+      usePathname: () => page.url,
+      useParams: () => ({}),
+      useRouter: () => router,
+    },
+    createElement(
+      RootProvider,
+      {
+        search: { enabled: false },
+        theme: { enabled: false },
+      },
+      createElement(
+        DocsLayout,
+        {
+          tree,
+          nav: {
+            title: "Rates API",
+            url: "/",
+          },
+          githubUrl: "https://github.com/simonbetton/ratesapi.nz",
+          links: [
+            {
+              type: "main",
+              text: "OpenAPI",
+              url: "/openapi/json",
+            },
+          ],
+          searchToggle: { enabled: false },
+          themeSwitch: { enabled: false },
+        },
+        createElement(
+          DocsPage,
+          {
+            toc: extractTableOfContents(pageData.markdown),
+          },
+          createElement(DocsTitle, null, pageData.title),
+          createElement(DocsDescription, null, description),
+          createElement(
+            DocsBody,
+            null,
+            renderEndpoint(pageData.endpoint),
+            createElement("div", {
+              dangerouslySetInnerHTML: {
+                __html: renderMarkdown(pageData.markdown),
+              },
+            }),
+          ),
+        ),
+      ),
+    ),
+  );
 
-  return `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>${escapeHtml(pageData.title)} | Rates API</title>
-    <meta name="description" content="${escapeAttribute(description)}" />
-    <style>
-      :root {
-        color-scheme: light dark;
-        --bg: #f8fafc;
-        --panel: #ffffff;
-        --text: #0f172a;
-        --muted: #475569;
-        --border: #e2e8f0;
-        --accent: #2563eb;
-      }
+  const markup = renderToStaticMarkup(
+    createElement(
+      "html",
+      { lang: "en" },
+      createElement(
+        "head",
+        null,
+        createElement("meta", { charSet: "utf-8" }),
+        createElement("meta", {
+          name: "viewport",
+          content: "width=device-width, initial-scale=1",
+        }),
+        createElement("title", null, `${pageData.title} | Rates API`),
+        createElement("meta", {
+          name: "description",
+          content: description,
+        }),
+        createElement("link", {
+          rel: "stylesheet",
+          href: fumadocsUiStylesheet,
+        }),
+        createElement("style", {
+          dangerouslySetInnerHTML: { __html: docsLayoutOverrides },
+        }),
+      ),
+      createElement("body", null, pageElement),
+    ),
+  );
 
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #020617;
-          --panel: #0f172a;
-          --text: #e2e8f0;
-          --muted: #94a3b8;
-          --border: #1e293b;
-          --accent: #60a5fa;
-        }
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        background: var(--bg);
-        color: var(--text);
-        font-family:
-          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", sans-serif;
-        line-height: 1.6;
-      }
-
-      a {
-        color: var(--accent);
-        text-decoration: none;
-      }
-
-      a:hover {
-        text-decoration: underline;
-      }
-
-      .shell {
-        display: grid;
-        gap: 2rem;
-        grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr);
-        margin: 0 auto;
-        max-width: 86rem;
-        padding: 2rem;
-      }
-
-      nav,
-      main {
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 1rem;
-      }
-
-      nav {
-        align-self: start;
-        padding: 1rem;
-        position: sticky;
-        top: 2rem;
-      }
-
-      nav h2 {
-        font-size: 0.875rem;
-        letter-spacing: 0.08em;
-        margin: 0 0 1rem;
-        text-transform: uppercase;
-      }
-
-      nav ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      nav ul ul {
-        border-left: 1px solid var(--border);
-        margin-left: 0.75rem;
-        padding-left: 0.5rem;
-      }
-
-      nav a {
-        border-radius: 0.5rem;
-        color: var(--muted);
-        display: block;
-        padding: 0.5rem 0.75rem;
-      }
-
-      nav a[aria-current="page"] {
-        background: color-mix(in srgb, var(--accent) 12%, transparent);
-        color: var(--accent);
-        font-weight: 700;
-      }
-
-      .section-label {
-        color: var(--text);
-        display: block;
-        font-size: 0.8rem;
-        font-weight: 700;
-        margin: 0.75rem 0 0.25rem;
-        padding: 0.25rem 0.75rem;
-      }
-
-      main {
-        padding: clamp(1.5rem, 4vw, 3rem);
-      }
-
-      h1 {
-        font-size: clamp(2rem, 5vw, 4rem);
-        line-height: 1;
-        margin: 0;
-      }
-
-      .description {
-        color: var(--muted);
-        font-size: 1.125rem;
-        margin: 1rem 0 2rem;
-        max-width: 42rem;
-      }
-
-      .endpoint {
-        background: color-mix(in srgb, var(--accent) 8%, transparent);
-        border: 1px solid var(--border);
-        border-radius: 0.875rem;
-        margin: 0 0 2rem;
-        padding: 1rem 1.25rem;
-      }
-
-      .method {
-        background: var(--accent);
-        border-radius: 999px;
-        color: white;
-        display: inline-block;
-        font-size: 0.75rem;
-        font-weight: 800;
-        letter-spacing: 0.06em;
-        margin-right: 0.5rem;
-        padding: 0.2rem 0.55rem;
-      }
-
-      li {
-        color: var(--muted);
-      }
-
-      h2,
-      h3,
-      h4 {
-        line-height: 1.2;
-        margin: 2rem 0 0.75rem;
-      }
-
-      table {
-        border-collapse: collapse;
-        display: block;
-        margin: 1rem 0;
-        overflow-x: auto;
-        width: 100%;
-      }
-
-      th,
-      td {
-        border: 1px solid var(--border);
-        padding: 0.65rem 0.75rem;
-        text-align: left;
-      }
-
-      th {
-        background: color-mix(in srgb, var(--muted) 10%, transparent);
-        color: var(--text);
-      }
-
-      pre {
-        background: #0f172a;
-        border-radius: 0.875rem;
-        color: #e2e8f0;
-        overflow-x: auto;
-        padding: 1rem;
-      }
-
-      code {
-        background: color-mix(in srgb, var(--muted) 12%, transparent);
-        border-radius: 0.375rem;
-        padding: 0.1rem 0.35rem;
-      }
-
-      pre code {
-        background: transparent;
-        padding: 0;
-      }
-
-      @media (max-width: 760px) {
-        .shell {
-          grid-template-columns: 1fr;
-          padding: 1rem;
-        }
-
-        nav {
-          position: static;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="shell">
-      <nav aria-label="Documentation">
-        <h2>${escapeHtml(String(tree.name))}</h2>
-        ${renderNavigation(tree, page.url)}
-      </nav>
-      <main>
-        <h1>${escapeHtml(pageData.title)}</h1>
-        ${description ? `<p class="description">${formatInlineText(description)}</p>` : ""}
-        ${renderEndpoint(pageData.endpoint)}
-        ${renderMarkdown(pageData.markdown)}
-      </main>
-    </div>
-  </body>
-</html>`;
+  return `<!doctype html>${markup}`;
 }
 
-function renderNavigation(tree: Root, currentUrl: string): string {
-  return `<ul>${tree.children.map((node) => renderNavigationNode(node, currentUrl)).join("")}</ul>`;
-}
-
-function renderNavigationNode(node: Node, currentUrl: string): string {
-  if (node.type === "separator") {
-    return node.name
-      ? `<li><span class="section-label">${escapeHtml(String(node.name))}</span></li>`
-      : "";
-  }
-
-  if (node.type === "folder") {
-    return `<li><span class="section-label">${escapeHtml(String(node.name))}</span><ul>${node.children
-      .map((child) => renderNavigationNode(child, currentUrl))
-      .join("")}</ul></li>`;
-  }
-
-  return `<li><a href="${escapeAttribute(node.url)}"${node.url === currentUrl ? ' aria-current="page"' : ""}>${escapeHtml(String(node.name))}</a></li>`;
-}
-
-function renderEndpoint(endpoint: DocsPageData["endpoint"]): string {
+function renderEndpoint(endpoint: DocsPageData["endpoint"]): ReactNode {
   if (!endpoint) {
-    return "";
+    return null;
   }
 
-  return `<section class="endpoint" aria-label="Endpoint summary">
-    <p><span class="method">${endpoint.method}</span><code>${escapeHtml(endpoint.path)}</code></p>
-    <p><strong>Operation:</strong> <code>${escapeHtml(endpoint.operationId)}</code></p>
-    ${endpoint.parameters ? `<p><strong>Parameters:</strong></p><ul>${endpoint.parameters.map((parameter) => `<li>${formatInlineText(parameter)}</li>`).join("")}</ul>` : ""}
-    <p><strong>Responses:</strong></p>
-    <ul>${endpoint.responses.map((response) => `<li>${formatInlineText(response)}</li>`).join("")}</ul>
-  </section>`;
+  return createElement(
+    "section",
+    {
+      className: "endpoint-summary",
+      "aria-label": "Endpoint summary",
+    },
+    createElement(
+      "p",
+      null,
+      createElement("span", { className: "endpoint-method" }, endpoint.method),
+      createElement("code", null, endpoint.path),
+    ),
+    createElement(
+      "p",
+      null,
+      createElement("strong", null, "Operation:"),
+      " ",
+      createElement("code", null, endpoint.operationId),
+    ),
+    endpoint.parameters
+      ? createElement(
+          Fragment,
+          null,
+          createElement("p", null, createElement("strong", null, "Parameters:")),
+          createElement(
+            "ul",
+            null,
+            endpoint.parameters.map((parameter) =>
+              createElement("li", {
+                key: parameter,
+                dangerouslySetInnerHTML: { __html: formatInlineText(parameter) },
+              }),
+            ),
+          ),
+        )
+      : null,
+    createElement("p", null, createElement("strong", null, "Responses:")),
+    createElement(
+      "ul",
+      null,
+      endpoint.responses.map((response) =>
+        createElement("li", {
+          key: response,
+          dangerouslySetInnerHTML: { __html: formatInlineText(response) },
+        }),
+      ),
+    ),
+  );
 }
 
 function renderMarkdown(markdown: string): string {
@@ -441,6 +358,43 @@ function toSlugs(pathname: string) {
     .split("/")
     .filter((segment) => segment.length > 0)
     .map(decodeURIComponent);
+}
+
+function extractTableOfContents(markdown: string): TOCItemType[] {
+  return markdown
+    .split("\n")
+    .flatMap((line): TOCItemType[] => {
+      const heading = /^(#{2,4})\s+(.+)$/.exec(line);
+
+      if (!heading) {
+        return [];
+      }
+
+      const depth = heading[1]?.length ?? 2;
+      const title = stripInlineMarkdown(heading[2] ?? "");
+
+      return [
+        {
+          title,
+          url: `#${toHeadingId(title)}`,
+          depth,
+        },
+      ];
+    });
+}
+
+function stripInlineMarkdown(value: string): string {
+  return value
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/`([^`]+)`/g, "$1");
+}
+
+function toHeadingId(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
 }
 
 function formatInlineText(value: string): string {
