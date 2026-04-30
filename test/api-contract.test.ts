@@ -304,6 +304,9 @@ describe("v1 API contract", () => {
     expect(body).toContain("fumadocs-ui@");
     expect(body).toContain("Historical Time Series");
     expect(body).toContain("/api-reference/endpoint/mortgage-rates/list");
+    expect(body).toContain("rates-mobile-sidebar");
+    expect(body).toContain("data-docs-search-open");
+    expect(body).toContain("data-fumadocs-search-ui");
   });
 
   test("serves mirrored API reference pages", async () => {
@@ -342,6 +345,25 @@ describe("v1 API contract", () => {
     expect(body).toContain("# Introduction");
     expect(body).toContain("List Car Loan Rates");
     expect(body).toContain("# Local Development");
+  });
+
+  test("searches documentation content", async () => {
+    const response = await request(
+      "/api/search?query=mortgage%20time%20series",
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("application/json");
+
+    const body = await response.json();
+
+    expect(body).toContainEqual(
+      expect.objectContaining({
+        type: expect.stringMatching(/^(page|heading|text)$/),
+        url: "/api-reference/endpoint/mortgage-rates/time-series",
+        content: expect.stringContaining("Mortgage Rates Time Series"),
+      }),
+    );
   });
 
   test("exposes OpenAPI UI and JSON without documenting MCP", async () => {
