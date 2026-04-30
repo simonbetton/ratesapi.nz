@@ -292,6 +292,42 @@ describe("v1 API contract", () => {
     });
   });
 
+  test("serves Fumadocs documentation from the root route", async () => {
+    const response = await request("/");
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/html");
+
+    const body = await response.text();
+
+    expect(body).toContain("Rates API");
+    expect(body).toContain("Fumadocs Core");
+    expect(body).toContain("/openapi");
+  });
+
+  test("serves Fumadocs child documentation pages", async () => {
+    const response = await request("/cloudflare-worker");
+
+    expect(response.status).toBe(200);
+
+    const body = await response.text();
+
+    expect(body).toContain("Cloudflare Worker support");
+    expect(body).toContain("headless loader API");
+  });
+
+  test("exposes docs content for LLM clients", async () => {
+    const response = await request("/llms.txt");
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/plain");
+
+    const body = await response.text();
+
+    expect(body).toContain("# Rates API");
+    expect(body).toContain("Cloudflare Worker support");
+  });
+
   test("exposes OpenAPI UI and JSON without documenting MCP", async () => {
     const uiResponse = await request("/openapi");
     expect(uiResponse.status).toBe(200);

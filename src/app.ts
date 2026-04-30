@@ -1,6 +1,7 @@
 import { openapi, toOpenAPISchema } from "@elysia/openapi";
 import { cors } from "@elysiajs/cors";
 import { Elysia, type ElysiaAdapter } from "elysia";
+import { renderDocsRoute, renderLlmsTxt } from "./docs/html";
 import { createLogger } from "./lib/logging";
 import { type GetEnv } from "./lib/routing";
 import {
@@ -146,15 +147,23 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
         },
       },
     )
-    .get("/", ({ request }) => {
-      const environment: string | undefined = getEnv().ENVIRONMENT ?? undefined;
-
-      if (environment === "production") {
-        return Response.redirect("https://docs.ratesapi.nz", 302);
-      }
-
-      return Response.redirect(new URL("/openapi", request.url), 302);
-    });
+    .get("/llms.txt", renderLlmsTxt)
+    .get(
+      "/",
+      () => renderDocsRoute("/") ?? new Response("Not found", { status: 404 }),
+    )
+    .get(
+      "/api-reference",
+      () =>
+        renderDocsRoute("/api-reference") ??
+        new Response("Not found", { status: 404 }),
+    )
+    .get(
+      "/cloudflare-worker",
+      () =>
+        renderDocsRoute("/cloudflare-worker") ??
+        new Response("Not found", { status: 404 }),
+    );
 
   return app;
 }
