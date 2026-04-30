@@ -1,0 +1,59 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": [
+    "src/index.ts",
+    "bin/scrape-car-loan-rates.ts",
+    "bin/scrape-credit-card-rates.ts",
+    "bin/scrape-mortgage-rates.ts",
+    "bin/scrape-personal-loan-rates.ts",
+    "bin/uptime-check.ts"
+  ],
+  "ignorePatterns": [
+    "node_modules/**",
+    "dist/**",
+    ".wrangler/**",
+    ".fallow/**",
+    ".agents/**",
+    ".claude/**",
+    ".cursor/**",
+    "tsconfig.tsbuildinfo",
+    "**/*.d.ts"
+  ],
+  "ignoreDependencies": ["pino-pretty"],
+  "ignoreExportsUsedInFile": true,
+  "rules": {
+    "unused-files": "warn",
+    "unused-exports": "warn",
+    "unused-types": "warn",
+    "private-type-leaks": "warn",
+    "unused-dependencies": "warn",
+    "unused-dev-dependencies": "warn",
+    "unused-optional-dependencies": "warn",
+    "unused-enum-members": "warn",
+    "unused-class-members": "warn",
+    "unresolved-imports": "error",
+    "unlisted-dependencies": "error",
+    "duplicate-exports": "warn",
+    "circular-dependencies": "error",
+    "boundary-violation": "error",
+    "type-only-dependencies": "warn",
+    "test-only-dependencies": "warn",
+    "coverage-gaps": "off",
+    "stale-suppressions": "warn"
+  },
+  "duplicates": {
+    "enabled": true,
+    "mode": "mild",
+    "minTokens": 80,
+    "minLines": 8,
+    "threshold": 0,
+    "ignoreImports": true
+  },
+  "health": {
+    "maxCyclomatic": 20,
+    "maxCognitive": 15,
+    "maxCrap": 200,
+    "suggestInlineSuppression": true
+  },
+  "production": false
+}

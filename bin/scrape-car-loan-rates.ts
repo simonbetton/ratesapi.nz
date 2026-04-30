@@ -1,10 +1,12 @@
-import { load, type CheerioAPI } from "cheerio";
+import { type CheerioAPI, load } from "cheerio";
 import { type Element } from "domhandler";
 import ora from "ora";
 import { generateId } from "../src/lib/generate-id";
 import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
 import { isTruthy } from "../src/lib/is-truthy";
 import { createLogger } from "../src/lib/logging";
+import { parseSchema } from "../src/lib/schema";
+import { toTitleFormat } from "../src/lib/transforms";
 import {
   CarLoanRates,
   type Institution,
@@ -37,7 +39,7 @@ async function main() {
   let currentRates: CarLoanRates | null = null;
   const loading = ora("Loading current data from D1").start();
   try {
-    currentRates = await loadFromD1<CarLoanRates>("car-loan-rates");
+    currentRates = await loadFromD1("car-loan-rates", CarLoanRates);
     loading.succeed("Loaded current data").stop();
   } catch (error) {
     loading.fail("Failed to load current data").stop();
@@ -67,12 +69,15 @@ async function main() {
   try {
     const $ = load(data);
     const unvalidatedData = getModelExtractedFromDOM($);
-    validatedModel = CarLoanRates.parse({
+    validatedModel = parseSchema(CarLoanRates, {
       type: "CarLoanRates",
       data: unvalidatedData,
       lastUpdated: new Date().toISOString(),
-    }) as CarLoanRates;
-    handle.succeed(`Extracted and Validated ${validatedModel.data.length} results`).stop();  } catch (error) {
+    });
+    handle
+      .succeed(`Extracted and Validated ${validatedModel.data.length} results`)
+      .stop();
+  } catch (error) {
     handle.fail("Failed to extract and/or validate").stop();
     log.error({ error }, "Failed to extract and/or validate");
     throw error;
@@ -91,7 +96,9 @@ async function main() {
     // Save to D1 database
     const saved = await saveToD1(validatedModel, "car-loan-rates");
 
-    saveDb.succeed(saved ? "Data saved to D1 database" : "Failed to save to D1").stop();
+    saveDb
+      .succeed(saved ? "Data saved to D1 database" : "Failed to save to D1")
+      .stop();
   } catch (error) {
     saveDb.fail("Failed to save data").stop();
     log.error({ error }, "Failed to save data");
@@ -175,8 +182,8 @@ function asRate(
 ): Rate {
   return {
     id: generateId(["rate", institution.name, productName, plan, condition]),
-    plan: plan || null,
-    condition: condition || null,
+    plan: toTitleFormat(plan) || null,
+    condition: toTitleFormat(condition) || null,
     rate: parseFloat(rate),
   };
 }
@@ -190,7 +197,7 @@ function getInstitutionName($: CheerioAPI, cell: Element): string {
 }
 
 function getProductName($: CheerioAPI, cells: Element[]): string {
-  return normalizeProductName($(cells[1]).text().trim());
+  return toTitleFormat(normalizeProductName($(cells[1]).text().trim())) ?? "";
 }
 
 function normalizeProductName(name: string) {

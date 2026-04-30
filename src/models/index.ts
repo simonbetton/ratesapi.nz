@@ -8,3 +8,4 @@ export { PersonalLoanRates } from "./personal-loan-rates";
 export { Plan } from "./plan";
 export { Product } from "./product";
 export { Rate } from "./rate";
+export * from "./responses";

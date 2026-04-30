@@ -22,3 +22,4 @@ CREATE TABLE IF NOT EXISTS latest_data (
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_historical_data_type ON historical_data(data_type);
 CREATE INDEX IF NOT EXISTS idx_historical_date ON historical_data(date);
+CREATE INDEX IF NOT EXISTS idx_historical_data_type_date ON historical_data(data_type, date);

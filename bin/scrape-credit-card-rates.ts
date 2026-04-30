@@ -1,9 +1,10 @@
-/* eslint-disable no-console */
-import { load, type CheerioAPI } from "cheerio";
+import { type CheerioAPI, load } from "cheerio";
 import { type Element } from "domhandler";
 import ora from "ora";
 import { generateId } from "../src/lib/generate-id";
 import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
+import { parseSchema } from "../src/lib/schema";
+import { toTitleFormat } from "../src/lib/transforms";
 import { CreditCardRates, type Issuer, type Plan } from "../src/models";
 import { hasDataChanged, loadFromD1, saveToD1 } from "./utils";
 
@@ -34,7 +35,7 @@ async function main() {
   let currentRates: CreditCardRates | null = null;
   const loading = ora("Loading current data from D1").start();
   try {
-    currentRates = await loadFromD1<CreditCardRates>("credit-card-rates");
+    currentRates = await loadFromD1("credit-card-rates", CreditCardRates);
     loading.succeed("Loaded current data").stop();
   } catch (error) {
     loading.fail("Failed to load current data").stop();
@@ -64,12 +65,15 @@ async function main() {
   try {
     const $ = load(data);
     const unvalidatedData = getModelExtractedFromDOM($);
-    validatedModel = CreditCardRates.parse({
+    validatedModel = parseSchema(CreditCardRates, {
       type: "CreditCardRates",
       data: unvalidatedData,
       lastUpdated: new Date().toISOString(),
-    }) as CreditCardRates;
-    handle.succeed(`Extracted and Validated ${validatedModel.data.length} results`).stop();  } catch (error) {
+    });
+    handle
+      .succeed(`Extracted and Validated ${validatedModel.data.length} results`)
+      .stop();
+  } catch (error) {
     handle.fail("Failed to extract and/or validate").stop();
     console.error("Failed to extract and/or validate", error);
     throw error;
@@ -88,7 +92,9 @@ async function main() {
     // Save to D1 database
     const saved = await saveToD1(validatedModel, "credit-card-rates");
 
-    saveDb.succeed(saved ? "Data saved to D1 database" : "Failed to save to D1").stop();
+    saveDb
+      .succeed(saved ? "Data saved to D1 database" : "Failed to save to D1")
+      .stop();
   } catch (error) {
     saveDb.fail("Failed to save data").stop();
     console.error("Failed to save data", error);
@@ -123,16 +129,17 @@ function addPlanTo(issuer: Issuer, $: CheerioAPI, cells: Element[]) {
     parseFloat($(cells[2]).text().trim()) || null;
   const primaryFeeNZD = parseFloat($(cells[3]).text().trim()) || null;
   const balanceTransferRate = parseFloat($(cells[4]).text().trim()) || null;
-  const balanceTransferPeriod =
+  const balanceTransferPeriod = toTitleFormat(
     String($(cells[5]).text().trim())
       .replace("mths", "months")
-      .replace("bal tsfrd", "balance transferred") || null;
+      .replace("bal tsfrd", "balance transferred") || null,
+  );
   const cashAdvanceRate = parseFloat($(cells[6]).text().trim()) || null;
   const purchaseRate = parseFloat($(cells[7]).text().trim()) || null;
 
   const plan: Plan = {
     id: generateId(["plan", issuer.name, productName]),
-    name: productName,
+    name: toTitleFormat(productName) ?? "",
     interestFreePeriodInMonths,
     primaryFeeNZD,
     balanceTransferRate,

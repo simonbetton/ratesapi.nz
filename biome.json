@@ -1,0 +1,53 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.13/schema.json",
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "files": { "ignoreUnknown": true },
+  "formatter": { "enabled": true, "indentStyle": "space", "indentWidth": 2 },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "complexity": { "noExcessiveCognitiveComplexity": "error" },
+      "style": {
+        "noDefaultExport": "error",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              ".": "Import from the specific module instead.",
+              "./index": "Import from the specific module instead."
+            }
+          }
+        },
+        "noUselessElse": "error",
+        "useBlockStatements": "error",
+        "useImportType": {
+          "level": "error",
+          "options": { "style": "inlineType" }
+        },
+        "useThrowOnlyError": "error"
+      },
+      "suspicious": { "noConsole": "warn" }
+    }
+  },
+  "javascript": { "formatter": { "quoteStyle": "double" } },
+  "assist": {
+    "enabled": true,
+    "actions": { "source": { "organizeImports": "on" } }
+  },
+  "overrides": [
+    {
+      "includes": ["bin/**/*.ts"],
+      "linter": { "rules": { "suspicious": { "noConsole": "off" } } }
+    },
+    {
+      "includes": ["src/index.ts"],
+      "linter": {
+        "rules": {
+          "style": { "noDefaultExport": "off" },
+          "suspicious": { "noConsole": "off" }
+        }
+      }
+    }
+  ]
+}

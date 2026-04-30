@@ -27,10 +27,20 @@
 ## Development Environment
 
 - TypeScript for type safety
-- ESLint and Prettier for code quality
+- Biome for formatting and linting
 - Husky for Git hooks
 - Wrangler for local development and deployment to Cloudflare
 - D1 database for persistent data storage
+
+## Quality Checks
+
+Run the same checks used by CI before deploying:
+
+```zsh
+bun run check
+```
+
+This runs Biome, TypeScript, and the Bun test suite.
 
 ## Database Structure
 

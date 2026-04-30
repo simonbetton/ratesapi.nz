@@ -1,19 +1,17 @@
-import { z } from "@hono/zod-openapi";
+import { t } from "elysia";
 import { Issuer } from "./issuer";
-import { type Plan } from "./plan";
 
-export const CreditCardRates = z
-  .object({
-    type: z.literal("CreditCardRates"),
-    data: z.array(Issuer).openapi("CarLoanRates"),
-    lastUpdated: z.string().openapi({
+export const CreditCardRates = t.Object(
+  {
+    type: t.Literal("CreditCardRates"),
+    data: t.Array(Issuer, {
+      title: "CreditCardRates",
+    }),
+    lastUpdated: t.String({
       example: "2021-08-01T00:00:00.000Z",
     }),
-  })
-  .strict();
+  },
+  { additionalProperties: false },
+);
 
-export type CreditCardRates = {
-  data: (Issuer & {
-    plans: Plan[];
-  })[];
-};
+export type CreditCardRates = typeof CreditCardRates.static;

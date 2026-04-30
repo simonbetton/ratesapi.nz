@@ -1,55 +1,66 @@
-import { z } from "@hono/zod-openapi";
-import { Institution as InstitutionSchema } from "./institution";
-import { Product as ProductSchema } from "./product";
-import { type RateId, Rate as RateSchema } from "./rate";
+import { t } from "elysia";
+import { RateSchema } from "./rate";
 
-export const PersonalLoanRates = z
-  .object({
-    type: z.literal("PersonalLoanRates"),
-    data: z
-      .array(
-        InstitutionSchema.extend({
-          products: z.array(
-            ProductSchema.extend({
-              rates: z.array(
-                RateSchema.extend({
-                  plan: z
-                    .string()
-                    .nullable()
-                    .openapi({
-                      examples: ["Secured"],
-                    }),
-                  condition: z
-                    .string()
-                    .nullable()
-                    .openapi({
-                      examples: ["$3,000 to $50,000"],
-                    }),
-                }),
-              ),
-            }),
-          ),
-        }),
-      )
-      .openapi("PersonalLoanRates"),
-    lastUpdated: z.string().openapi({
+const PersonalLoanRate = t.Object(
+  {
+    ...RateSchema.properties,
+    plan: t.Nullable(
+      t.String({
+        examples: ["Secured"],
+      }),
+    ),
+    condition: t.Nullable(
+      t.String({
+        examples: ["$3,000 to $50,000"],
+      }),
+    ),
+  },
+  { additionalProperties: false },
+);
+
+const PersonalLoanProduct = t.Object(
+  {
+    id: t.String({
+      pattern: "^product:",
+      examples: ["product:asb:personal-loan"],
+    }),
+    name: t.String({
+      examples: ["Personal Loan"],
+    }),
+    rates: t.Array(PersonalLoanRate),
+  },
+  { additionalProperties: false },
+);
+
+const PersonalLoanInstitution = t.Object(
+  {
+    id: t.String({
+      pattern: "^institution:",
+      examples: ["institution:asb"],
+    }),
+    name: t.String({
+      examples: ["ANZ", "Kiwibank", "Westpac"],
+    }),
+    products: t.Array(PersonalLoanProduct),
+  },
+  { additionalProperties: false },
+);
+
+export const PersonalLoanRates = t.Object(
+  {
+    type: t.Literal("PersonalLoanRates"),
+    data: t.Array(PersonalLoanInstitution, {
+      title: "PersonalLoanRates",
+    }),
+    lastUpdated: t.String({
       example: "2021-08-01T00:00:00.000Z",
     }),
-  })
-  .strict();
+  },
+  { additionalProperties: false },
+);
 
-export type Rate = z.infer<
-  typeof PersonalLoanRates
->["data"][number]["products"][number]["rates"][number] & {
-  id: RateId;
-};
+export type Rate = typeof PersonalLoanRate.static;
 
-export type PersonalLoanRates = {
-  data: (InstitutionSchema & {
-    products: (ProductSchema & {
-      rates: Rate[];
-    })[];
-  })[];
-};
+export type PersonalLoanRates = typeof PersonalLoanRates.static;
 export type Institution = PersonalLoanRates["data"][number];
 export type Product = PersonalLoanRates["data"][number]["products"][number];

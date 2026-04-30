@@ -1,58 +1,66 @@
-import { z } from "@hono/zod-openapi";
-import { toTitleFormat } from "../lib/transforms";
-import { Institution as InstitutionSchema } from "./institution";
-import { Product as ProductSchema } from "./product";
-import { Rate as RateSchema, type RateId } from "./rate";
+import { t } from "elysia";
+import { RateSchema } from "./rate";
 
-export const CarLoanRates = z
-  .object({
-    type: z.literal("CarLoanRates"),
-    data: z
-      .array(
-        InstitutionSchema.extend({
-          products: z.array(
-            ProductSchema.extend({
-              rates: z.array(
-                RateSchema.extend({
-                  plan: z
-                    .string()
-                    .transform(toTitleFormat)
-                    .nullable()
-                    .openapi({
-                      examples: ["Secured"],
-                    }),
-                  condition: z
-                    .string()
-                    .transform(toTitleFormat)
-                    .nullable()
-                    .openapi({
-                      examples: ["$3,000 to $50,000"],
-                    }),
-                }),
-              ),
-            }),
-          ),
-        }),
-      )
-      .openapi("CarLoanRates"),
-    lastUpdated: z.string().openapi({
+const CarLoanRate = t.Object(
+  {
+    ...RateSchema.properties,
+    plan: t.Nullable(
+      t.String({
+        examples: ["Secured"],
+      }),
+    ),
+    condition: t.Nullable(
+      t.String({
+        examples: ["$3,000 to $50,000"],
+      }),
+    ),
+  },
+  { additionalProperties: false },
+);
+
+const CarLoanProduct = t.Object(
+  {
+    id: t.String({
+      pattern: "^product:",
+      examples: ["product:asb:car-loan"],
+    }),
+    name: t.String({
+      examples: ["Car Loan"],
+    }),
+    rates: t.Array(CarLoanRate),
+  },
+  { additionalProperties: false },
+);
+
+const CarLoanInstitution = t.Object(
+  {
+    id: t.String({
+      pattern: "^institution:",
+      examples: ["institution:asb"],
+    }),
+    name: t.String({
+      examples: ["ANZ", "Kiwibank", "Westpac"],
+    }),
+    products: t.Array(CarLoanProduct),
+  },
+  { additionalProperties: false },
+);
+
+export const CarLoanRates = t.Object(
+  {
+    type: t.Literal("CarLoanRates"),
+    data: t.Array(CarLoanInstitution, {
+      title: "CarLoanRates",
+    }),
+    lastUpdated: t.String({
       example: "2021-08-01T00:00:00.000Z",
     }),
-  })
-  .strict();
+  },
+  { additionalProperties: false },
+);
 
-export type Rate = z.infer<
-  typeof CarLoanRates
->["data"][number]["products"][number]["rates"][number] & {
-  id: RateId;
-};
+export type Rate = typeof CarLoanRate.static;
 
-export type CarLoanRates = {
-  data: (InstitutionSchema & {
-    products: (ProductSchema & {
-      rates: Rate[];
-    })[];
-  })[];
-};
+export type CarLoanRates = typeof CarLoanRates.static;
 export type Institution = CarLoanRates["data"][number];
 export type Product = CarLoanRates["data"][number]["products"][number];

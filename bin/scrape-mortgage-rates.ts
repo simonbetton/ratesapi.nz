@@ -1,13 +1,14 @@
-/* eslint-disable no-console */
-import { load, type CheerioAPI } from "cheerio";
+import { type CheerioAPI, load } from "cheerio";
 import { type Element } from "domhandler";
 import ora from "ora";
 import { generateId } from "../src/lib/generate-id";
 import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
+import { parseSchema } from "../src/lib/schema";
+import { toTitleFormat } from "../src/lib/transforms";
 import {
-  MortgageRates,
-  isRateTerm,
   type Institution,
+  isRateTerm,
+  MortgageRates,
   type Product,
   type Rate,
   type RateTerm,
@@ -46,7 +47,7 @@ async function main() {
   let currentRates: MortgageRates | null = null;
   const loading = ora("Loading current data from D1").start();
   try {
-    currentRates = await loadFromD1<MortgageRates>("mortgage-rates");
+    currentRates = await loadFromD1("mortgage-rates", MortgageRates);
     loading.succeed("Loaded current data").stop();
   } catch (error) {
     loading.fail("Failed to load current data").stop();
@@ -76,12 +77,14 @@ async function main() {
   try {
     const $ = load(data);
     const unvalidatedData = getModelExtractedFromDOM($);
-    validatedModel = MortgageRates.parse({
+    validatedModel = parseSchema(MortgageRates, {
       type: "MortgageRates",
       data: unvalidatedData,
       lastUpdated: new Date().toISOString(),
-    }) as MortgageRates;
-    handle.succeed(`Extracted and Validated ${validatedModel.data.length} results`).stop();
+    });
+    handle
+      .succeed(`Extracted and Validated ${validatedModel.data.length} results`)
+      .stop();
   } catch (error) {
     handle.fail("Failed to extract and/or validate").stop();
     console.error("Failed to extract and/or validate", error);
@@ -101,7 +104,9 @@ async function main() {
     // Save to D1 database
     const saved = await saveToD1(validatedModel, "mortgage-rates");
 
-    saveDb.succeed(saved ? "Data saved to D1 database" : "Failed to save to D1").stop();
+    saveDb
+      .succeed(saved ? "Data saved to D1 database" : "Failed to save to D1")
+      .stop();
   } catch (error) {
     saveDb.fail("Failed to save data").stop();
     console.error("Failed to save data", error);
@@ -216,7 +221,7 @@ function getInstitutionName($: CheerioAPI, cell: Element): string {
 }
 
 function getProductName($: CheerioAPI, cells: Element[]): string {
-  return normalizeProductName($(cells[1]).text().trim());
+  return toTitleFormat(normalizeProductName($(cells[1]).text().trim())) ?? "";
 }
 
 function getSpecialRate(text: string): { term: string; rate: string } | null {
@@ -244,12 +249,12 @@ function convertTermToMonthsNumber(term: RateTerm): number | null {
   // If term has "months" in it, parse the number of months
   const matches = term.match(/(\d+) months?/);
   if (matches && matches.length === 2 && matches[1]) {
-    return parseInt(matches[1]);
+    return parseInt(matches[1], 10);
   }
   // If term has "year" in it, parse the number of years
   const matchesYears = term.match(/(\d+) years?/);
   if (matchesYears && matchesYears.length === 2 && matchesYears[1]) {
-    return parseInt(matchesYears[1]) * 12;
+    return parseInt(matchesYears[1], 10) * 12;
   }
   return null;
 }
