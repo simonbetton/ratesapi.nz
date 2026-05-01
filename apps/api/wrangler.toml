@@ -3,6 +3,18 @@ main = "src/index.ts"
 compatibility_date = "2025-06-01"
 compatibility_flags = ["nodejs_compat"]
 
+[[routes]]
+pattern = "ratesapi.nz/api/v1/*"
+zone_name = "ratesapi.nz"
+
+[[routes]]
+pattern = "ratesapi.nz/openapi"
+zone_name = "ratesapi.nz"
+
+[[routes]]
+pattern = "ratesapi.nz/openapi/*"
+zone_name = "ratesapi.nz"
+
 [vars]
 ENVIRONMENT = "production"
 

@@ -7,6 +7,7 @@
     "db:seed:local": "bun run apps/api/bin/seed-local-d1.ts",
     "deploy": "wrangler deploy --config apps/api/wrangler.toml --minify",
     "deploy:docs": "bun run --cwd apps/docs deploy",
+    "deploy:docs:dry-run": "wrangler deploy --config apps/docs/wrangler.toml --dry-run",
     "deploy:dry-run": "wrangler deploy --config apps/api/wrangler.toml --dry-run --env=\"\" --minify",
     "scrape:all:local": "D1_DATABASE_NAME=\"ratesapi-data\" D1_LOCAL=\"true\" bun run scrape:all",
     "build:docs": "bun run --cwd apps/docs source && bun run --cwd apps/docs build:cloudflare",
