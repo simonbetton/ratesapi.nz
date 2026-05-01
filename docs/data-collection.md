@@ -53,13 +53,15 @@ npx wrangler d1 execute DATABASE_NAME --config apps/api/wrangler.toml --file=./a
 D1_DATABASE_NAME="your-database-name" bun run apps/api/bin/scrape-mortgage-rates.ts
 ```
 
-By default, `bun run dev` uses the remote D1 binding so local API requests have
-current data. For fully local/offline API development, initialize the local D1
-database and seed it with scraper output:
+By default, `bun run dev` runs Wrangler in remote mode so local API requests have
+current data from Cloudflare D1. For fully local/offline API development,
+initialize the local D1 database, seed it with scraper output, then start the
+local-only dev server:
 
 ```bash
 bun run db:init:local
 D1_DATABASE_NAME="ratesapi-data" D1_LOCAL="true" bun run scrape:all
+bun run dev:api:local
 ```
 
 This is useful for initial seeding of a new database or manual updates when needed.
@@ -67,9 +69,9 @@ This is useful for initial seeding of a new database or manual updates when need
 ## Local Development vs. GitHub Actions
 
 - **Local Development**:
-  - `bun run dev` uses the remote D1 binding configured in `apps/api/wrangler.toml`
+  - `bun run dev` runs Wrangler in remote mode so it can read the populated Cloudflare D1 database
   - Scripts display scraped data but don't store it without D1_DATABASE_NAME
-  - Set `D1_DATABASE_NAME="ratesapi-data"` and `D1_LOCAL="true"` to write to the same local D1 database used by `bun run dev`
+  - Set `D1_DATABASE_NAME="ratesapi-data"` and `D1_LOCAL="true"` to seed the local D1 database used by `bun run dev:api:local`
 
 - **GitHub Actions (CI Environment)**:
   - D1 database is used as the exclusive data source 

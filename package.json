@@ -1,12 +1,14 @@
 {
   "scripts": {
-    "dev": "wrangler dev --config apps/api/wrangler.toml --env development",
+    "dev": "wrangler dev --config apps/api/wrangler.toml --env development --remote",
+    "dev:api:local": "wrangler dev --config apps/api/wrangler.toml --env development --local",
     "dev:docs": "bun run --cwd apps/docs dev",
     "deploy": "wrangler deploy --config apps/api/wrangler.toml --minify",
     "deploy:docs": "bun run --cwd apps/docs deploy",
     "deploy:dry-run": "wrangler deploy --config apps/api/wrangler.toml --dry-run --env=\"\" --minify",
     "build:docs": "bun run --cwd apps/docs build:cloudflare",
     "db:init:local": "bun run apps/api/bin/init-local-d1.ts",
+    "scrape:all:local": "D1_DATABASE_NAME=\"ratesapi-data\" D1_LOCAL=\"true\" bun run scrape:all",
     "typecheck:docs": "tsc -p apps/docs/tsconfig.json --noEmit",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",

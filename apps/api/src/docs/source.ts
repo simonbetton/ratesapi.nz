@@ -541,8 +541,8 @@ The project uses Cloudflare D1, a serverless SQL database built on SQLite, for c
 
 ### Local Development with D1
 
-\`bun run dev\` uses the remote D1 binding for the development environment, so
-local API requests have current data by default.
+\`bun run dev\` runs Wrangler with \`--remote\`, so local API requests have current
+data by default.
 
 For offline local D1 development, apply the schema and seed data first:
 

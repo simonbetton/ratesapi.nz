@@ -39,12 +39,15 @@ database_id = "your-database-id-here"
 npx wrangler d1 execute ratesapi-data --config apps/api/wrangler.toml --remote --file=apps/api/schema.sql
 ```
 
-By default, `bun run dev` uses the remote development D1 binding so local API requests have current data.
-If you want an offline Miniflare database instead, initialise the local database and seed it:
+By default, `bun run dev` uses Wrangler's remote dev mode so local API
+requests have current D1 data.
+If you want an offline Miniflare database instead, initialise the local database,
+seed it, and run the local-only dev command:
 
 ```zsh
 bun run db:init:local
 bun run scrape:all:local
+bun run dev:local
 ```
 
 ## 🚀 Deploy to Cloudflare Workers
