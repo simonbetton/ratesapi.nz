@@ -3,15 +3,14 @@ title: "Local Development"
 description: "Set up a local development environment for Rates API and start contributing to the project."
 ---
 
-
-
-This guide will help you set up a local development environment for Rates API, allowing you to make changes, test new features, and contribute to the project.
+This project is a small monorepo with separate API and docs apps. The root scripts are the normal entry point for local work.
 
 ## Prerequisites
 
 - [Bun](https://bun.sh/): The JavaScript runtime and package manager used by the project
 - Git: For version control
 - A text editor or IDE such as VS Code or WebStorm
+- A Cloudflare account if you need remote D1 access or deployment
 
 ## Getting Started
 
@@ -28,13 +27,31 @@ cd ratesapi.nz
 bun i
 ```
 
-### 3. Run the Development Server
+### 3. Run the API Worker
 
 ```bash
 bun run dev
 ```
 
-This starts the server at `http://localhost:8787`.
+This starts Wrangler for the API Worker at `http://localhost:8787` and uses the configured development environment.
+
+### 4. Run the Docs App
+
+```bash
+bun run dev:docs
+```
+
+The docs app runs with Next.js. The docs content comes from MDX files under `apps/docs/content/docs`.
+
+## Local D1 Modes
+
+The default API development command is configured for remote development data. Use the explicit local path when you need an offline Miniflare D1 database:
+
+```bash
+bun run dev:api:local
+```
+
+That command initializes and seeds the local D1 database before starting Wrangler.
 
 ## Scraping Data
 
@@ -51,23 +68,31 @@ Available scraper scripts:
 - `scrape-car-loan-rates.ts`: Fetches car loan rates
 - `scrape-credit-card-rates.ts`: Fetches credit card rates
 
-## Cloudflare D1 Database
-
-The project uses Cloudflare D1, a serverless SQL database built on SQLite, for current and historical rate data.
-
-### Local Development with D1
+To run all scrapers against local D1:
 
 ```bash
-# Install Wrangler CLI if not already installed
-npm install -g wrangler
-
-# Create a local D1 database
-wrangler d1 create ratesapi-data-local
+bun run scrape:all:local
 ```
 
-## Development Tips
+## Checks
 
-- Add a new endpoint: Create a new route handler in `apps/api/src/routes/`
-- Update data models: Modify schemas in `apps/api/src/models/`
-- Enhance scrapers: Modify the scraper scripts in `apps/api/bin/`
-- Before submitting changes, test affected endpoints locally and ensure the project builds without errors
+Run the full local verification suite before opening a pull request:
+
+```bash
+bun run check
+```
+
+For docs-only type checking:
+
+```bash
+bun run typecheck:docs
+```
+
+## Common Workflows
+
+| Task | Files to start with |
+| --- | --- |
+| Add an endpoint | `apps/api/src/routes/`, `apps/api/src/models/`, `test/api-contract.test.ts` |
+| Update docs content | `apps/docs/content/docs/` |
+| Update scraper behavior | `apps/api/bin/` and `apps/api/src/lib/schema.ts` |
+| Change deployment | `apps/api/wrangler.toml`, `apps/docs/wrangler.toml`, `.github/workflows/` |

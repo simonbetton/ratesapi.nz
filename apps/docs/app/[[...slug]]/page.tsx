@@ -52,7 +52,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${page.data.title} | Rates API`,
+    title: page.data.title,
     description: page.data.description,
   };
 }

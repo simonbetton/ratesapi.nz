@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     template: "%s | Rates API",
   },
   description:
-    "Rates API documentation for New Zealand lending rates, time series endpoints, and open-source deployment.",
+    "AI-ready Rates API documentation for New Zealand lending rates, MCP, OpenAPI, time series endpoints, and open-source deployment.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

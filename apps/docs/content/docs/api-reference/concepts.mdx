@@ -1,0 +1,80 @@
+---
+title: "Core Concepts"
+description: "Understand identifiers, dates, data freshness, errors, CORS, OpenAPI behavior, and AI integration surfaces."
+---
+
+## Data Freshness
+
+Rates API stores the latest scraped dataset and historical snapshots in Cloudflare D1. The scheduled scraping workflow runs hourly. The `/api/v1/health` endpoint reports the latest available timestamp for each dataset.
+
+```bash
+curl https://ratesapi.nz/api/v1/health
+```
+
+## Identifiers
+
+Use IDs returned by list endpoints when calling detail or time-series endpoints.
+
+| Identifier | Used by | Example |
+| --- | --- | --- |
+| `institutionId` | Mortgage, personal loan, and car loan endpoints | `institution:anz` |
+| `issuerId` | Credit card endpoints | `issuer:amex` |
+
+Identifiers are intentionally stable enough for API routing and filtering, but product names and product availability can change when institutions update their public rate pages.
+
+## Current vs Historical Data
+
+| Need | Use |
+| --- | --- |
+| Current market data | List endpoints such as `/api/v1/mortgage-rates` |
+| One institution or issuer | Detail endpoints such as `/api/v1/mortgage-rates/{institutionId}` |
+| One historical snapshot | Time-series endpoint with `date` |
+| Range for charts or analysis | Time-series endpoint with `startDate` and `endDate` |
+
+## Date Filtering
+
+Time-series endpoints accept ISO calendar dates in `YYYY-MM-DD` format.
+
+Use either `date` or the `startDate` and `endDate` pair. Do not combine a single date with a range.
+
+| Rule | Result |
+| --- | --- |
+| `date` by itself | Returns a single snapshot |
+| `startDate` and `endDate` together | Returns a range |
+| `startDate` without `endDate` | Invalid request |
+| `endDate` without `startDate` | Invalid request |
+| `date` with `startDate` or `endDate` | Invalid request |
+
+Invalid query parameters return:
+
+```json
+{
+  "code": 400,
+  "message": "Invalid request parameters"
+}
+```
+
+## Request IDs
+
+Every response includes `x-request-id`. If a client sends `x-request-id`, the API returns the same value. Otherwise, the API generates one.
+
+## CORS
+
+Public `/api/v1/*` endpoints allow any origin and return `access-control-max-age: 600` for preflight requests.
+
+## AI Integration Surfaces
+
+Rates API is designed to be consumed by both traditional applications and AI agents.
+
+| Surface | Purpose |
+| --- | --- |
+| `POST /api/v1/mcp` | MCP endpoint for tool discovery and tool calls |
+| `/openapi/json` | Machine-readable REST contract for SDKs and tool generation |
+| `/llms.txt` | Plain-text documentation feed for assistants and retrieval pipelines |
+| `/api/v1/*` | Stable JSON data endpoints for direct tool calls |
+
+For MCP clients, `listChanged: false` means the server's tool list is stable for the current API version. It does not mean rates data is static.
+
+## OpenAPI
+
+The interactive Scalar docs are available at `/openapi`, and the generated OpenAPI document is available at `/openapi/json`. The MCP route is intentionally excluded from the public OpenAPI paths.

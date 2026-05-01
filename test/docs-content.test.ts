@@ -4,14 +4,43 @@ const docsRoot = new URL("../apps/docs/content/docs/", import.meta.url);
 const docsAppRoot = new URL("../apps/docs/", import.meta.url);
 
 describe("docs MDX content", () => {
-  test("keeps the root documentation page as the Introduction page", async () => {
+  test("keeps the root documentation page as a concise overview", async () => {
     const body = await readDocsFile("index.mdx");
 
-    expect(body).toContain('title: "Introduction"');
-    expect(body).toContain(
-      "Rates API is a comprehensive and up-to-date service",
-    );
+    expect(body).toContain('title: "Overview"');
+    expect(body).toContain("AI-ready JSON API");
+    expect(body).toContain("AI-Ready by Design");
     expect(body).toContain("| Mortgage Rates |");
+  });
+
+  test("keeps API navigation free of duplicate introduction links", async () => {
+    const body = await readDocsFile("api-reference/meta.json");
+
+    expect(body).toContain(
+      '"pages": ["index", "quickstart", "ai-integration", "concepts", "endpoint"]',
+    );
+    expect(body).not.toContain('"introduction"');
+  });
+
+  test("adds task-oriented API onboarding pages", async () => {
+    const quickstart = await readDocsFile("api-reference/quickstart.mdx");
+    const aiIntegration = await readDocsFile(
+      "api-reference/ai-integration.mdx",
+    );
+    const concepts = await readDocsFile("api-reference/concepts.mdx");
+
+    expect(quickstart).toContain('title: "Quickstart"');
+    expect(quickstart).toContain(
+      "curl https://ratesapi.nz/api/v1/mortgage-rates",
+    );
+    expect(aiIntegration).toContain('title: "AI Integration"');
+    expect(aiIntegration).toContain("POST /api/v1/mcp");
+    expect(aiIntegration).toContain("/openapi/json");
+    expect(aiIntegration).toContain("/llms.txt");
+    expect(concepts).toContain('title: "Core Concepts"');
+    expect(concepts).toContain(
+      "Use either `date` or the `startDate` and `endDate` pair",
+    );
   });
 
   test("keeps the mortgage time-series endpoint page at the existing URL", async () => {

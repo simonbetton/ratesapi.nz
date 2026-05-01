@@ -10,8 +10,13 @@ export function baseOptions(): BaseLayoutProps {
     links: [
       {
         type: "main",
+        text: "AI-ready",
+        url: "/api-reference/ai-integration",
+      },
+      {
+        type: "main",
         text: "OpenAPI",
-        url: "/openapi/json",
+        url: "/openapi",
       },
     ],
     themeSwitch: {

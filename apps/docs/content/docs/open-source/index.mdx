@@ -1,50 +1,52 @@
 ---
 title: "Open Source"
-description: "Rates API is proudly open source, hosted on GitHub and built with modern web technologies."
+description: "Understand the Rates API repository structure, runtime architecture, and contribution paths."
 ---
 
+Rates API is an open source Cloudflare Workers project. The repository contains the public API Worker, the Fumadocs documentation app, scraper scripts, tests, and GitHub Actions automation.
 
+## Architecture at a Glance
 
-Rates API is an open source project that provides up-to-date lending rates from New Zealand financial institutions. The entire codebase is available on GitHub at [github.com/simonbetton/ratesapi.nz](https://github.com/simonbetton/ratesapi.nz), allowing anyone to contribute, customize, or deploy their own instance.
-
-## Why Open Source?
-
-We believe in the power of open source to:
-
-- Promote Transparency: Open code means anyone can see how the data is collected and processed
-- Encourage Collaboration: Developers can contribute improvements and new features
-- Ensure Longevity: The project is not dependent on a single maintainer
-- Enable Customization: Fork the project to create specialized versions for specific needs
-- Support Education: Serve as a learning resource for developers interested in financial data or Cloudflare Workers
+| Area | Purpose |
+| --- | --- |
+| API Worker | Serves `/api/v1/*`, `/openapi`, and `/openapi/json` |
+| Docs Worker | Serves the Fumadocs site at `ratesapi.nz` |
+| Cloudflare D1 | Stores latest datasets and historical snapshots |
+| Scraper scripts | Collect rates from public institution pages |
+| GitHub Actions | Runs checks, dry-run deploys, scraping, deploys, and uptime monitoring |
 
 ## Technology Stack
 
-Rates API is built with modern web technologies:
-
-- Bun: A fast JavaScript runtime and package manager
-- Elysia: A lightweight, fast web framework
-- Cloudflare Workers: Serverless JavaScript runtime on Cloudflare CDN
-- Cloudflare D1: Serverless SQL database for data storage
-- TypeScript: For type-safe development
-- TypeBox: Runtime schema definitions and validation
-- OpenAPI: API documentation generation
-- Cheerio: HTML parsing for web scraping
-- GitHub Actions: For monitoring and automation
-
-This stack ensures high performance, global distribution, and excellent developer experience with reliable data persistence.
+| Layer | Tooling |
+| --- | --- |
+| Runtime | Bun and Cloudflare Workers |
+| API routing | Elysia |
+| Schemas | Elysia `t` and TypeBox-compatible runtime validation |
+| API docs | Elysia OpenAPI plugin with Scalar |
+| Docs site | Next.js, Fumadocs UI, and Fumadocs MDX |
+| Data storage | Cloudflare D1 |
+| Scraping | Cheerio |
+| Code quality | Biome, TypeScript, Fallow, and Bun tests |
 
 ## Repository Structure
 
-- `apps/api/src/`: API Worker application code
-- `apps/api/src/index.ts`: Worker entry point
-- `apps/api/src/models/`: Schema definitions for API data types
-- `apps/api/src/routes/`: API endpoint implementations
-- `apps/api/src/lib/`: Utility functions and helpers
-- `apps/api/bin/`: Scraper scripts to collect rates data
-- `docs/`: Project documentation
+| Path | Contents |
+| --- | --- |
+| `apps/api/src/` | API Worker application code |
+| `apps/api/src/routes/` | Elysia route groups |
+| `apps/api/src/models/` | Runtime schemas and exported TypeScript types |
+| `apps/api/src/lib/` | Shared API helpers |
+| `apps/api/bin/` | Scraper, D1, and uptime scripts |
+| `apps/docs/app/` | Next.js App Router routes for the docs site |
+| `apps/docs/content/docs/` | Filesystem MDX documentation |
+| `test/` | API and docs content tests |
+| `.github/workflows/` | CI, deploy, scraping, monitoring, and Fallow workflows |
 
-## Getting Started
+## Contribution Paths
 
-1. Visit the [GitHub repository](https://github.com/simonbetton/ratesapi.nz)
-2. Follow the setup instructions in the [Local Development](/open-source/local-development) guide
-3. Check out the [Deployment](/open-source/deployment) guide to deploy your own instance
+- API changes: update route handlers, schemas, contract tests, and endpoint docs together.
+- Scraper changes: update scraper normalization, validation, and D1 write behavior together.
+- Docs changes: edit MDX files under `apps/docs/content/docs` and run the docs source generation.
+- Deployment changes: update Worker config and the dry-run deploy CI path together.
+
+Start with [Local Development](/open-source/local-development), then read [Deployment](/open-source/deployment) if you need to operate your own instance.

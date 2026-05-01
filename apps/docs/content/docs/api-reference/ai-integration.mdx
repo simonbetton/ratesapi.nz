@@ -1,0 +1,95 @@
+---
+title: "AI Integration"
+description: "Use Rates API with agents, LLM applications, MCP clients, OpenAPI tools, and docs-aware assistants."
+---
+
+Rates API is built to be useful in AI products without adding a private integration layer. The public API exposes machine-readable docs, stable JSON responses, an MCP endpoint, and a plain-text documentation feed.
+
+Use this page when you are adding Rates API to a chat assistant, internal research agent, retrieval pipeline, workflow automation, or tool-calling application.
+
+## Integration Surfaces
+
+| Surface | URL | Use it for |
+| --- | --- | --- |
+| MCP endpoint | `POST /api/v1/mcp` | Tool-calling agents that support Model Context Protocol |
+| Scalar OpenAPI UI | [`/openapi`](/openapi) | Interactive request testing and endpoint discovery |
+| OpenAPI JSON | [`/openapi/json`](/openapi/json) | SDK generation, agent tool generation, and contract checks |
+| LLM docs feed | [`/llms.txt`](/llms.txt) | Giving assistants the full docs as plain text |
+| Search API | `/api/search` | Docs search inside the Fumadocs site |
+
+## Recommended AI Architecture
+
+| Step | Component | Role |
+| --- | --- | --- |
+| 1 | User question | A person asks for current, historical, or comparative lending-rate information. |
+| 2 | AI assistant or workflow | The agent decides whether it needs docs context, endpoint metadata, or live rates data. |
+| 3 | `/llms.txt` and `/openapi/json` | The agent learns the available endpoints, parameters, and response shapes. |
+| 4 | `POST /api/v1/mcp` | MCP-compatible agents discover and call Rates API tools. |
+| 5 | `/api/v1/*` JSON endpoints | Direct tools and MCP handlers retrieve current or historical rates. |
+| 6 | Grounded answer | The agent returns an answer based on live API data and stable identifiers. |
+
+Use OpenAPI and `llms.txt` to teach the agent what exists. Use MCP when your runtime supports tool discovery and tool calls. Use direct `/api/v1/*` requests when you are building your own tools or typed client.
+
+## MCP Endpoint
+
+The MCP endpoint is available at:
+
+```text
+POST https://ratesapi.nz/api/v1/mcp
+```
+
+The endpoint supports standard MCP JSON-RPC requests such as:
+
+| Method | Purpose |
+| --- | --- |
+| `initialize` | Establish client capabilities and read server metadata |
+| `tools/list` | Discover the available Rates API tools |
+| `tools/call` | Call a specific rates tool with structured arguments |
+
+The MCP server reports `listChanged: false` because the tool list is static for a running API version. The underlying rates data can still change when the hourly scraper publishes new snapshots.
+
+## OpenAPI for Tool Generation
+
+Use [`/openapi/json`](/openapi/json) when your AI framework can convert OpenAPI operations into callable tools.
+
+The public OpenAPI document includes the `/api/v1/*` data endpoints and intentionally excludes `/api/v1/mcp`. MCP is a protocol endpoint rather than a REST data endpoint, so it is documented here instead of being mixed into the generated OpenAPI contract.
+
+## LLM Documentation Feed
+
+Use [`/llms.txt`](/llms.txt) when an assistant, coding agent, or retrieval system needs the documentation in a compact text format.
+
+This is useful for:
+
+- Adding Rates API docs to a custom assistant system prompt
+- Indexing the docs for retrieval-augmented generation
+- Giving coding agents enough context to generate API clients
+- Keeping docs context separate from live API data
+
+## Agent-Friendly API Conventions
+
+| Convention | Benefit |
+| --- | --- |
+| No API key required | Agents can prototype and test without secrets |
+| Stable identifiers | Follow-up tool calls can reuse institution, issuer, and product IDs |
+| Predictable JSON | Tool outputs are easy to parse, validate, and display |
+| Stable error shape | Invalid tool arguments can be handled consistently |
+| `x-request-id` header | Agent logs can be correlated with API logs |
+| Time-series filters | Agents can answer historical and trend questions |
+
+## Example Agent Tasks
+
+- Compare current 12-month mortgage rates across New Zealand lenders
+- Find the latest rates for one institution before drafting a customer response
+- Build a daily digest when a watched rate changes
+- Answer historical questions such as "what did ANZ offer last month?"
+- Enrich a financial planning workflow with live lending-rate context
+
+## Choosing an Integration Path
+
+| If you are building | Start with |
+| --- | --- |
+| MCP-capable agent | `POST /api/v1/mcp` |
+| SDK or typed client | `/openapi/json` |
+| Chat assistant with docs context | `/llms.txt` |
+| Browser-based prototype | `/openapi` |
+| Direct product feature | `/api/v1/*` endpoints |

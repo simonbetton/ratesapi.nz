@@ -1,4 +1,4 @@
 {
   "title": "API Reference",
-  "pages": ["index", "introduction", "endpoint"]
+  "pages": ["index", "quickstart", "ai-integration", "concepts", "endpoint"]
 }

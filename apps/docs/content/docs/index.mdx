@@ -1,41 +1,47 @@
 ---
-title: "Introduction"
-description: "Rates API is a comprehensive and up-to-date service for the latest lending rates from New Zealand's leading financial institutions."
+title: "Overview"
+description: "Rates API is an AI-ready JSON API for current and historical New Zealand lending rates."
 ---
 
+Rates API provides current and historical lending rates from New Zealand financial institutions through stable JSON endpoints, OpenAPI metadata, a Model Context Protocol endpoint, and an `llms.txt` documentation feed.
 
+Use it to power comparison tools, affordability calculators, market dashboards, research workflows, and AI agents without scraping lender websites yourself.
 
-Rates API is a comprehensive and up-to-date service designed to provide you with the latest lending rates from New Zealand's leading financial institutions. This API is updated hourly, ensuring you have access to the most current information available to make informed decisions.
+The API is free to use, does not require authentication, and is updated hourly when the scheduled data collection workflow runs successfully.
 
-## Features
+## Start Here
 
-- Comprehensive Data: Access a wide range of data including mortgage rates, personal and car loan rates, and credit card rates from top New Zealand banks and financial institutions.
-- Historical Time Series: Retrieve historical rate data with our time series endpoints to analyze trends and changes over time.
-- Hourly Updates: Our data is updated hourly, offering you the latest rates to ensure your decisions are based on the most current information.
-- Cloudflare D1 Database: Enhanced data storage using Cloudflare D1 for improved performance and better management of historical datasets.
-- Easy Integration: Designed with simplicity in mind, our API provides a straightforward integration process, allowing you to start retrieving data with minimal setup.
-- Free Access: Rates API is a free service, providing valuable financial information without any cost.
-- OpenAPI Specification: Built on OpenAPI 3.1.0, ensuring well-documented and standardized interfaces for developers.
+| Goal | Go to |
+| --- | --- |
+| Make your first request | [Quickstart](/api-reference/quickstart) |
+| Connect an AI agent or assistant | [AI Integration](/api-reference/ai-integration) |
+| Understand identifiers, date filters, and errors | [Core Concepts](/api-reference/concepts) |
+| Browse endpoints by product type | [API Reference](/api-reference) |
+| Try requests in the browser | [OpenAPI](/openapi) |
+| Run or deploy the project yourself | [Open Source](/open-source) |
 
-## Use Cases
+## Quick Example
 
-- All-in-One Comparison Platforms: Build comprehensive financial product comparison tools that empower consumers to evaluate options across mortgages, personal loans, car loans, and credit cards all in one place with real-time rates.
-- Personalized Financial Recommendation Engines: Create sophisticated algorithms that match users with financial products based on their specific needs, credit profile, and goals, using current market rates to provide accurate recommendations.
-- Real Estate and Property Technology: Enhance property listings with integrated mortgage calculators and up-to-date lending rates, helping potential buyers understand true affordability and see financing options alongside properties.
-- Intelligent Financial Planning Applications: Power next-generation budgeting and financial planning tools that incorporate real lending rates to provide more accurate debt reduction strategies, refinancing opportunities, and long-term planning scenarios.
-- Market Intelligence Dashboards: Develop professional-grade analytics platforms that track lending rate trends across the New Zealand market, identifying patterns, predicting movements, and providing valuable insights for both consumers and financial professionals.
-- Historical Analysis and Forecasting: Use time series data to analyze interest rate trends over time, identify patterns, and develop forecasting models for future rate movements.
+```bash
+curl https://ratesapi.nz/api/v1/mortgage-rates
+```
 
-## Getting Started
+The response groups products by institution and includes stable identifiers that can be reused in detail and time-series requests.
 
-To begin using the Rates API, familiarize yourself with the endpoints and data structures. The API is built on the OpenAPI 3.1.0 specification, ensuring a standardized and well-documented interface for developers.
+## AI-Ready by Design
 
-### Base URLs
+Rates API is designed to be easy for AI products to discover, call, and reason about.
 
-- Production: `https://ratesapi.nz`
-- Local Development: `http://localhost:8787`
+| Capability | Why it matters for AI systems |
+| --- | --- |
+| Model Context Protocol | `POST /api/v1/mcp` exposes rate lookup tools for agents that support MCP. |
+| OpenAPI | `/openapi/json` gives agent builders and SDK generators a machine-readable contract. |
+| `llms.txt` | `/llms.txt` gives assistants a compact, plain-text index of the documentation. |
+| Stable JSON | Predictable response and error shapes make tool results easier to validate. |
+| Stable identifiers | Institution, issuer, and product IDs can be reused across prompts, tools, and workflows. |
+| No API key | Agents can test public market data without a secrets-management setup. |
 
-### Available Endpoints
+## Data Coverage
 
 | Category | List Endpoint | Get By ID | Time Series |
 | --- | --- | --- | --- |
@@ -44,25 +50,24 @@ To begin using the Rates API, familiarize yourself with the endpoints and data s
 | Car Loan Rates | `GET /api/v1/car-loan-rates` | `GET /api/v1/car-loan-rates/{institutionId}` | `GET /api/v1/car-loan-rates/time-series` |
 | Credit Card Rates | `GET /api/v1/credit-card-rates` | `GET /api/v1/credit-card-rates/{issuerId}` | `GET /api/v1/credit-card-rates/time-series` |
 
-Each endpoint provides detailed information about the rates offered by various institutions, including specific products and terms. All data is returned in JSON format.
+## Common Use Cases
 
-#### Time Series Parameters
+- Product comparison experiences across mortgages, personal loans, car loans, and credit cards
+- Affordability calculators that need current lending rates
+- Market monitoring dashboards for New Zealand lending products
+- Historical analysis and charts using daily time-series snapshots
+- Research projects that need consistent lender and product identifiers
+- AI assistants that answer rate questions with live, source-backed data
+- Agent workflows that compare lenders, detect rate changes, or enrich customer journeys
 
-| Parameter | Description |
-| --- | --- |
-| `date` | Date in YYYY-MM-DD format for a single historical snapshot |
-| `startDate` | Start date in YYYY-MM-DD format for a time series range |
-| `endDate` | End date in YYYY-MM-DD format for a time series range |
-| `institutionId` | Filter results by a specific institution ID |
-| `issuerId` | Filter credit card results by a specific issuer ID |
-| `termInMonths` | Filter mortgage results by term length |
+## Operational Notes
 
-### Authentication
-
-Currently, the Rates API is a free service and does not require authentication. The API will ensure backward compatibility if authentication is introduced in the future.
-
-## Support
-
-If you encounter any issues or have feature requests, please [create a GitHub issue](https://github.com/simonbetton/ratesapi.nz/issues).
-
-Thank you for choosing Rates API as your source for financial data. We look forward to supporting your applications and services.
+- Base URL: `https://ratesapi.nz`
+- Local API URL: `http://localhost:8787`
+- Auth: no API key required
+- Format: JSON
+- Documentation: Scalar OpenAPI UI at `/openapi`
+- OpenAPI JSON: `/openapi/json`
+- MCP endpoint: `POST /api/v1/mcp`
+- LLM documentation feed: `/llms.txt`
+- Source: [github.com/simonbetton/ratesapi.nz](https://github.com/simonbetton/ratesapi.nz)

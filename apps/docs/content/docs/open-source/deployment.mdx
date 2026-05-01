@@ -3,9 +3,14 @@ title: "Deployment"
 description: "Learn how to deploy Rates API to Cloudflare Workers for production use."
 ---
 
+Rates API deploys two Cloudflare Workers:
 
+| Worker | Serves |
+| --- | --- |
+| `ratesapi-nz` | API routes such as `/api/v1/*` and `/openapi` |
+| `ratesapi-nz-docs` | The Fumadocs site and docs-only routes |
 
-Rates API is designed to be deployed to Cloudflare Workers, a serverless platform that offers global distribution, high performance, and excellent scalability. The API also uses Cloudflare D1 for data storage.
+Cloudflare D1 stores latest datasets and historical snapshots for the API Worker.
 
 ## Prerequisites
 
@@ -14,64 +19,75 @@ Rates API is designed to be deployed to Cloudflare Workers, a serverless platfor
 3. [Bun](https://bun.sh/) installed
 4. [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/) for Cloudflare Workers and D1 management
 
-## Deployment Steps
+## Cloudflare D1
 
-### 1. Create a Cloudflare Worker
-
-1. Log in to the [Cloudflare dashboard](https://dash.cloudflare.com/)
-2. Select your account
-3. Go to Workers & Pages > Create application
-4. Select Create Worker > Deploy
-
-### 2. Set Up Cloudflare D1 Database
-
-1. In the Cloudflare dashboard, go to Workers & Pages > D1
-2. Click Create database
-3. Give your database a name such as `ratesapi-data`
-4. Select a location close to your target audience
+Create the D1 database and apply the schema before deploying the API Worker.
 
 ```bash
 wrangler login
 wrangler d1 execute ratesapi-data --file=./apps/api/schema.sql
 ```
 
-### 3. Configure Wrangler
+## Worker Configuration
 
-The `apps/api/wrangler.toml` file controls API Worker deployment and D1 bindings.
+The API Worker is configured in `apps/api/wrangler.toml`. It owns the public API path routes on the apex domain:
 
 ```toml
-name = "rates-api"
-main = "src/index.ts" # relative to apps/api/wrangler.toml
-compatibility_date = "2025-06-01"
+[[routes]]
+pattern = "ratesapi.nz/api/v1/*"
+zone_name = "ratesapi.nz"
 
-[[d1_databases]]
-binding = "RATESAPI_DB"
-database_name = "ratesapi-data"
-database_id = "your-database-id-from-cloudflare"
+[[routes]]
+pattern = "ratesapi.nz/openapi"
+zone_name = "ratesapi.nz"
 ```
 
-### 4. Deploy the Worker
+The docs Worker is configured in `apps/docs/wrangler.toml`. It owns the apex Custom Domain:
+
+```toml
+[[routes]]
+pattern = "ratesapi.nz"
+custom_domain = true
+```
+
+This lets the docs app serve `https://ratesapi.nz/`, while the API Worker still handles `https://ratesapi.nz/api/v1/*` and OpenAPI routes.
+
+## Dry-Run Deployment
+
+Run the same deployability checks used by CI:
+
+```bash
+bun run deploy:dry-run
+bun run build:docs
+bun run deploy:docs:dry-run
+```
+
+## Deploy
+
+Deploy the API Worker:
 
 ```bash
 bun run deploy
 ```
 
+Build and deploy the docs Worker:
+
+```bash
+bun run build:docs
+bun run deploy:docs
+```
+
 ## Post-Deployment Setup
 
-### Data Updates
-
-The API requires regular updates to financial rate data. Options include manual scraper runs, scheduled workflows, or Cloudflare Cron Triggers.
-
-### Monitoring
-
-The repository includes a monitoring system that uses GitHub Actions to check endpoint health and create issues when endpoints are down.
-
-### Custom Domain
-
-In the Cloudflare dashboard, go to Workers & Pages, select your worker, then use Triggers > Custom Domains to add your domain.
+- Confirm `https://ratesapi.nz/` serves the docs app.
+- Confirm `https://ratesapi.nz/api/v1/health` serves the API Worker.
+- Confirm `https://ratesapi.nz/openapi` loads the Scalar API client.
+- Confirm `https://ratesapi.nz/openapi/json` returns the generated OpenAPI document.
+- Confirm the hourly scraping workflow has the `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, and D1 database environment it needs.
 
 ## Production Considerations
 
-- Caching: Adjust cache times based on freshness and performance needs.
-- Rate Limiting: Consider rate limiting if traffic is high or abuse prevention is needed.
-- Documentation: Keep the docs app aligned with API changes.
+- Keep route ownership clear: docs Worker owns the apex Custom Domain, API Worker owns API path routes.
+- Review the deploy dry-run job when Worker bindings or route patterns change.
+- Keep endpoint docs and OpenAPI schemas aligned with route changes.
+- Monitor scraper failures separately from Worker uptime.

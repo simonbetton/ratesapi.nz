@@ -3,30 +3,29 @@ title: "Monitoring"
 description: "Learn how the Rates API monitoring system works to ensure reliability and uptime."
 ---
 
+Rates API uses GitHub Actions for three operational feedback loops: CI, scheduled scraping, and uptime monitoring.
 
+## Uptime Monitoring
 
-Rates API includes a robust monitoring system that continuously checks the health of all endpoints. This system uses GitHub Actions to run automated checks every 15 minutes and alert developers when issues are detected.
+The `API Uptime Monitoring` workflow runs every 15 minutes and:
 
-## How Monitoring Works
-
-1. Runs every 15 minutes via GitHub Actions
+1. Installs dependencies with Bun
 2. Checks the health of all API endpoints
-3. Creates a GitHub Issue when problems are detected
-4. Notifies the repository owner through GitHub's notification system
+3. Fails the workflow if one or more endpoints are unavailable
+4. Creates a GitHub issue with failure details
 
 ## Monitored Endpoints
 
-- API Root: The main API endpoint
-- Mortgage Rates: Both list and by-institution endpoints
-- Personal Loan Rates: Both list and by-institution endpoints
-- Car Loan Rates: Both list and by-institution endpoints
-- Credit Card Rates: Both list and by-issuer endpoints
-- Time Series Endpoints: Historical data for all rate types
-- API Documentation: The OpenAPI documentation endpoint
+- API health and freshness
+- Mortgage rate list, detail, and time-series routes
+- Personal loan list, detail, and time-series routes
+- Car loan list, detail, and time-series routes
+- Credit card list, detail, and time-series routes
+- OpenAPI UI and JSON
 
 ## Alert System
 
-When an endpoint fails, the monitoring system creates a GitHub Issue, labels it as `incident` and `high-priority`, mentions the repository owner, and provides details about which endpoints failed and why.
+When an endpoint fails, the monitoring workflow creates a GitHub issue, labels it `incident` and `high-priority`, mentions the repository owner, and includes the failing endpoint output.
 
 ## Required Permissions
 
@@ -38,9 +37,24 @@ permissions:
 
 If using an organization with restricted permissions, ensure repository settings allow GitHub Actions to create issues and create the required `incident` and `high-priority` labels.
 
-## Extending the Monitoring System
+## Scraping Health
 
-- Add new endpoints to the monitoring workflow
-- Implement more detailed health checks
-- Set up additional notification channels, such as Slack, Discord, or email
-- Configure custom alerting thresholds or criteria
+The scraping workflow runs hourly and writes to the remote D1 database. It verifies D1 access before scraping and verifies saved data after the scraper scripts finish.
+
+## CI Health
+
+Pull requests run:
+
+- Biome, TypeScript, docs type generation, and tests through `bun run check`
+- API deploy dry-run
+- Docs OpenNext build
+- Docs deploy dry-run
+- Fallow static analysis
+- CodeQL analysis
+
+## Extending Monitoring
+
+- Add new endpoints to `apps/api/bin/uptime-check.ts`.
+- Add docs checks when docs-only routes become critical.
+- Add notification channels if GitHub issues are not enough.
+- Add data freshness thresholds if stale data becomes more important than endpoint availability.

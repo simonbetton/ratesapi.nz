@@ -1,0 +1,67 @@
+---
+title: "Quickstart"
+description: "Make your first Rates API request and learn the most common request patterns."
+---
+
+This guide gets you from zero to useful API data in a few requests. No API key is required.
+
+## 1. Fetch Current Mortgage Rates
+
+```bash
+curl https://ratesapi.nz/api/v1/mortgage-rates
+```
+
+The list endpoints return institutions with nested products and rates. Keep the institution IDs from this response when you need a specific lender later.
+
+## 2. Filter Mortgage Rates by Term
+
+```bash
+curl "https://ratesapi.nz/api/v1/mortgage-rates?termInMonths=12"
+```
+
+Use `termInMonths` when your UI only needs a fixed-rate mortgage term such as 6, 12, 18, 24, 36, 48, or 60 months.
+
+## 3. Fetch One Institution
+
+```bash
+curl https://ratesapi.nz/api/v1/mortgage-rates/institution:anz
+```
+
+Detail endpoints are useful for institution profile pages, product comparison pages, and cache refreshes for a single lender.
+
+## 4. Fetch a Historical Snapshot
+
+```bash
+curl "https://ratesapi.nz/api/v1/mortgage-rates/time-series?date=2026-04-30&institutionId=institution:anz&termInMonths=12"
+```
+
+Use `date` when you need one historical snapshot.
+
+## 5. Fetch a Historical Range
+
+```bash
+curl "https://ratesapi.nz/api/v1/mortgage-rates/time-series?startDate=2026-04-01&endDate=2026-04-30&institutionId=institution:anz"
+```
+
+Use `startDate` and `endDate` together for charts and trend analysis. Do not combine `date` with a date range.
+
+## 6. Explore Interactively
+
+Open [`/openapi`](/openapi) to use the Scalar API client in the browser, or fetch the generated spec directly from [`/openapi/json`](/openapi/json).
+
+## 7. Connect an AI Agent
+
+Use the MCP endpoint when your agent runtime supports Model Context Protocol:
+
+```text
+POST https://ratesapi.nz/api/v1/mcp
+```
+
+Use [`/llms.txt`](/llms.txt) to give an assistant the documentation in plain text, and use [`/openapi/json`](/openapi/json) when your framework can generate tools from an OpenAPI contract.
+
+## Next Steps
+
+- Read [AI Integration](/api-reference/ai-integration) for MCP, OpenAPI, and `llms.txt` guidance.
+- Read [Core Concepts](/api-reference/concepts) for identifiers, date filters, errors, and data freshness.
+- Browse [Endpoint Groups](/api-reference) when you know which product category you need.
+- Review the [Open Source](/open-source) section if you want to run or deploy the project yourself.
