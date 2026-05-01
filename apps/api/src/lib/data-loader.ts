@@ -19,6 +19,10 @@ export type DataType =
   | "credit-card-rates"
   | "personal-loan-rates";
 
+type LoadLatestDataOptions = {
+  fallbackUrl?: string;
+};
+
 const log = createLogger("data-loader");
 
 /**
@@ -28,6 +32,7 @@ export async function loadLatestData<Schema extends TSchema>(
   dataType: DataType,
   db: Database,
   schema: Schema,
+  options: LoadLatestDataOptions = {},
 ): Promise<Schema["static"]> {
   try {
     const stmt = db.prepare("SELECT data FROM latest_data WHERE data_type = ?");
@@ -42,8 +47,27 @@ export async function loadLatestData<Schema extends TSchema>(
 
     return parseSchema(schema, fromSavableJson(data));
   } catch (error) {
+    if (options.fallbackUrl) {
+      log.warn(
+        { dataType, error, fallbackUrl: options.fallbackUrl },
+        "Falling back to production API data",
+      );
+      return loadLatestDataFromApi(dataType, options.fallbackUrl, schema);
+    }
+
     throw new Error(`Failed to load ${dataType} data: ${error}`);
   }
+}
+
+export function productionLatestDataFallbackUrl(
+  dataType: DataType,
+  environment: string | undefined,
+): string | undefined {
+  if (environment !== "development") {
+    return undefined;
+  }
+
+  return `https://ratesapi.nz/api/v1/${dataType}`;
 }
 
 /**
@@ -178,4 +202,35 @@ function readStringField(
 ): string | undefined {
   const value = row?.[field];
   return typeof value === "string" ? value : undefined;
+}
+
+async function loadLatestDataFromApi<Schema extends TSchema>(
+  dataType: DataType,
+  url: string,
+  schema: Schema,
+): Promise<Schema["static"]> {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(
+      `Fallback request for ${dataType} failed with status ${response.status}`,
+    );
+  }
+
+  const body = await response.json();
+  log.info({ dataType, url }, "Loaded fallback latest data");
+
+  return parseSchema(schema, stripApiOnlyFields(body));
+}
+
+function stripApiOnlyFields(value: unknown): unknown {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return value;
+  }
+
+  const { termsOfUse, timestamp, ...model } = value as Record<string, unknown>;
+  void termsOfUse;
+  void timestamp;
+
+  return model;
 }

@@ -5,7 +5,10 @@ import {
   invalidRequestResult,
   jsonResult,
 } from "../../lib/api-result";
-import { loadLatestData } from "../../lib/data-loader";
+import {
+  loadLatestData,
+  productionLatestDataFallbackUrl,
+} from "../../lib/data-loader";
 import { type Environment } from "../../lib/environment";
 import { createLogger } from "../../lib/logging";
 import { getMortgageTimeSeries } from "../../lib/mortgage-time-series";
@@ -151,6 +154,12 @@ export async function listMortgageRates(
       "mortgage-rates",
       env.RATESAPI_DB,
       MortgageRates,
+      {
+        fallbackUrl: productionLatestDataFallbackUrl(
+          "mortgage-rates",
+          env.ENVIRONMENT,
+        ),
+      },
     );
 
     if (query.termInMonths) {
@@ -232,6 +241,12 @@ export async function getMortgageRatesByInstitution(
       "mortgage-rates",
       env.RATESAPI_DB,
       MortgageRates,
+      {
+        fallbackUrl: productionLatestDataFallbackUrl(
+          "mortgage-rates",
+          env.ENVIRONMENT,
+        ),
+      },
     );
 
     const singleInstitution = mortgageRates.data.find(

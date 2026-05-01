@@ -5,7 +5,10 @@ import {
   invalidRequestResult,
   jsonResult,
 } from "../../lib/api-result";
-import { loadLatestData } from "../../lib/data-loader";
+import {
+  loadLatestData,
+  productionLatestDataFallbackUrl,
+} from "../../lib/data-loader";
 import { getEntityTimeSeries } from "../../lib/entity-time-series";
 import { type Environment } from "../../lib/environment";
 import { createLogger } from "../../lib/logging";
@@ -125,6 +128,12 @@ export async function listCarLoanRates(env: Environment): Promise<ApiResult> {
       "car-loan-rates",
       env.RATESAPI_DB,
       CarLoanRates,
+      {
+        fallbackUrl: productionLatestDataFallbackUrl(
+          "car-loan-rates",
+          env.ENVIRONMENT,
+        ),
+      },
     );
 
     return apiResult(200, {
@@ -183,6 +192,12 @@ export async function getCarLoanRatesByInstitution(
       "car-loan-rates",
       env.RATESAPI_DB,
       CarLoanRates,
+      {
+        fallbackUrl: productionLatestDataFallbackUrl(
+          "car-loan-rates",
+          env.ENVIRONMENT,
+        ),
+      },
     );
 
     const singleInstitution = carLoanRates.data.find(

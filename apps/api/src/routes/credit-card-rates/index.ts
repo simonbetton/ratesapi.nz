@@ -5,7 +5,10 @@ import {
   invalidRequestResult,
   jsonResult,
 } from "../../lib/api-result";
-import { loadLatestData } from "../../lib/data-loader";
+import {
+  loadLatestData,
+  productionLatestDataFallbackUrl,
+} from "../../lib/data-loader";
 import { getEntityTimeSeries } from "../../lib/entity-time-series";
 import { type Environment } from "../../lib/environment";
 import { createLogger } from "../../lib/logging";
@@ -121,6 +124,12 @@ export async function listCreditCardRates(
       "credit-card-rates",
       env.RATESAPI_DB,
       CreditCardRates,
+      {
+        fallbackUrl: productionLatestDataFallbackUrl(
+          "credit-card-rates",
+          env.ENVIRONMENT,
+        ),
+      },
     );
 
     return apiResult(200, {
@@ -179,6 +188,12 @@ export async function getCreditCardRatesByIssuer(
       "credit-card-rates",
       env.RATESAPI_DB,
       CreditCardRates,
+      {
+        fallbackUrl: productionLatestDataFallbackUrl(
+          "credit-card-rates",
+          env.ENVIRONMENT,
+        ),
+      },
     );
 
     const singleIssuer = creditCardRates.data.find(
