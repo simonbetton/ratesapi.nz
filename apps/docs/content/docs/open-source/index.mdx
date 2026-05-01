@@ -1,0 +1,50 @@
+---
+title: "Open Source"
+description: "Rates API is proudly open source, hosted on GitHub and built with modern web technologies."
+---
+
+
+
+Rates API is an open source project that provides up-to-date lending rates from New Zealand financial institutions. The entire codebase is available on GitHub at [github.com/simonbetton/ratesapi.nz](https://github.com/simonbetton/ratesapi.nz), allowing anyone to contribute, customize, or deploy their own instance.
+
+## Why Open Source?
+
+We believe in the power of open source to:
+
+- Promote Transparency: Open code means anyone can see how the data is collected and processed
+- Encourage Collaboration: Developers can contribute improvements and new features
+- Ensure Longevity: The project is not dependent on a single maintainer
+- Enable Customization: Fork the project to create specialized versions for specific needs
+- Support Education: Serve as a learning resource for developers interested in financial data or Cloudflare Workers
+
+## Technology Stack
+
+Rates API is built with modern web technologies:
+
+- Bun: A fast JavaScript runtime and package manager
+- Elysia: A lightweight, fast web framework
+- Cloudflare Workers: Serverless JavaScript runtime on Cloudflare CDN
+- Cloudflare D1: Serverless SQL database for data storage
+- TypeScript: For type-safe development
+- TypeBox: Runtime schema definitions and validation
+- OpenAPI: API documentation generation
+- Cheerio: HTML parsing for web scraping
+- GitHub Actions: For monitoring and automation
+
+This stack ensures high performance, global distribution, and excellent developer experience with reliable data persistence.
+
+## Repository Structure
+
+- `apps/api/src/`: API Worker application code
+- `apps/api/src/index.ts`: Worker entry point
+- `apps/api/src/models/`: Schema definitions for API data types
+- `apps/api/src/routes/`: API endpoint implementations
+- `apps/api/src/lib/`: Utility functions and helpers
+- `apps/api/bin/`: Scraper scripts to collect rates data
+- `docs/`: Project documentation
+
+## Getting Started
+
+1. Visit the [GitHub repository](https://github.com/simonbetton/ratesapi.nz)
+2. Follow the setup instructions in the [Local Development](/open-source/local-development) guide
+3. Check out the [Deployment](/open-source/deployment) guide to deploy your own instance

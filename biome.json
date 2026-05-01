@@ -37,17 +37,25 @@
   },
   "overrides": [
     {
-      "includes": ["bin/**/*.ts"],
+      "includes": ["apps/api/bin/**/*.ts"],
       "linter": { "rules": { "suspicious": { "noConsole": "off" } } }
     },
     {
-      "includes": ["src/index.ts"],
+      "includes": ["apps/api/src/index.ts"],
       "linter": {
         "rules": {
           "style": { "noDefaultExport": "off" },
           "suspicious": { "noConsole": "off" }
         }
       }
+    },
+    {
+      "includes": [
+        "apps/docs/app/**",
+        "apps/docs/next.config.mjs",
+        "apps/docs/open-next.config.ts"
+      ],
+      "linter": { "rules": { "style": { "noDefaultExport": "off" } } }
     }
   ]
 }

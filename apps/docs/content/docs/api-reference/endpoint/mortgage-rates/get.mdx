@@ -1,0 +1,30 @@
+---
+title: "Get Mortgage Rates by Institution ID"
+---
+
+
+## Endpoint
+
+| Field | Value |
+| --- | --- |
+| Method | `GET` |
+| Path | `/api/v1/mortgage-rates/{institutionId}` |
+| Operation ID | `getMortgageRatesByInstitution` |
+
+## Parameters
+
+| Parameter | Description |
+| --- | --- |
+| `institutionId` | institution identifier, e.g. institution:anz |
+| `termInMonths` | optional mortgage term filter |
+
+## Responses
+
+| Status | Description |
+| --- | --- |
+| `200` | Retrieve mortgage rates for the institution |
+| `404` | Institution not found |
+| `500` | Server error |
+
+
+Retrieve mortgage rates for a specific institution.

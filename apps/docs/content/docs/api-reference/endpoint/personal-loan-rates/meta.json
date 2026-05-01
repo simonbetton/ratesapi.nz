@@ -1,0 +1,4 @@
+{
+  "title": "Personal Loan Rates",
+  "pages": ["list", "get", "time-series"]
+}

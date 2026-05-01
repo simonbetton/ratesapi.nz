@@ -1,24 +1,24 @@
 import { describe, expect, test } from "bun:test";
-import { createApp } from "../src/app";
+import { createApp } from "../apps/api/src/app";
 import {
   type DataType,
   type SupportedModels,
   toSavableJson,
-} from "../src/lib/data-loader";
-import { type Environment } from "../src/lib/environment";
-import { parseSchema } from "../src/lib/schema";
-import { HealthResponse } from "../src/models/api";
-import { type CarLoanRates } from "../src/models/car-loan-rates";
-import { type CreditCardRates } from "../src/models/credit-card-rates";
-import { type MortgageRates } from "../src/models/mortgage-rates";
-import { type PersonalLoanRates } from "../src/models/personal-loan-rates";
+} from "../apps/api/src/lib/data-loader";
+import { type Environment } from "../apps/api/src/lib/environment";
+import { parseSchema } from "../apps/api/src/lib/schema";
+import { HealthResponse } from "../apps/api/src/models/api";
+import { type CarLoanRates } from "../apps/api/src/models/car-loan-rates";
+import { type CreditCardRates } from "../apps/api/src/models/credit-card-rates";
+import { type MortgageRates } from "../apps/api/src/models/mortgage-rates";
+import { type PersonalLoanRates } from "../apps/api/src/models/personal-loan-rates";
 import {
   CarLoanRatesResponse,
   CreditCardRatesResponse,
   MortgageRatesResponse,
   MortgageRatesTimeSeriesResponse,
   PersonalLoanRatesResponse,
-} from "../src/models/responses";
+} from "../apps/api/src/models/responses";
 
 type ListResponseType =
   | "MortgageRates"
@@ -292,84 +292,38 @@ describe("v1 API contract", () => {
     });
   });
 
-  test("serves Fumadocs documentation from the root route", async () => {
+  test("leaves root documentation pages to the docs app", async () => {
     const response = await request("/");
 
-    expect(response.status).toBe(200);
-    expect(response.headers.get("content-type")).toContain("text/html");
-
-    const body = await response.text();
-
-    expect(body).toContain("Rates API");
-    expect(body).toContain("fumadocs-ui@");
-    expect(body).toContain("Historical Time Series");
-    expect(body).toContain("/api-reference/endpoint/mortgage-rates/list");
-    expect(body).toContain("rates-mobile-sidebar");
-    expect(body).toContain("data-docs-search-open");
-    expect(body).toContain("data-fumadocs-search-ui");
+    expect(response.status).toBe(404);
   });
 
-  test("serves mirrored API reference pages", async () => {
+  test("leaves API reference documentation pages to the docs app", async () => {
     const response = await request(
       "/api-reference/endpoint/mortgage-rates/time-series",
     );
 
-    expect(response.status).toBe(200);
-
-    const body = await response.text();
-
-    expect(body).toContain("Mortgage Rates Time Series");
-    expect(body).toContain("/api/v1/mortgage-rates/time-series");
-    expect(body).toContain("termInMonths");
+    expect(response.status).toBe(404);
   });
 
-  test("serves mirrored open-source documentation pages", async () => {
+  test("leaves open-source documentation pages to the docs app", async () => {
     const response = await request("/open-source/deployment");
 
-    expect(response.status).toBe(200);
-
-    const body = await response.text();
-
-    expect(body).toContain("Deployment Steps");
-    expect(body).toContain("bun run deploy");
+    expect(response.status).toBe(404);
   });
 
-  test("exposes docs content for LLM clients", async () => {
+  test("leaves LLM documentation index to the docs app", async () => {
     const response = await request("/llms.txt");
 
-    expect(response.status).toBe(200);
-    expect(response.headers.get("content-type")).toContain("text/plain");
-
-    const body = await response.text();
-
-    expect(body).toContain("# Introduction");
-    expect(body).toContain("List Car Loan Rates");
-    expect(body).toContain("# Local Development");
+    expect(response.status).toBe(404);
   });
 
-  test("searches documentation content", async () => {
+  test("leaves documentation search to the docs app", async () => {
     const response = await request(
       "/api/search?query=mortgage%20time%20series",
     );
 
-    expect(response.status).toBe(200);
-    expect(response.headers.get("content-type")).toContain("application/json");
-
-    const body = readSearchResults(await jsonBody(response));
-    const mortgageTimeSeriesResult = body.find(
-      (result) =>
-        result.url === "/api-reference/endpoint/mortgage-rates/time-series",
-    );
-
-    expect(mortgageTimeSeriesResult).toEqual(
-      expect.objectContaining({
-        type: expect.stringMatching(/^(page|heading|text)$/),
-        url: "/api-reference/endpoint/mortgage-rates/time-series",
-      }),
-    );
-    expect(stripSearchHighlights(mortgageTimeSeriesResult?.content)).toContain(
-      "Mortgage Rates Time Series",
-    );
+    expect(response.status).toBe(404);
   });
 
   test("exposes OpenAPI UI and JSON without documenting MCP", async () => {
@@ -727,34 +681,6 @@ function isDataType(value: string): value is DataType {
 
 function readString(value: unknown): string | undefined {
   return typeof value === "string" ? value : undefined;
-}
-
-function readSearchResults(
-  value: unknown,
-): Array<{ content: string; type: string; url: string }> {
-  if (!Array.isArray(value)) {
-    return [];
-  }
-
-  return value.flatMap((item) => {
-    if (!isRecord(item)) {
-      return [];
-    }
-
-    const content = readString(item.content);
-    const type = readString(item.type);
-    const url = readString(item.url);
-
-    if (!content || !type || !url) {
-      return [];
-    }
-
-    return [{ content, type, url }];
-  });
-}
-
-function stripSearchHighlights(value: string | undefined): string {
-  return value?.replaceAll(/<\/?mark>/g, "") ?? "";
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

@@ -1,0 +1,56 @@
+---
+title: "Personal Loan Rates Time Series"
+description: "Retrieve historical time series data for personal loan rates from New Zealand financial institutions."
+---
+
+
+## Endpoint
+
+| Field | Value |
+| --- | --- |
+| Method | `GET` |
+| Path | `/api/v1/personal-loan-rates/time-series` |
+| Operation ID | `getPersonalLoanRatesTimeSeries` |
+
+## Parameters
+
+| Parameter | Description |
+| --- | --- |
+| `date` | optional single date in YYYY-MM-DD format |
+| `startDate` | optional range start date in YYYY-MM-DD format |
+| `endDate` | optional range end date in YYYY-MM-DD format |
+| `institutionId` | optional institution ID filter |
+
+## Responses
+
+| Status | Description |
+| --- | --- |
+| `200` | Retrieve personal loan rates time series data |
+| `400` | Invalid date parameters |
+| `404` | No data found |
+| `500` | Server error |
+
+
+This endpoint provides historical time series data for personal loan rates, allowing you to analyze trends and changes over time. The data is stored in Cloudflare D1 database, enabling efficient querying of historical datasets.
+
+## Response Data
+
+- Timestamp for each data point
+- Institution name and ID
+- Interest rates for secured and unsecured personal loans
+- Fixed and variable rate options
+- Minimum and maximum loan amounts
+- Available loan terms
+- Any special conditions or promotions
+
+## Use Cases
+
+- Rate Trend Analysis: Monitor how personal loan rates fluctuate over time
+- Competitive Intelligence: Compare rate changes across different lenders
+- Consumer Education: Provide historical context for current personal loan offerings
+- Financial Planning Tools: Incorporate historical rate data into loan calculators and planning applications
+- Research and Reporting: Support academic or market research with reliable historical data
+
+## Notes on Data Storage
+
+The time series data is stored in Cloudflare D1, a serverless SQL database built on SQLite. This allows for efficient querying, fast retrieval, reliable persistence, and scalable performance for growing historical datasets.

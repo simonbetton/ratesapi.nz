@@ -1,0 +1,9 @@
+{
+  "title": "Endpoints",
+  "pages": [
+    "mortgage-rates",
+    "personal-loan-rates",
+    "car-loan-rates",
+    "credit-card-rates"
+  ]
+}

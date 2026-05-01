@@ -1,0 +1,58 @@
+---
+title: "Credit Card Rates Time Series"
+description: "Retrieve historical time series data for credit card rates from New Zealand financial institutions."
+---
+
+
+## Endpoint
+
+| Field | Value |
+| --- | --- |
+| Method | `GET` |
+| Path | `/api/v1/credit-card-rates/time-series` |
+| Operation ID | `getCreditCardRatesTimeSeries` |
+
+## Parameters
+
+| Parameter | Description |
+| --- | --- |
+| `date` | optional single date in YYYY-MM-DD format |
+| `startDate` | optional range start date in YYYY-MM-DD format |
+| `endDate` | optional range end date in YYYY-MM-DD format |
+| `issuerId` | optional issuer ID filter |
+
+## Responses
+
+| Status | Description |
+| --- | --- |
+| `200` | Retrieve credit card rates time series data |
+| `400` | Invalid date parameters |
+| `404` | No data found |
+| `500` | Server error |
+
+
+This endpoint provides historical time series data for credit card rates, allowing you to analyze trends and changes over time. The data is stored in Cloudflare D1 database, enabling efficient querying of historical datasets.
+
+## Response Data
+
+- Timestamp for each data point
+- Institution name and ID
+- Purchase interest rates
+- Cash advance rates
+- Balance transfer rates and promotional periods
+- Annual fees
+- Reward program details
+- Minimum credit limits
+- Special features and benefits
+
+## Use Cases
+
+- Credit Card Rate Tracking: Monitor how credit card interest rates change over time
+- Promotional Offer Analysis: Track balance transfer and introductory rate offers across institutions
+- Fee Structure Comparison: Analyze changes in annual fees and fee structures over time
+- Market Competition Studies: Identify competitive trends and market responses in the credit card space
+- Consumer Education Tools: Provide historical context for current credit card offerings
+
+## Notes on Data Storage
+
+The time series data is stored in Cloudflare D1, a serverless SQL database built on SQLite. This allows for efficient querying, fast retrieval, reliable persistence, and scalable performance for growing historical datasets.

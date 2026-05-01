@@ -1,0 +1,4 @@
+{
+  "title": "Mortgage Rates",
+  "pages": ["list", "get", "time-series"]
+}

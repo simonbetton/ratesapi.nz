@@ -46,20 +46,32 @@ You can manually update the D1 database in two ways:
 2. **Using Wrangler directly**: For manual updates, use the wrangler CLI directly:
 
 ```bash
-# Replace DATABASE_NAME with your database name from wrangler.toml (e.g. "ratesapi-data")
-npx wrangler d1 execute DATABASE_NAME --file=./schema.sql
+# Replace DATABASE_NAME with your database name from apps/api/wrangler.toml (e.g. "ratesapi-data")
+npx wrangler d1 execute DATABASE_NAME --config apps/api/wrangler.toml --file=./apps/api/schema.sql
 
 # Then run the scraper scripts with D1_DATABASE_NAME set
-D1_DATABASE_NAME="your-database-name" bun run bin/scrape-mortgage-rates.ts
+D1_DATABASE_NAME="your-database-name" bun run apps/api/bin/scrape-mortgage-rates.ts
+```
+
+By default, `bun run dev` runs Wrangler in remote mode so local API requests have
+current data from Cloudflare D1. For fully local/offline API development,
+initialize the local D1 database, seed it with scraper output, then start the
+local-only dev server:
+
+```bash
+bun run db:init:local
+D1_DATABASE_NAME="ratesapi-data" D1_LOCAL="true" bun run scrape:all
+bun run dev:api:local
 ```
 
 This is useful for initial seeding of a new database or manual updates when needed.
 
 ## Local Development vs. GitHub Actions
 
-- **Local Development**: 
+- **Local Development**:
+  - `bun run dev` runs Wrangler in remote mode so it can read the populated Cloudflare D1 database
   - Scripts display scraped data but don't store it without D1_DATABASE_NAME
-  - D1 operations are skipped to avoid connection errors when no database name is provided
+  - Set `D1_DATABASE_NAME="ratesapi-data"` and `D1_LOCAL="true"` to seed the local D1 database used by `bun run dev:api:local`
 
 - **GitHub Actions (CI Environment)**:
   - D1 database is used as the exclusive data source 

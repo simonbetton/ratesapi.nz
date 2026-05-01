@@ -1,0 +1,46 @@
+---
+title: "Monitoring"
+description: "Learn how the Rates API monitoring system works to ensure reliability and uptime."
+---
+
+
+
+Rates API includes a robust monitoring system that continuously checks the health of all endpoints. This system uses GitHub Actions to run automated checks every 15 minutes and alert developers when issues are detected.
+
+## How Monitoring Works
+
+1. Runs every 15 minutes via GitHub Actions
+2. Checks the health of all API endpoints
+3. Creates a GitHub Issue when problems are detected
+4. Notifies the repository owner through GitHub's notification system
+
+## Monitored Endpoints
+
+- API Root: The main API endpoint
+- Mortgage Rates: Both list and by-institution endpoints
+- Personal Loan Rates: Both list and by-institution endpoints
+- Car Loan Rates: Both list and by-institution endpoints
+- Credit Card Rates: Both list and by-issuer endpoints
+- Time Series Endpoints: Historical data for all rate types
+- API Documentation: The OpenAPI documentation endpoint
+
+## Alert System
+
+When an endpoint fails, the monitoring system creates a GitHub Issue, labels it as `incident` and `high-priority`, mentions the repository owner, and provides details about which endpoints failed and why.
+
+## Required Permissions
+
+```yaml
+permissions:
+  issues: write
+  contents: read
+```
+
+If using an organization with restricted permissions, ensure repository settings allow GitHub Actions to create issues and create the required `incident` and `high-priority` labels.
+
+## Extending the Monitoring System
+
+- Add new endpoints to the monitoring workflow
+- Implement more detailed health checks
+- Set up additional notification channels, such as Slack, Discord, or email
+- Configure custom alerting thresholds or criteria
