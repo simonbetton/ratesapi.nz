@@ -20,11 +20,6 @@ export function isValidIsoDate(value: string): boolean {
   );
 }
 
-export const DateParameter = t.String({
-  pattern: "^\\d{4}-\\d{2}-\\d{2}$",
-  description: "Date in YYYY-MM-DD format",
-});
-
 export const TermInMonthsParameter = t.String({
   pattern: "^\\d+$",
   description: "Mortgage term in months",
@@ -126,7 +121,7 @@ export const TimestampedFields = {
   }),
 };
 
-type ValidationErrorResponseBody = {
+export type ValidationErrorResponseBody = {
   code: 400;
   message: "Invalid request parameters";
 };
@@ -139,9 +134,3 @@ export const ValidationErrorResponse: ValidationErrorResponseBody = {
 export function invalidRequestParameters() {
   return ValidationErrorResponse;
 }
-
-export const ErrorResponseByStatus = {
-  400: GenericApiError,
-  404: GenericApiError,
-  500: GenericApiError,
-};

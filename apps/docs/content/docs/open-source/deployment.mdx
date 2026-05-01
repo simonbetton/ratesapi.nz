@@ -1,0 +1,77 @@
+---
+title: "Deployment"
+description: "Learn how to deploy Rates API to Cloudflare Workers for production use."
+---
+
+
+
+Rates API is designed to be deployed to Cloudflare Workers, a serverless platform that offers global distribution, high performance, and excellent scalability. The API also uses Cloudflare D1 for data storage.
+
+## Prerequisites
+
+1. A [Cloudflare account](https://dash.cloudflare.com/sign-up)
+2. The project set up for local development
+3. [Bun](https://bun.sh/) installed
+4. [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/) for Cloudflare Workers and D1 management
+
+## Deployment Steps
+
+### 1. Create a Cloudflare Worker
+
+1. Log in to the [Cloudflare dashboard](https://dash.cloudflare.com/)
+2. Select your account
+3. Go to Workers & Pages > Create application
+4. Select Create Worker > Deploy
+
+### 2. Set Up Cloudflare D1 Database
+
+1. In the Cloudflare dashboard, go to Workers & Pages > D1
+2. Click Create database
+3. Give your database a name such as `ratesapi-data`
+4. Select a location close to your target audience
+
+```bash
+wrangler login
+wrangler d1 execute ratesapi-data --file=./apps/api/schema.sql
+```
+
+### 3. Configure Wrangler
+
+The `apps/api/wrangler.toml` file controls API Worker deployment and D1 bindings.
+
+```toml
+name = "rates-api"
+main = "src/index.ts" # relative to apps/api/wrangler.toml
+compatibility_date = "2025-06-01"
+
+[[d1_databases]]
+binding = "RATESAPI_DB"
+database_name = "ratesapi-data"
+database_id = "your-database-id-from-cloudflare"
+```
+
+### 4. Deploy the Worker
+
+```bash
+bun run deploy
+```
+
+## Post-Deployment Setup
+
+### Data Updates
+
+The API requires regular updates to financial rate data. Options include manual scraper runs, scheduled workflows, or Cloudflare Cron Triggers.
+
+### Monitoring
+
+The repository includes a monitoring system that uses GitHub Actions to check endpoint health and create issues when endpoints are down.
+
+### Custom Domain
+
+In the Cloudflare dashboard, go to Workers & Pages, select your worker, then use Triggers > Custom Domains to add your domain.
+
+## Production Considerations
+
+- Caching: Adjust cache times based on freshness and performance needs.
+- Rate Limiting: Consider rate limiting if traffic is high or abuse prevention is needed.
+- Documentation: Keep the docs app aligned with API changes.

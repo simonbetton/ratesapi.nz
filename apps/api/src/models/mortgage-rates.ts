@@ -91,11 +91,10 @@ export const MortgageRates = t.Object(
   { additionalProperties: false },
 );
 
-export type Rate = typeof MortgageRate.static;
-
+export type MortgageRate = typeof MortgageRate.static;
 export type MortgageRates = typeof MortgageRates.static;
-export type Institution = MortgageRates["data"][number];
-export type Product = MortgageRates["data"][number]["products"][number];
+export type MortgageInstitution = MortgageRates["data"][number];
+export type MortgageProduct = MortgageRates["data"][number]["products"][number];
 
 export function isRateTerm(term: string): term is RateTerm {
   return RateTermLookup.has(term);

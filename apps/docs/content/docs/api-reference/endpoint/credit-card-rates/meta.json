@@ -1,0 +1,4 @@
+{
+  "title": "Credit Card Rates",
+  "pages": ["list", "get", "time-series"]
+}

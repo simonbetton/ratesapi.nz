@@ -1,7 +1,7 @@
 import { isTruthy } from "./is-truthy";
 
-type Prefix = "institution" | "product" | "rate" | "issuer" | "plan";
-type Args = [Prefix, ...string[]];
+export type Prefix = "institution" | "product" | "rate" | "issuer" | "plan";
+export type Args = [Prefix, ...string[]];
 const PrefixValues: Prefix[] = [
   "institution",
   "product",

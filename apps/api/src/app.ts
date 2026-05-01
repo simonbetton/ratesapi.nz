@@ -1,7 +1,6 @@
 import { openapi, toOpenAPISchema } from "@elysia/openapi";
 import { cors } from "@elysiajs/cors";
 import { Elysia, type ElysiaAdapter } from "elysia";
-import { renderDocsSearch, renderLlmsTxt } from "./docs/responses";
 import { createLogger } from "./lib/logging";
 import { type GetEnv } from "./lib/routing";
 import {
@@ -35,7 +34,7 @@ const openApiInfo = {
     "Rates API is a free OpenAPI service to retrieve the latest lending rates offered by New Zealand financial institutions — updated hourly.",
 };
 
-type CreateAppOptions = {
+export type CreateAppOptions = {
   adapter?: ElysiaAdapter;
 };
 
@@ -146,18 +145,10 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
           hide: true,
         },
       },
-    )
-    .get("/llms.txt", renderLlmsTxt)
-    .get("/api/search", ({ request }) => renderDocsSearch(request), {
-      detail: {
-        hide: true,
-      },
-    });
+    );
 
   return app;
 }
-
-export type App = ReturnType<typeof createApp>;
 
 function getOpenApiServers(request: Request, environment: string | undefined) {
   const origin = new URL(request.url).origin;

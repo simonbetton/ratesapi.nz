@@ -19,7 +19,7 @@ export type DataType =
   | "credit-card-rates"
   | "personal-loan-rates";
 
-type LoadLatestDataOptions = {
+export type LoadLatestDataOptions = {
   fallbackUrl?: string;
 };
 
@@ -166,36 +166,6 @@ export async function loadTimeSeriesData<Schema extends TSchema>(
   }
 }
 
-/**
- * Save historical data to the D1 database
- */
-export async function saveHistoricalData<T extends SupportedModels>(
-  dataType: DataType,
-  date: string,
-  data: T,
-  db: Database,
-): Promise<void> {
-  try {
-    const dataJson = toSavableJson(data);
-
-    // Insert or replace historical data
-    const stmt = db.prepare(
-      "INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES (?, ?, ?)",
-    );
-    await stmt.bind(dataType, date, dataJson).run();
-
-    // Also update latest_data
-    const latestStmt = db.prepare(
-      "INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES (?, ?, CURRENT_TIMESTAMP)",
-    );
-    await latestStmt.bind(dataType, dataJson).run();
-  } catch (error) {
-    throw new Error(
-      `Failed to save historical data for ${dataType} on ${date}: ${error}`,
-    );
-  }
-}
-
 function readStringField(
   row: Record<string, unknown> | null,
   field: string,
@@ -224,13 +194,21 @@ async function loadLatestDataFromApi<Schema extends TSchema>(
 }
 
 function stripApiOnlyFields(value: unknown): unknown {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+  if (!isRecord(value)) {
     return value;
   }
 
-  const { termsOfUse, timestamp, ...model } = value as Record<string, unknown>;
-  void termsOfUse;
-  void timestamp;
+  const model: Record<string, unknown> = {};
+
+  for (const [key, field] of Object.entries(value)) {
+    if (key !== "termsOfUse" && key !== "timestamp") {
+      model[key] = field;
+    }
+  }
 
   return model;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

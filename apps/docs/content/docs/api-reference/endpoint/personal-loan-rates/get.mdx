@@ -1,0 +1,29 @@
+---
+title: "Get Personal Loan Rates by Institution ID"
+---
+
+
+## Endpoint
+
+| Field | Value |
+| --- | --- |
+| Method | `GET` |
+| Path | `/api/v1/personal-loan-rates/{institutionId}` |
+| Operation ID | `getPersonalLoanRatesByInstitution` |
+
+## Parameters
+
+| Parameter | Description |
+| --- | --- |
+| `institutionId` | institution identifier, e.g. institution:anz |
+
+## Responses
+
+| Status | Description |
+| --- | --- |
+| `200` | Retrieve personal loan rates for the institution |
+| `404` | Institution not found |
+| `500` | Server error |
+
+
+Retrieve personal loan rates for a specific institution.

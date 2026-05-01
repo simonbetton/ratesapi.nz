@@ -59,8 +59,7 @@ export const CarLoanRates = t.Object(
   { additionalProperties: false },
 );
 
-export type Rate = typeof CarLoanRate.static;
-
+export type CarLoanRate = typeof CarLoanRate.static;
 export type CarLoanRates = typeof CarLoanRates.static;
-export type Institution = CarLoanRates["data"][number];
-export type Product = CarLoanRates["data"][number]["products"][number];
+export type CarLoanInstitution = CarLoanRates["data"][number];
+export type CarLoanProduct = CarLoanRates["data"][number]["products"][number];

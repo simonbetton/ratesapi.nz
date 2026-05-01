@@ -1,0 +1,29 @@
+---
+title: "Get Car Loan Rates By Institution ID"
+---
+
+
+## Endpoint
+
+| Field | Value |
+| --- | --- |
+| Method | `GET` |
+| Path | `/api/v1/car-loan-rates/{institutionId}` |
+| Operation ID | `getCarLoanRatesByInstitution` |
+
+## Parameters
+
+| Parameter | Description |
+| --- | --- |
+| `institutionId` | institution identifier, e.g. institution:asb |
+
+## Responses
+
+| Status | Description |
+| --- | --- |
+| `200` | Retrieve car loan rates for the institution |
+| `404` | Institution not found |
+| `500` | Server error |
+
+
+Retrieve car loan rates for a specific New Zealand financial institution.

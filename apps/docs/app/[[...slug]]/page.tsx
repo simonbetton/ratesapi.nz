@@ -1,10 +1,4 @@
 import {
-  extractTableOfContents,
-  renderEndpoint,
-  renderMarkdown,
-} from "@rates-api/docs/render";
-import { type DocsPageData, docsSource } from "@rates-api/docs/source";
-import {
   DocsBody,
   DocsDescription,
   DocsPage,
@@ -12,6 +6,7 @@ import {
 } from "fumadocs-ui/layouts/docs/page";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
+import { source } from "@/lib/source";
 
 type PageProps = {
   params: Promise<{
@@ -21,30 +16,27 @@ type PageProps = {
 
 export default async function Page({ params }: PageProps) {
   const { slug } = await params;
-  const page = docsSource.getPage(slug);
+  const page = source.getPage(slug);
 
   if (!page) {
     notFound();
   }
 
-  const pageData = page.data as DocsPageData;
-  const description =
-    pageData.description ?? pageData.markdown.split("\n")[0] ?? "";
+  const MDXContent = page.data.body;
 
   return (
-    <DocsPage toc={extractTableOfContents(pageData.markdown)}>
-      <DocsTitle>{pageData.title}</DocsTitle>
-      <DocsDescription>{description}</DocsDescription>
+    <DocsPage toc={page.data.toc}>
+      <DocsTitle>{page.data.title}</DocsTitle>
+      <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
-        {renderEndpoint(pageData.endpoint)}
-        {renderMarkdown(pageData.markdown)}
+        <MDXContent />
       </DocsBody>
     </DocsPage>
   );
 }
 
 export function generateStaticParams() {
-  return docsSource
+  return source
     .generateParams()
     .map(({ slug }) => ({ slug: slug.length > 0 ? slug : undefined }));
 }
@@ -53,16 +45,14 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const page = docsSource.getPage(slug);
+  const page = source.getPage(slug);
 
   if (!page) {
     notFound();
   }
 
-  const pageData = page.data as DocsPageData;
-
   return {
-    title: `${pageData.title} | Rates API`,
-    description: pageData.description ?? pageData.markdown.split("\n")[0],
+    title: `${page.data.title} | Rates API`,
+    description: page.data.description,
   };
 }

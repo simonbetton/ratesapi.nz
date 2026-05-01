@@ -1,0 +1,29 @@
+---
+title: "Get Credit Card Rates by Issuer"
+---
+
+
+## Endpoint
+
+| Field | Value |
+| --- | --- |
+| Method | `GET` |
+| Path | `/api/v1/credit-card-rates/{issuerId}` |
+| Operation ID | `getCreditCardRatesIssuer` |
+
+## Parameters
+
+| Parameter | Description |
+| --- | --- |
+| `issuerId` | issuer identifier, e.g. issuer:amex |
+
+## Responses
+
+| Status | Description |
+| --- | --- |
+| `200` | Retrieve credit card rates for the issuer |
+| `404` | Issuer not found |
+| `500` | Server error |
+
+
+Retrieve credit card rates for a specific issuer.

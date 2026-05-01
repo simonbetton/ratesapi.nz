@@ -1,0 +1,43 @@
+---
+title: "List Mortgage Rates"
+---
+
+
+## Endpoint
+
+| Field | Value |
+| --- | --- |
+| Method | `GET` |
+| Path | `/api/v1/mortgage-rates` |
+| Operation ID | `listMortgageRates` |
+
+## Parameters
+
+| Parameter | Description |
+| --- | --- |
+| `termInMonths` | optional mortgage term filter |
+
+## Responses
+
+| Status | Description |
+| --- | --- |
+| `200` | Retrieve all mortgage rates |
+| `500` | Server error |
+
+
+This endpoint returns a comprehensive list of mortgage rates from most financial institutions in New Zealand. The data includes interest rates, loan terms, and special conditions for various mortgage products including fixed and floating rate options.
+
+## Response Data
+
+- Institution name and ID
+- Interest rates for different term periods (6 months, 1 year, 2 years, etc.)
+- Floating/variable rates
+- Special rates and promotional offers
+- Loan-to-value ratio requirements
+
+## Use Cases
+
+- Mortgage Comparison Sites: Build tools to help home buyers find the best mortgage rates across all NZ lenders
+- Real Estate Applications: Integrate current mortgage rates into property listing platforms
+- Financial Calculators: Power mortgage calculators with real-time interest rate data
+- Market Analysis: Track and analyze mortgage rate trends across the New Zealand market

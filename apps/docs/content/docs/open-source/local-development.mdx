@@ -1,0 +1,73 @@
+---
+title: "Local Development"
+description: "Set up a local development environment for Rates API and start contributing to the project."
+---
+
+
+
+This guide will help you set up a local development environment for Rates API, allowing you to make changes, test new features, and contribute to the project.
+
+## Prerequisites
+
+- [Bun](https://bun.sh/): The JavaScript runtime and package manager used by the project
+- Git: For version control
+- A text editor or IDE such as VS Code or WebStorm
+
+## Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/simonbetton/ratesapi.nz.git
+cd ratesapi.nz
+```
+
+### 2. Install Dependencies
+
+```bash
+bun i
+```
+
+### 3. Run the Development Server
+
+```bash
+bun run dev
+```
+
+This starts the server at `http://localhost:8787`.
+
+## Scraping Data
+
+The project includes scripts to scrape rate data from financial institution websites. These scripts are located in the `apps/api/bin/` directory.
+
+```bash
+bun run apps/api/bin/scrape-mortgage-rates.ts
+```
+
+Available scraper scripts:
+
+- `scrape-mortgage-rates.ts`: Fetches current mortgage rates
+- `scrape-personal-loan-rates.ts`: Fetches personal loan rates
+- `scrape-car-loan-rates.ts`: Fetches car loan rates
+- `scrape-credit-card-rates.ts`: Fetches credit card rates
+
+## Cloudflare D1 Database
+
+The project uses Cloudflare D1, a serverless SQL database built on SQLite, for current and historical rate data.
+
+### Local Development with D1
+
+```bash
+# Install Wrangler CLI if not already installed
+npm install -g wrangler
+
+# Create a local D1 database
+wrangler d1 create ratesapi-data-local
+```
+
+## Development Tips
+
+- Add a new endpoint: Create a new route handler in `apps/api/src/routes/`
+- Update data models: Modify schemas in `apps/api/src/models/`
+- Enhance scrapers: Modify the scraper scripts in `apps/api/bin/`
+- Before submitting changes, test affected endpoints locally and ensure the project builds without errors

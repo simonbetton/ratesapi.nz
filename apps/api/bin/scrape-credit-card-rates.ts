@@ -5,7 +5,9 @@ import { generateId } from "../src/lib/generate-id";
 import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
 import { parseSchema } from "../src/lib/schema";
 import { toTitleFormat } from "../src/lib/transforms";
-import { CreditCardRates, type Issuer, type Plan } from "../src/models";
+import { CreditCardRates } from "../src/models/credit-card-rates";
+import { type Issuer } from "../src/models/issuer";
+import { type Plan } from "../src/models/plan";
 import { hasDataChanged, loadFromD1, saveToD1 } from "./utils";
 
 const config: {

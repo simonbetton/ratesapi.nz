@@ -6,11 +6,11 @@ import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
 import { parseSchema } from "../src/lib/schema";
 import { toTitleFormat } from "../src/lib/transforms";
 import {
-  type Institution,
   isRateTerm,
+  type MortgageInstitution,
+  type MortgageProduct,
+  type MortgageRate,
   MortgageRates,
-  type Product,
-  type Rate,
   type RateTerm,
 } from "../src/models/mortgage-rates";
 import { hasDataChanged, loadFromD1, saveToD1 } from "./utils";
@@ -115,10 +115,10 @@ async function main() {
 }
 main().catch(console.error);
 
-function getModelExtractedFromDOM($: CheerioAPI): Institution[] {
-  const institutions: Institution[] = [];
+function getModelExtractedFromDOM($: CheerioAPI): MortgageInstitution[] {
+  const institutions: MortgageInstitution[] = [];
   const rows = $(config.tableSelector);
-  let currentInstitution: Institution | null = null;
+  let currentInstitution: MortgageInstitution | null = null;
 
   for (const row of rows) {
     const cells = Array.from($(row).find("td"));
@@ -141,9 +141,12 @@ function getModelExtractedFromDOM($: CheerioAPI): Institution[] {
   return institutions;
 }
 
-function asProduct(institution: Institution, productName: string): Product {
+function asProduct(
+  institution: MortgageInstitution,
+  productName: string,
+): MortgageProduct {
   let product = institution.products.find(
-    (p: Product) => p.name === productName,
+    (p: MortgageProduct) => p.name === productName,
   );
   if (!product) {
     product = {
@@ -156,7 +159,7 @@ function asProduct(institution: Institution, productName: string): Product {
   return product;
 }
 
-function asInstitution($: CheerioAPI, cell: Element): Institution {
+function asInstitution($: CheerioAPI, cell: Element): MortgageInstitution {
   const name = getInstitutionName($, cell);
   return {
     id: generateId(["institution", name]),
@@ -166,12 +169,12 @@ function asInstitution($: CheerioAPI, cell: Element): Institution {
 }
 
 function asRatesForProduct(
-  institution: Institution,
-  product: Product,
+  institution: MortgageInstitution,
+  product: MortgageProduct,
   $: CheerioAPI,
   cells: Element[],
-): Rate[] {
-  const rates: Rate[] = [];
+): MortgageRate[] {
+  const rates: MortgageRate[] = [];
 
   for (let i = 2; i < cells.length; i++) {
     const cell = cells[i];
@@ -199,11 +202,11 @@ function asRatesForProduct(
 }
 
 function asRate(
-  institution: Institution,
+  institution: MortgageInstitution,
   productName: string,
   term: RateTerm,
   rate: string,
-): Rate {
+): MortgageRate {
   return {
     id: generateId(["rate", institution.name, productName, term]),
     term,
@@ -239,7 +242,7 @@ function normalizeProductName(name: string) {
   return name;
 }
 
-function sortProductRatesByTermInMonths(rates: Rate[]) {
+function sortProductRatesByTermInMonths(rates: MortgageRate[]) {
   rates.sort((a, b) => {
     return (a.termInMonths ?? 0) - (b.termInMonths ?? 0);
   });

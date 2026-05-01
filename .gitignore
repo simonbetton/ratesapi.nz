@@ -5,4 +5,5 @@ dist
 .open-next
 .dev.vars
 .fallow/
+.source/
 tsconfig.tsbuildinfo

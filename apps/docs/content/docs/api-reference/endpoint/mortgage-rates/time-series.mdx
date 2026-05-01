@@ -1,0 +1,54 @@
+---
+title: "Mortgage Rates Time Series"
+description: "Retrieve historical time series data for mortgage rates from New Zealand financial institutions."
+---
+
+
+## Endpoint
+
+| Field | Value |
+| --- | --- |
+| Method | `GET` |
+| Path | `/api/v1/mortgage-rates/time-series` |
+| Operation ID | `getMortgageRatesTimeSeries` |
+
+## Parameters
+
+| Parameter | Description |
+| --- | --- |
+| `date` | optional single date in YYYY-MM-DD format |
+| `startDate` | optional range start date in YYYY-MM-DD format |
+| `endDate` | optional range end date in YYYY-MM-DD format |
+| `institutionId` | optional institution ID filter |
+| `termInMonths` | optional mortgage term filter |
+
+## Responses
+
+| Status | Description |
+| --- | --- |
+| `200` | Retrieve mortgage rates time series data |
+| `500` | Server error |
+
+
+This endpoint provides historical time series data for mortgage rates, allowing you to analyze trends and changes over time. The data is stored in Cloudflare D1 database, enabling efficient querying of historical datasets.
+
+## Response Data
+
+- Timestamp for each data point
+- Institution name and ID
+- Interest rates for different term periods (6 months, 1 year, 2 years, etc.)
+- Floating/variable rates
+- Special rates and promotional offers
+- Loan-to-value ratio requirements
+
+## Use Cases
+
+- Historical Analysis: Track how mortgage rates have changed over time to identify trends and patterns
+- Comparative Studies: Compare rate changes across different institutions to identify competitive offerings
+- Economic Research: Correlate interest rate changes with wider economic indicators
+- Predictive Modeling: Develop forecasting models based on historical rate movements
+- Visualization Tools: Create interactive charts and graphs showing rate trends over time
+
+## Notes on Data Storage
+
+The time series data is stored in Cloudflare D1, a serverless SQL database built on SQLite. This allows for efficient querying, fast retrieval, reliable persistence, and scalable performance for growing historical datasets.

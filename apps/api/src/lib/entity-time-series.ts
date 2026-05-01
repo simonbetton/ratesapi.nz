@@ -10,13 +10,16 @@ import { type Database } from "./environment";
 import { termsOfUse } from "./terms-of-use";
 import { getCurrentTimestamp } from "./transforms";
 
-type EntityRates = SupportedModels & {
+export type EntityRates = SupportedModels & {
   data: { id: string }[];
 };
 
-type EntityName = "institution" | "issuer";
+export type EntityName = "institution" | "issuer";
 
-type TimeSeriesBody<T extends EntityRates, ResponseType extends string> = {
+export type TimeSeriesBody<
+  T extends EntityRates,
+  ResponseType extends string,
+> = {
   type: ResponseType;
   timeSeries: Record<string, T>;
   availableDates: string[];
@@ -25,25 +28,29 @@ type TimeSeriesBody<T extends EntityRates, ResponseType extends string> = {
   message?: string;
 };
 
-type ErrorStatus = 400 | 404;
+export type EntityTimeSeriesErrorStatus = 400 | 404;
 
-type ErrorBody = {
-  code: ErrorStatus;
+export type EntityTimeSeriesErrorBody = {
+  code: EntityTimeSeriesErrorStatus;
   message: string;
 };
 
-type EntityTimeSeriesResult<
+export type EntityTimeSeriesResult<
   T extends EntityRates,
   ResponseType extends string,
 > =
   | { ok: true; body: TimeSeriesBody<T, ResponseType> }
-  | { ok: false; status: ErrorStatus; body: ErrorBody };
+  | {
+      ok: false;
+      status: EntityTimeSeriesErrorStatus;
+      body: EntityTimeSeriesErrorBody;
+    };
 
-type EntitySchema<T extends EntityRates> = TSchema & {
+export type EntitySchema<T extends EntityRates> = TSchema & {
   static: T;
 };
 
-type EntityTimeSeriesOptions<
+export type EntityTimeSeriesOptions<
   T extends EntityRates,
   ResponseType extends string,
 > = {
@@ -247,7 +254,7 @@ function successResult<T extends EntityRates, ResponseType extends string>(
 }
 
 function errorResult<T extends EntityRates, ResponseType extends string>(
-  status: ErrorStatus,
+  status: EntityTimeSeriesErrorStatus,
   message: string,
 ): EntityTimeSeriesResult<T, ResponseType> {
   return {

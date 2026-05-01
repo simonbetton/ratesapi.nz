@@ -6,6 +6,7 @@
     "build:cloudflare": "opennextjs-cloudflare build",
     "dev": "next dev",
     "preview": "opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare deploy"
+    "deploy": "opennextjs-cloudflare deploy",
+    "source": "fumadocs-mdx source.config.ts .source"
   }
 }

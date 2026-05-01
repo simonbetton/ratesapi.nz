@@ -312,42 +312,18 @@ describe("v1 API contract", () => {
     expect(response.status).toBe(404);
   });
 
-  test("exposes docs content for LLM clients", async () => {
+  test("leaves LLM documentation index to the docs app", async () => {
     const response = await request("/llms.txt");
 
-    expect(response.status).toBe(200);
-    expect(response.headers.get("content-type")).toContain("text/plain");
-
-    const body = await response.text();
-
-    expect(body).toContain("# Introduction");
-    expect(body).toContain("List Car Loan Rates");
-    expect(body).toContain("# Local Development");
+    expect(response.status).toBe(404);
   });
 
-  test("searches documentation content", async () => {
+  test("leaves documentation search to the docs app", async () => {
     const response = await request(
       "/api/search?query=mortgage%20time%20series",
     );
 
-    expect(response.status).toBe(200);
-    expect(response.headers.get("content-type")).toContain("application/json");
-
-    const body = readSearchResults(await jsonBody(response));
-    const mortgageTimeSeriesResult = body.find(
-      (result) =>
-        result.url === "/api-reference/endpoint/mortgage-rates/time-series",
-    );
-
-    expect(mortgageTimeSeriesResult).toEqual(
-      expect.objectContaining({
-        type: expect.stringMatching(/^(page|heading|text)$/),
-        url: "/api-reference/endpoint/mortgage-rates/time-series",
-      }),
-    );
-    expect(stripSearchHighlights(mortgageTimeSeriesResult?.content)).toContain(
-      "Mortgage Rates Time Series",
-    );
+    expect(response.status).toBe(404);
   });
 
   test("exposes OpenAPI UI and JSON without documenting MCP", async () => {
@@ -705,34 +681,6 @@ function isDataType(value: string): value is DataType {
 
 function readString(value: unknown): string | undefined {
   return typeof value === "string" ? value : undefined;
-}
-
-function readSearchResults(
-  value: unknown,
-): Array<{ content: string; type: string; url: string }> {
-  if (!Array.isArray(value)) {
-    return [];
-  }
-
-  return value.flatMap((item) => {
-    if (!isRecord(item)) {
-      return [];
-    }
-
-    const content = readString(item.content);
-    const type = readString(item.type);
-    const url = readString(item.url);
-
-    if (!content || !type || !url) {
-      return [];
-    }
-
-    return [{ content, type, url }];
-  });
-}
-
-function stripSearchHighlights(value: string | undefined): string {
-  return value?.replaceAll(/<\/?mark>/g, "") ?? "";
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

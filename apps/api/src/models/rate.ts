@@ -12,7 +12,3 @@ export const RateSchema = t.Object(
   },
   { additionalProperties: false },
 );
-
-export const Rate = RateSchema;
-
-export type Rate = typeof RateSchema.static;

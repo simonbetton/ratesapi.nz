@@ -2,14 +2,14 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
-    "baseUrl": "../..",
+    "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "incremental": true,
     "jsx": "preserve",
     "noEmit": true,
     "paths": {
-      "@/*": ["apps/docs/*"],
-      "@rates-api/*": ["apps/api/src/*"]
+      "@/*": ["./*"],
+      "fumadocs-mdx:collections/*": [".source/*"]
     },
     "plugins": [{ "name": "next" }]
   },
@@ -18,7 +18,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "../../apps/api/src/docs/**/*.ts"
+    ".source/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

@@ -59,8 +59,8 @@ export const PersonalLoanRates = t.Object(
   { additionalProperties: false },
 );
 
-export type Rate = typeof PersonalLoanRate.static;
-
+export type PersonalLoanRate = typeof PersonalLoanRate.static;
 export type PersonalLoanRates = typeof PersonalLoanRates.static;
-export type Institution = PersonalLoanRates["data"][number];
-export type Product = PersonalLoanRates["data"][number]["products"][number];
+export type PersonalLoanInstitution = PersonalLoanRates["data"][number];
+export type PersonalLoanProduct =
+  PersonalLoanRates["data"][number]["products"][number];

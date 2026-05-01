@@ -1,16 +1,16 @@
 import { createLogger } from "./logging";
 
-type RetryOptions = {
+export type RetryOptions = {
   retries: number;
   retryDelay: number;
   retryOn: Array<number>;
 };
 
-type FetchOptions = RequestInit & {
+export type FetchOptions = RequestInit & {
   retryOptions?: RetryOptions;
 };
 
-type DefaultFetchOptions = FetchOptions & {
+export type DefaultFetchOptions = FetchOptions & {
   prefixUrl?: string;
 };
 

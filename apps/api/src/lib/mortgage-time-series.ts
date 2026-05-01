@@ -8,7 +8,7 @@ import { type Database } from "./environment";
 import { termsOfUse } from "./terms-of-use";
 import { getCurrentTimestamp } from "./transforms";
 
-type MortgageTimeSeriesOptions = {
+export type MortgageTimeSeriesOptions = {
   date?: string;
   startDate?: string;
   endDate?: string;
@@ -22,7 +22,7 @@ type MortgageFilters = Pick<
   "institutionId" | "termInMonths"
 >;
 
-type MortgageTimeSeriesBody = {
+export type MortgageTimeSeriesBody = {
   type: "MortgageRatesTimeSeries";
   timeSeries: Record<string, MortgageRates>;
   availableDates: string[];
@@ -31,16 +31,20 @@ type MortgageTimeSeriesBody = {
   message?: string;
 };
 
-type ErrorStatus = 400 | 404;
+export type MortgageTimeSeriesErrorStatus = 400 | 404;
 
-type ErrorBody = {
-  code: ErrorStatus;
+export type MortgageTimeSeriesErrorBody = {
+  code: MortgageTimeSeriesErrorStatus;
   message: string;
 };
 
-type MortgageTimeSeriesResult =
+export type MortgageTimeSeriesResult =
   | { ok: true; body: MortgageTimeSeriesBody }
-  | { ok: false; status: ErrorStatus; body: ErrorBody };
+  | {
+      ok: false;
+      status: MortgageTimeSeriesErrorStatus;
+      body: MortgageTimeSeriesErrorBody;
+    };
 
 export async function getMortgageTimeSeries(
   options: MortgageTimeSeriesOptions,
@@ -271,7 +275,7 @@ function successResult(
 }
 
 function errorResult(
-  status: ErrorStatus,
+  status: MortgageTimeSeriesErrorStatus,
   message: string,
 ): MortgageTimeSeriesResult {
   return {
