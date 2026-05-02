@@ -2,12 +2,8 @@
 
 import { createHttpClient } from "../src/lib/http-client";
 
-const LAST_WEEK = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  .toISOString()
-  .split("T")[0];
-const YESTERDAY = new Date(new Date().setDate(new Date().getDate() - 1))
-  .toISOString()
-  .split("T")[0];
+const KNOWN_HISTORICAL_START_DATE = "2026-04-24";
+const KNOWN_HISTORICAL_END_DATE = "2026-04-30";
 
 const endpoints = [
   // Base endpoints
@@ -38,11 +34,11 @@ const endpoints = [
   "v1/credit-card-rates/time-series?issuerId=issuer:amex",
 
   // Time Series with date parameters
-  `v1/mortgage-rates/time-series?startDate=${LAST_WEEK}&endDate=${YESTERDAY}`,
-  `v1/mortgage-rates/time-series?date=${YESTERDAY}`,
+  `v1/mortgage-rates/time-series?startDate=${KNOWN_HISTORICAL_START_DATE}&endDate=${KNOWN_HISTORICAL_END_DATE}`,
+  `v1/mortgage-rates/time-series?date=${KNOWN_HISTORICAL_END_DATE}`,
 
   // Time Series with combined filters
-  `v1/mortgage-rates/time-series?startDate=${LAST_WEEK}&endDate=${YESTERDAY}&institutionId=institution:anz`,
+  `v1/mortgage-rates/time-series?startDate=${KNOWN_HISTORICAL_START_DATE}&endDate=${KNOWN_HISTORICAL_END_DATE}&institutionId=institution:anz`,
   `v1/mortgage-rates/time-series?institutionId=institution:anz&termInMonths=12`,
 ];
 
