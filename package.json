@@ -48,7 +48,7 @@
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "domhandler": "^5.0.3",
+    "domhandler": "^6.0.1",
     "fallow": "^2.56.0",
     "husky": "^9.1.7",
     "pino": "^10.3.1",
