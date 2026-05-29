@@ -37,5 +37,11 @@
 
     "noErrorTruncation": true // TLDR - Don't truncate errors (useful for debugging)
   },
-  "exclude": ["apps/docs/.next", "apps/docs/**/*.ts", "apps/docs/**/*.tsx"]
+  "exclude": [
+    "apps/docs/.next",
+    "apps/docs/**/*.ts",
+    "apps/docs/**/*.tsx",
+    "apps/web/**/*.ts",
+    "apps/web/**/*.tsx"
+  ]
 }
