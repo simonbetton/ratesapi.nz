@@ -33,7 +33,7 @@
     "cheerio": "1.1.2",
     "elysia": "^1.4.28",
     "fumadocs-core": "^16.8.5",
-    "fumadocs-mdx": "^14.3.2",
+    "fumadocs-mdx": "^15.0.11",
     "fumadocs-ui": "^16.8.5",
     "next": "^16.2.4",
     "ora": "^9.4.0",
