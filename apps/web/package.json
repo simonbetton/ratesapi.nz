@@ -11,10 +11,10 @@
     "start": "node .output/server/index.mjs",
     "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
-    "format": "biome format",
-    "lint": "biome lint",
-    "check": "biome check"
+    "typecheck": "tsgo --noEmit",
+    "format": "oxfmt",
+    "lint": "oxlint",
+    "check": "oxlint && oxfmt --check"
   },
   "dependencies": {
     "@fontsource/crimson-pro": "^5.2.8",
@@ -33,7 +33,6 @@
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.5",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-vite": "latest",
     "@testing-library/dom": "^10.4.1",
@@ -41,9 +40,12 @@
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "@typescript/native-preview": "7.0.0-dev.20260707.2",
     "@vitejs/plugin-react": "^6.0.1",
     "jsdom": "^28.1.0",
     "nitro": "^3.0.260522-beta",
+    "oxfmt": "^0.70.0",
+    "oxlint": "^1.85.0",
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
     "vitest": "^4.1.5"
