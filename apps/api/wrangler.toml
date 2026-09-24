@@ -15,6 +15,10 @@ zone_name = "ratesapi.nz"
 pattern = "ratesapi.nz/openapi/*"
 zone_name = "ratesapi.nz"
 
+[observability.logs]
+enabled = true
+invocation_logs = true
+
 [vars]
 ENVIRONMENT = "production"
 
