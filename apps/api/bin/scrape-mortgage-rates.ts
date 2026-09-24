@@ -13,6 +13,7 @@ import {
   MortgageRates,
   type RateTerm,
 } from "../src/models/mortgage-rates";
+import { assertScrapeHasRates, assertTableHasRows } from "./scrape-guards";
 import { hasDataChanged, loadFromD1, saveToD1 } from "./utils";
 
 const config: {
@@ -76,12 +77,14 @@ async function main() {
   const handle = ora("Extracting and Validating").start();
   try {
     const $ = load(data);
+    assertTableHasRows($(config.tableSelector).length, config.tableSelector);
     const unvalidatedData = getModelExtractedFromDOM($);
     validatedModel = parseSchema(MortgageRates, {
       type: "MortgageRates",
       data: unvalidatedData,
       lastUpdated: new Date().toISOString(),
     });
+    assertScrapeHasRates(validatedModel);
     handle
       .succeed(`Extracted and Validated ${validatedModel.data.length} results`)
       .stop();

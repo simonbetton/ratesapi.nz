@@ -8,6 +8,7 @@ import { toTitleFormat } from "../src/lib/transforms";
 import { CreditCardRates } from "../src/models/credit-card-rates";
 import { type Issuer } from "../src/models/issuer";
 import { type Plan } from "../src/models/plan";
+import { assertScrapeHasRates, assertTableHasRows } from "./scrape-guards";
 import { hasDataChanged, loadFromD1, saveToD1 } from "./utils";
 
 const config: {
@@ -66,12 +67,14 @@ async function main() {
   const handle = ora("Extracting and Validating").start();
   try {
     const $ = load(data);
+    assertTableHasRows($(config.tableSelector).length, config.tableSelector);
     const unvalidatedData = getModelExtractedFromDOM($);
     validatedModel = parseSchema(CreditCardRates, {
       type: "CreditCardRates",
       data: unvalidatedData,
       lastUpdated: new Date().toISOString(),
     });
+    assertScrapeHasRates(validatedModel);
     handle
       .succeed(`Extracted and Validated ${validatedModel.data.length} results`)
       .stop();

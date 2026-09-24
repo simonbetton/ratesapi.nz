@@ -12,6 +12,7 @@ import {
   type PersonalLoanRate,
   PersonalLoanRates,
 } from "../src/models/personal-loan-rates";
+import { assertScrapeHasRates, assertTableHasRows } from "./scrape-guards";
 import { hasDataChanged, loadFromD1, saveToD1 } from "./utils";
 
 const config: {
@@ -66,12 +67,14 @@ async function main() {
   const handle = ora("Extracting and Validating").start();
   try {
     const $ = load(data);
+    assertTableHasRows($(config.tableSelector).length, config.tableSelector);
     const unvalidatedData = getModelExtractedFromDOM($);
     validatedModel = parseSchema(PersonalLoanRates, {
       type: "PersonalLoanRates",
       data: unvalidatedData,
       lastUpdated: new Date().toISOString(),
     });
+    assertScrapeHasRates(validatedModel);
     handle
       .succeed(`Extracted and Validated ${validatedModel.data.length} results`)
       .stop();
