@@ -1,6 +1,7 @@
 import { openapi, toOpenAPISchema } from "@elysia/openapi";
 import { cors } from "@elysiajs/cors";
 import { Elysia, type ElysiaAdapter } from "elysia";
+
 import { createLogger } from "./lib/logging";
 import { type GetEnv } from "./lib/routing";
 import {
@@ -45,7 +46,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
         origin: "*",
         credentials: false,
         maxAge: 600,
-      }),
+      })
     )
     .use(mortgageRatesRoutes(getEnv))
     .use(personalLoanRatesRoutes(getEnv))
@@ -58,7 +59,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
         try {
           const result = await getEnv()
             .RATESAPI_DB.prepare(
-              "SELECT data_type, last_updated FROM latest_data ORDER BY data_type ASC",
+              "SELECT data_type, last_updated FROM latest_data ORDER BY data_type ASC"
             )
             .all();
 
@@ -98,7 +99,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
           tags: ["Health"],
           summary: "Get API data freshness",
         },
-      },
+      }
     );
 
   const app = new Elysia({
@@ -112,7 +113,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
           servers: [productionServer],
         },
         exclude: openApiExclude,
-      }),
+      })
     )
     .onBeforeHandle({ as: "global" }, ({ request, set }) => {
       set.headers["x-request-id"] =
@@ -144,7 +145,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
         detail: {
           hide: true,
         },
-      },
+      }
     );
 
   return app;

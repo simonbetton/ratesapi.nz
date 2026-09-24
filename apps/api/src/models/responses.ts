@@ -1,4 +1,5 @@
 import { t } from "elysia";
+
 import { TimestampedFields } from "./api";
 import { CarLoanRates } from "./car-loan-rates";
 import { CreditCardRates } from "./credit-card-rates";
@@ -10,7 +11,7 @@ export const MortgageRatesResponse = t.Object(
     ...MortgageRates.properties,
     ...TimestampedFields,
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const PersonalLoanRatesResponse = t.Object(
@@ -18,7 +19,7 @@ export const PersonalLoanRatesResponse = t.Object(
     ...PersonalLoanRates.properties,
     ...TimestampedFields,
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const CarLoanRatesResponse = t.Object(
@@ -26,7 +27,7 @@ export const CarLoanRatesResponse = t.Object(
     ...CarLoanRates.properties,
     ...TimestampedFields,
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const CreditCardRatesResponse = t.Object(
@@ -34,7 +35,7 @@ export const CreditCardRatesResponse = t.Object(
     ...CreditCardRates.properties,
     ...TimestampedFields,
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const MortgageRatesTimeSeriesResponse = t.Object(
@@ -45,7 +46,7 @@ export const MortgageRatesTimeSeriesResponse = t.Object(
     ...TimestampedFields,
     message: t.Optional(t.String()),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const PersonalLoanRatesTimeSeriesResponse = t.Object(
@@ -56,7 +57,7 @@ export const PersonalLoanRatesTimeSeriesResponse = t.Object(
     ...TimestampedFields,
     message: t.Optional(t.String()),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const CarLoanRatesTimeSeriesResponse = t.Object(
@@ -67,7 +68,7 @@ export const CarLoanRatesTimeSeriesResponse = t.Object(
     ...TimestampedFields,
     message: t.Optional(t.String()),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const CreditCardRatesTimeSeriesResponse = t.Object(
@@ -78,5 +79,5 @@ export const CreditCardRatesTimeSeriesResponse = t.Object(
     ...TimestampedFields,
     message: t.Optional(t.String()),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );

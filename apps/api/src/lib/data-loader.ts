@@ -1,4 +1,5 @@
 import { type TSchema } from "elysia";
+
 import { type CarLoanRates } from "../models/car-loan-rates";
 import { type CreditCardRates } from "../models/credit-card-rates";
 import { type MortgageRates } from "../models/mortgage-rates";
@@ -32,7 +33,7 @@ export async function loadLatestData<Schema extends TSchema>(
   dataType: DataType,
   db: Database,
   schema: Schema,
-  options: LoadLatestDataOptions = {},
+  options: LoadLatestDataOptions = {}
 ): Promise<Schema["static"]> {
   try {
     const stmt = db.prepare("SELECT data FROM latest_data WHERE data_type = ?");
@@ -50,7 +51,7 @@ export async function loadLatestData<Schema extends TSchema>(
     if (options.fallbackUrl) {
       log.warn(
         { dataType, error, fallbackUrl: options.fallbackUrl },
-        "Falling back to production API data",
+        "Falling back to production API data"
       );
       return loadLatestDataFromApi(dataType, options.fallbackUrl, schema);
     }
@@ -61,7 +62,7 @@ export async function loadLatestData<Schema extends TSchema>(
 
 export function productionLatestDataFallbackUrl(
   dataType: DataType,
-  environment: string | undefined,
+  environment: string | undefined
 ): string | undefined {
   if (environment !== "development") {
     return undefined;
@@ -77,11 +78,11 @@ export async function loadHistoricalData<Schema extends TSchema>(
   dataType: DataType,
   date: string,
   db: Database,
-  schema: Schema,
+  schema: Schema
 ): Promise<Schema["static"] | null> {
   try {
     const stmt = db.prepare(
-      "SELECT data FROM historical_data WHERE data_type = ? AND date = ?",
+      "SELECT data FROM historical_data WHERE data_type = ? AND date = ?"
     );
     const result = await stmt.bind(dataType, date).first();
     const data = readStringField(result, "data");
@@ -95,7 +96,7 @@ export async function loadHistoricalData<Schema extends TSchema>(
     return parseSchema(schema, fromSavableJson(data));
   } catch (error) {
     throw new Error(
-      `Failed to load historical ${dataType} data for ${date}: ${error}`,
+      `Failed to load historical ${dataType} data for ${date}: ${error}`
     );
   }
 }
@@ -103,7 +104,7 @@ export async function loadHistoricalData<Schema extends TSchema>(
 export function toSavableJson(json: unknown) {
   const escaped = JSON.stringify(json).replace(
     /[\u0080-\uffff]/g,
-    (char) => `\\u${char.charCodeAt(0).toString(16).padStart(4, "0")}`,
+    (char) => `\\u${char.charCodeAt(0).toString(16).padStart(4, "0")}`
   );
 
   return btoa(escaped);
@@ -118,11 +119,11 @@ export function fromSavableJson(json: string): unknown {
  */
 export async function getAvailableDates(
   dataType: DataType,
-  db: Database,
+  db: Database
 ): Promise<string[]> {
   try {
     const stmt = db.prepare(
-      "SELECT date FROM historical_data WHERE data_type = ? ORDER BY date ASC",
+      "SELECT date FROM historical_data WHERE data_type = ? ORDER BY date ASC"
     );
     const results = await stmt.bind(dataType).all();
 
@@ -143,11 +144,11 @@ export async function loadTimeSeriesData<Schema extends TSchema>(
   startDate: string,
   endDate: string,
   db: Database,
-  schema: Schema,
+  schema: Schema
 ): Promise<Record<string, Schema["static"]>> {
   try {
     const stmt = db.prepare(
-      "SELECT date, data FROM historical_data WHERE data_type = ? AND date >= ? AND date <= ? ORDER BY date ASC",
+      "SELECT date, data FROM historical_data WHERE data_type = ? AND date >= ? AND date <= ? ORDER BY date ASC"
     );
     const results = await stmt.bind(dataType, startDate, endDate).all();
 
@@ -166,14 +167,14 @@ export async function loadTimeSeriesData<Schema extends TSchema>(
   } catch (error) {
     log.error({ dataType, error }, "Failed to load time series data");
     throw new Error(
-      `Failed to load time series data for ${dataType}: ${error}`,
+      `Failed to load time series data for ${dataType}: ${error}`
     );
   }
 }
 
 function readStringField(
   row: Record<string, unknown> | null,
-  field: string,
+  field: string
 ): string | undefined {
   const value = row?.[field];
   return typeof value === "string" ? value : undefined;
@@ -182,13 +183,13 @@ function readStringField(
 async function loadLatestDataFromApi<Schema extends TSchema>(
   dataType: DataType,
   url: string,
-  schema: Schema,
+  schema: Schema
 ): Promise<Schema["static"]> {
   const response = await fetch(url);
 
   if (!response.ok) {
     throw new Error(
-      `Fallback request for ${dataType} failed with status ${response.status}`,
+      `Fallback request for ${dataType} failed with status ${response.status}`
     );
   }
 

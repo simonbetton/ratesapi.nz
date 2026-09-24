@@ -47,7 +47,7 @@ export type MortgageTimeSeriesResult =
     };
 
 export async function getMortgageTimeSeries(
-  options: MortgageTimeSeriesOptions,
+  options: MortgageTimeSeriesOptions
 ): Promise<MortgageTimeSeriesResult> {
   const availableDates = await getAvailableDates("mortgage-rates", options.db);
 
@@ -64,7 +64,7 @@ export async function getMortgageTimeSeries(
       options,
       availableDates,
       options.startDate,
-      options.endDate,
+      options.endDate
     );
   }
 
@@ -76,13 +76,13 @@ export async function getMortgageTimeSeries(
 async function getSingleDateTimeSeries(
   options: MortgageTimeSeriesOptions,
   availableDates: string[],
-  date: string,
+  date: string
 ): Promise<MortgageTimeSeriesResult> {
   const historicalData = await loadHistoricalData(
     "mortgage-rates",
     date,
     options.db,
-    MortgageRates,
+    MortgageRates
   );
 
   if (!historicalData) {
@@ -103,7 +103,7 @@ async function getDateRangeTimeSeries(
   options: MortgageTimeSeriesOptions,
   availableDates: string[],
   startDate: string,
-  endDate: string,
+  endDate: string
 ): Promise<MortgageTimeSeriesResult> {
   if (startDate > endDate) {
     return errorResult(400, "Start date cannot be after end date");
@@ -114,13 +114,13 @@ async function getDateRangeTimeSeries(
     startDate,
     endDate,
     options.db,
-    MortgageRates,
+    MortgageRates
   );
 
   if (Object.keys(timeSeriesData).length === 0) {
     return errorResult(
       404,
-      `No data available between ${startDate} and ${endDate}`,
+      `No data available between ${startDate} and ${endDate}`
     );
   }
 
@@ -137,7 +137,7 @@ async function getDateRangeTimeSeries(
 
 function filterMortgageTimeSeries(
   timeSeriesData: Record<string, MortgageRates>,
-  filters: MortgageFilters,
+  filters: MortgageFilters
 ): Record<string, MortgageRates> {
   const filteredTimeSeries: Record<string, MortgageRates> = {};
 
@@ -154,11 +154,11 @@ function filterMortgageTimeSeries(
 
 function filterMortgageRates(
   data: MortgageRates,
-  filters: MortgageFilters,
+  filters: MortgageFilters
 ): MortgageRates {
   const institutionFilteredData = filterByInstitution(
     data,
-    filters.institutionId,
+    filters.institutionId
   );
 
   return filterByTerm(institutionFilteredData, filters.termInMonths);
@@ -166,7 +166,7 @@ function filterMortgageRates(
 
 function filterByInstitution(
   data: MortgageRates,
-  institutionId?: string,
+  institutionId?: string
 ): MortgageRates {
   if (!institutionId) {
     return data;
@@ -175,7 +175,7 @@ function filterByInstitution(
   const normalizedInstitutionId = institutionId.toLowerCase();
   const filteredData = structuredClone(data);
   const filteredInstitutions = data.data.filter(
-    (institution) => institution.id.toLowerCase() === normalizedInstitutionId,
+    (institution) => institution.id.toLowerCase() === normalizedInstitutionId
   );
 
   filteredData.data.length = 0;
@@ -186,7 +186,7 @@ function filterByInstitution(
 
 function filterByTerm(
   data: MortgageRates,
-  termInMonths?: string,
+  termInMonths?: string
 ): MortgageRates {
   const parsedTermInMonths = parseTermInMonths(termInMonths);
 
@@ -199,7 +199,7 @@ function filterByTerm(
   for (const institution of filteredData.data) {
     for (const product of institution.products) {
       const matchingRates = product.rates.filter(
-        (rate) => rate.termInMonths === parsedTermInMonths,
+        (rate) => rate.termInMonths === parsedTermInMonths
       );
 
       product.rates.length = 0;
@@ -207,7 +207,7 @@ function filterByTerm(
     }
 
     const matchingProducts = institution.products.filter(
-      (product) => product.rates.length > 0,
+      (product) => product.rates.length > 0
     );
 
     institution.products.length = 0;
@@ -220,7 +220,7 @@ function filterByTerm(
 function getSingleDateFilterError(
   data: MortgageRates,
   filters: MortgageFilters,
-  date: string,
+  date: string
 ): MortgageTimeSeriesResult | null {
   if (filters.institutionId && data.data.length === 0) {
     return errorResult(404, `Institution not found for date: ${date}`);
@@ -229,7 +229,7 @@ function getSingleDateFilterError(
   if (filters.termInMonths && !hasMortgageRates(data)) {
     return errorResult(
       404,
-      `No rates found with term ${filters.termInMonths} months for date: ${date}`,
+      `No rates found with term ${filters.termInMonths} months for date: ${date}`
     );
   }
 
@@ -259,7 +259,7 @@ function parseTermInMonths(termInMonths?: string): number | undefined {
 function successResult(
   timeSeries: Record<string, MortgageRates>,
   availableDates: string[],
-  options: { message?: string } = {},
+  options: { message?: string } = {}
 ): MortgageTimeSeriesResult {
   return {
     ok: true,
@@ -276,7 +276,7 @@ function successResult(
 
 function errorResult(
   status: MortgageTimeSeriesErrorStatus,
-  message: string,
+  message: string
 ): MortgageTimeSeriesResult {
   return {
     ok: false,

@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+
 import {
   type DataType,
   type SupportedModels,
@@ -129,7 +130,7 @@ for (const row of seedRows) {
 
   seedStatements.push(
     `INSERT OR IGNORE INTO latest_data (data_type, data, last_updated) VALUES ('${row.dataType}', '${data}', '${row.data.lastUpdated}')`,
-    `INSERT OR IGNORE INTO historical_data (data_type, date, data) VALUES ('${row.dataType}', '${seedDate}', '${data}')`,
+    `INSERT OR IGNORE INTO historical_data (data_type, date, data) VALUES ('${row.dataType}', '${seedDate}', '${data}')`
   );
 }
 
@@ -153,6 +154,6 @@ function runLocalD1(command: string): void {
     ],
     {
       stdio: "inherit",
-    },
+    }
   );
 }

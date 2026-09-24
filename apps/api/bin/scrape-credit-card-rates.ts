@@ -1,6 +1,7 @@
 import { type CheerioAPI, load } from "cheerio";
 import { type Element } from "domhandler";
 import ora from "ora";
+
 import { generateId } from "../src/lib/generate-id";
 import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
 import { parseSchema } from "../src/lib/schema";
@@ -42,7 +43,7 @@ async function main() {
       try {
         const currentRates = await loadFromD1(
           "credit-card-rates",
-          CreditCardRates,
+          CreditCardRates
         );
         loading.succeed("Loaded current data").stop();
         return currentRates;
@@ -73,7 +74,7 @@ async function main() {
         const $ = load(data);
         assertTableHasRows(
           $(config.tableSelector).length,
-          config.tableSelector,
+          config.tableSelector
         );
         const unvalidatedData = getModelExtractedFromDOM($);
         const validatedModel = parseSchema(CreditCardRates, {
@@ -84,7 +85,7 @@ async function main() {
         assertScrapeHasRates(validatedModel);
         handle
           .succeed(
-            `Extracted and Validated ${validatedModel.data.length} results`,
+            `Extracted and Validated ${validatedModel.data.length} results`
           )
           .stop();
         return validatedModel;
@@ -146,14 +147,14 @@ function getModelExtractedFromDOM($: CheerioAPI): Issuer[] {
 function addPlanTo(issuer: Issuer, $: CheerioAPI, cells: Element[]) {
   const productName = getPlanName($, cells);
   const interestFreePeriodInMonths = parseOptionalNumber(
-    $(cells[2]).text().trim(),
+    $(cells[2]).text().trim()
   );
   const primaryFeeNZD = parseOptionalNumber($(cells[3]).text().trim());
   const balanceTransferRate = parseOptionalNumber($(cells[4]).text().trim());
   const balanceTransferPeriod = toTitleFormat(
     String($(cells[5]).text().trim())
       .replace("mths", "months")
-      .replace("bal tsfrd", "balance transferred") || null,
+      .replace("bal tsfrd", "balance transferred") || null
   );
   const cashAdvanceRate = parseOptionalNumber($(cells[6]).text().trim());
   const purchaseRate = parseOptionalNumber($(cells[7]).text().trim());

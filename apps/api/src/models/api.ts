@@ -34,7 +34,7 @@ export const GenericApiError = t.Object(
       examples: ["Internal Server Error"],
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const TimeSeriesDateParameter = t.Object(
@@ -44,34 +44,34 @@ export const TimeSeriesDateParameter = t.Object(
         pattern: "^\\d{4}-\\d{2}-\\d{2}$",
         description: "Date in YYYY-MM-DD format for historical data",
         example: "2025-03-01",
-      }),
+      })
     ),
     startDate: t.Optional(
       t.String({
         pattern: "^\\d{4}-\\d{2}-\\d{2}$",
         description: "Start date in YYYY-MM-DD format for time series range",
         example: "2025-01-01",
-      }),
+      })
     ),
     endDate: t.Optional(
       t.String({
         pattern: "^\\d{4}-\\d{2}-\\d{2}$",
         description: "End date in YYYY-MM-DD format for time series range",
         example: "2025-03-01",
-      }),
+      })
     ),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export type TimeSeriesDateQuery = typeof TimeSeriesDateParameter.static;
 
 export function validateTimeSeriesDateQuery(
-  value: TimeSeriesDateQuery,
+  value: TimeSeriesDateQuery
 ): boolean {
   if (
     [value.date, value.startDate, value.endDate].some(
-      (date) => date !== undefined && !isValidIsoDate(date),
+      (date) => date !== undefined && !isValidIsoDate(date)
     )
   ) {
     return false;
@@ -96,12 +96,12 @@ export const HealthResponse = t.Object(
           dataType: t.String(),
           lastUpdated: t.String(),
         },
-        { additionalProperties: false },
-      ),
+        { additionalProperties: false }
+      )
     ),
     timestamp: t.String(),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const HealthErrorResponse = t.Object(
@@ -110,7 +110,7 @@ export const HealthErrorResponse = t.Object(
     message: t.String(),
     timestamp: t.String(),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const TimestampedFields = {

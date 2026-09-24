@@ -1,4 +1,5 @@
 import { t } from "elysia";
+
 import { RateSchema } from "./rate";
 
 export type RateTerm =
@@ -44,10 +45,10 @@ const MortgageRate = t.Object(
     termInMonths: t.Nullable(
       t.Number({
         examples: [6, 36],
-      }),
+      })
     ),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const MortgageProduct = t.Object(
@@ -61,7 +62,7 @@ const MortgageProduct = t.Object(
     }),
     rates: t.Array(MortgageRate),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const MortgageInstitution = t.Object(
@@ -75,7 +76,7 @@ const MortgageInstitution = t.Object(
     }),
     products: t.Array(MortgageProduct),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const MortgageRates = t.Object(
@@ -88,7 +89,7 @@ export const MortgageRates = t.Object(
       example: "2021-08-01T00:00:00.000Z",
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export type MortgageRate = typeof MortgageRate.static;

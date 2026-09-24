@@ -16,13 +16,13 @@ export type DefaultFetchOptions = FetchOptions & {
 
 export function createHttpClient(
   name: string,
-  defaultOptions?: DefaultFetchOptions,
+  defaultOptions?: DefaultFetchOptions
 ) {
   const log = createLogger(name);
 
   const fetchWithRetry = async (
     url: string,
-    requestOptions: FetchOptions = {},
+    requestOptions: FetchOptions = {}
   ): Promise<Response> => {
     const composedUrl = defaultOptions?.prefixUrl
       ? new URL(url, defaultOptions.prefixUrl).toString()
@@ -49,7 +49,7 @@ export function createHttpClient(
             headers: mergedOptions.headers,
             method: mergedOptions.method,
           },
-          `${name}: ${mergedOptions.method ?? "GET"} ${composedUrl}`,
+          `${name}: ${mergedOptions.method ?? "GET"} ${composedUrl}`
         );
 
         if (response.ok) {

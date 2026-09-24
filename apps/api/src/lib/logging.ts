@@ -2,7 +2,7 @@ import pino, { type Logger, type LoggerOptions } from "pino";
 
 export function createLogger(
   module: string | { name: string },
-  options: Partial<LoggerOptions> = {},
+  options: Partial<LoggerOptions> = {}
 ): Logger {
   const moduleName = typeof module === "string" ? module : module.name;
   const isNodeRuntime =

@@ -1,6 +1,6 @@
-import { docs } from "fumadocs-mdx:collections/server";
 import { createFromSource } from "fumadocs-core/search/server";
 import { llms, loader } from "fumadocs-core/source";
+import { docs } from "fumadocs-mdx:collections/server";
 
 export const source = loader({
   baseUrl: "/",

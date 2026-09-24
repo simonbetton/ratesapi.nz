@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+
 import { mcpRequest } from "../lib/api-examples";
 import { CopyButton } from "./copy-button";
 import { apiLinks } from "./rates-api-content";

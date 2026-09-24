@@ -1,4 +1,5 @@
 import { t } from "elysia";
+
 import { RateSchema } from "./rate";
 
 const CarLoanRate = t.Object(
@@ -7,15 +8,15 @@ const CarLoanRate = t.Object(
     plan: t.Nullable(
       t.String({
         examples: ["Secured"],
-      }),
+      })
     ),
     condition: t.Nullable(
       t.String({
         examples: ["$3,000 to $50,000"],
-      }),
+      })
     ),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const CarLoanProduct = t.Object(
@@ -29,7 +30,7 @@ const CarLoanProduct = t.Object(
     }),
     rates: t.Array(CarLoanRate),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const CarLoanInstitution = t.Object(
@@ -43,7 +44,7 @@ const CarLoanInstitution = t.Object(
     }),
     products: t.Array(CarLoanProduct),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const CarLoanRates = t.Object(
@@ -56,7 +57,7 @@ export const CarLoanRates = t.Object(
       example: "2021-08-01T00:00:00.000Z",
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export type CarLoanRate = typeof CarLoanRate.static;

@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+
 import { type ApiResult } from "../../lib/api-result";
 import { type Environment } from "../../lib/environment";
 import { type GetEnv } from "../../lib/routing";
@@ -375,7 +376,7 @@ export function createMcpRoutes(getEnv: GetEnv) {
       detail: {
         hide: true,
       },
-    },
+    }
   );
 }
 
@@ -477,7 +478,7 @@ async function handleToolCall(params: unknown, getEnv: GetEnv) {
   if (args !== undefined && !isRecord(args)) {
     throw new JsonRpcErrorResponse(
       -32602,
-      "Invalid params: arguments must be an object",
+      "Invalid params: arguments must be an object"
     );
   }
 
@@ -506,7 +507,7 @@ async function handleToolCall(params: unknown, getEnv: GetEnv) {
                 body: error.body,
               },
               null,
-              2,
+              2
             ),
           },
         ],
@@ -520,14 +521,14 @@ async function handleToolCall(params: unknown, getEnv: GetEnv) {
 async function callTool(
   name: string,
   args: Record<string, unknown>,
-  env: Environment,
+  env: Environment
 ) {
   switch (name) {
     case "list_mortgage_rates":
       return unwrapApiResult(
         await listMortgageRates(env, {
           termInMonths: toOptionalString(args.termInMonths),
-        }),
+        })
       );
     case "get_mortgage_rates_by_institution":
       return unwrapApiResult(
@@ -536,13 +537,13 @@ async function callTool(
           {
             institutionId: toRequiredString(
               args.institutionId,
-              "institutionId",
+              "institutionId"
             ),
           },
           {
             termInMonths: toOptionalString(args.termInMonths),
-          },
-        ),
+          }
+        )
       );
     case "get_mortgage_rates_time_series":
       return unwrapApiResult(
@@ -552,7 +553,7 @@ async function callTool(
           endDate: toOptionalString(args.endDate),
           institutionId: toOptionalString(args.institutionId),
           termInMonths: toOptionalString(args.termInMonths),
-        }),
+        })
       );
     case "list_personal_loan_rates":
       return unwrapApiResult(await listPersonalLoanRates(env));
@@ -560,7 +561,7 @@ async function callTool(
       return unwrapApiResult(
         await getPersonalLoanRatesByInstitution(env, {
           institutionId: toRequiredString(args.institutionId, "institutionId"),
-        }),
+        })
       );
     case "get_personal_loan_rates_time_series":
       return unwrapApiResult(
@@ -569,7 +570,7 @@ async function callTool(
           startDate: toOptionalString(args.startDate),
           endDate: toOptionalString(args.endDate),
           institutionId: toOptionalString(args.institutionId),
-        }),
+        })
       );
     case "list_car_loan_rates":
       return unwrapApiResult(await listCarLoanRates(env));
@@ -577,7 +578,7 @@ async function callTool(
       return unwrapApiResult(
         await getCarLoanRatesByInstitution(env, {
           institutionId: toRequiredString(args.institutionId, "institutionId"),
-        }),
+        })
       );
     case "get_car_loan_rates_time_series":
       return unwrapApiResult(
@@ -586,7 +587,7 @@ async function callTool(
           startDate: toOptionalString(args.startDate),
           endDate: toOptionalString(args.endDate),
           institutionId: toOptionalString(args.institutionId),
-        }),
+        })
       );
     case "list_credit_card_rates":
       return unwrapApiResult(await listCreditCardRates(env));
@@ -594,7 +595,7 @@ async function callTool(
       return unwrapApiResult(
         await getCreditCardRatesByIssuer(env, {
           issuerId: toRequiredString(args.issuerId, "issuerId"),
-        }),
+        })
       );
     case "get_credit_card_rates_time_series":
       return unwrapApiResult(
@@ -603,7 +604,7 @@ async function callTool(
           startDate: toOptionalString(args.startDate),
           endDate: toOptionalString(args.endDate),
           issuerId: toOptionalString(args.issuerId),
-        }),
+        })
       );
     default:
       throw new JsonRpcErrorResponse(-32601, `Tool not found: ${name}`);
@@ -615,7 +616,7 @@ function unwrapApiResult(result: ApiResult) {
     throw new McpToolError(
       `API request failed with status ${result.status}`,
       result.status,
-      result.body,
+      result.body
     );
   }
 
@@ -644,7 +645,7 @@ function toRequiredString(value: unknown, name: string): string {
   if (!normalized) {
     throw new JsonRpcErrorResponse(
       -32602,
-      `Invalid params: ${name} is required`,
+      `Invalid params: ${name} is required`
     );
   }
 

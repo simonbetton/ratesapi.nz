@@ -1,6 +1,7 @@
 import { type CheerioAPI, load } from "cheerio";
 import { type Element } from "domhandler";
 import ora from "ora";
+
 import { generateId } from "../src/lib/generate-id";
 import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
 import { parseSchema } from "../src/lib/schema";
@@ -79,7 +80,7 @@ async function main() {
         const $ = load(data);
         assertTableHasRows(
           $(config.tableSelector).length,
-          config.tableSelector,
+          config.tableSelector
         );
         const unvalidatedData = getModelExtractedFromDOM($);
         const validatedModel = parseSchema(MortgageRates, {
@@ -90,7 +91,7 @@ async function main() {
         assertScrapeHasRates(validatedModel);
         handle
           .succeed(
-            `Extracted and Validated ${validatedModel.data.length} results`,
+            `Extracted and Validated ${validatedModel.data.length} results`
           )
           .stop();
         return validatedModel;
@@ -157,10 +158,10 @@ function getModelExtractedFromDOM($: CheerioAPI): MortgageInstitution[] {
 
 function asProduct(
   institution: MortgageInstitution,
-  productName: string,
+  productName: string
 ): MortgageProduct {
   let product = institution.products.find(
-    (p: MortgageProduct) => p.name === productName,
+    (p: MortgageProduct) => p.name === productName
   );
   if (!product) {
     product = {
@@ -186,7 +187,7 @@ function asRatesForProduct(
   institution: MortgageInstitution,
   product: MortgageProduct,
   $: CheerioAPI,
-  cells: Element[],
+  cells: Element[]
 ): MortgageRate[] {
   const rates: MortgageRate[] = [];
 
@@ -196,11 +197,11 @@ function asRatesForProduct(
     // Check for "18 months" lines. These are spanned across multiple columns 🤷
     if (colspan) {
       const specialRate = getSpecialRate(
-        $(cell).text().replace(/\n|\r/g, "").trim(),
+        $(cell).text().replace(/\n|\r/g, "").trim()
       );
       if (specialRate && isRateTerm(specialRate.term) && product.name) {
         rates.push(
-          asRate(institution, product.name, specialRate.term, specialRate.rate),
+          asRate(institution, product.name, specialRate.term, specialRate.rate)
         );
       }
     } else {
@@ -219,7 +220,7 @@ function asRate(
   institution: MortgageInstitution,
   productName: string,
   term: RateTerm,
-  rate: string,
+  rate: string
 ): MortgageRate {
   return {
     id: generateId(["rate", institution.name, productName, term]),

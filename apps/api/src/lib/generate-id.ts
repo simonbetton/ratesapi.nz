@@ -32,8 +32,8 @@ export function generateId(args: Args): string {
   if (!PrefixValues.some((prefix) => str.startsWith(prefix))) {
     throw new Error(
       `The generated ID must start with one of the following prefixes: ${PrefixValues.join(
-        ", ",
-      )}`,
+        ", "
+      )}`
     );
   }
 

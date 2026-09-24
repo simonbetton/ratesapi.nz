@@ -1,5 +1,6 @@
 import { ArrowUpRight, Play } from "lucide-react";
 import { useState } from "react";
+
 import {
   type ExampleLanguage,
   exampleResponse,
@@ -30,7 +31,7 @@ export function DemoPlayer() {
       });
       if (!response.ok) {
         throw new Error(
-          `The API returned HTTP ${response.status}. Try again or check service health.`,
+          `The API returned HTTP ${response.status}. Try again or check service health.`
         );
       }
       const body: unknown = await response.json();

@@ -1,4 +1,5 @@
 import { t } from "elysia";
+
 import { Plan } from "./plan";
 
 export const Issuer = t.Object(
@@ -12,7 +13,7 @@ export const Issuer = t.Object(
     }),
     plans: t.Array(Plan),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export type Issuer = typeof Issuer.static;

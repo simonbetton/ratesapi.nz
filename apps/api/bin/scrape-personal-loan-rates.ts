@@ -1,6 +1,7 @@
 import { type CheerioAPI, load } from "cheerio";
 import { type Element } from "domhandler";
 import ora from "ora";
+
 import { generateId } from "../src/lib/generate-id";
 import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
 import { isTruthy } from "../src/lib/is-truthy";
@@ -41,7 +42,7 @@ async function main() {
       try {
         const currentRates = await loadFromD1(
           "personal-loan-rates",
-          PersonalLoanRates,
+          PersonalLoanRates
         );
         loading.succeed("Loaded current data").stop();
         return currentRates;
@@ -72,7 +73,7 @@ async function main() {
         const $ = load(data);
         assertTableHasRows(
           $(config.tableSelector).length,
-          config.tableSelector,
+          config.tableSelector
         );
         const unvalidatedData = getModelExtractedFromDOM($);
         const validatedModel = parseSchema(PersonalLoanRates, {
@@ -83,7 +84,7 @@ async function main() {
         assertScrapeHasRates(validatedModel);
         handle
           .succeed(
-            `Extracted and Validated ${validatedModel.data.length} results`,
+            `Extracted and Validated ${validatedModel.data.length} results`
           )
           .stop();
         return validatedModel;
@@ -150,10 +151,10 @@ function getModelExtractedFromDOM($: CheerioAPI): PersonalLoanInstitution[] {
 
 function asProduct(
   institution: PersonalLoanInstitution,
-  productName: string,
+  productName: string
 ): PersonalLoanProduct {
   let product = institution.products.find(
-    (p: PersonalLoanProduct) => p.name === productName,
+    (p: PersonalLoanProduct) => p.name === productName
   );
   if (!product) {
     product = {
@@ -179,7 +180,7 @@ function asRateForProduct(
   institution: PersonalLoanInstitution,
   product: PersonalLoanProduct,
   $: CheerioAPI,
-  cells: Element[],
+  cells: Element[]
 ): PersonalLoanRate | undefined {
   const remainingCells = cells.slice(2); // The first column is institution name and the second column is the product name – we don't need these for rates
   const plan = $(remainingCells[0]).text().trim();
@@ -196,7 +197,7 @@ function asRate(
   productName: string,
   plan: string,
   condition: string,
-  rate: string,
+  rate: string
 ): PersonalLoanRate {
   return {
     id: generateId(["rate", institution.name, productName, plan, condition]),

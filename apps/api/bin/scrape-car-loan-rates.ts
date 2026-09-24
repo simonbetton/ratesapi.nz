@@ -1,6 +1,7 @@
 import { type CheerioAPI, load } from "cheerio";
 import { type Element } from "domhandler";
 import ora from "ora";
+
 import { generateId } from "../src/lib/generate-id";
 import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
 import { isTruthy } from "../src/lib/is-truthy";
@@ -71,7 +72,7 @@ async function main() {
         const $ = load(data);
         assertTableHasRows(
           $(config.tableSelector).length,
-          config.tableSelector,
+          config.tableSelector
         );
         const unvalidatedData = getModelExtractedFromDOM($);
         const validatedModel = parseSchema(CarLoanRates, {
@@ -82,7 +83,7 @@ async function main() {
         assertScrapeHasRates(validatedModel);
         handle
           .succeed(
-            `Extracted and Validated ${validatedModel.data.length} results`,
+            `Extracted and Validated ${validatedModel.data.length} results`
           )
           .stop();
         return validatedModel;
@@ -149,10 +150,10 @@ function getModelExtractedFromDOM($: CheerioAPI): CarLoanInstitution[] {
 
 function asProduct(
   institution: CarLoanInstitution,
-  productName: string,
+  productName: string
 ): CarLoanProduct {
   let product = institution.products.find(
-    (p: CarLoanProduct) => p.name === productName,
+    (p: CarLoanProduct) => p.name === productName
   );
   if (!product) {
     product = {
@@ -178,7 +179,7 @@ function asRateForProduct(
   institution: CarLoanInstitution,
   product: CarLoanProduct,
   $: CheerioAPI,
-  cells: Element[],
+  cells: Element[]
 ): CarLoanRate | undefined {
   const remainingCells = cells.slice(2); // The first column is institution name and the second column is the product name – we don't need these for rates
   const plan = $(remainingCells[0]).text().trim();
@@ -195,7 +196,7 @@ function asRate(
   productName: string,
   plan: string,
   condition: string,
-  rate: string,
+  rate: string
 ): CarLoanRate {
   return {
     id: generateId(["rate", institution.name, productName, plan, condition]),

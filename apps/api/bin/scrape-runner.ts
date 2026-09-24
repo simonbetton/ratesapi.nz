@@ -33,7 +33,7 @@ export type RunScrapeOptions<TData> = {
 };
 
 export async function runScrape<TData>(
-  options: RunScrapeOptions<TData>,
+  options: RunScrapeOptions<TData>
 ): Promise<ScrapeOutcome> {
   let currentData: TData | null = null;
   try {

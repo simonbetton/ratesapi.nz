@@ -1,4 +1,5 @@
 import { type TSchema } from "elysia";
+
 import {
   type DataType,
   getAvailableDates,
@@ -69,7 +70,7 @@ export async function getEntityTimeSeries<
   T extends EntityRates,
   ResponseType extends string,
 >(
-  options: EntityTimeSeriesOptions<T, ResponseType>,
+  options: EntityTimeSeriesOptions<T, ResponseType>
 ): Promise<EntityTimeSeriesResult<T, ResponseType>> {
   const availableDates = await getAvailableDates(options.dataType, options.db);
 
@@ -81,7 +82,7 @@ export async function getEntityTimeSeries<
     return getSingleDateTimeSeries<T, ResponseType>(
       options,
       availableDates,
-      options.date,
+      options.date
     );
   }
 
@@ -90,7 +91,7 @@ export async function getEntityTimeSeries<
       options,
       availableDates,
       options.startDate,
-      options.endDate,
+      options.endDate
     );
   }
 
@@ -101,7 +102,7 @@ export async function getEntityTimeSeries<
     {
       message:
         "Please specify a date or date range to retrieve time series data",
-    },
+    }
   );
 }
 
@@ -111,19 +112,19 @@ async function getSingleDateTimeSeries<
 >(
   options: EntityTimeSeriesOptions<T, ResponseType>,
   availableDates: string[],
-  date: string,
+  date: string
 ): Promise<EntityTimeSeriesResult<T, ResponseType>> {
   const historicalData = await loadHistoricalData(
     options.dataType,
     date,
     options.db,
-    options.schema,
+    options.schema
   );
 
   if (!historicalData) {
     return errorResult<T, ResponseType>(
       404,
-      `No data available for date: ${date}`,
+      `No data available for date: ${date}`
     );
   }
 
@@ -132,14 +133,14 @@ async function getSingleDateTimeSeries<
   if (options.entityId && filteredData.data.length === 0) {
     return errorResult<T, ResponseType>(
       404,
-      `${toTitleCase(options.entityName)} not found for date: ${date}`,
+      `${toTitleCase(options.entityName)} not found for date: ${date}`
     );
   }
 
   return successResult<T, ResponseType>(
     options.responseType,
     { [date]: filteredData },
-    availableDates,
+    availableDates
   );
 }
 
@@ -150,12 +151,12 @@ async function getDateRangeTimeSeries<
   options: EntityTimeSeriesOptions<T, ResponseType>,
   availableDates: string[],
   startDate: string,
-  endDate: string,
+  endDate: string
 ): Promise<EntityTimeSeriesResult<T, ResponseType>> {
   if (startDate > endDate) {
     return errorResult<T, ResponseType>(
       400,
-      "Start date cannot be after end date",
+      "Start date cannot be after end date"
     );
   }
 
@@ -164,38 +165,38 @@ async function getDateRangeTimeSeries<
     startDate,
     endDate,
     options.db,
-    options.schema,
+    options.schema
   );
 
   if (Object.keys(timeSeriesData).length === 0) {
     return errorResult<T, ResponseType>(
       404,
-      `No data available between ${startDate} and ${endDate}`,
+      `No data available between ${startDate} and ${endDate}`
     );
   }
 
   const filteredTimeSeries = filterTimeSeriesByEntityId(
     timeSeriesData,
-    options.entityId,
+    options.entityId
   );
 
   if (options.entityId && Object.keys(filteredTimeSeries).length === 0) {
     return errorResult<T, ResponseType>(
       404,
-      `No data found matching the specified ${options.entityName}`,
+      `No data found matching the specified ${options.entityName}`
     );
   }
 
   return successResult<T, ResponseType>(
     options.responseType,
     filteredTimeSeries,
-    availableDates,
+    availableDates
   );
 }
 
 function filterTimeSeriesByEntityId<T extends EntityRates>(
   timeSeriesData: Record<string, T>,
-  entityId?: string,
+  entityId?: string
 ): Record<string, T> {
   if (!entityId) {
     return timeSeriesData;
@@ -216,7 +217,7 @@ function filterTimeSeriesByEntityId<T extends EntityRates>(
 
 function filterDataByEntityId<T extends EntityRates>(
   data: T,
-  entityId?: string,
+  entityId?: string
 ): T {
   if (!entityId) {
     return data;
@@ -225,7 +226,7 @@ function filterDataByEntityId<T extends EntityRates>(
   const normalizedEntityId = entityId.toLowerCase();
   const filteredData = structuredClone(data);
   const filteredEntities = data.data.filter(
-    (entity) => entity.id.toLowerCase() === normalizedEntityId,
+    (entity) => entity.id.toLowerCase() === normalizedEntityId
   );
 
   filteredData.data.length = 0;
@@ -238,7 +239,7 @@ function successResult<T extends EntityRates, ResponseType extends string>(
   type: ResponseType,
   timeSeries: Record<string, T>,
   availableDates: string[],
-  options: { message?: string } = {},
+  options: { message?: string } = {}
 ): EntityTimeSeriesResult<T, ResponseType> {
   return {
     ok: true,
@@ -255,7 +256,7 @@ function successResult<T extends EntityRates, ResponseType extends string>(
 
 function errorResult<T extends EntityRates, ResponseType extends string>(
   status: EntityTimeSeriesErrorStatus,
-  message: string,
+  message: string
 ): EntityTimeSeriesResult<T, ResponseType> {
   return {
     ok: false,

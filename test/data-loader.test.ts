@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+
 import {
   fromSavableJson,
   productionLatestDataFallbackUrl,
@@ -62,10 +63,10 @@ describe("data-loader serialization", () => {
 
   test("only enables production latest-data fallback for development", () => {
     expect(
-      productionLatestDataFallbackUrl("personal-loan-rates", "development"),
+      productionLatestDataFallbackUrl("personal-loan-rates", "development")
     ).toBe("https://ratesapi.nz/api/v1/personal-loan-rates");
     expect(
-      productionLatestDataFallbackUrl("personal-loan-rates", "production"),
+      productionLatestDataFallbackUrl("personal-loan-rates", "production")
     ).toBeUndefined();
   });
 });
