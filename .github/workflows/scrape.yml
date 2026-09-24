@@ -30,6 +30,10 @@ jobs:
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
+      - name: Install web dependencies
+        working-directory: apps/web
+        run: bun install --frozen-lockfile
+
       - name: Check
         run: bun run check
 
