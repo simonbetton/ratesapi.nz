@@ -1,12 +1,9 @@
-import { type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
-import {
-  type ApiGlyphType,
-  type EndpointIconName,
-  rateTableRows,
-} from "./rates-api-content";
+import { rateTableRows } from "./rates-api-content";
+import type { ApiGlyphType, EndpointIconName } from "./rates-api-content";
 
 const pillClass =
   "inline-flex items-center gap-[7px] rounded-[40px] bg-white px-3.5 py-[7px] text-[13px] font-medium text-[#1a2035] shadow-[0_2px_4px_#12376914,0_1px_1px_#1237690a,0_0_0_1px_#12376914] [&_svg]:shrink-0";

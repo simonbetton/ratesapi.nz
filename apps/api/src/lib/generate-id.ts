@@ -15,17 +15,20 @@ const PrefixValues: Prefix[] = [
  */
 export function generateId(args: Args): string {
   const str = args
-    .map((arg) => {
-      return arg
+    .map((arg) =>
+      arg
         .toString()
         .toLowerCase()
         .trim()
-        .replace(/</g, "less-than-")
-        .replace(/>/g, "greater-than-")
-        .replace(/\s+/g, "-") // Replace spaces with -
-        .replace(/[^\w-]+/g, "") // Remove all non-word chars
-        .replace(/--+/g, "-"); // Replace multiple - with single -
-    })
+        .replaceAll("<", "less-than-")
+        .replaceAll(">", "greater-than-")
+        // Replace spaces with -
+        .replaceAll(/\s+/gu, "-")
+        // Remove all non-word chars
+        .replaceAll(/[^\w-]+/gu, "")
+        // Replace multiple - with single -
+        .replaceAll(/--+/gu, "-")
+    )
     .filter(isTruthy)
     .join(":");
 

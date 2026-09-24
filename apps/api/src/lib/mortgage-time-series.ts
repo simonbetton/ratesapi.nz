@@ -4,39 +4,39 @@ import {
   loadHistoricalData,
   loadTimeSeriesData,
 } from "./data-loader";
-import { type Database } from "./environment";
+import type { Database } from "./environment";
 import { termsOfUse } from "./terms-of-use";
 import { getCurrentTimestamp } from "./transforms";
 
-export type MortgageTimeSeriesOptions = {
+export interface MortgageTimeSeriesOptions {
   date?: string;
   startDate?: string;
   endDate?: string;
   institutionId?: string;
   termInMonths?: string;
   db: Database;
-};
+}
 
 type MortgageFilters = Pick<
   MortgageTimeSeriesOptions,
   "institutionId" | "termInMonths"
 >;
 
-export type MortgageTimeSeriesBody = {
+export interface MortgageTimeSeriesBody {
   type: "MortgageRatesTimeSeries";
   timeSeries: Record<string, MortgageRates>;
   availableDates: string[];
   termsOfUse: ReturnType<typeof termsOfUse>;
   timestamp: string;
   message?: string;
-};
+}
 
 export type MortgageTimeSeriesErrorStatus = 400 | 404;
 
-export type MortgageTimeSeriesErrorBody = {
+export interface MortgageTimeSeriesErrorBody {
   code: MortgageTimeSeriesErrorStatus;
   message: string;
-};
+}
 
 export type MortgageTimeSeriesResult =
   | { ok: true; body: MortgageTimeSeriesBody }
@@ -253,7 +253,7 @@ function hasFilters(filters: MortgageFilters): boolean {
 }
 
 function parseTermInMonths(termInMonths?: string): number | undefined {
-  return termInMonths ? parseInt(termInMonths, 10) : undefined;
+  return termInMonths ? Number.parseInt(termInMonths, 10) : undefined;
 }
 
 function successResult(

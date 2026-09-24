@@ -1,19 +1,19 @@
 import { Elysia, t } from "elysia";
 
 import {
-  type ApiResult,
   apiResult,
   invalidRequestResult,
   jsonResult,
 } from "../../lib/api-result";
+import type { ApiResult } from "../../lib/api-result";
 import {
   loadLatestData,
   productionLatestDataFallbackUrl,
 } from "../../lib/data-loader";
 import { getEntityTimeSeries } from "../../lib/entity-time-series";
-import { type Environment } from "../../lib/environment";
+import type { Environment } from "../../lib/environment";
 import { createLogger } from "../../lib/logging";
-import { type GetEnv } from "../../lib/routing";
+import type { GetEnv } from "../../lib/routing";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
 import {

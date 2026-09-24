@@ -1,13 +1,12 @@
-import { type TSchema } from "elysia";
+import type { TSchema } from "elysia";
 
 import {
-  type DataType,
   getAvailableDates,
   loadHistoricalData,
   loadTimeSeriesData,
-  type SupportedModels,
 } from "./data-loader";
-import { type Database } from "./environment";
+import type { DataType, SupportedModels } from "./data-loader";
+import type { Database } from "./environment";
 import { termsOfUse } from "./terms-of-use";
 import { getCurrentTimestamp } from "./transforms";
 
@@ -17,24 +16,24 @@ export type EntityRates = SupportedModels & {
 
 export type EntityName = "institution" | "issuer";
 
-export type TimeSeriesBody<
+export interface TimeSeriesBody<
   T extends EntityRates,
   ResponseType extends string,
-> = {
+> {
   type: ResponseType;
   timeSeries: Record<string, T>;
   availableDates: string[];
   termsOfUse: ReturnType<typeof termsOfUse>;
   timestamp: string;
   message?: string;
-};
+}
 
 export type EntityTimeSeriesErrorStatus = 400 | 404;
 
-export type EntityTimeSeriesErrorBody = {
+export interface EntityTimeSeriesErrorBody {
   code: EntityTimeSeriesErrorStatus;
   message: string;
-};
+}
 
 export type EntityTimeSeriesResult<
   T extends EntityRates,
@@ -51,10 +50,10 @@ export type EntitySchema<T extends EntityRates> = TSchema & {
   static: T;
 };
 
-export type EntityTimeSeriesOptions<
+export interface EntityTimeSeriesOptions<
   T extends EntityRates,
   ResponseType extends string,
-> = {
+> {
   dataType: DataType;
   schema: EntitySchema<T>;
   responseType: ResponseType;
@@ -64,7 +63,7 @@ export type EntityTimeSeriesOptions<
   startDate?: string;
   endDate?: string;
   db: Database;
-};
+}
 
 export async function getEntityTimeSeries<
   T extends EntityRates,

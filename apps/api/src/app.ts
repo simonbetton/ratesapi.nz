@@ -1,9 +1,10 @@
 import { openapi, toOpenAPISchema } from "@elysia/openapi";
 import { cors } from "@elysiajs/cors";
-import { Elysia, type ElysiaAdapter } from "elysia";
+import type { ElysiaAdapter } from "elysia";
+import { Elysia } from "elysia";
 
 import { createLogger } from "./lib/logging";
-import { type GetEnv } from "./lib/routing";
+import type { GetEnv } from "./lib/routing";
 import {
   HealthErrorResponse,
   HealthResponse,
@@ -35,9 +36,9 @@ const openApiInfo = {
     "Rates API is a free OpenAPI service to retrieve the latest lending rates offered by New Zealand financial institutions — updated hourly.",
 };
 
-export type CreateAppOptions = {
+export interface CreateAppOptions {
   adapter?: ElysiaAdapter;
-};
+}
 
 export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
   const apiRoutes = new Elysia({ prefix: "/api/v1" })
@@ -120,12 +121,12 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
         request.headers.get("x-request-id") ?? crypto.randomUUID();
     })
     .onError({ as: "global" }, ({ code, error, status }) => {
-      if (code === "VALIDATION") {
-        validationLog.warn({ error }, "Request validation failed");
-        return status(400, invalidRequestParameters());
+      if (code !== "VALIDATION") {
+        return;
       }
 
-      return undefined;
+      validationLog.warn({ error }, "Request validation failed");
+      return status(400, invalidRequestParameters());
     })
     .use(apiRoutes)
     .get(
@@ -152,7 +153,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
 }
 
 function getOpenApiServers(request: Request, environment: string | undefined) {
-  const origin = new URL(request.url).origin;
+  const { origin } = new URL(request.url);
   const currentServer = {
     url: origin,
     description: environment === "production" ? "Production" : "Local",

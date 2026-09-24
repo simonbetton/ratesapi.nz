@@ -1,5 +1,6 @@
-import { type CheerioAPI, load } from "cheerio";
-import { type Element } from "domhandler";
+import { load } from "cheerio";
+import type { CheerioAPI } from "cheerio";
+import type { Element } from "domhandler";
 import ora from "ora";
 
 import { generateId } from "../src/lib/generate-id";
@@ -7,8 +8,8 @@ import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
 import { parseSchema } from "../src/lib/schema";
 import { toTitleFormat } from "../src/lib/transforms";
 import { CreditCardRates } from "../src/models/credit-card-rates";
-import { type Issuer } from "../src/models/issuer";
-import { type Plan } from "../src/models/plan";
+import type { Issuer } from "../src/models/issuer";
+import type { Plan } from "../src/models/plan";
 import { parseOptionalNumber } from "./parse-optional-number";
 import { assertScrapeHasRates, assertTableHasRows } from "./scrape-guards";
 import { runScrape } from "./scrape-runner";
@@ -119,10 +120,12 @@ async function main() {
     noChange.succeed("No changes detected").stop();
   }
 }
-main().catch((error) => {
+try {
+  await main();
+} catch (error) {
   console.error(error);
   process.exitCode = 1;
-});
+}
 
 function getModelExtractedFromDOM($: CheerioAPI): Issuer[] {
   const issuers: Issuer[] = [];
@@ -130,7 +133,7 @@ function getModelExtractedFromDOM($: CheerioAPI): Issuer[] {
   let currentIssuer: Issuer | null = null;
 
   for (const row of rows) {
-    const cells = Array.from($(row).find("td"));
+    const cells = [...$(row).find("td")];
     const isPrimaryRow = $(row).hasClass("primary_row");
     if (isPrimaryRow && cells[0]) {
       currentIssuer = asIssuer($, cells[0]);
@@ -185,9 +188,11 @@ function asIssuer($: CheerioAPI, cell: Element): Issuer {
 function getIssuerName($: CheerioAPI, cell: Element): string {
   const imgElement = $(cell).find("img");
   if (imgElement) {
-    return imgElement.attr("alt")?.trim() ?? $(cell).text().trim(); // Use alt text if image exists
+    // Use alt text if image exists
+    return imgElement.attr("alt")?.trim() ?? $(cell).text().trim();
   }
-  return $(cell).text().trim(); // Fallback to innerText
+  // Fallback to innerText
+  return $(cell).text().trim();
 }
 
 function getPlanName($: CheerioAPI, cells: Element[]): string {
@@ -198,9 +203,12 @@ function normalizePlanName(name: string) {
   if (config.alternativeSpecialPlanNames.includes(name)) {
     return "Special";
   }
-  return name
-    .replace(/airpoint /i, "Airpoints ")
-    .replace(/onesmart/i, "OneSmart")
-    .replace("FarmersCard", "Farmers Finance Card")
-    .replace("Warehose", "Warehouse"); // Typo in the source
+  return (
+    name
+      .replace(/airpoint /iu, "Airpoints ")
+      .replace(/onesmart/iu, "OneSmart")
+      .replace("FarmersCard", "Farmers Finance Card")
+      // Typo in the source
+      .replace("Warehose", "Warehouse")
+  );
 }

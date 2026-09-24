@@ -63,6 +63,9 @@ async function main() {
     let success = false;
     let errorDetails = "Unknown error";
     try {
+      // Check endpoints one at a time so the log reads in order and the API
+      // isn't hit with a burst of concurrent requests.
+      // oxlint-disable-next-line no-await-in-loop
       const response = await httpClient(endpoint);
       // Assuming a successful request implies the endpoint is up.
       // You might want to add more specific checks on the response status or body.
@@ -86,18 +89,22 @@ async function main() {
   if (failedEndpoints.length > 0) {
     console.log("\n--- Uptime Check Failed ---");
     console.log("The following endpoints failed:");
-    failedEndpoints.forEach(({ endpoint, error }) => {
+    for (const { endpoint, error } of failedEndpoints) {
       console.log(`- ${endpoint} (${error})`);
-    });
-    process.exit(1); // Exit with non-zero code to indicate failure
+    }
+    // Exit with non-zero code to indicate failure
+    process.exit(1);
   } else {
     console.log("\n--- Uptime Check Successful ---");
     console.log("All endpoints are responding correctly.");
-    process.exit(0); // Exit with zero code for success
+    // Exit with zero code for success
+    process.exit(0);
   }
 }
 
-main().catch((error) => {
+try {
+  await main();
+} catch (error) {
   console.error("Unhandled error during uptime check:", error);
   process.exit(1);
-});
+}

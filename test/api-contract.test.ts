@@ -1,18 +1,18 @@
 import { describe, expect, test } from "bun:test";
 
 import { createApp } from "../apps/api/src/app";
-import {
-  type DataType,
-  type SupportedModels,
-  toSavableJson,
+import { toSavableJson } from "../apps/api/src/lib/data-loader";
+import type {
+  DataType,
+  SupportedModels,
 } from "../apps/api/src/lib/data-loader";
-import { type Environment } from "../apps/api/src/lib/environment";
+import type { Environment } from "../apps/api/src/lib/environment";
 import { parseSchema } from "../apps/api/src/lib/schema";
 import { HealthResponse } from "../apps/api/src/models/api";
-import { type CarLoanRates } from "../apps/api/src/models/car-loan-rates";
-import { type CreditCardRates } from "../apps/api/src/models/credit-card-rates";
-import { type MortgageRates } from "../apps/api/src/models/mortgage-rates";
-import { type PersonalLoanRates } from "../apps/api/src/models/personal-loan-rates";
+import type { CarLoanRates } from "../apps/api/src/models/car-loan-rates";
+import type { CreditCardRates } from "../apps/api/src/models/credit-card-rates";
+import type { MortgageRates } from "../apps/api/src/models/mortgage-rates";
+import type { PersonalLoanRates } from "../apps/api/src/models/personal-loan-rates";
 import {
   CarLoanRatesResponse,
   CreditCardRatesResponse,
@@ -33,11 +33,11 @@ type ListSchema =
   | typeof CarLoanRatesResponse
   | typeof CreditCardRatesResponse;
 
-type ListCase = {
+interface ListCase {
   path: string;
   type: ListResponseType;
   schema: ListSchema;
-};
+}
 
 const mortgageRates: MortgageRates = {
   type: "MortgageRates",
@@ -351,7 +351,6 @@ describe("v1 API contract", () => {
     const specResponse = await requestWithEnv(
       createProductionEnv,
       "/openapi/json",
-      {},
       "https://ratesapi.nz"
     );
     expect(specResponse.status).toBe(200);
@@ -445,10 +444,10 @@ describe("v1 API contract", () => {
     const callBody = requireRecord(await jsonBody(callResponse));
     const callResult = readRecord(callBody, "result");
     const content = readArray(callResult, "content");
-    const firstContent = content[0];
+    const [firstContent] = content;
     const text = readRecord(firstContent, "self")?.text;
     if (typeof text !== "string") {
-      throw new Error("Expected MCP tool call to return text content");
+      throw new TypeError("Expected MCP tool call to return text content");
     }
 
     const parsedText: unknown = JSON.parse(text);
@@ -472,14 +471,14 @@ describe("v1 API contract", () => {
 });
 
 function request(path: string, init: RequestInit = {}) {
-  return requestWithEnv(createEnv, path, init, "http://localhost");
+  return requestWithEnv(createEnv, path, "http://localhost", init);
 }
 
 function requestWithEnv(
   getEnv: () => Environment,
   path: string,
-  init: RequestInit = {},
-  origin: string
+  origin: string,
+  init: RequestInit = {}
 ) {
   const app = createApp(getEnv);
   return app.handle(new Request(new URL(path, origin).toString(), init));

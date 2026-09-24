@@ -1,5 +1,6 @@
-import { type CheerioAPI, load } from "cheerio";
-import { type Element } from "domhandler";
+import { load } from "cheerio";
+import type { CheerioAPI } from "cheerio";
+import type { Element } from "domhandler";
 import ora from "ora";
 
 import { generateId } from "../src/lib/generate-id";
@@ -8,11 +9,11 @@ import { isTruthy } from "../src/lib/is-truthy";
 import { createLogger } from "../src/lib/logging";
 import { parseSchema } from "../src/lib/schema";
 import { toTitleFormat } from "../src/lib/transforms";
-import {
-  type CarLoanInstitution,
-  type CarLoanProduct,
-  type CarLoanRate,
-  CarLoanRates,
+import { CarLoanRates } from "../src/models/car-loan-rates";
+import type {
+  CarLoanInstitution,
+  CarLoanProduct,
+  CarLoanRate,
 } from "../src/models/car-loan-rates";
 import { assertScrapeHasRates, assertTableHasRows } from "./scrape-guards";
 import { runScrape } from "./scrape-runner";
@@ -117,10 +118,12 @@ async function main() {
     noChange.succeed("No changes detected").stop();
   }
 }
-main().catch((error) => {
+try {
+  await main();
+} catch (error) {
   log.error({ error }, "Scraper failed");
   process.exitCode = 1;
-});
+}
 
 function getModelExtractedFromDOM($: CheerioAPI): CarLoanInstitution[] {
   const institutions: CarLoanInstitution[] = [];
@@ -128,7 +131,7 @@ function getModelExtractedFromDOM($: CheerioAPI): CarLoanInstitution[] {
   let currentInstitution: CarLoanInstitution | null = null;
 
   for (const row of rows) {
-    const cells = Array.from($(row).find("td"));
+    const cells = [...$(row).find("td")];
     const isPrimaryRow = $(row).hasClass("primary_row");
     if (isPrimaryRow && cells[0]) {
       currentInstitution = asInstitution($, cells[0]);
@@ -181,7 +184,8 @@ function asRateForProduct(
   $: CheerioAPI,
   cells: Element[]
 ): CarLoanRate | undefined {
-  const remainingCells = cells.slice(2); // The first column is institution name and the second column is the product name – we don't need these for rates
+  // The first column is institution name and the second column is the product name – we don't need these for rates
+  const remainingCells = cells.slice(2);
   const plan = $(remainingCells[0]).text().trim();
   const condition = $(remainingCells[1]).text().trim();
   const rate = $(remainingCells[2]).text().trim();
@@ -202,16 +206,18 @@ function asRate(
     id: generateId(["rate", institution.name, productName, plan, condition]),
     plan: toTitleFormat(plan) || null,
     condition: toTitleFormat(condition) || null,
-    rate: parseFloat(rate),
+    rate: Number.parseFloat(rate),
   };
 }
 
 function getInstitutionName($: CheerioAPI, cell: Element): string {
   const imgElement = $(cell).find("img");
   if (imgElement) {
-    return imgElement.attr("alt")?.trim() ?? $(cell).text().trim(); // Use alt text if image exists
+    // Use alt text if image exists
+    return imgElement.attr("alt")?.trim() ?? $(cell).text().trim();
   }
-  return $(cell).text().trim(); // Fallback to innerText
+  // Fallback to innerText
+  return $(cell).text().trim();
 }
 
 function getProductName($: CheerioAPI, cells: Element[]): string {
@@ -226,7 +232,5 @@ function normalizeProductName(name: string) {
 }
 
 function sortProductRatesById(rates: CarLoanRate[]) {
-  rates.sort((a, b) => {
-    return a.id.localeCompare(b.id);
-  });
+  rates.sort((a, b) => a.id.localeCompare(b.id));
 }

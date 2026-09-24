@@ -1,4 +1,4 @@
-import { type SupportedModels } from "../src/lib/data-loader";
+import type { SupportedModels } from "../src/lib/data-loader";
 
 /**
  * Guards against persisting a scrape that produced no usable data.

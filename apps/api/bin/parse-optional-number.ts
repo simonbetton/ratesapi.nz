@@ -9,6 +9,6 @@ export function parseOptionalNumber(text: string): number | null {
     return null;
   }
 
-  const parsed = parseFloat(trimmed);
+  const parsed = Number.parseFloat(trimmed);
   return Number.isNaN(parsed) ? null : parsed;
 }

@@ -1,16 +1,17 @@
 import { t } from "elysia";
 
 export function isValidIsoDate(value: string): boolean {
-  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const groups = value.match(
+    /^(?<yearValue>\d{4})-(?<monthValue>\d{2})-(?<dayValue>\d{2})$/u
+  )?.groups;
 
-  if (!match) {
+  if (!groups) {
     return false;
   }
 
-  const [, yearValue, monthValue, dayValue] = match;
-  const year = Number(yearValue);
-  const month = Number(monthValue);
-  const day = Number(dayValue);
+  const year = Number(groups.yearValue);
+  const month = Number(groups.monthValue);
+  const day = Number(groups.dayValue);
   const date = new Date(Date.UTC(year, month - 1, day));
 
   return (
@@ -121,10 +122,10 @@ export const TimestampedFields = {
   }),
 };
 
-export type ValidationErrorResponseBody = {
+export interface ValidationErrorResponseBody {
   code: 400;
   message: "Invalid request parameters";
-};
+}
 
 export const ValidationErrorResponse: ValidationErrorResponseBody = {
   code: 400,

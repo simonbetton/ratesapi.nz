@@ -2,12 +2,12 @@ import { ArrowUpRight, Play } from "lucide-react";
 import { useState } from "react";
 
 import {
-  type ExampleLanguage,
   exampleResponse,
   languages,
   requestExample,
   requestUrl,
 } from "../lib/api-examples";
+import type { ExampleLanguage } from "../lib/api-examples";
 import { CopyButton } from "./copy-button";
 import { apiLinks } from "./rates-api-content";
 
@@ -15,6 +15,13 @@ type RequestState =
   | { status: "example" | "loading" }
   | { status: "success"; body: string }
   | { status: "error"; message: string };
+
+const requestStatusMessages: Record<RequestState["status"], string> = {
+  example: "",
+  loading: "Requesting rates from the API.",
+  success: "Request complete. Live JSON response ready.",
+  error: "",
+};
 
 export function DemoPlayer() {
   const [language, setLanguage] = useState<ExampleLanguage>("cURL");
@@ -30,19 +37,19 @@ export function DemoPlayer() {
         signal: AbortSignal.timeout(15_000),
       });
       if (!response.ok) {
-        throw new Error(
-          `The API returned HTTP ${response.status}. Try again or check service health.`
-        );
+        setRequest({
+          status: "error",
+          message: `The API returned HTTP ${response.status}. Try again or check service health.`,
+        });
+        return;
       }
       const body: unknown = await response.json();
       setRequest({ status: "success", body: JSON.stringify(body, null, 2) });
-    } catch (error) {
+    } catch {
       setRequest({
         status: "error",
         message:
-          error instanceof Error && error.message.startsWith("The API returned")
-            ? error.message
-            : "Could not reach the API. Check your connection and retry, or open the endpoint directly.",
+          "Could not reach the API. Check your connection and retry, or open the endpoint directly.",
       });
     }
   }
@@ -60,9 +67,9 @@ export function DemoPlayer() {
       <div className="demo-grid">
         <div className="demo-request">
           <div className="code-toolbar">
-            {/* biome-ignore lint/a11y/useSemanticElements: a toggle-button group; <fieldset> adds UA min-inline-size and legend semantics we do not want */}
             <div
               className="language-switch"
+              // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- a toggle-button group; <fieldset> adds UA min-inline-size and legend semantics we do not want
               role="group"
               aria-label="Code language"
             >
@@ -100,10 +107,9 @@ export function DemoPlayer() {
               <option value="60">5 years</option>
             </select>
           </div>
-          {/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: the label names the focusable code block for screen readers */}
           <pre
             className="request-code"
-            // biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable code block must be reachable by keyboard to scroll
+            // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- scrollable code block must be reachable by keyboard to scroll
             tabIndex={0}
             aria-label={`${language} request`}
           >
@@ -138,12 +144,9 @@ export function DemoPlayer() {
             </span>
             <span className="json-label">JSON</span>
           </div>
+          {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- <output> is not announced as a live region consistently across screen readers */}
           <div role="status" className="sr-only">
-            {loading
-              ? "Requesting rates from the API."
-              : request.status === "success"
-                ? "Request complete. Live JSON response ready."
-                : ""}
+            {requestStatusMessages[request.status]}
           </div>
           {request.status === "error" ? (
             <div className="request-error" role="alert">
@@ -154,10 +157,9 @@ export function DemoPlayer() {
               </a>
             </div>
           ) : (
-            // biome-ignore lint/a11y/useAriaPropsSupportedByRole: the label names the focusable code block for screen readers
             <pre
               className="response-code"
-              // biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable code block must be reachable by keyboard to scroll
+              // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- scrollable code block must be reachable by keyboard to scroll
               tabIndex={0}
               aria-label={
                 request.status === "success"

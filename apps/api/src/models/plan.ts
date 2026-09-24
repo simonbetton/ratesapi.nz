@@ -16,12 +16,12 @@ export const Plan = t.Object(
     ),
     primaryFeeNZD: t.Nullable(
       t.Number({
-        examples: [0.0, 149.0],
+        examples: [0, 149],
       })
     ),
     balanceTransferRate: t.Nullable(
       t.Number({
-        examples: [0.0, 5.95],
+        examples: [0, 5.95],
       })
     ),
     balanceTransferPeriod: t.Nullable(
@@ -31,12 +31,12 @@ export const Plan = t.Object(
     ),
     cashAdvanceRate: t.Nullable(
       t.Number({
-        examples: [0.0, 21.95],
+        examples: [0, 21.95],
       })
     ),
     purchaseRate: t.Nullable(
       t.Number({
-        examples: [0.0, 21.95],
+        examples: [0, 21.95],
       })
     ),
   },

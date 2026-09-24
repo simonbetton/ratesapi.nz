@@ -2,7 +2,9 @@ import { describe, expect, test } from "bun:test";
 
 import { runScrape } from "../apps/api/bin/scrape-runner";
 
-type FakeData = { data: string[] };
+interface FakeData {
+  data: string[];
+}
 
 function callCounter() {
   let count = 0;

@@ -1,10 +1,10 @@
-import { type TSchema } from "elysia";
+import type { TSchema } from "elysia";
 
-import { type CarLoanRates } from "../models/car-loan-rates";
-import { type CreditCardRates } from "../models/credit-card-rates";
-import { type MortgageRates } from "../models/mortgage-rates";
-import { type PersonalLoanRates } from "../models/personal-loan-rates";
-import { type Database } from "./environment";
+import type { CarLoanRates } from "../models/car-loan-rates";
+import type { CreditCardRates } from "../models/credit-card-rates";
+import type { MortgageRates } from "../models/mortgage-rates";
+import type { PersonalLoanRates } from "../models/personal-loan-rates";
+import type { Database } from "./environment";
 import { createLogger } from "./logging";
 import { parseSchema } from "./schema";
 
@@ -20,9 +20,9 @@ export type DataType =
   | "credit-card-rates"
   | "personal-loan-rates";
 
-export type LoadLatestDataOptions = {
+export interface LoadLatestDataOptions {
   fallbackUrl?: string;
-};
+}
 
 const log = createLogger("data-loader");
 
@@ -56,7 +56,9 @@ export async function loadLatestData<Schema extends TSchema>(
       return loadLatestDataFromApi(dataType, options.fallbackUrl, schema);
     }
 
-    throw new Error(`Failed to load ${dataType} data: ${error}`);
+    throw new Error(`Failed to load ${dataType} data: ${error}`, {
+      cause: error,
+    });
   }
 }
 
@@ -96,14 +98,19 @@ export async function loadHistoricalData<Schema extends TSchema>(
     return parseSchema(schema, fromSavableJson(data));
   } catch (error) {
     throw new Error(
-      `Failed to load historical ${dataType} data for ${date}: ${error}`
+      `Failed to load historical ${dataType} data for ${date}: ${error}`,
+      { cause: error }
     );
   }
 }
 
 export function toSavableJson(json: unknown) {
-  const escaped = JSON.stringify(json).replace(
-    /[\u0080-\uffff]/g,
+  // Match UTF-16 code units (no `u` flag) so astral characters are escaped as
+  // surrogate pairs, which is what JSON's `\uXXXX` escapes require.
+  const escaped = JSON.stringify(json).replaceAll(
+    // oxlint-disable-next-line require-unicode-regexp
+    /[\u0080-\uFFFF]/g,
+    // oxlint-disable-next-line unicorn/prefer-code-point
     (char) => `\\u${char.charCodeAt(0).toString(16).padStart(4, "0")}`
   );
 
@@ -132,7 +139,9 @@ export async function getAvailableDates(
       .filter((date): date is string => date !== undefined);
   } catch (error) {
     log.error({ dataType, error }, "Failed to get available dates");
-    throw new Error(`Failed to get available dates for ${dataType}: ${error}`);
+    throw new Error(`Failed to get available dates for ${dataType}: ${error}`, {
+      cause: error,
+    });
   }
 }
 
@@ -167,7 +176,8 @@ export async function loadTimeSeriesData<Schema extends TSchema>(
   } catch (error) {
     log.error({ dataType, error }, "Failed to load time series data");
     throw new Error(
-      `Failed to load time series data for ${dataType}: ${error}`
+      `Failed to load time series data for ${dataType}: ${error}`,
+      { cause: error }
     );
   }
 }

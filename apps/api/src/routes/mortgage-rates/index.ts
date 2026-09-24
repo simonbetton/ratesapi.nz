@@ -1,19 +1,19 @@
 import { Elysia, t } from "elysia";
 
 import {
-  type ApiResult,
   apiResult,
   invalidRequestResult,
   jsonResult,
 } from "../../lib/api-result";
+import type { ApiResult } from "../../lib/api-result";
 import {
   loadLatestData,
   productionLatestDataFallbackUrl,
 } from "../../lib/data-loader";
-import { type Environment } from "../../lib/environment";
+import type { Environment } from "../../lib/environment";
 import { createLogger } from "../../lib/logging";
 import { getMortgageTimeSeries } from "../../lib/mortgage-time-series";
-import { type GetEnv } from "../../lib/routing";
+import type { GetEnv } from "../../lib/routing";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
 import {
@@ -164,7 +164,7 @@ export async function listMortgageRates(
     );
 
     if (query.termInMonths) {
-      const termInMonths = parseInt(query.termInMonths, 10);
+      const termInMonths = Number.parseInt(query.termInMonths, 10);
       const filteredMortgageRates = mortgageRates.data.map((institution) => ({
         ...institution,
         products: institution.products
@@ -263,7 +263,7 @@ export async function getMortgageRatesByInstitution(
     }
 
     if (query.termInMonths) {
-      const termInMonths = parseInt(query.termInMonths, 10);
+      const termInMonths = Number.parseInt(query.termInMonths, 10);
       const filteredProducts = singleInstitution.products
         .map((product) => ({
           ...product,
@@ -303,5 +303,5 @@ export async function getMortgageRatesByInstitution(
 }
 
 function hasInvalidTerm(termInMonths?: string): boolean {
-  return termInMonths !== undefined && !/^\d+$/.test(termInMonths);
+  return termInMonths !== undefined && !/^\d+$/u.test(termInMonths);
 }

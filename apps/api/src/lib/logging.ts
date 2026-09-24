@@ -1,4 +1,5 @@
-import pino, { type Logger, type LoggerOptions } from "pino";
+import pino from "pino";
+import type { Logger, LoggerOptions } from "pino";
 
 export function createLogger(
   module: string | { name: string },

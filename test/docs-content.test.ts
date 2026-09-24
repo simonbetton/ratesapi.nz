@@ -70,7 +70,7 @@ describe("docs MDX content", () => {
     const llmsRoute = await readDocsAppFile("app/llms.txt/route.ts");
 
     expect(searchRoute).toContain('import { searchApi } from "@/lib/source";');
-    expect(searchRoute).toContain("export const GET = searchApi.GET;");
+    expect(searchRoute).toContain("export const { GET } = searchApi;");
     expect(llmsRoute).toContain('import { docsLlms } from "@/lib/source";');
     expect(llmsRoute).toContain("docsLlms.index()");
   });

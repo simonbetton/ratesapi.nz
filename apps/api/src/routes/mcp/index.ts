@@ -1,8 +1,9 @@
+// oxlint-disable max-classes-per-file -- small error types private to this route
 import { Elysia } from "elysia";
 
-import { type ApiResult } from "../../lib/api-result";
-import { type Environment } from "../../lib/environment";
-import { type GetEnv } from "../../lib/routing";
+import type { ApiResult } from "../../lib/api-result";
+import type { Environment } from "../../lib/environment";
+import type { GetEnv } from "../../lib/routing";
 import {
   getCarLoanRatesByInstitution,
   getCarLoanRatesTimeSeries,
@@ -26,20 +27,20 @@ import {
 
 type JsonRpcId = string | number | null;
 
-type JsonRpcError = {
+interface JsonRpcError {
   code: number;
   message: string;
   data?: unknown;
-};
+}
 
-type JsonRpcResponse = {
+interface JsonRpcResponse {
   jsonrpc: "2.0";
   id: JsonRpcId;
   result?: unknown;
   error?: JsonRpcError;
-};
+}
 
-type McpTool = {
+interface McpTool {
   name: string;
   description: string;
   inputSchema: {
@@ -48,14 +49,15 @@ type McpTool = {
     required?: string[];
     additionalProperties: boolean;
   };
-};
+}
 
-class JsonRpcErrorResponse extends Error {
+class JsonRpcResponseError extends Error {
   code: number;
   data?: unknown;
 
   constructor(code: number, message: string, data?: unknown) {
     super(message);
+    this.name = "JsonRpcResponseError";
     this.code = code;
     this.data = data;
   }
@@ -67,6 +69,7 @@ class McpToolError extends Error {
 
   constructor(message: string, status: number, body: unknown) {
     super(message);
+    this.name = "McpToolError";
     this.status = status;
     this.body = body;
   }
@@ -331,7 +334,7 @@ export function createMcpRoutes(getEnv: GetEnv) {
           jsonrpc: "2.0",
           id: null,
           error: {
-            code: -32700,
+            code: -32_700,
             message: "Parse error",
             data: error instanceof Error ? error.message : undefined,
           },
@@ -382,15 +385,15 @@ export function createMcpRoutes(getEnv: GetEnv) {
 
 function parseJsonRpcRequest(body: unknown) {
   if (!isRecord(body)) {
-    throw new JsonRpcErrorResponse(-32600, "Invalid Request");
+    throw new JsonRpcResponseError(-32_600, "Invalid Request");
   }
 
   if (body.jsonrpc !== "2.0") {
-    throw new JsonRpcErrorResponse(-32600, "Invalid Request");
+    throw new JsonRpcResponseError(-32_600, "Invalid Request");
   }
 
   if (typeof body.method !== "string" || body.method.length === 0) {
-    throw new JsonRpcErrorResponse(-32600, "Invalid Request");
+    throw new JsonRpcResponseError(-32_600, "Invalid Request");
   }
 
   const { id, hasId } = parseRequestId(body);
@@ -416,14 +419,14 @@ function parseRequestId(body: unknown) {
   }
 
   if (hasId) {
-    throw new JsonRpcErrorResponse(-32600, "Invalid Request");
+    throw new JsonRpcResponseError(-32_600, "Invalid Request");
   }
 
   return { id: null, hasId };
 }
 
 function toJsonRpcError(error: unknown): JsonRpcError {
-  if (error instanceof JsonRpcErrorResponse) {
+  if (error instanceof JsonRpcResponseError) {
     return {
       code: error.code,
       message: error.message,
@@ -432,7 +435,7 @@ function toJsonRpcError(error: unknown): JsonRpcError {
   }
 
   return {
-    code: -32603,
+    code: -32_603,
     message: "Internal error",
     data: error instanceof Error ? error.message : undefined,
   };
@@ -440,7 +443,7 @@ function toJsonRpcError(error: unknown): JsonRpcError {
 
 async function handleMethod(method: string, params: unknown, getEnv: GetEnv) {
   switch (method) {
-    case "initialize":
+    case "initialize": {
       return {
         protocolVersion: MCP_PROTOCOL_VERSION,
         serverInfo: MCP_SERVER_INFO,
@@ -450,34 +453,42 @@ async function handleMethod(method: string, params: unknown, getEnv: GetEnv) {
           },
         },
       };
-    case "ping":
+    }
+    case "ping": {
       return {};
-    case "tools/list":
+    }
+    case "tools/list": {
       return {
         tools: MCP_TOOLS,
       };
-    case "tools/call":
-      return handleToolCall(params, getEnv);
-    default:
-      throw new JsonRpcErrorResponse(-32601, `Method not found: ${method}`);
+    }
+    case "tools/call": {
+      return await handleToolCall(params, getEnv);
+    }
+    default: {
+      throw new JsonRpcResponseError(-32_601, `Method not found: ${method}`);
+    }
   }
 }
 
 async function handleToolCall(params: unknown, getEnv: GetEnv) {
   if (!isRecord(params)) {
-    throw new JsonRpcErrorResponse(-32602, "Invalid params");
+    throw new JsonRpcResponseError(-32_602, "Invalid params");
   }
 
-  const name = params.name;
+  const { name } = params;
   const args = params.arguments;
 
   if (typeof name !== "string" || name.length === 0) {
-    throw new JsonRpcErrorResponse(-32602, "Invalid params: missing tool name");
+    throw new JsonRpcResponseError(
+      -32_602,
+      "Invalid params: missing tool name"
+    );
   }
 
   if (args !== undefined && !isRecord(args)) {
-    throw new JsonRpcErrorResponse(
-      -32602,
+    throw new JsonRpcResponseError(
+      -32_602,
       "Invalid params: arguments must be an object"
     );
   }
@@ -524,13 +535,14 @@ async function callTool(
   env: Environment
 ) {
   switch (name) {
-    case "list_mortgage_rates":
+    case "list_mortgage_rates": {
       return unwrapApiResult(
         await listMortgageRates(env, {
           termInMonths: toOptionalString(args.termInMonths),
         })
       );
-    case "get_mortgage_rates_by_institution":
+    }
+    case "get_mortgage_rates_by_institution": {
       return unwrapApiResult(
         await getMortgageRatesByInstitution(
           env,
@@ -545,7 +557,8 @@ async function callTool(
           }
         )
       );
-    case "get_mortgage_rates_time_series":
+    }
+    case "get_mortgage_rates_time_series": {
       return unwrapApiResult(
         await getMortgageRatesTimeSeries(env, {
           date: toOptionalString(args.date),
@@ -555,15 +568,18 @@ async function callTool(
           termInMonths: toOptionalString(args.termInMonths),
         })
       );
-    case "list_personal_loan_rates":
+    }
+    case "list_personal_loan_rates": {
       return unwrapApiResult(await listPersonalLoanRates(env));
-    case "get_personal_loan_rates_by_institution":
+    }
+    case "get_personal_loan_rates_by_institution": {
       return unwrapApiResult(
         await getPersonalLoanRatesByInstitution(env, {
           institutionId: toRequiredString(args.institutionId, "institutionId"),
         })
       );
-    case "get_personal_loan_rates_time_series":
+    }
+    case "get_personal_loan_rates_time_series": {
       return unwrapApiResult(
         await getPersonalLoanRatesTimeSeries(env, {
           date: toOptionalString(args.date),
@@ -572,15 +588,18 @@ async function callTool(
           institutionId: toOptionalString(args.institutionId),
         })
       );
-    case "list_car_loan_rates":
+    }
+    case "list_car_loan_rates": {
       return unwrapApiResult(await listCarLoanRates(env));
-    case "get_car_loan_rates_by_institution":
+    }
+    case "get_car_loan_rates_by_institution": {
       return unwrapApiResult(
         await getCarLoanRatesByInstitution(env, {
           institutionId: toRequiredString(args.institutionId, "institutionId"),
         })
       );
-    case "get_car_loan_rates_time_series":
+    }
+    case "get_car_loan_rates_time_series": {
       return unwrapApiResult(
         await getCarLoanRatesTimeSeries(env, {
           date: toOptionalString(args.date),
@@ -589,15 +608,18 @@ async function callTool(
           institutionId: toOptionalString(args.institutionId),
         })
       );
-    case "list_credit_card_rates":
+    }
+    case "list_credit_card_rates": {
       return unwrapApiResult(await listCreditCardRates(env));
-    case "get_credit_card_rates_by_issuer":
+    }
+    case "get_credit_card_rates_by_issuer": {
       return unwrapApiResult(
         await getCreditCardRatesByIssuer(env, {
           issuerId: toRequiredString(args.issuerId, "issuerId"),
         })
       );
-    case "get_credit_card_rates_time_series":
+    }
+    case "get_credit_card_rates_time_series": {
       return unwrapApiResult(
         await getCreditCardRatesTimeSeries(env, {
           date: toOptionalString(args.date),
@@ -606,8 +628,10 @@ async function callTool(
           issuerId: toOptionalString(args.issuerId),
         })
       );
-    default:
-      throw new JsonRpcErrorResponse(-32601, `Tool not found: ${name}`);
+    }
+    default: {
+      throw new JsonRpcResponseError(-32_601, `Tool not found: ${name}`);
+    }
   }
 }
 
@@ -643,8 +667,8 @@ function toRequiredString(value: unknown, name: string): string {
   const normalized = toOptionalString(value);
 
   if (!normalized) {
-    throw new JsonRpcErrorResponse(
-      -32602,
+    throw new JsonRpcResponseError(
+      -32_602,
       `Invalid params: ${name} is required`
     );
   }

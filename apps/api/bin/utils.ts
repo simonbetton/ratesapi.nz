@@ -1,25 +1,21 @@
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-import { type TSchema } from "elysia";
+import type { TSchema } from "elysia";
 import ora from "ora";
 
-import {
-  type DataType,
-  fromSavableJson,
-  type SupportedModels,
-  toSavableJson,
-} from "../src/lib/data-loader";
+import { fromSavableJson, toSavableJson } from "../src/lib/data-loader";
+import type { DataType, SupportedModels } from "../src/lib/data-loader";
 import { parseSchema } from "../src/lib/schema";
 
-type D1Target = {
+interface D1Target {
   databaseName: string;
   flags: string[];
-};
+}
 
-type D1RunOptions = {
+interface D1RunOptions {
   json?: boolean;
-};
+}
 
 const wranglerConfigPath = fileURLToPath(
   new URL("../wrangler.toml", import.meta.url)
@@ -36,6 +32,8 @@ export function hasDataChanged(
  * Directly save data to D1 using Wrangler.
  * This is the preferred method for saving data in CI environments.
  */
+// Wrangler runs synchronously today, but callers treat D1 I/O as async.
+// oxlint-disable-next-line require-await
 export async function saveToD1(
   data: SupportedModels,
   dataType: DataType
@@ -60,7 +58,7 @@ export async function saveToD1(
   }
 
   try {
-    const timestamp = new Date().toISOString().split("T")[0];
+    const [timestamp] = new Date().toISOString().split("T");
     const dataJson = toSavableJson(data);
 
     const prepareSpinner = ora("Preparing data for D1").start();
@@ -125,6 +123,8 @@ export async function saveToD1(
 /**
  * Load data from D1 database.
  */
+// Wrangler runs synchronously today, but callers treat D1 I/O as async.
+// oxlint-disable-next-line require-await
 export async function loadFromD1<Schema extends TSchema>(
   dataType: DataType,
   schema: Schema
@@ -175,7 +175,7 @@ function getD1Target(): D1Target | null {
     return null;
   }
 
-  const [databaseName, ...legacyFlags] = rawDatabaseName.split(/\s+/);
+  const [databaseName, ...legacyFlags] = rawDatabaseName.split(/\s+/u);
 
   if (!databaseName) {
     return null;
@@ -216,7 +216,7 @@ function runWranglerD1(
   }
 
   return execFileSync("npx", args, {
-    encoding: "utf8",
+    encoding: "utf-8",
     stdio: ["ignore", "pipe", "pipe"],
   });
 }
