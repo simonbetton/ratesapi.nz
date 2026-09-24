@@ -9,6 +9,7 @@ import { CreditCardRates } from "../src/models/credit-card-rates";
 import { type Issuer } from "../src/models/issuer";
 import { type Plan } from "../src/models/plan";
 import { assertScrapeHasRates, assertTableHasRows } from "./scrape-guards";
+import { runScrape } from "./scrape-runner";
 import { hasDataChanged, loadFromD1, saveToD1 } from "./utils";
 
 const config: {
@@ -34,79 +35,92 @@ const interestScraperAPI = InterestScraperAPI();
 
 // The main function to scrape and save credit card rates
 async function main() {
-  // Load current rates from D1
-  let currentRates: CreditCardRates | null = null;
-  const loading = ora("Loading current data from D1").start();
-  try {
-    currentRates = await loadFromD1("credit-card-rates", CreditCardRates);
-    loading.succeed("Loaded current data").stop();
-  } catch (error) {
-    loading.fail("Failed to load current data").stop();
-    console.error("Failed to load current data", error);
-    // Continue with the process even if loading fails
-  }
+  const outcome = await runScrape<CreditCardRates>({
+    loadCurrent: async () => {
+      const loading = ora("Loading current data from D1").start();
+      try {
+        const currentRates = await loadFromD1(
+          "credit-card-rates",
+          CreditCardRates,
+        );
+        loading.succeed("Loaded current data").stop();
+        return currentRates;
+      } catch (error) {
+        loading.fail("Failed to load current data").stop();
+        console.error("Failed to load current data", error);
+        throw error;
+      }
+    },
+    fetchHtml: async () => {
+      const gather = ora("Scraping credit card rates").start();
+      try {
+        const response = await interestScraperAPI.getCreditCardRatesPage();
+        if (!response) {
+          throw new Error(`Failed to fetch credit card rates`);
+        }
+        gather.succeed("Scraped credit card rates").stop();
+        return response;
+      } catch (error) {
+        gather.fail("Failed to scrape credit card rates").stop();
+        console.error("Failed to scrape credit card rates", error);
+        throw error;
+      }
+    },
+    parseAndValidate: (data) => {
+      const handle = ora("Extracting and Validating").start();
+      try {
+        const $ = load(data);
+        assertTableHasRows(
+          $(config.tableSelector).length,
+          config.tableSelector,
+        );
+        const unvalidatedData = getModelExtractedFromDOM($);
+        const validatedModel = parseSchema(CreditCardRates, {
+          type: "CreditCardRates",
+          data: unvalidatedData,
+          lastUpdated: new Date().toISOString(),
+        });
+        assertScrapeHasRates(validatedModel);
+        handle
+          .succeed(
+            `Extracted and Validated ${validatedModel.data.length} results`,
+          )
+          .stop();
+        return validatedModel;
+      } catch (error) {
+        handle.fail("Failed to extract and/or validate").stop();
+        console.error("Failed to extract and/or validate", error);
+        throw error;
+      }
+    },
+    hasChanged: hasDataChanged,
+    save: async (validatedModel) => {
+      const saveDb = ora("Saving data to D1").start();
+      try {
+        const saved = await saveToD1(validatedModel, "credit-card-rates");
+        if (saved) {
+          saveDb.succeed("Data saved to D1 database").stop();
+        } else {
+          saveDb.fail("Failed to save to D1").stop();
+        }
+        return saved;
+      } catch (error) {
+        saveDb.fail("Failed to save data").stop();
+        console.error("Failed to save data", error);
+        throw error;
+      }
+    },
+  });
 
-  // Scrape new data
-  let data: string = "";
-  const gather = ora("Scraping credit card rates").start();
-  try {
-    const response = await interestScraperAPI.getCreditCardRatesPage();
-    if (!response) {
-      throw new Error(`Failed to fetch credit card rates`);
-    }
-    data = response;
-    gather.succeed("Scraped credit card rates").stop();
-  } catch (error) {
-    gather.fail("Failed to scrape credit card rates").stop();
-    console.error("Failed to scrape credit card rates", error);
-    return;
-  }
-
-  // Extract and validate data
-  let validatedModel: CreditCardRates;
-  const handle = ora("Extracting and Validating").start();
-  try {
-    const $ = load(data);
-    assertTableHasRows($(config.tableSelector).length, config.tableSelector);
-    const unvalidatedData = getModelExtractedFromDOM($);
-    validatedModel = parseSchema(CreditCardRates, {
-      type: "CreditCardRates",
-      data: unvalidatedData,
-      lastUpdated: new Date().toISOString(),
-    });
-    assertScrapeHasRates(validatedModel);
-    handle
-      .succeed(`Extracted and Validated ${validatedModel.data.length} results`)
-      .stop();
-  } catch (error) {
-    handle.fail("Failed to extract and/or validate").stop();
-    console.error("Failed to extract and/or validate", error);
-    throw error;
-  }
-
-  // Check if the rates have changed
-  if (currentRates && !hasDataChanged(validatedModel, currentRates)) {
+  if (outcome.status === "unchanged") {
     const noChange = ora("No changes detected").start();
     noChange.succeed("No changes detected").stop();
-    return;
-  }
-
-  // Save new data to D1 database
-  const saveDb = ora("Saving data to D1").start();
-  try {
-    // Save to D1 database
-    const saved = await saveToD1(validatedModel, "credit-card-rates");
-
-    saveDb
-      .succeed(saved ? "Data saved to D1 database" : "Failed to save to D1")
-      .stop();
-  } catch (error) {
-    saveDb.fail("Failed to save data").stop();
-    console.error("Failed to save data", error);
-    return;
   }
 }
-main().catch(console.error);
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
 
 function getModelExtractedFromDOM($: CheerioAPI): Issuer[] {
   const issuers: Issuer[] = [];
