@@ -8,6 +8,7 @@ import { toTitleFormat } from "../src/lib/transforms";
 import { CreditCardRates } from "../src/models/credit-card-rates";
 import { type Issuer } from "../src/models/issuer";
 import { type Plan } from "../src/models/plan";
+import { parseOptionalNumber } from "./parse-optional-number";
 import { assertScrapeHasRates, assertTableHasRows } from "./scrape-guards";
 import { runScrape } from "./scrape-runner";
 import { hasDataChanged, loadFromD1, saveToD1 } from "./utils";
@@ -144,17 +145,18 @@ function getModelExtractedFromDOM($: CheerioAPI): Issuer[] {
 
 function addPlanTo(issuer: Issuer, $: CheerioAPI, cells: Element[]) {
   const productName = getPlanName($, cells);
-  const interestFreePeriodInMonths =
-    parseFloat($(cells[2]).text().trim()) || null;
-  const primaryFeeNZD = parseFloat($(cells[3]).text().trim()) || null;
-  const balanceTransferRate = parseFloat($(cells[4]).text().trim()) || null;
+  const interestFreePeriodInMonths = parseOptionalNumber(
+    $(cells[2]).text().trim(),
+  );
+  const primaryFeeNZD = parseOptionalNumber($(cells[3]).text().trim());
+  const balanceTransferRate = parseOptionalNumber($(cells[4]).text().trim());
   const balanceTransferPeriod = toTitleFormat(
     String($(cells[5]).text().trim())
       .replace("mths", "months")
       .replace("bal tsfrd", "balance transferred") || null,
   );
-  const cashAdvanceRate = parseFloat($(cells[6]).text().trim()) || null;
-  const purchaseRate = parseFloat($(cells[7]).text().trim()) || null;
+  const cashAdvanceRate = parseOptionalNumber($(cells[6]).text().trim());
+  const purchaseRate = parseOptionalNumber($(cells[7]).text().trim());
 
   const plan: Plan = {
     id: generateId(["plan", issuer.name, productName]),
