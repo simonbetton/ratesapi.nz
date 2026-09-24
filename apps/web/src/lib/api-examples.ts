@@ -3,7 +3,9 @@ export const languages = ["cURL", "JavaScript", "Python"] as const;
 export type ExampleLanguage = (typeof languages)[number];
 
 export function requestUrl(term: string) {
-  return term ? `${mortgageUrl}?termInMonths=${encodeURIComponent(term)}` : mortgageUrl;
+  return term
+    ? `${mortgageUrl}?termInMonths=${encodeURIComponent(term)}`
+    : mortgageUrl;
 }
 
 export function requestExample(language: ExampleLanguage, term: string) {
@@ -21,22 +23,29 @@ export function requestExample(language: ExampleLanguage, term: string) {
 // A small, illustrative response using the public API's schema, not live rates.
 export const exampleResponse = {
   type: "MortgageRates",
-  data: [{
-    id: "institution:anz",
-    name: "ANZ",
-    products: [{
-      id: "product:anz:special",
-      name: "Special",
-      rates: [{
-        id: "rate:anz:special:1-year",
-        rate: 4.99,
-        term: "1 year",
-        termInMonths: 12,
-      }],
-    }],
-  }],
+  data: [
+    {
+      id: "institution:anz",
+      name: "ANZ",
+      products: [
+        {
+          id: "product:anz:special",
+          name: "Special",
+          rates: [
+            {
+              id: "rate:anz:special:1-year",
+              rate: 4.99,
+              term: "1 year",
+              termInMonths: 12,
+            },
+          ],
+        },
+      ],
+    },
+  ],
   lastUpdated: "2026-09-24T04:19:31.911Z",
-  termsOfUse: "Data is retrieved hourly from interest.co.nz. Please note that the information provided is not guaranteed to be accurate. For the most up-to-date and accurate rates, please check with the provider directly.",
+  termsOfUse:
+    "Data is retrieved hourly from interest.co.nz. Please note that the information provided is not guaranteed to be accurate. For the most up-to-date and accurate rates, please check with the provider directly.",
   timestamp: "2026-09-24T05:41:12.125Z",
 };
 

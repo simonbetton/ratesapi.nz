@@ -1,5 +1,11 @@
 import { cn } from "@/lib/utils";
-import { apiLinks, collectionSteps, rateTrendBars, techBadges, terminalFlowSteps } from "./rates-api-content";
+import {
+  apiLinks,
+  collectionSteps,
+  rateTrendBars,
+  techBadges,
+  terminalFlowSteps,
+} from "./rates-api-content";
 import { RateTableMock, SectionBadge } from "./rates-api-ui";
 
 function AnimatedTerminalFlow() {
@@ -51,11 +57,7 @@ function AnimatedTerminalFlow() {
 
 export function TeamStrategySection() {
   return (
-    <section
-      className={cn(
-        "section-space",
-      )}
-    >
+    <section className={cn("section-space")}>
       <div className={cn("mx-auto w-full max-w-[1330px] px-5")}>
         <SectionBadge className="mb-5">Made for your next feature</SectionBadge>
         <h2>
@@ -63,8 +65,12 @@ export function TeamStrategySection() {
           <br className={cn("max-[640px]:hidden")} />
           More time building.
         </h2>
-        <p className="mt-3">Example views below use illustrative data, not current offers.</p>
-        <div className={cn("mt-12 grid grid-cols-3 gap-5 max-[900px]:grid-cols-1")}>
+        <p className="mt-3">
+          Example views below use illustrative data, not current offers.
+        </p>
+        <div
+          className={cn("mt-12 grid grid-cols-3 gap-5 max-[900px]:grid-cols-1")}
+        >
           <div
             className={cn(
               "flex min-w-0 flex-1 flex-col overflow-hidden rounded-lg bg-white shadow-[0_0_0_1px_#f0f0f5]",
@@ -212,8 +218,8 @@ export function TeamStrategySection() {
             >
               <h3>Follow a provider from list to detail</h3>
               <p>
-                Use the IDs returned by the API to fetch one institution or filter
-                its history. Product names and availability can change.
+                Use the IDs returned by the API to fetch one institution or
+                filter its history. Product names and availability can change.
               </p>
               <a
                 className={cn(
@@ -368,9 +374,7 @@ export function FooterCtaSection() {
       <div className={cn("flex flex-col items-center p-0 text-center")}>
         <h2>
           <span className={cn("block")}>Start with a free request.</span>
-          <span className={cn("text-[#636b7b]")}>
-            Ship something useful.
-          </span>
+          <span className={cn("text-[#636b7b]")}>Ship something useful.</span>
         </h2>
         <p
           className={cn(

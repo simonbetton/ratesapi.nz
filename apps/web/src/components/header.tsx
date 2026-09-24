@@ -10,11 +10,21 @@ export function SiteHeader() {
           <span>Rates API</span>
         </a>
         <nav aria-label="Main navigation">
-          <a className="nav-secondary" href="#endpoints">Endpoints</a>
-          <a className="nav-secondary" href="#agents">For agents</a>
-          <a className="nav-secondary" href={apiLinks.source}>GitHub</a>
-          <a className="nav-docs" href={apiLinks.openapi}>API docs <span aria-hidden="true">↗</span></a>
-          <a className="nav-start" href="#quickstart">Try the API <span aria-hidden="true">→</span></a>
+          <a className="nav-secondary" href="#endpoints">
+            Endpoints
+          </a>
+          <a className="nav-secondary" href="#agents">
+            For agents
+          </a>
+          <a className="nav-secondary" href={apiLinks.source}>
+            GitHub
+          </a>
+          <a className="nav-docs" href={apiLinks.openapi}>
+            API docs <span aria-hidden="true">↗</span>
+          </a>
+          <a className="nav-start" href="#quickstart">
+            Try the API <span aria-hidden="true">→</span>
+          </a>
         </nav>
       </div>
     </header>

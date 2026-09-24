@@ -157,8 +157,7 @@ export const collectionSteps = [
 export const terminalFlowSteps = [
   { kind: "command", text: "bun i" },
   { kind: "output", text: "dependencies installed" },
-  
-  
+
   { kind: "command", text: "bun run dev:api:local" },
   { kind: "output", text: "worker ready on localhost:8787" },
   { kind: "command", text: "curl localhost:8787/api/v1/mortgage-rates" },
