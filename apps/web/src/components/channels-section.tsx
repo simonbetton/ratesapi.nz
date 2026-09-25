@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 
+import { apiOrigin } from "../lib/site-urls";
 import { endpointCards } from "./rates-api-content";
 
 export function ChannelsSection() {
@@ -36,7 +37,7 @@ export function ChannelsSection() {
         ))}
       </div>
       <p className="endpoint-footnote">
-        Base URL <code>https://ratesapi.nz</code>
+        Base URL <code>{apiOrigin}</code>
         <span aria-hidden="true"> · </span>JSON responses · Browser CORS enabled
       </p>
     </section>

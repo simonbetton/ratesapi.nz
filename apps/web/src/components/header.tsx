@@ -14,6 +14,9 @@ export function SiteHeader() {
           <a className="nav-secondary" href="#endpoints">
             Endpoints
           </a>
+          <a className="nav-secondary" href="#explorer">
+            Explore
+          </a>
           <a className="nav-secondary" href="#agents">
             For agents
           </a>

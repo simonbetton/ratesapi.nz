@@ -1,4 +1,6 @@
-export const mortgageUrl = "https://ratesapi.nz/api/v1/mortgage-rates";
+import { apiUrl } from "./site-urls";
+
+export const mortgageUrl = apiUrl("/api/v1/mortgage-rates");
 export const languages = ["cURL", "JavaScript", "Python"] as const;
 export type ExampleLanguage = (typeof languages)[number];
 
@@ -56,7 +58,7 @@ export const exampleResponse = {
   timestamp: "2026-09-24T05:41:12.125Z",
 };
 
-export const mcpRequest = `curl --fail-with-body https://ratesapi.nz/api/v1/mcp \\
+export const mcpRequest = `curl --fail-with-body ${apiUrl("/api/v1/mcp")} \\
   -H 'Content-Type: application/json' \\
   -d '{
     "jsonrpc": "2.0",

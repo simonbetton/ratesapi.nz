@@ -1,9 +1,9 @@
 ---
 title: "API Reference"
-description: "Reference material for the Rates API base URL, response rules, OpenAPI reference, and AI integration."
+description: "The base URL, the endpoint groups, the filters, the response rules, and the time-series rules of Rates API."
 ---
 
-Use this section when you know which data you need. For the parameters, response fields, and errors of each endpoint, use the [OpenAPI reference](/openapi). If you are new to the API, start with the [Quickstart](/api-reference/quickstart), then read [AI Integration](/api-reference/ai-integration) and [Core Concepts](/api-reference/concepts).
+Use this section when you know which data you must get. The [OpenAPI reference](/openapi) shows the parameters, the response fields, and the errors of each endpoint. If Rates API is new to you, start with the [Quickstart](/api-reference/quickstart). Then read [AI Integration](/api-reference/ai-integration) and [Core Concepts](/api-reference/concepts).
 
 ## Base URL
 
@@ -11,7 +11,7 @@ Use this section when you know which data you need. For the parameters, response
 https://ratesapi.nz
 ```
 
-Local development uses:
+For local development, use this URL:
 
 ```text
 http://localhost:8787
@@ -19,11 +19,11 @@ http://localhost:8787
 
 ## Authentication
 
-No API key is required.
+An API key is not necessary.
 
 ## OpenAPI Reference
 
-The OpenAPI reference is the full reference for each endpoint. It shows all parameters, response fields, and errors, and you can send requests from it.
+The OpenAPI reference shows all parameters, response fields, and errors of each endpoint. You can also send requests from it.
 
 | Resource                   | URL                              |
 | -------------------------- | -------------------------------- |
@@ -32,19 +32,21 @@ The OpenAPI reference is the full reference for each endpoint. It shows all para
 
 ## AI Integration
 
-Rates API is designed for AI assistants and agent workflows:
-
-| Resource | URL | Purpose |
+| Resource | URL | Use |
 | --- | --- | --- |
-| MCP endpoint | `POST /api/v1/mcp` | Tool discovery and tool calls for MCP-compatible clients |
-| OpenAPI JSON | [`/openapi/json`](/openapi/json) | Tool generation, SDK generation, and contract inspection |
-| LLM docs feed | [`/llms.txt`](/llms.txt) | Plain-text discovery index of doc pages for assistants and retrieval systems |
+| MCP endpoint | `POST /api/v1/mcp` | Find and use tools from an MCP client |
+| OpenAPI JSON | [`/openapi/json`](/openapi/json) | Make tools and SDKs, and examine the contract |
+| Documentation list for LLMs | [`/llms.txt`](/llms.txt) | Give an assistant a plain-text list of the documentation pages |
 
-Read [AI Integration](/api-reference/ai-integration) for MCP behavior, `llms.txt`, and recommended agent patterns.
+For more information about MCP, `llms.txt`, and agent patterns, read [AI Integration](/api-reference/ai-integration).
 
 ## Endpoint Groups
 
-For the full details of each endpoint, use the [OpenAPI reference](/openapi).
+Each category has three endpoints:
+
+- The list endpoint gives the newest rates of all institutions or issuers.
+- The detail endpoint gives the newest rates of one institution or issuer.
+- The time-series endpoint gives snapshots of earlier rates.
 
 | Category | List Endpoint | Get By ID | Time Series |
 | --- | --- | --- | --- |
@@ -53,9 +55,25 @@ For the full details of each endpoint, use the [OpenAPI reference](/openapi).
 | Car Loan Rates | `GET /api/v1/car-loan-rates` | `GET /api/v1/car-loan-rates/{institutionId}` | `GET /api/v1/car-loan-rates/time-series` |
 | Credit Card Rates | `GET /api/v1/credit-card-rates` | `GET /api/v1/credit-card-rates/{issuerId}` | `GET /api/v1/credit-card-rates/time-series` |
 
-## Response Conventions
+The health endpoint, `GET /api/v1/health`, shows if the API can read its database. It also shows the time of the last change to each dataset.
 
-All successful responses return JSON. Error responses use a stable shape:
+## Filters
+
+| Parameter | Endpoints | Result |
+| --- | --- | --- |
+| `termInMonths` | All mortgage endpoints | Only the fixed rates for this term, for example, `12`. The response does not contain variable floating rates. |
+| `institutionId` | The time series of mortgages, personal loans, and car loans | Only the data of this institution |
+| `issuerId` | The time series of credit cards | Only the data of this issuer |
+
+The data contains mortgage terms of 6, 12, 18, 24, 36, 48, and 60 months. If you send a different term, the `products` arrays are empty.
+
+An endpoint does not use a filter that it does not accept. For example, the credit card time series does not use `institutionId`, and it gives the data of all issuers. Make sure that you send the correct filter for each endpoint.
+
+## Responses
+
+All successful responses are JSON. Each rate response has a `lastUpdated` field. This field gives the date and time (UTC, ISO 8601) at which the API collected the data.
+
+An error response has this shape:
 
 ```json
 {
@@ -64,17 +82,30 @@ All successful responses return JSON. Error responses use a stable shape:
 }
 ```
 
-Each response includes an `x-request-id` header. Send your own `x-request-id` when you want to correlate client logs with API logs.
+| HTTP status | Cause | Example message |
+| --- | --- | --- |
+| 400 | A parameter is not correct. For example, a date is not in `YYYY-MM-DD` format. | `Invalid request parameters` |
+| 404 | The institution, the issuer, or the snapshot does not exist. | `Institution not found` |
+| 500 | An error occurred on the server. Send the request again. If the error continues, examine `/api/v1/health`. | `An error occurred while retrieving mortgage rates data` |
 
-## Time Series Rules
+## Request IDs
 
-| Parameter       | Description                                            |
-| --------------- | ------------------------------------------------------ |
-| `date`          | Single historical snapshot date in `YYYY-MM-DD` format |
-| `startDate`     | Range start date in `YYYY-MM-DD` format                |
-| `endDate`       | Range end date in `YYYY-MM-DD` format                  |
-| `institutionId` | Filter results by a specific institution ID            |
-| `issuerId`      | Filter credit card results by a specific issuer ID     |
-| `termInMonths`  | Filter mortgage results by term length                 |
+The API adds an `x-request-id` header to the responses of its endpoints. If you send an `x-request-id` header, the API returns the same value. If you do not send it, the API makes a new value. Use this value to find a request in the logs.
 
-Use either `date` or the `startDate` and `endDate` pair. Do not combine a single date with a range.
+Some responses do not have this header:
+
+- A response to a path that does not exist
+- A 400 response for a parameter of the incorrect type, for example, `termInMonths=abc`
+- The Scalar page at `/openapi`
+
+## Time-Series Rules
+
+| Parameter | Description |
+| --- | --- |
+| `date` | The date of one snapshot, in `YYYY-MM-DD` format (UTC) |
+| `startDate` | The first date of a range, in `YYYY-MM-DD` format (UTC) |
+| `endDate` | The last date of a range, in `YYYY-MM-DD` format (UTC). The range contains this date. |
+
+Send `date`, or send `startDate` and `endDate` together. Do not send `date` with `startDate` or `endDate`.
+
+If you send no date, the response contains no snapshots. The `availableDates` field shows the dates that have a snapshot.

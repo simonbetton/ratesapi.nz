@@ -9,14 +9,13 @@ export function HeroSection() {
       <div className="page-container">
         <div className="hero-copy">
           <p className="eyebrow">
-            New Zealand lending data, ready to build with
+            New Zealand lending data
           </p>
           <h1 id="hero-title">
             Build the product.
-            <br />
-            <span>We’ll bring the rates.</span>
+            <span className="text-pretty">We’ll bring the rates.</span>
           </h1>
-          <p className="hero-description">
+          <p className="hero-description text-pretty">
             Add New Zealand mortgage, loan, and credit card rates to your app
             with one free JSON API. Build comparisons, calculators, and agents
             without maintaining your own scrapers.

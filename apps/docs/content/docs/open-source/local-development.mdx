@@ -1,11 +1,11 @@
 ---
 title: "Local Development"
-description: "Set up a local development environment for Rates API and start contributing to the project."
+description: "Prepare a local development environment for Rates API, get rate data, and run the checks."
 ---
 
-This project is a Bun workspace with three apps. The root scripts run a task across every app, and each app keeps its own scripts in its `package.json`.
+This project is a Bun workspace with three apps. The root scripts run a task in each app. Each app has scripts in its `package.json`.
 
-| App    | Path        | Runs on                 |
+| App    | Path        | URL                     |
 | ------ | ----------- | ----------------------- |
 | `api`  | `apps/api`  | `http://localhost:8787` |
 | `docs` | `apps/docs` | `http://localhost:3000` |
@@ -13,12 +13,12 @@ This project is a Bun workspace with three apps. The root scripts run a task acr
 
 ## Prerequisites
 
-- [Bun](https://bun.sh/): The JavaScript runtime and package manager used by the project
-- Git: For version control
-- A text editor or IDE such as VS Code or WebStorm
-- A Cloudflare account if you need remote D1 access or deployment
+- [Bun](https://bun.sh/): The JavaScript runtime and package manager of the project
+- Git
+- A text editor, for example, VS Code
+- A Cloudflare account, only for remote D1 access or deployment
 
-## Getting Started
+## Procedure
 
 ### 1. Clone the Repository
 
@@ -27,74 +27,84 @@ git clone https://github.com/simonbetton/ratesapi.nz.git
 cd ratesapi.nz
 ```
 
-### 2. Install Dependencies
+### 2. Install the Dependencies
 
 ```bash
 bun i
 ```
 
-One install at the repository root covers every app.
+One install at the root of the repository installs the dependencies of all apps.
 
-### 3. Run Everything
+### 3. Start All Apps
 
 ```bash
 bun run dev
 ```
 
-This starts the API, docs, and web apps together. The API runs against a local D1 database. Each start creates any missing tables and adds sample data without overwriting rows you already have, so no Cloudflare account is needed.
+This command starts the API, the docs, and the web apps together. The API uses a local D1 database on your computer. A Cloudflare account is not necessary.
 
-## Working With One App
+Each time the API starts, it makes the tables that do not exist. Then it adds sample data: one provider for each category, with a snapshot on 2026-04-30. The sample data does not replace rows that you already have.
 
-Use `--filter` with an app name to run a single app's script:
+## Run One App
+
+To run the script of one app, use `--filter` with the name of the app:
 
 ```bash
 bun run --filter docs dev
 ```
 
-### Remote D1 Data
+## Get Rate Data
 
-To run the API against the remote development D1 database instead of local sample data, log in to Cloudflare and run:
-
-```bash
-bun run --filter api dev:remote
-```
-
-## Scraping Data
-
-The project includes scripts to scrape rate data from interest.co.nz, which aggregates lending rates across New Zealand financial institutions. These scripts are located in the `apps/api/bin/` directory.
-
-Available scraper scripts:
-
-- `scrape-mortgage-rates.ts`: Fetches current mortgage rates
-- `scrape-personal-loan-rates.ts`: Fetches personal loan rates
-- `scrape-car-loan-rates.ts`: Fetches car loan rates
-- `scrape-credit-card-rates.ts`: Fetches credit card rates
-
-To run all scrapers against local D1:
+The sample data is small. To get the newest rates into your local D1 database, run the scraper scripts:
 
 ```bash
 bun run --filter api scrape:local
 ```
 
+The scripts collect the rates from interest.co.nz and save them in the local database. The data stays when you start the API again.
+
+The scraper scripts are in `apps/api/bin/`:
+
+- `scrape-mortgage-rates.ts`: Collects mortgage rates
+- `scrape-personal-loan-rates.ts`: Collects personal loan rates
+- `scrape-car-loan-rates.ts`: Collects car loan rates
+- `scrape-credit-card-rates.ts`: Collects credit card rates
+
+Each scrape adds a maximum of one snapshot for each day. The sample snapshot of 2026-04-30 also stays in the history.
+
+### Remote D1 Data
+
+To use the remote D1 database, log in to Cloudflare. Then run this command:
+
+```bash
+bun run --filter api dev:remote
+```
+
+This command gives the full production data and the full history.
+
+> **WARNING:** The `development` environment in `apps/api/wrangler.toml` has the same database ID as production. As a result, `dev:remote` connects to the production database. The API endpoints only read data. Do not run scripts that write data with this connection.
+
 ## Checks
 
-Run the full local verification suite before opening a pull request:
+Before you open a pull request, run all checks:
 
 ```bash
 bun run check
 ```
 
-This runs Oxlint and Oxfmt, type checks every app, and runs the Bun tests. To build every app the way CI does:
+This command runs Oxlint and Oxfmt, does a type check of each app, and runs the Bun tests.
+
+To build each app in the same way as CI, run this command:
 
 ```bash
 bun run build
 ```
 
-## Common Workflows
+## Frequent Tasks
 
-| Task | Files to start with |
+| Task | Files |
 | --- | --- |
-| Add an endpoint | `apps/api/src/routes/`, `apps/api/src/models/`, `apps/api/test/api-contract.test.ts` |
-| Update docs content | `apps/docs/content/docs/` |
-| Update scraper behavior | `apps/api/bin/` and `apps/api/src/lib/schema.ts` |
-| Change deployment | `apps/api/wrangler.toml`, `apps/docs/wrangler.toml`, `.github/workflows/` |
+| Add an endpoint | `apps/api/src/routes/`, `apps/api/src/models/`, and `apps/api/test/api-contract.test.ts` |
+| Change the documentation | `apps/docs/content/docs/` |
+| Change the scraper behavior | `apps/api/bin/` and `apps/api/src/models/` |
+| Change the deployment | `apps/api/wrangler.toml`, `apps/docs/wrangler.toml`, and `.github/workflows/` |

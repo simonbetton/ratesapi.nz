@@ -35,7 +35,7 @@ export function DeveloperSection() {
                 OpenAPI JSON <ArrowUpRight size={14} aria-hidden="true" />
               </span>
             </a>
-            <a href="https://ratesapi.nz/llms.txt">
+            <a href={apiLinks.llmsTxt}>
               <strong>Give your agent the docs</strong>
               <span>
                 llms.txt <ArrowUpRight size={14} aria-hidden="true" />
@@ -71,10 +71,7 @@ export function QuestionsSection() {
       <div>
         <p className="eyebrow">Before you ship</p>
         <h2 id="questions-title">A few useful details.</h2>
-        <a
-          className="text-link"
-          href="https://ratesapi.nz/api-reference/concepts"
-        >
+        <a className="text-link" href={apiLinks.concepts}>
           Read the integration notes{" "}
           <ArrowUpRight size={16} aria-hidden="true" />
         </a>
@@ -114,7 +111,7 @@ export function QuestionsSection() {
             <code>date</code> for one day, or <code>startDate</code> and{" "}
             <code>endDate</code> together for a range. Responses include{" "}
             <code>availableDates</code>; coverage depends on stored snapshots.{" "}
-            <a href="https://ratesapi.nz/openapi#tag/mortgage-rates/GET/api/v1/mortgage-rates/time-series">
+            <a href={apiLinks.mortgageTimeSeriesOpenApi}>
               See a mortgage history example.
             </a>
           </dd>

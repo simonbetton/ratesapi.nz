@@ -79,7 +79,7 @@ export function TeamStrategySection() {
           >
             <div
               className={cn(
-                "relative aspect-[1.35] w-full shrink-0 overflow-hidden bg-[url(/images/hero.webp)] bg-cover bg-center p-8"
+                "relative aspect-[1.35] max-h-[320px] min-h-[300px] w-full shrink-0 overflow-hidden bg-[url(/images/hero.webp)] bg-cover bg-center p-8"
               )}
             >
               <div
@@ -104,7 +104,7 @@ export function TeamStrategySection() {
                 className={cn(
                   "text-sm font-medium text-[#1a2035] no-underline hover:underline"
                 )}
-                href="https://ratesapi.nz/api-reference/concepts"
+                href={apiLinks.concepts}
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -119,7 +119,7 @@ export function TeamStrategySection() {
           >
             <div
               className={cn(
-                "relative aspect-[1.35] w-full shrink-0 overflow-hidden bg-[url(/images/hero.webp)] bg-cover bg-center p-8"
+                "relative aspect-[1.35] max-h-[320px] min-h-[300px] w-full shrink-0 overflow-hidden bg-[url(/images/hero.webp)] bg-cover bg-center p-8"
               )}
             >
               <div
@@ -174,7 +174,7 @@ export function TeamStrategySection() {
                 className={cn(
                   "text-sm font-medium text-[#1a2035] no-underline hover:underline"
                 )}
-                href="https://ratesapi.nz/openapi#tag/mortgage-rates/GET/api/v1/mortgage-rates/time-series"
+                href={apiLinks.mortgageTimeSeriesOpenApi}
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -189,7 +189,7 @@ export function TeamStrategySection() {
           >
             <div
               className={cn(
-                "relative aspect-[1.35] w-full shrink-0 overflow-hidden bg-[url(/images/hero.webp)] bg-cover bg-center p-8"
+                "relative aspect-[1.35] max-h-[320px] min-h-[300px] w-full shrink-0 overflow-hidden bg-[url(/images/hero.webp)] bg-cover bg-center p-8"
               )}
             >
               <div
@@ -226,7 +226,7 @@ export function TeamStrategySection() {
                 className={cn(
                   "text-sm font-medium text-[#1a2035] no-underline hover:underline"
                 )}
-                href="https://ratesapi.nz/api-reference/concepts"
+                href={apiLinks.concepts}
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -369,7 +369,7 @@ export function FooterCtaSection() {
   return (
     <section
       className={cn(
-        "block bg-white bg-[linear-gradient(180deg,#fff_0%,#fff_16%,rgba(255,255,255,0.92)_30%,rgba(255,255,255,0)_58%),url(/images/footer.webp)] [background-size:100%_100%,100%_auto] [background-position:top,bottom] bg-no-repeat px-6 pt-20 pb-[22%] max-[640px]:bg-[linear-gradient(180deg,#fff_0%,#fff_28%,rgba(255,255,255,0.94)_42%,rgba(255,255,255,0.28)_68%,rgba(255,255,255,0)_86%),url(/images/footer-mobile.webp)] max-[640px]:[background-size:100%_100%,auto_64%] max-[640px]:pb-[42%]"
+        "block bg-white bg-[linear-gradient(180deg,#fff_0%,#fff_16%,rgba(255,255,255,0.92)_30%,rgba(255,255,255,0)_58%),url(/images/footer.webp)] [background-size:100%_100%,100%_auto] [background-position:top,bottom] bg-no-repeat px-6 pt-20 pb-[22%] max-[640px]:bg-[linear-gradient(180deg,#fff_0%,rgba(255,255,255,0.94)_10%,rgba(255,255,255,0.28)_50%,rgba(255,255,255,0)_78%),url(/images/footer-mobile.webp)] max-[640px]:[background-size:100%_80.125vw,100%_auto] max-[640px]:[background-position:bottom] max-[640px]:pb-[42%]"
       )}
     >
       <div className={cn("flex flex-col items-center p-0 text-center")}>
@@ -430,9 +430,6 @@ export function SiteFooter() {
               <h4>Product</h4>
               <ul>
                 <li>
-                  <a href={apiLinks.sampleRequest}>Sample request</a>
-                </li>
-                <li>
                   <a href={apiLinks.openapi}>OpenAPI</a>
                 </li>
                 <li>
@@ -468,12 +465,9 @@ export function SiteFooter() {
                 <a href={apiLinks.openapiJson}>OpenAPI JSON</a>
               </li>
               <li>
-                <a
-                  href="https://x.com/simonbetton"
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  Follow Simon on X
+                <a href={apiLinks.author} rel="noopener" target="_blank">
+                  Made by Simon Betton
+                  <span className="sr-only"> (opens in a new tab)</span>
                 </a>
               </li>
             </ul>

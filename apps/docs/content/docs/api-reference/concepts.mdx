@@ -1,53 +1,66 @@
 ---
 title: "Core Concepts"
-description: "Understand identifiers, dates, data freshness, errors, CORS, OpenAPI behavior, and AI integration surfaces."
+description: "The rules for data freshness, IDs, snapshots, dates, errors, request IDs, CORS, and OpenAPI in Rates API."
 ---
 
 ## Data Freshness
 
-Rates API stores the latest scraped dataset and historical snapshots in Cloudflare D1. The scheduled scraping workflow runs hourly. The `/api/v1/health` endpoint reports the latest available timestamp for each dataset.
+The API collects data from interest.co.nz each hour. It saves a dataset only when the data changes. Cloudflare D1 keeps the newest version of each dataset and snapshots of earlier versions.
+
+To see the time of the last change to each dataset, send a request to the health endpoint:
 
 ```bash
 curl https://ratesapi.nz/api/v1/health
 ```
 
+In the health response, `lastUpdated` has the format `YYYY-MM-DD HH:MM:SS` (UTC). In the rate responses, `lastUpdated` has the ISO 8601 format.
+
+An old `lastUpdated` value has two possible causes: the rates did not change, or the data collection failed. The health endpoint does not show which cause is correct.
+
 ## Identifiers
 
-Use IDs returned by list endpoints when calling detail or time-series endpoints.
+Use the IDs from the list endpoints in detail requests and time-series requests.
 
-| Identifier | Used by | Example |
+| Identifier | Endpoints | Example |
 | --- | --- | --- |
 | `institutionId` | Mortgage, personal loan, and car loan endpoints | `institution:anz` |
 | `issuerId` | Credit card endpoints | `issuer:amex` |
 
-Identifiers are intentionally stable enough for API routing and filtering, but product names and product availability can change when institutions update their public rate pages.
+The ID of an institution or an issuer does not change when the API collects new data. You can use upper-case or lower-case letters in an ID.
 
-## Current vs Historical Data
+Product names and products can change when an institution changes its rates page. Product IDs and rate IDs identify items in a response. No endpoint uses them as a parameter.
 
-| Need | Use |
+## Newest Data and Earlier Data
+
+| Data | Endpoint |
 | --- | --- |
-| Current market data | List endpoints such as `/api/v1/mortgage-rates` |
-| One institution or issuer | Detail endpoints such as `/api/v1/mortgage-rates/{institutionId}` |
-| One historical snapshot | Time-series endpoint with `date` |
-| Range for charts or analysis | Time-series endpoint with `startDate` and `endDate` |
+| The newest rates of all institutions or issuers | A list endpoint, for example, `/api/v1/mortgage-rates` |
+| The newest rates of one institution or issuer | A detail endpoint, for example, `/api/v1/mortgage-rates/{institutionId}` |
+| One snapshot | A time-series endpoint with `date` |
+| All snapshots in a range | A time-series endpoint with `startDate` and `endDate` |
+| The dates that have a snapshot | A time-series endpoint with no date |
 
-Historical snapshots are written only when scraped data changes: the scraper runs hourly, but history keeps at most one snapshot per dataset per UTC date; a later change on the same date replaces the earlier snapshot. Dates without a change have no historical row. Use each time-series response's `availableDates` array to see which dates actually have data instead of assuming a complete daily series.
+The API keeps a maximum of one snapshot for each dataset on each UTC date. If the data changes again on the same date, the new snapshot replaces the earlier snapshot.
 
-## Date Filtering
+A date on which the data did not change has no snapshot. On that date, the rates were the same as in the snapshot before it. Use the `availableDates` array in each time-series response to find the dates that have data. Some days do not have a snapshot.
 
-Time-series endpoints accept ISO calendar dates in `YYYY-MM-DD` format.
+## Date Filters
 
-Use either `date` or the `startDate` and `endDate` pair. Do not combine a single date with a range.
+Time-series endpoints use calendar dates in `YYYY-MM-DD` format (UTC).
 
-| Rule                                 | Result                    |
-| ------------------------------------ | ------------------------- |
-| `date` by itself                     | Returns a single snapshot |
-| `startDate` and `endDate` together   | Returns a range           |
-| `startDate` without `endDate`        | Invalid request           |
-| `endDate` without `startDate`        | Invalid request           |
-| `date` with `startDate` or `endDate` | Invalid request           |
+Use either `date` or the `startDate` and `endDate` pair. Do not send `date` with `startDate` or `endDate`.
 
-Invalid query parameters return:
+| Parameters | Result |
+| --- | --- |
+| `date` only | One snapshot |
+| `startDate` and `endDate` | All snapshots in the range. The range contains the two dates. |
+| No date | No snapshots. The `availableDates` field shows the dates that have a snapshot. |
+| `startDate` without `endDate` | Invalid request |
+| `endDate` without `startDate` | Invalid request |
+| `date` with `startDate` or `endDate` | Invalid request |
+| `startDate` after `endDate` | Invalid request |
+
+An invalid request returns HTTP 400:
 
 ```json
 {
@@ -56,27 +69,31 @@ Invalid query parameters return:
 }
 ```
 
+If `startDate` is after `endDate`, the message is `Start date cannot be after end date`.
+
+If the API has no snapshot for the request, it returns HTTP 404. For example, the message can be `No data available for date: 2020-01-01`.
+
 ## Request IDs
 
-Every response includes `x-request-id`. If a client sends `x-request-id`, the API returns the same value. Otherwise, the API generates one.
+The API adds an `x-request-id` header to the responses of its endpoints. If a client sends `x-request-id`, the API returns the same value. If the client does not send it, the API makes a new value.
+
+A response to a path that does not exist does not have this header. A 400 response for a parameter of the incorrect type also does not have it.
 
 ## CORS
 
-Public `/api/v1/*` endpoints allow any origin and return `access-control-max-age: 600` for preflight requests.
+The `/api/v1/*` endpoints accept requests from all origins. A preflight response contains `access-control-max-age: 600`. A browser can keep the preflight result for 600 seconds.
 
-## AI Integration Surfaces
+## AI Integration Items
 
-Rates API is designed to be consumed by both traditional applications and AI agents.
-
-| Surface | Purpose |
+| Item | Use |
 | --- | --- |
-| `POST /api/v1/mcp` | MCP endpoint for tool discovery and tool calls |
-| `/openapi/json` | Machine-readable REST contract for SDKs and tool generation |
-| `/llms.txt` | Plain-text discovery index of doc pages for assistants and retrieval pipelines |
-| `/api/v1/*` | Stable JSON data endpoints for direct tool calls |
+| `POST /api/v1/mcp` | The MCP endpoint. Clients use it to find tools and to use tools. |
+| `/openapi/json` | A REST contract that SDK generators and tool generators can read |
+| `/llms.txt` | A plain-text list of the documentation pages for assistants and search systems |
+| `/api/v1/*` | JSON data endpoints for direct requests |
 
-For MCP clients, `listChanged: false` means the server's tool list is stable for the current API version. It does not mean rates data is static.
+The MCP server sends `listChanged: false`. This value means that the list of tools does not change while the API version stays the same. The rate data can change.
 
 ## OpenAPI
 
-The interactive Scalar docs are available at `/openapi`, and the generated OpenAPI document is available at `/openapi/json`. The MCP route is intentionally excluded from the public OpenAPI paths.
+The Scalar reference is at `/openapi`, and the OpenAPI document is at `/openapi/json`. The OpenAPI document does not contain the MCP endpoint, because MCP is a protocol endpoint and not a data endpoint.

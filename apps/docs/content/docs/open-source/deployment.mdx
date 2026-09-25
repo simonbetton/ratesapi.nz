@@ -1,36 +1,59 @@
 ---
 title: "Deployment"
-description: "Learn how to deploy Rates API to Cloudflare Workers for production use."
+description: "Deploy Rates API to Cloudflare Workers, prepare Cloudflare D1, and set the GitHub Actions secrets."
 ---
 
 Rates API deploys two Cloudflare Workers:
 
-| Worker             | Serves                                        |
-| ------------------ | --------------------------------------------- |
-| `ratesapi-nz`      | API routes such as `/api/v1/*` and `/openapi` |
-| `ratesapi-nz-docs` | The Fumadocs site and docs-only routes        |
+| Worker | Serves |
+| --- | --- |
+| `ratesapi-nz` | The API routes: `/api/v1/*`, `/openapi`, and `/openapi/*` |
+| `ratesapi-nz-docs` | The Fumadocs site and the routes of the docs site |
 
-Cloudflare D1 stores latest datasets and historical snapshots for the API Worker.
+Cloudflare D1 keeps the newest datasets and the historical snapshots for the API Worker. The landing page in `apps/web` deploys to Vercel. It does not have a deploy script.
 
 ## Prerequisites
 
 1. A [Cloudflare account](https://dash.cloudflare.com/sign-up)
-2. The project set up for local development
-3. [Bun](https://bun.sh/) installed
-4. [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/) for Cloudflare Workers and D1 management
+2. The project, prepared for local development
+3. [Bun](https://bun.sh/)
+4. The [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/) for Cloudflare Workers and D1
 
 ## Cloudflare D1
 
-Create the D1 database and apply the schema before deploying the API Worker.
+Do these steps before you deploy the API Worker for the first time.
 
-```bash
-wrangler login
-wrangler d1 execute ratesapi-data --file=./apps/api/schema.sql
-```
+1. Log in to Cloudflare:
+
+   ```bash
+   wrangler login
+   ```
+
+2. Go to the API app:
+
+   ```bash
+   cd apps/api
+   ```
+
+3. Add the D1 database to your Cloudflare account:
+
+   ```bash
+   wrangler d1 create ratesapi-data
+   ```
+
+4. Copy the database ID from the output. Write it in the two `d1_databases` blocks in `apps/api/wrangler.toml`.
+
+5. Add the tables to the remote database:
+
+   ```bash
+   wrangler d1 execute ratesapi-data --remote --file=schema.sql
+   ```
+
+> **CAUTION:** Without `--remote`, Wrangler changes only the local database on your computer.
 
 ## Worker Configuration
 
-The API Worker is configured in `apps/api/wrangler.toml`. It owns the public API path routes on the apex domain:
+The configuration of the API Worker is in `apps/api/wrangler.toml`. The API Worker controls the API paths on the apex domain:
 
 ```toml
 [[routes]]
@@ -40,9 +63,13 @@ zone_name = "ratesapi.nz"
 [[routes]]
 pattern = "ratesapi.nz/openapi"
 zone_name = "ratesapi.nz"
+
+[[routes]]
+pattern = "ratesapi.nz/openapi/*"
+zone_name = "ratesapi.nz"
 ```
 
-The docs Worker is configured in `apps/docs/wrangler.toml`. It owns the apex Custom Domain:
+The configuration of the docs Worker is in `apps/docs/wrangler.toml`. The docs Worker controls the apex Custom Domain:
 
 ```toml
 [[routes]]
@@ -50,44 +77,53 @@ pattern = "ratesapi.nz"
 custom_domain = true
 ```
 
-This lets the docs app serve `https://ratesapi.nz/`, while the API Worker still handles `https://ratesapi.nz/api/v1/*` and OpenAPI routes.
+As a result, the docs app serves `https://ratesapi.nz/`. The API Worker serves `https://ratesapi.nz/api/v1/*` and the OpenAPI routes.
 
 ## Build
 
-Build every app the same way CI checks deployability. The API build is a Wrangler dry run, and the docs build is the OpenNext Worker bundle:
+Build each app in the same way as the CI build job:
 
 ```bash
 bun run build
 ```
 
+The API build is a Wrangler dry run. The docs build makes the OpenNext Worker bundle. The web build makes the landing page.
+
 ## Deploy
 
-Deploy the API and docs Workers:
+Deploy the API Worker and the docs Worker:
 
 ```bash
 bun run deploy
 ```
 
-To deploy only one Worker, filter by app name:
+To deploy one Worker only, use the name of the app:
 
 ```bash
 bun run --filter api deploy
 bun run --filter docs deploy
 ```
 
-The web app deploys to Vercel from `apps/web` and has no deploy script.
+## GitHub Actions
 
-## Post-Deployment Setup
+| Workflow | Starts | Secrets |
+| --- | --- | --- |
+| Deploy to Cloudflare | On each push to `main`, or manually | `CLOUDFLARE_API_TOKEN` |
+| Hourly Scraping and Database Updates | Each hour, on each push to `main`, or manually | `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` |
 
-- Confirm `https://ratesapi.nz/` serves the docs app.
-- Confirm `https://ratesapi.nz/api/v1/health` serves the API Worker.
-- Confirm `https://ratesapi.nz/openapi` loads the Scalar API client.
-- Confirm `https://ratesapi.nz/openapi/json` returns the generated OpenAPI document.
-- Confirm the hourly scraping workflow has the `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, and D1 database environment it needs.
+Each workflow runs `bun run check` before it deploys or collects data.
 
-## Production Considerations
+## After Deployment
 
-- Keep route ownership clear: docs Worker owns the apex Custom Domain, API Worker owns API path routes.
-- Review the CI build job when Worker bindings or route patterns change.
-- Keep OpenAPI descriptions and schemas aligned with route changes.
+- Make sure that `https://ratesapi.nz/` shows the docs app.
+- Make sure that `https://ratesapi.nz/api/v1/health` gives a response from the API Worker.
+- Make sure that `https://ratesapi.nz/openapi` shows the Scalar API client.
+- Make sure that `https://ratesapi.nz/openapi/json` gives the OpenAPI document.
+- Make sure that the repository has the secrets that the workflows use.
+
+## Production Rules
+
+- Keep the route control clear: the docs Worker controls the apex Custom Domain, and the API Worker controls the API paths.
+- When you change Worker bindings or route patterns, examine the CI build job.
+- Keep the OpenAPI descriptions and schemas aligned with the routes.
 - Monitor scraper failures separately from Worker uptime.

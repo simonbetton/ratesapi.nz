@@ -1,97 +1,139 @@
 ---
 title: "AI Integration"
-description: "Use Rates API with agents, LLM applications, MCP clients, OpenAPI tools, and docs-aware assistants."
+description: "Use Rates API with AI agents, LLM applications, MCP clients, OpenAPI tools, and assistants that read documentation."
 ---
 
-Rates API is built to be useful in AI products without adding a private integration layer. The public API exposes machine-readable docs, stable JSON responses, an MCP endpoint, and a plain-text documentation feed.
+You can use Rates API in AI products without a private integration. The API gives documentation that machines can read, JSON responses with a fixed shape, an MCP endpoint, and a plain-text list of the documentation pages.
 
-Use this page when you are adding Rates API to a chat assistant, internal research agent, retrieval pipeline, workflow automation, or tool-calling application.
+Use this page when you add Rates API to an AI product. Examples are chat assistants, research agents, search systems, workflows, and applications that call tools.
 
-## Integration Surfaces
+## Integration Items
 
-| Surface | URL | Use it for |
+| Item | URL | Use |
 | --- | --- | --- |
-| MCP endpoint | `POST /api/v1/mcp` | Tool-calling agents that support Model Context Protocol |
-| Scalar OpenAPI UI | [`/openapi`](/openapi) | Interactive request testing and endpoint discovery |
-| OpenAPI JSON | [`/openapi/json`](/openapi/json) | SDK generation, agent tool generation, and contract checks |
-| LLM docs feed | [`/llms.txt`](/llms.txt) | A plain-text discovery index of doc pages, with titles and links |
-| Search API | `/api/search` | Docs search inside the Fumadocs site |
+| MCP endpoint | `POST /api/v1/mcp` | Agents that use the Model Context Protocol (MCP) |
+| Scalar OpenAPI reference | [`/openapi`](/openapi) | Find endpoints and send test requests from the browser |
+| OpenAPI JSON | [`/openapi/json`](/openapi/json) | Make SDKs and agent tools, and check the contract |
+| Documentation list for LLMs | [`/llms.txt`](/llms.txt) | A plain-text list of the documentation pages, with titles and links |
+| Search API | `/api/search` | Search in this documentation site |
 
-## Recommended AI Architecture
+## Recommended Architecture
 
-| Step | Component | Role |
+| Step | Component | Function |
 | --- | --- | --- |
-| 1 | User question | A person asks for current, historical, or comparative lending-rate information. |
-| 2 | AI assistant or workflow | The agent decides whether it needs docs context, endpoint metadata, or live rates data. |
-| 3 | `/llms.txt` and `/openapi/json` | The agent learns the available endpoints, parameters, and response shapes. |
-| 4 | `POST /api/v1/mcp` | MCP-compatible agents discover and call Rates API tools. |
-| 5 | `/api/v1/*` JSON endpoints | Direct tools and MCP handlers retrieve current or historical rates. |
-| 6 | Grounded answer | The agent returns an answer based on live API data and stable identifiers. |
+| 1 | User question | A person asks for the newest rates, earlier rates, or a comparison. |
+| 2 | AI assistant or workflow | The agent finds which data is necessary: documentation, endpoint data, or rates. |
+| 3 | `/llms.txt` and `/openapi/json` | The agent finds the endpoints, the parameters, and the response shapes. |
+| 4 | `POST /api/v1/mcp` | An MCP agent finds the Rates API tools and uses them. |
+| 5 | `/api/v1/*` JSON endpoints | Direct tools and the MCP tools get the rates. |
+| 6 | Answer | The agent gives an answer that uses API data and IDs. |
 
-Use OpenAPI and `llms.txt` to teach the agent what exists. Use MCP when your runtime supports tool discovery and tool calls. Use direct `/api/v1/*` requests when you are building your own tools or typed client.
+Use OpenAPI and `llms.txt` to tell the agent which items are available. Use MCP if your agent runtime can find tools and call them. Send direct `/api/v1/*` requests if you make tools or a typed client.
 
 ## MCP Endpoint
 
-The MCP endpoint is available at:
+The MCP endpoint is at this URL:
 
 ```text
 POST https://ratesapi.nz/api/v1/mcp
 ```
 
-The endpoint supports standard MCP JSON-RPC requests such as:
+The endpoint uses JSON-RPC 2.0 and MCP protocol version `2024-11-05`. It accepts only `POST` requests. It accepts these methods:
 
-| Method       | Purpose                                                |
-| ------------ | ------------------------------------------------------ |
-| `initialize` | Establish client capabilities and read server metadata |
-| `tools/list` | Discover the available Rates API tools                 |
-| `tools/call` | Call a specific rates tool with structured arguments   |
+| Method | Function |
+| --- | --- |
+| `initialize` | Gives the protocol version, the server data, and the capabilities |
+| `ping` | Gives an empty result. Use it to make sure that the server operates. |
+| `tools/list` | Gives the list of Rates API tools and their input schemas |
+| `tools/call` | Uses one tool with the arguments that you send |
 
-The MCP server reports `listChanged: false` because the tool list is static for a running API version. The underlying rates data can still change when the hourly scraper publishes new snapshots.
+A request without an `id` is a notification. The endpoint returns HTTP 204 with no body for a notification.
+
+### Tools
+
+| Category | Tools |
+| --- | --- |
+| Mortgages | `list_mortgage_rates`, `get_mortgage_rates_by_institution`, `get_mortgage_rates_time_series` |
+| Personal loans | `list_personal_loan_rates`, `get_personal_loan_rates_by_institution`, `get_personal_loan_rates_time_series` |
+| Car loans | `list_car_loan_rates`, `get_car_loan_rates_by_institution`, `get_car_loan_rates_time_series` |
+| Credit cards | `list_credit_card_rates`, `get_credit_card_rates_by_issuer`, `get_credit_card_rates_time_series` |
+
+All tool arguments are strings. For example, send `"termInMonths": "12"`, not `"termInMonths": 12`. The endpoint rejects an argument of the incorrect type.
+
+### Example Tool Call
+
+```bash
+curl https://ratesapi.nz/api/v1/mcp \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "rates-1",
+    "method": "tools/call",
+    "params": {
+      "name": "list_mortgage_rates",
+      "arguments": { "termInMonths": "12" }
+    }
+  }'
+```
+
+The result contains one `text` item. The text is the same JSON that the related REST endpoint returns. If the tool fails, the result has `isError: true`.
+
+### Errors
+
+| Code | Message | Cause |
+| --- | --- | --- |
+| `-32700` | `Parse error` | The request body is not JSON. The HTTP status is 400. |
+| `-32600` | `Invalid Request` | The body is not a JSON-RPC 2.0 request. |
+| `-32601` | `Method not found` or `Tool not found` | The method or the tool does not exist. |
+| `-32602` | `Invalid params` | You did not send a necessary argument, an argument has the incorrect type, or an argument is unknown. |
+| `-32603` | `Internal error` | An error occurred on the server. |
+
+The MCP server sends `listChanged: false`, because the list of tools does not change while the API version stays the same. The rate data can change each hour.
 
 ## OpenAPI for Tool Generation
 
-Use [`/openapi/json`](/openapi/json) when your AI framework can convert OpenAPI operations into callable tools.
+Use [`/openapi/json`](/openapi/json) if your AI framework can change OpenAPI operations into tools.
 
-The public OpenAPI document includes the `/api/v1/*` data endpoints and intentionally excludes `/api/v1/mcp`. MCP is a protocol endpoint rather than a REST data endpoint, so it is documented here instead of being mixed into the generated OpenAPI contract.
+The OpenAPI document contains the `/api/v1/*` data endpoints. It does not contain `/api/v1/mcp`, because MCP is a protocol endpoint and not a REST data endpoint. This page gives the MCP information.
 
-## LLM Documentation Feed
+## Documentation List for LLMs
 
-Use [`/llms.txt`](/llms.txt) when an assistant, coding agent, or retrieval system needs a compact, plain-text map of the documentation.
+Use [`/llms.txt`](/llms.txt) when an assistant, a coding agent, or a search system must have a short plain-text list of the documentation.
 
-`/llms.txt` lists every doc page as a Markdown link with its title and description. It is a discovery index, not the full page content — fetch a linked page directly to read its full text, and use [`/openapi/json`](/openapi/json) for request and response schemas.
+`/llms.txt` shows each documentation page as a Markdown link, with its title and description. It does not contain the full text of the pages. To read a page, get the linked page. For request schemas and response schemas, use [`/openapi/json`](/openapi/json).
 
-This is useful for:
+Use `/llms.txt` for these tasks:
 
-- Adding a list of Rates API doc pages to a custom assistant system prompt
-- Letting a retrieval system enumerate available pages before fetching the ones it needs
-- Giving coding agents a starting map of the docs to follow up on with individual page fetches
-- Keeping docs discovery separate from live API data
+- Add a list of the Rates API pages to the system prompt of an assistant.
+- Let a search system find the available pages before it gets the necessary pages.
+- Give a coding agent a list of pages to read.
+- Keep the documentation separate from the rate data.
 
-## Agent-Friendly API Conventions
+## API Rules That Help Agents
 
-| Convention | Benefit |
+| Rule | Result |
 | --- | --- |
-| No API key required | Agents can prototype and test without secrets |
-| Stable identifiers | Follow-up tool calls can reuse institution, issuer, and product IDs |
-| Predictable JSON | Tool outputs are easy to parse, validate, and display |
-| Stable error shape | Invalid tool arguments can be handled consistently |
-| `x-request-id` header | Agent logs can be correlated with API logs |
-| Time-series filters | Agents can answer historical and trend questions |
+| An API key is not necessary | Agents can make prototypes and tests without secrets. |
+| The IDs of institutions and issuers do not change | The next tool call can use the same IDs. |
+| JSON responses have a fixed shape | Tool results are easy to parse, check, and show. |
+| Errors have a fixed shape | An agent can process incorrect tool arguments in the same way each time. |
+| REST responses have an `x-request-id` header | You can connect agent logs to API logs. |
+| Time-series filters | Agents can answer questions about earlier rates and trends. |
 
 ## Example Agent Tasks
 
-- Compare current 12-month mortgage rates across New Zealand lenders
-- Find the latest rates for one institution before drafting a customer response
-- Build a daily digest when a watched rate changes
-- Answer historical questions such as "what did ANZ offer last month?"
-- Enrich a financial planning workflow with live lending-rate context
+- Compare the newest 12-month mortgage rates of New Zealand lenders.
+- Find the newest rates of one institution before you write a reply to a customer.
+- Make a daily summary when a monitored rate changes.
+- Answer questions about earlier rates, for example, "What did ANZ offer last month?"
+- Add the newest lending rates to a workflow for financial plans.
 
-## Choosing an Integration Path
+## Select an Integration Path
 
-| If you are building              | Start with            |
+| If you make this                 | Start with            |
 | -------------------------------- | --------------------- |
-| MCP-capable agent                | `POST /api/v1/mcp`    |
-| SDK or typed client              | `/openapi/json`       |
-| Chat assistant with docs context | `/llms.txt`           |
-| Browser-based prototype          | `/openapi`            |
-| Direct product feature           | `/api/v1/*` endpoints |
+| An MCP agent                     | `POST /api/v1/mcp`    |
+| An SDK or a typed client         | `/openapi/json`       |
+| A chat assistant that reads docs | `/llms.txt`           |
+| A prototype in the browser       | `/openapi`            |
+| A product feature                | `/api/v1/*` endpoints |

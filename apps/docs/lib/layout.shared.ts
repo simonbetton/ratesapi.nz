@@ -12,7 +12,7 @@ export function baseOptions(): BaseLayoutProps {
     links: [
       {
         type: "main",
-        text: "AI-ready",
+        text: "AI integration",
         url: "/api-reference/ai-integration",
       },
       {

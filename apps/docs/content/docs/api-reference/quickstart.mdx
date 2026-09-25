@@ -1,67 +1,69 @@
 ---
 title: "Quickstart"
-description: "Make your first Rates API request and learn the most common request patterns."
+description: "Send your first requests to Rates API. Get the newest rates, the rates of one institution, and snapshots of earlier rates."
 ---
 
-This guide gets you from zero to useful API data in a few requests. No API key is required.
+Do these steps to get data from Rates API. An API key is not necessary.
 
-## 1. Fetch Current Mortgage Rates
+## 1. Get the Newest Mortgage Rates
 
 ```bash
 curl https://ratesapi.nz/api/v1/mortgage-rates
 ```
 
-The list endpoints return institutions with nested products and rates. Keep the institution IDs from this response when you need a specific lender later.
+The response contains a list of institutions. Each institution has products, and each product has rates. Keep the `id` of an institution for the steps that follow.
 
-## 2. Filter Mortgage Rates by Term
+## 2. Get the Rates for One Term
 
 ```bash
 curl "https://ratesapi.nz/api/v1/mortgage-rates?termInMonths=12"
 ```
 
-Use `termInMonths` when your UI only needs a fixed-rate mortgage term such as 6, 12, 18, 24, 36, 48, or 60 months.
+The `termInMonths` parameter gives only the fixed rates for one term. The data contains terms of 6, 12, 18, 24, 36, 48, and 60 months. The response does not contain variable floating rates.
 
-## 3. Fetch One Institution
+## 3. Get the Rates of One Institution
 
 ```bash
 curl https://ratesapi.nz/api/v1/mortgage-rates/institution:anz
 ```
 
-Detail endpoints are useful for institution profile pages, product comparison pages, and cache refreshes for a single lender.
+Use this endpoint for a page about one lender. You can also use it to update the data of one lender only.
 
-## 4. Fetch a Historical Snapshot
+## 4. Get One Snapshot
 
 ```bash
 curl "https://ratesapi.nz/api/v1/mortgage-rates/time-series?date=2026-04-30&institutionId=institution:anz&termInMonths=12"
 ```
 
-Use `date` when you need one historical snapshot.
+The `date` parameter gives the snapshot of that date. If that date has no snapshot, the API returns HTTP 404.
 
-## 5. Fetch a Historical Range
+## 5. Get the Snapshots in a Range
 
 ```bash
 curl "https://ratesapi.nz/api/v1/mortgage-rates/time-series?startDate=2026-04-01&endDate=2026-04-30&institutionId=institution:anz"
 ```
 
-Use `startDate` and `endDate` together for charts and trend analysis. Do not combine `date` with a date range.
+Send `startDate` and `endDate` together. The range contains the two dates. Do not send `date` with a range.
 
-## 6. Explore Interactively
+The API keeps a snapshot only when the data changes. Because of this, some dates in a range have no snapshot. The `availableDates` field shows the dates that have a snapshot.
 
-Open [`/openapi`](/openapi) to use the Scalar API client in the browser, or fetch the generated spec directly from [`/openapi/json`](/openapi/json).
+## 6. Examine the API in the Browser
+
+Open [`/openapi`](/openapi) to send requests from the Scalar API client. To get the OpenAPI document, use [`/openapi/json`](/openapi/json).
 
 ## 7. Connect an AI Agent
 
-Use the MCP endpoint when your agent runtime supports Model Context Protocol:
+If your agent can use the Model Context Protocol (MCP), send requests to the MCP endpoint:
 
 ```text
 POST https://ratesapi.nz/api/v1/mcp
 ```
 
-Use [`/llms.txt`](/llms.txt) to give an assistant a plain-text index of the documentation pages, and use [`/openapi/json`](/openapi/json) for request/response schemas or when your framework can generate tools from an OpenAPI contract.
+To give an assistant a list of the documentation pages, use [`/llms.txt`](/llms.txt). To get the request and response schemas, use [`/openapi/json`](/openapi/json). Some AI frameworks can make tools from this OpenAPI contract.
 
 ## Next Steps
 
-- Read [AI Integration](/api-reference/ai-integration) for MCP, OpenAPI, and `llms.txt` guidance.
-- Read [Core Concepts](/api-reference/concepts) for identifiers, date filters, errors, and data freshness.
-- Use the [OpenAPI reference](/openapi) to find all parameters and response fields for each endpoint.
-- Review the [Open Source](/open-source) section if you want to run or deploy the project yourself.
+- Read [AI Integration](/api-reference/ai-integration) for MCP, OpenAPI, and `llms.txt`.
+- Read [Core Concepts](/api-reference/concepts) for IDs, dates, errors, and data freshness.
+- Use the [OpenAPI reference](/openapi) to find all parameters and response fields of each endpoint.
+- To run or deploy the project, read [Open Source](/open-source).

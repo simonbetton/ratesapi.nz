@@ -8,9 +8,26 @@ describe("docs MDX content", () => {
     const body = await readDocsFile("index.mdx");
 
     expect(body).toContain('title: "Overview"');
-    expect(body).toContain("AI-ready JSON API");
-    expect(body).toContain("AI-Ready by Design");
+    expect(body).toContain("free JSON API");
+    expect(body).toContain("## Made for AI Agents");
     expect(body).toContain("| Mortgage Rates |");
+  });
+
+  test("keeps operational instructions in line with the repository", async () => {
+    const deployment = await readDocsFile("open-source/deployment.mdx");
+    const localDevelopment = await readDocsFile(
+      "open-source/local-development.mdx"
+    );
+    const monitoring = await readDocsFile("open-source/monitoring.mdx");
+
+    // Without --remote, Wrangler only changes the local database.
+    expect(deployment).toContain(
+      "wrangler d1 execute ratesapi-data --remote --file=schema.sql"
+    );
+    expect(deployment).toContain('pattern = "ratesapi.nz/openapi/*"');
+    // The development environment reuses the production D1 database ID.
+    expect(localDevelopment).toContain("same database ID as production");
+    expect(monitoring).not.toContain("CodeQL");
   });
 
   test("keeps API navigation free of duplicate introduction links", async () => {

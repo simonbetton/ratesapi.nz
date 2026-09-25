@@ -8,13 +8,28 @@ import {
   requestUrl,
 } from "../lib/api-examples";
 import type { ExampleLanguage } from "../lib/api-examples";
+import { fetchMortgageRates } from "../lib/rates-request";
+import type { RequestResult } from "../lib/rates-request";
 import { CopyButton } from "./copy-button";
 import { apiLinks } from "./rates-api-content";
 
-type RequestState =
-  | { status: "example" | "loading" }
-  | { status: "success"; body: string }
-  | { status: "error"; message: string };
+type RequestState = { status: "example" | "loading" } | RequestResult;
+
+const responseLabels: Record<RequestState["status"], string> = {
+  example: "Example response · shortened",
+  loading: "Requesting live data…",
+  success: "200 OK · Live response",
+  error: "Request failed",
+};
+
+const responseNotes: Record<RequestState["status"], string> = {
+  example:
+    "Illustrative 1-year mortgage data. Run a request for the selected term’s latest available rates.",
+  loading: "Fetching the selected mortgage term from ratesapi.nz.",
+  success:
+    "Check lastUpdated for data freshness; timestamp is the request time.",
+  error: "No live data loaded. You can retry using Run request.",
+};
 
 const requestStatusMessages: Record<RequestState["status"], string> = {
   example: "",
@@ -32,26 +47,7 @@ export function DemoPlayer() {
 
   async function runRequest() {
     setRequest({ status: "loading" });
-    try {
-      const response = await fetch(requestUrl(term), {
-        signal: AbortSignal.timeout(15_000),
-      });
-      if (!response.ok) {
-        setRequest({
-          status: "error",
-          message: `The API returned HTTP ${response.status}. Try again or check service health.`,
-        });
-        return;
-      }
-      const body: unknown = await response.json();
-      setRequest({ status: "success", body: JSON.stringify(body, null, 2) });
-    } catch {
-      setRequest({
-        status: "error",
-        message:
-          "Could not reach the API. Check your connection and retry, or open the endpoint directly.",
-      });
-    }
+    setRequest(await fetchMortgageRates(term));
   }
 
   return (
@@ -138,9 +134,7 @@ export function DemoPlayer() {
         <div className="demo-response" aria-busy={loading}>
           <div className="code-toolbar">
             <span className="response-label">
-              {request.status === "success"
-                ? "200 OK · Live response"
-                : "Example response · shortened"}
+              {responseLabels[request.status]}
             </span>
             <span className="json-label">JSON</span>
           </div>
@@ -174,11 +168,7 @@ export function DemoPlayer() {
               </code>
             </pre>
           )}
-          <p className="response-note">
-            {request.status === "success"
-              ? "Check lastUpdated for data freshness; timestamp is the request time."
-              : "Illustrative 1-year mortgage data. Run a request for the selected term’s latest available rates."}
-          </p>
+          <p className="response-note">{responseNotes[request.status]}</p>
         </div>
       </div>
     </section>

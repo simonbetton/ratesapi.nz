@@ -1,33 +1,35 @@
 ---
 title: "Monitoring"
-description: "Learn how the Rates API monitoring system works to ensure reliability and uptime."
+description: "How the GitHub Actions workflows of Rates API monitor uptime, data collection, and code quality."
 ---
 
-Rates API uses GitHub Actions for three operational feedback loops: CI, scheduled scraping, and uptime monitoring.
+Rates API uses GitHub Actions workflows to monitor the service. The workflows monitor uptime, data collection, and code quality.
 
-## Uptime Monitoring
+## Uptime Checks
 
-The `API Uptime Monitoring` workflow runs every 15 minutes and:
+The `API Uptime Monitoring` workflow starts every 15 minutes. It does these steps:
 
-1. Installs dependencies with Bun
-2. Checks the health of all API endpoints
-3. Fails the workflow if one or more endpoints are unavailable
-4. Creates a GitHub issue with failure details
+1. It installs the dependencies with Bun.
+2. It runs `apps/api/bin/uptime-check.ts`. This script sends requests to the production API at `https://ratesapi.nz/api/`.
+3. If one or more requests fail, the workflow fails.
+4. If the workflow fails, it makes a GitHub issue with the failure details.
+
+If the API returns HTTP 500, 502, 503, or 504, the script sends the request again. It does this a maximum of 3 times.
 
 ## Monitored Endpoints
 
-- API health and freshness
-- Mortgage rate list, detail, and time-series routes
-- Personal loan list, detail, and time-series routes
-- Car loan list, detail, and time-series routes
-- Credit card list, detail, and time-series routes
-- OpenAPI UI and JSON
+- The health endpoint
+- The list endpoint and one detail endpoint for each category
+- The time-series endpoint for each category, with no filter and with an institution or issuer filter
+- The mortgage time series, with a date, with a date range, and with the `termInMonths` filter
 
-## Alert System
+The script does not check `/openapi` or `/openapi/json`.
 
-When an endpoint fails, the monitoring workflow creates a GitHub issue, labels it `incident` and `high-priority`, mentions the repository owner, and includes the failing endpoint output.
+## Alerts
 
-## Required Permissions
+When a request fails, the workflow makes a GitHub issue with the title `🚨 API Endpoint(s) Down`. The issue has the labels `incident` and `high-priority`. It mentions the owner of the repository, and it contains the output of the failed requests.
+
+## Necessary Permissions
 
 ```yaml
 permissions:
@@ -35,26 +37,34 @@ permissions:
   contents: read
 ```
 
-If using an organization with restricted permissions, ensure repository settings allow GitHub Actions to create issues and create the required `incident` and `high-priority` labels.
+If your organization limits permissions, make sure that GitHub Actions can make issues. Also make sure that the `incident` and `high-priority` labels exist.
 
-## Scraping Health
+## Data Collection
 
-The scraping workflow runs hourly and writes to the remote D1 database. It verifies D1 access before scraping and verifies saved data after the scraper scripts finish.
+The `Hourly Scraping and Database Updates` workflow starts each hour. It also starts on each push to `main`. It does these steps:
 
-## CI Health
+1. It runs `bun run check`.
+2. It makes sure that it can get access to the remote D1 database.
+3. It runs the four scraper scripts.
+4. It shows the saved data in the workflow log.
 
-Pull requests run:
+A scraper saves a dataset only when the data changed.
 
-- Oxlint and Oxfmt (Ultracite presets), TypeScript via `tsgo`, docs type generation, and tests through `bun run check`
-- API deploy dry-run
-- Docs OpenNext build
-- Docs deploy dry-run
-- Fallow static analysis
-- CodeQL analysis
+## Code Quality
 
-## Extending Monitoring
+These workflows start for pull requests and for pushes to `main`:
 
-- Add new endpoints to `apps/api/bin/uptime-check.ts`.
-- Add docs checks when docs-only routes become critical.
-- Add notification channels if GitHub issues are not enough.
-- Add data freshness thresholds if stale data becomes more important than endpoint availability.
+| Workflow | Checks |
+| --- | --- |
+| `CI` | `bun run check` (Oxlint, Oxfmt, TypeScript through `tsgo`, docs type generation, and tests) and `bun run build` (the API dry run, the docs OpenNext build, and the web build) |
+| `Fallow` | Static analysis of the code |
+| `React Doctor` | React diagnostics for the changed files |
+
+The `Deploy to Cloudflare` workflow starts on each push to `main`. It runs `bun run check` before it deploys.
+
+## Add Checks
+
+- To monitor a new endpoint, add it to `apps/api/bin/uptime-check.ts`.
+- If a docs route becomes important, add a check for it.
+- If GitHub issues are not enough, add a notification channel.
+- If old data is more important than endpoint uptime, add a limit for data age.

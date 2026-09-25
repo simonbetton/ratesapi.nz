@@ -19,7 +19,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "A public JSON API for New Zealand mortgage, personal loan, car loan, and credit card rates.",
+          "Build with free New Zealand mortgage, loan, and credit card data. JSON endpoints, historical rates, OpenAPI, and MCP. No account or API key required.",
       },
       {
         property: "og:title",
@@ -30,8 +30,26 @@ export const Route = createRootRoute({
         content:
           "Latest and historical NZ lending rates for products, dashboards, and agent tools.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://ratesapi.nz/" },
+      { property: "og:site_name", content: "Rates API" },
+      { property: "og:image", content: "https://ratesapi.nz/images/hero.webp" },
+      {
+        property: "og:image:alt",
+        content: "New Zealand mountain lake landscape",
+      },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "theme-color", content: "#1a2035" },
     ],
     links: [
+      { rel: "canonical", href: "https://ratesapi.nz/" },
+      {
+        rel: "preload",
+        href: "/fonts/Inter-Regular.woff2?v=3.19",
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
+      },
       {
         rel: "stylesheet",
         href: appCss,

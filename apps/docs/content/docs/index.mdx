@@ -1,47 +1,49 @@
 ---
 title: "Overview"
-description: "Rates API is an AI-ready JSON API for current and historical New Zealand lending rates."
+description: "Rates API is a free JSON API that gives the interest rates of New Zealand financial institutions. AI agents can use it through MCP."
 ---
 
-Rates API provides current and historical lending rates from New Zealand financial institutions through stable JSON endpoints, OpenAPI metadata, a Model Context Protocol endpoint, and an `llms.txt` documentation feed.
+Rates API gives the interest rates of New Zealand financial institutions. It has data for mortgages, personal loans, car loans, and credit cards.
 
-Use it to power comparison tools, affordability calculators, market dashboards, research workflows, and AI agents without scraping lender websites yourself.
+The API collects data from [interest.co.nz](https://www.interest.co.nz) each hour. You can get the newest rates and snapshots of earlier rates.
 
-The API is free to use, does not require authentication, and is updated hourly when the scheduled data collection workflow runs successfully.
+An API key is not necessary. All responses are JSON.
+
+The data can be incorrect. For correct rates, refer to the financial institution.
 
 ## Start Here
 
-| Goal | Go to |
+| Task | Page |
 | --- | --- |
-| Make your first request | [Quickstart](/api-reference/quickstart) |
-| Connect an AI agent or assistant | [AI Integration](/api-reference/ai-integration) |
-| Understand identifiers, date filters, and errors | [Core Concepts](/api-reference/concepts) |
-| Find the base URL, endpoint groups, and response rules | [API Reference](/api-reference) |
-| Find parameters and response fields, and try requests in the browser | [OpenAPI Reference](/openapi) |
-| Run or deploy the project yourself | [Open Source](/open-source) |
+| Send your first request | [Quickstart](/api-reference/quickstart) |
+| Connect an AI agent or an assistant | [AI Integration](/api-reference/ai-integration) |
+| Read about IDs, dates, and errors | [Core Concepts](/api-reference/concepts) |
+| Find the base URL, the endpoints, and the response rules | [API Reference](/api-reference) |
+| Find all parameters and response fields, and send requests from the browser | [OpenAPI Reference](/openapi) |
+| Run or deploy the project | [Open Source](/open-source) |
 
-## Quick Example
+## Example
 
 ```bash
 curl https://ratesapi.nz/api/v1/mortgage-rates
 ```
 
-The response groups products by institution and includes stable identifiers that can be reused in detail and time-series requests.
+The response contains a list of institutions. Each institution has products, and each product has rates. Use the `id` of an institution in detail requests and time-series requests.
 
-## AI-Ready by Design
+## Made for AI Agents
 
-Rates API is designed to be easy for AI products to discover, call, and reason about.
+AI agents can find the data, get it, and check it without special work.
 
-| Capability | Why it matters for AI systems |
+| Item | How it helps an AI agent |
 | --- | --- |
-| Model Context Protocol | `POST /api/v1/mcp` exposes rate lookup tools for agents that support MCP. |
-| OpenAPI | `/openapi/json` gives agent builders and SDK generators a machine-readable contract. |
-| `llms.txt` | `/llms.txt` gives assistants a compact, plain-text index of the documentation. |
-| Stable JSON | Predictable response and error shapes make tool results easier to validate. |
-| Stable identifiers | Institution, issuer, and product IDs can be reused across prompts, tools, and workflows. |
-| No API key | Agents can test public market data without a secrets-management setup. |
+| Model Context Protocol (MCP) | `POST /api/v1/mcp` gives tools that an MCP client can find and use. |
+| OpenAPI | `/openapi/json` gives a contract that tools can read. SDK generators can make clients from it. |
+| `llms.txt` | `/llms.txt` gives a short plain-text list of the documentation pages. |
+| JSON | Responses and errors always have the same shape. An agent can easily check a result. |
+| IDs | The ID of an institution or an issuer does not change. An agent can use it in the next request. |
+| No API key | An agent can use the data without secrets. |
 
-## Data Coverage
+## Data
 
 | Category | List Endpoint | Get By ID | Time Series |
 | --- | --- | --- | --- |
@@ -50,24 +52,26 @@ Rates API is designed to be easy for AI products to discover, call, and reason a
 | Car Loan Rates | `GET /api/v1/car-loan-rates` | `GET /api/v1/car-loan-rates/{institutionId}` | `GET /api/v1/car-loan-rates/time-series` |
 | Credit Card Rates | `GET /api/v1/credit-card-rates` | `GET /api/v1/credit-card-rates/{issuerId}` | `GET /api/v1/credit-card-rates/time-series` |
 
-## Common Use Cases
+## Use Cases
 
-- Product comparison experiences across mortgages, personal loans, car loans, and credit cards
-- Affordability calculators that need current lending rates
-- Market monitoring dashboards for New Zealand lending products
-- Historical analysis and charts using daily time-series snapshots
-- Research projects that need consistent lender and product identifiers
-- AI assistants that answer rate questions with live, source-backed data
-- Agent workflows that compare lenders, detect rate changes, or enrich customer journeys
+- Compare mortgages, personal loans, car loans, and credit cards.
+- Calculate the cost of a loan with the newest rates.
+- Show changes in the lending market on a dashboard.
+- Make charts of rates over time. The API keeps a snapshot only for days on which the data changed.
+- Examine rates over time with the same institution IDs.
+- Let an AI assistant answer questions about rates with data from the API.
+- Let an agent compare lenders or find rate changes.
 
-## Operational Notes
+## Summary
 
-- Base URL: `https://ratesapi.nz`
-- Local API URL: `http://localhost:8787`
-- Auth: no API key required
-- Format: JSON
-- Documentation: Scalar OpenAPI UI at `/openapi`
-- OpenAPI JSON: `/openapi/json`
-- MCP endpoint: `POST /api/v1/mcp`
-- LLM documentation feed: `/llms.txt`
-- Source: [github.com/simonbetton/ratesapi.nz](https://github.com/simonbetton/ratesapi.nz)
+| Item | Value |
+| --- | --- |
+| Base URL | `https://ratesapi.nz` |
+| Local API URL | `http://localhost:8787` |
+| Authentication | None. An API key is not necessary. |
+| Format | JSON |
+| OpenAPI reference (Scalar) | `/openapi` |
+| OpenAPI JSON | `/openapi/json` |
+| MCP endpoint | `POST /api/v1/mcp` |
+| Documentation list for LLMs | `/llms.txt` |
+| Source code | [github.com/simonbetton/ratesapi.nz](https://github.com/simonbetton/ratesapi.nz) |

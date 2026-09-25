@@ -2,6 +2,8 @@ import { ChannelsSection } from "./channels-section";
 import { DeveloperSection, QuestionsSection } from "./developer-section";
 import { SiteHeader } from "./header";
 import { HeroSection } from "./hero-section";
+import { MobileNav } from "./mobile-nav";
+import { RatesExplorer } from "./rates-explorer";
 import {
   AutomationsSection,
   FooterCtaSection,
@@ -19,6 +21,7 @@ export function Page() {
       <main id="main-content" tabIndex={-1}>
         <HeroSection />
         <ChannelsSection />
+        <RatesExplorer />
         <TeamStrategySection />
         <DeveloperSection />
         <AutomationsSection />
@@ -26,6 +29,7 @@ export function Page() {
         <FooterCtaSection />
       </main>
       <SiteFooter />
+      <MobileNav />
     </div>
   );
 }

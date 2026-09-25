@@ -1,54 +1,58 @@
 ---
 title: "Open Source"
-description: "Understand the Rates API repository structure, runtime architecture, and contribution paths."
+description: "The structure of the Rates API repository, the runtime architecture, and the procedures to change the project."
 ---
 
-Rates API is an open source Cloudflare Workers project. The repository contains the public API Worker, the Fumadocs documentation app, scraper scripts, tests, and GitHub Actions automation.
+Rates API is an open source project that operates on Cloudflare Workers. The repository contains the API Worker, the documentation app, the landing page, the scraper scripts, the tests, and the GitHub Actions workflows.
 
-## Architecture at a Glance
+## Architecture
 
-| Area | Purpose |
+| Component | Function |
 | --- | --- |
 | API Worker | Serves `/api/v1/*`, `/openapi`, and `/openapi/json` |
-| Docs Worker | Serves the Fumadocs site at `ratesapi.nz` |
-| Cloudflare D1 | Stores latest datasets and historical snapshots |
-| Scraper scripts | Collect rates from interest.co.nz aggregator pages |
-| GitHub Actions | Runs checks, dry-run deploys, scraping, deploys, and uptime monitoring |
+| Docs Worker | Serves this Fumadocs site at `ratesapi.nz` |
+| Landing page | A TanStack Start app in `apps/web`. It deploys to Vercel. |
+| Cloudflare D1 | Keeps the newest datasets and the historical snapshots |
+| Scraper scripts | Collect rates from the interest.co.nz pages |
+| GitHub Actions | Do checks, builds, data collection, deployment, and uptime checks |
 
 ## Technology Stack
 
-| Layer        | Tooling                                                   |
-| ------------ | --------------------------------------------------------- |
-| Runtime      | Bun and Cloudflare Workers                                |
-| API routing  | Elysia                                                    |
-| Schemas      | Elysia `t` and TypeBox-compatible runtime validation      |
-| API docs     | Elysia OpenAPI plugin with Scalar                         |
-| Docs site    | Next.js, Fumadocs UI, and Fumadocs MDX                    |
-| Data storage | Cloudflare D1                                             |
-| Scraping     | Cheerio                                                   |
-| Code quality | Oxlint, Oxfmt, TypeScript (`tsgo`), Fallow, and Bun tests |
+| Layer | Tools |
+| --- | --- |
+| Runtime | Bun and Cloudflare Workers |
+| API routes | Elysia |
+| Schemas | Elysia `t` and TypeBox validation at runtime |
+| API reference | The Elysia OpenAPI plugin with Scalar |
+| Docs site | Next.js, Fumadocs UI, and Fumadocs MDX |
+| Landing page | TanStack Start, React, and Tailwind CSS |
+| Data storage | Cloudflare D1 |
+| Scrapers | Cheerio |
+| Code quality | Oxlint, Oxfmt, TypeScript (`tsgo`), Fallow, React Doctor, and Bun tests |
 
 ## Repository Structure
 
 | Path | Contents |
 | --- | --- |
-| `apps/api/src/` | API Worker application code |
-| `apps/api/src/routes/` | Elysia route groups |
-| `apps/api/src/models/` | Runtime schemas and exported TypeScript types |
-| `apps/api/src/lib/` | Shared API helpers |
-| `apps/api/bin/` | Scraper, D1, and uptime scripts |
-| `apps/api/test/` | API, scraper, and data loader tests |
-| `apps/docs/app/` | Next.js App Router routes for the docs site |
-| `apps/docs/content/docs/` | Filesystem MDX documentation |
-| `apps/docs/test/` | Docs content tests |
-| `apps/web/` | Landing page built with TanStack Start |
-| `.github/workflows/` | CI, deploy, scraping, monitoring, and Fallow workflows |
+| `apps/api/src/` | The code of the API Worker |
+| `apps/api/src/routes/` | The Elysia route groups |
+| `apps/api/src/models/` | The runtime schemas and the TypeScript types |
+| `apps/api/src/lib/` | Shared API functions |
+| `apps/api/bin/` | The scraper scripts, the D1 scripts, and the uptime script |
+| `apps/api/test/` | The API, scraper, and data loader tests |
+| `apps/docs/app/` | The Next.js App Router routes of the docs site |
+| `apps/docs/content/docs/` | The MDX documentation pages |
+| `apps/docs/test/` | The docs content tests |
+| `apps/web/` | The landing page |
+| `.github/workflows/` | The CI, deploy, scraping, monitoring, Fallow, and React Doctor workflows |
 
-## Contribution Paths
+## Changes to the Project
 
-- API changes: update route handlers, schemas, OpenAPI descriptions, and contract tests together. Write OpenAPI descriptions in ASD-STE100 Simplified Technical English.
-- Scraper changes: update scraper normalization, validation, and D1 write behavior together.
-- Docs changes: edit MDX files under `apps/docs/content/docs` and run `bun run check`.
-- Deployment changes: update Worker config and the dry-run deploy CI path together.
+- API changes: Change the route handlers, the schemas, the OpenAPI descriptions, and the contract tests together.
+- Scraper changes: Change the scraper normalization, the validation, and the D1 write behavior together.
+- Documentation changes: Change the MDX files in `apps/docs/content/docs`. Then run `bun run check`.
+- Deployment changes: Change the Worker configuration and the CI build job together.
 
-Start with [Local Development](/open-source/local-development), then read [Deployment](/open-source/deployment) if you need to operate your own instance.
+Write the OpenAPI descriptions and the documentation pages in ASD-STE100 Simplified Technical English.
+
+To start, read [Local Development](/open-source/local-development). To operate a copy of the service, read [Deployment](/open-source/deployment).
