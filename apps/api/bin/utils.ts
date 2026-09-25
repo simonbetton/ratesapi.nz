@@ -8,13 +8,26 @@ import { fromSavableJson, toSavableJson } from "../src/lib/data-loader";
 import type { DataType, SupportedModels } from "../src/lib/data-loader";
 import { parseSchema } from "../src/lib/schema";
 
-interface D1Target {
+export interface D1Target {
   databaseName: string;
   flags: string[];
 }
 
-interface D1RunOptions {
+export interface D1RunOptions {
   json?: boolean;
+}
+
+/**
+ * Injectable dependencies for {@link saveToD1}, used by tests to point at a
+ * temporary local D1 target and to control the run/verify command executor
+ * and the "current" date without touching the production Wrangler target.
+ * Production callers omit this parameter entirely and get the existing
+ * `getD1Target()` / `runWranglerD1` / `new Date()` behavior unchanged.
+ */
+export interface D1SaveDeps {
+  target?: D1Target | null;
+  run?: (target: D1Target, command: string, options?: D1RunOptions) => string;
+  now?: () => Date;
 }
 
 const wranglerConfigPath = fileURLToPath(
@@ -36,7 +49,8 @@ export function hasDataChanged(
 // oxlint-disable-next-line require-await
 export async function saveToD1(
   data: SupportedModels,
-  dataType: DataType
+  dataType: DataType,
+  deps: D1SaveDeps = {}
 ): Promise<boolean> {
   const envCheck = ora("Checking environment").start();
   envCheck
@@ -45,7 +59,9 @@ export async function saveToD1(
     )
     .stop();
 
-  const target = getD1Target();
+  const target = deps.target === undefined ? getD1Target() : deps.target;
+  const run = deps.run ?? runWranglerD1;
+  const now = deps.now ?? (() => new Date());
 
   if (!target) {
     const noDbSpinner = ora("Checking D1 database name").start();
@@ -58,7 +74,7 @@ export async function saveToD1(
   }
 
   try {
-    const [timestamp] = new Date().toISOString().split("T");
+    const [timestamp] = now().toISOString().split("T");
     const dataJson = toSavableJson(data);
 
     const prepareSpinner = ora("Preparing data for D1").start();
@@ -71,34 +87,23 @@ export async function saveToD1(
     const testSpinner = ora(
       `Testing D1 database access for ${formatTarget(target)}`
     ).start();
-    const testResult = runWranglerD1(
-      target,
-      "SELECT count(*) FROM sqlite_master"
-    );
+    const testResult = run(target, "SELECT count(*) FROM sqlite_master");
     testSpinner
       .succeed(`D1 access test successful: ${testResult.trim()}`)
       .stop();
 
-    const historySpinner = ora(
-      `Saving historical data for ${dataType}`
-    ).start();
-    runWranglerD1(
-      target,
-      `INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES ('${dataType}', '${timestamp}', '${dataJson}')`
-    );
-    historySpinner
-      .succeed(`Historical data saved for ${dataType} on ${timestamp}`)
+    const saveSpinner = ora(`Saving ${dataType} snapshot`).start();
+    const mutationCommand = [
+      `INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES ('${dataType}', '${timestamp}', '${dataJson}')`,
+      `INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES ('${dataType}', '${dataJson}', CURRENT_TIMESTAMP)`,
+    ].join("; ");
+    run(target, mutationCommand);
+    saveSpinner
+      .succeed(`Snapshot saved for ${dataType} on ${timestamp}`)
       .stop();
 
-    const latestSpinner = ora(`Updating latest data for ${dataType}`).start();
-    runWranglerD1(
-      target,
-      `INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES ('${dataType}', '${dataJson}', CURRENT_TIMESTAMP)`
-    );
-    latestSpinner.succeed(`Latest data updated for ${dataType}`).stop();
-
     const verifySpinner = ora("Verifying data was saved").start();
-    const verifyResult = runWranglerD1(
+    const verifyResult = run(
       target,
       `SELECT data_type, last_updated FROM latest_data WHERE data_type='${dataType}'`
     );
