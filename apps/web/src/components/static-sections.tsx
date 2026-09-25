@@ -1,3 +1,5 @@
+import { Terminal } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 import {
@@ -274,13 +276,13 @@ export function AutomationsSection() {
             <figure
               aria-label="Hourly data collection workflow"
               className={cn(
-                "min-h-[390px] rounded-[14px] border border-[#f1f3f6] bg-white bg-[radial-gradient(#c8cad4_1px,transparent_1px)] bg-size-[10px_10px] p-8"
+                "min-h-[390px] rounded-[14px] border border-[#f1f3f6] bg-white bg-[radial-gradient(#e1e3e9_1px,transparent_1px)] bg-size-[10px_10px] p-8"
               )}
             >
               <div aria-hidden="true">
                 <strong
                   className={cn(
-                    "mb-3 block text-[11px] tracking-[1px] text-[#848894] uppercase"
+                    "mb-3 block text-[11px] tracking-[1px] text-[#656977] uppercase"
                   )}
                 >
                   Hourly collection schedule
@@ -416,21 +418,40 @@ export function SiteFooter() {
   return (
     <footer
       className={cn(
-        "[&_a]:block [&_a]:py-[5px] [&_a]:text-[15px] [&_a]:leading-[22px] [&_a]:font-normal [&_a]:text-[#636b7b] [&_a]:no-underline [&_a]:transition-colors [&_a]:duration-150 [&_a:hover]:text-[#00a0ff] [&_h4]:mb-3 [&_h4]:text-[15px] [&_h4]:leading-[22px] [&_h4]:font-medium [&_h4]:text-[#1a2035] [&_li]:m-0 [&_ul]:m-0 [&_ul]:list-none [&_ul]:p-0"
+        "border-t border-[#eaecf0] [&_h4]:mb-2 [&_h4]:text-[13px] [&_h4]:leading-5 [&_h4]:font-medium [&_h4]:text-[#1a2035] [&_li]:m-0 [&_ul]:m-0 [&_ul]:list-none [&_ul]:p-0 [&_ul_a]:block [&_ul_a]:py-1.5 [&_ul_a]:text-[14px] [&_ul_a]:leading-5 [&_ul_a]:no-underline [&_ul_a]:transition-colors [&_ul_a]:duration-150"
       )}
     >
       <div className={cn("mx-auto w-full max-w-[1330px] px-5")}>
         <div
           className={cn(
-            "flex justify-between py-[60px] pb-[50px] transition-all duration-1500 ease-[cubic-bezier(.19,1,.22,1)] max-[640px]:flex-col max-[640px]:[&>div]:mb-6"
+            "flex justify-between gap-12 pt-14 pb-12 max-[640px]:flex-col max-[640px]:gap-9 max-[640px]:pt-10 max-[640px]:pb-9"
           )}
         >
-          <div className={cn("flex")}>
-            <div className={cn("mr-[60px]")}>
+          <div className={cn("max-w-[300px]")}>
+            <div className="site-logo">
+              <Terminal aria-hidden="true" size={22} />
+              <span>Rates API</span>
+            </div>
+            <p className={cn("mt-3")}>
+              Free New Zealand lending rates as JSON, OpenAPI, and MCP. Updated
+              every hour.
+            </p>
+          </div>
+          <nav
+            aria-label="Footer"
+            className={cn("grid grid-cols-2 gap-x-16 max-[640px]:gap-x-6")}
+          >
+            <div>
               <h4>Product</h4>
               <ul>
                 <li>
                   <a href={apiLinks.openapi}>OpenAPI</a>
+                </li>
+                <li>
+                  <a href={apiLinks.openapiJson}>OpenAPI JSON</a>
+                </li>
+                <li>
+                  <a href={apiLinks.mcpDocs}>MCP endpoint</a>
                 </li>
                 <li>
                   <a href={apiLinks.health}>Health check</a>
@@ -454,30 +475,18 @@ export function SiteFooter() {
                 </li>
               </ul>
             </div>
-          </div>
-          <div>
-            <h4>Rates API</h4>
-            <ul>
-              <li>
-                <a href={apiLinks.mcpDocs}>MCP endpoint</a>
-              </li>
-              <li>
-                <a href={apiLinks.openapiJson}>OpenAPI JSON</a>
-              </li>
-              <li>
-                <a href={apiLinks.author} rel="noopener" target="_blank">
-                  Made by Simon Betton
-                  <span className="sr-only"> (opens in a new tab)</span>
-                </a>
-              </li>
-            </ul>
-            <div
-              className={cn("mt-3 text-[15px] text-[#636b7b]")}
-              id="copyright"
-            >
-              © 2026 Rates API
-            </div>
-          </div>
+          </nav>
+        </div>
+        <div
+          className={cn(
+            "flex items-center justify-between gap-1.5 border-t border-[#eaecf0] py-6 text-[13px] text-[#596275] max-[640px]:flex-col max-[640px]:items-start"
+          )}
+        >
+          <span>© 2026 Rates API</span>
+          <a href={apiLinks.author} rel="noopener" target="_blank">
+            Made by Simon Betton
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
         </div>
       </div>
     </footer>

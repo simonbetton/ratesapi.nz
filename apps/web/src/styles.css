@@ -247,6 +247,7 @@ pre:focus-visible {
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.08em;
+  text-transform: uppercase;
   margin-bottom: 1.25rem;
 }
 .page-container {
@@ -339,9 +340,6 @@ pre:focus-visible {
 }
 .hero-copy {
   max-width: 820px;
-}
-#rates-home .hero .eyebrow {
-  text-transform: uppercase;
 }
 #rates-home .hero h1 {
   font-size: clamp(3.2rem, 5.4vw, 5.3rem);
@@ -536,10 +534,13 @@ pre:focus-visible {
   font-size: 0.75rem;
 }
 .request-filter select {
+  appearance: none;
   color: #edf4f1;
-  background: #233138;
+  background: #233138
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b3c3be' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+    no-repeat right 0.65rem center / 0.875rem;
   border: 1px solid #ffffff26;
-  padding: 0.45rem 1.75rem 0.45rem 0.65rem;
+  padding: 0.45rem 2.1rem 0.45rem 0.65rem;
   border-radius: 0.3rem;
 }
 .api-demo pre,
@@ -920,8 +921,13 @@ pre:focus-visible {
   color: var(--muted-ink);
   font-size: 0.75rem;
 }
+/* The native arrow hugs the right edge and ignores padding, so draw our own. */
 .explorer-select select {
-  padding: 0.55rem 0.65rem;
+  appearance: none;
+  padding: 0.55rem 2.1rem 0.55rem 0.65rem;
+  background: #fff
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23596275' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+    no-repeat right 0.7rem center / 0.875rem;
 }
 .explorer-check {
   display: inline-flex;
@@ -1398,21 +1404,27 @@ pre:focus-visible {
     grid-template-columns: minmax(0, 1fr);
     gap: 0.5rem;
   }
+  /* Label and detail stack on the left; the value sits centred beside them. */
   .explorer-stats > div {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    align-items: baseline;
-    gap: 0 1rem;
+    align-items: center;
+    gap: 0.15rem 1rem;
     padding: 0.75rem 0.9rem;
   }
+  .explorer-stats dt {
+    align-self: end;
+  }
   .explorer-stats dd {
-    grid-row: span 2;
+    grid-column: 2;
+    grid-row: 1 / span 2;
     margin: 0;
     font-size: 1.25rem;
   }
   .explorer-stats .explorer-stat-detail {
-    grid-row: auto;
     grid-column: 1;
+    grid-row: 2;
+    align-self: start;
     margin: 0;
   }
   .explorer-skeleton-stats {
@@ -1468,21 +1480,33 @@ pre:focus-visible {
 }
 .mobile-nav-fade {
   position: absolute;
-  inset: 0;
+  /* Start above the bar so the fade has room to ease in. */
+  inset: -2rem 0 0;
   transform-origin: bottom;
-  opacity: 0.75;
-  transition:
-    opacity 225ms var(--mobile-nav-ease),
-    scale 225ms var(--mobile-nav-ease);
+  transition: scale 225ms var(--mobile-nav-ease);
 }
 .mobile-nav-fade > div {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(to bottom, rgb(255 255 255 / 0), #fff);
+  background: #fff;
   backdrop-filter: blur(0.3px);
+  /* An eased ramp instead of a linear one, which shows a hard top edge over
+     dark content. Masking (not a background gradient) fades the blur in too. */
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    rgb(0 0 0 / 0.03) 12%,
+    rgb(0 0 0 / 0.1) 22%,
+    rgb(0 0 0 / 0.22) 32%,
+    rgb(0 0 0 / 0.4) 42%,
+    rgb(0 0 0 / 0.6) 52%,
+    rgb(0 0 0 / 0.78) 62%,
+    rgb(0 0 0 / 0.9) 72%,
+    rgb(0 0 0 / 0.97) 82%,
+    #000 92%
+  );
 }
 .mobile-nav:has(.mobile-nav-menu:popover-open) .mobile-nav-fade {
-  opacity: 1;
   scale: 1 1.05;
 }
 .mobile-nav-bar {
