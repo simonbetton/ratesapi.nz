@@ -34,23 +34,26 @@ This endpoint provides historical time series data for credit card rates, allowi
 ## Response Data
 
 - Timestamp for each data point
-- Institution name and ID
-- Purchase interest rates
-- Cash advance rates
-- Balance transfer rates and promotional periods
-- Annual fees
-- Reward program details
-- Minimum credit limits
-- Special features and benefits
+- Issuer name and ID
+- Plan name and ID
+- Purchase interest rate (`purchaseRate`)
+- Cash advance rate (`cashAdvanceRate`)
+- Balance transfer rate and period (`balanceTransferRate`, `balanceTransferPeriod`)
+- Interest-free period in months (`interestFreePeriodInMonths`)
+- Primary card fee in NZD (`primaryFeeNZD`)
+
+Reward program details, minimum credit limits, and other plan benefits are not returned as structured fields.
 
 ## Use Cases
 
 - Credit Card Rate Tracking: Monitor how credit card interest rates change over time
 - Promotional Offer Analysis: Track balance transfer and introductory rate offers across institutions
-- Fee Structure Comparison: Analyze changes in annual fees and fee structures over time
+- Fee Structure Comparison: Analyze changes in card fees over time
 - Market Competition Studies: Identify competitive trends and market responses in the credit card space
 - Consumer Education Tools: Provide historical context for current credit card offerings
 
 ## Notes on Data Storage
 
 The time series data is stored in Cloudflare D1, a serverless SQL database built on SQLite. This allows for efficient querying, fast retrieval, reliable persistence, and scalable performance for growing historical datasets.
+
+The scraper runs hourly, but a new snapshot is only written when the scraped data changes, and history holds at most one credit-card-rates snapshot per UTC date. Dates with no change have no historical row, so use the response's `availableDates` array to see which dates actually have data instead of assuming a complete daily series.

@@ -35,11 +35,12 @@ This endpoint provides historical time series data for personal loan rates, allo
 
 - Timestamp for each data point
 - Institution name and ID
-- Interest rates for secured and unsecured personal loans
-- Fixed and variable rate options
-- Minimum and maximum loan amounts
-- Available loan terms
-- Any special conditions or promotions
+- Product name and ID
+- Interest rate for each product (`rate`)
+- Plan label when available (`plan`, for example `Secured`) — a free-text string, not a structured secured/unsecured flag
+- Condition notes when available (`condition`, for example an amount range or eligibility note) — also free text
+
+The API does not return separate fixed/variable rate types, minimum/maximum loan amounts, or loan term fields for personal loans.
 
 ## Use Cases
 
@@ -52,3 +53,5 @@ This endpoint provides historical time series data for personal loan rates, allo
 ## Notes on Data Storage
 
 The time series data is stored in Cloudflare D1, a serverless SQL database built on SQLite. This allows for efficient querying, fast retrieval, reliable persistence, and scalable performance for growing historical datasets.
+
+The scraper runs hourly, but a new snapshot is only written when the scraped data changes, and history holds at most one personal-loan-rates snapshot per UTC date. Dates with no change have no historical row, so use the response's `availableDates` array to see which dates actually have data instead of assuming a complete daily series.

@@ -35,21 +35,23 @@ This endpoint provides historical time series data for car loan rates, allowing 
 
 - Timestamp for each data point
 - Institution name and ID
-- Interest rates for new and used vehicles
-- Fixed and variable rate options
-- Special rates for specific vehicle types, such as electric vehicles
-- Minimum and maximum loan amounts
-- Available loan terms
-- Any promotional offers or special conditions
+- Product name and ID
+- Interest rate for each product (`rate`)
+- Plan label when available (`plan`, for example `Secured`) — a free-text string, not a structured secured/unsecured flag
+- Condition notes when available (`condition`, for example an amount range or eligibility note) — also free text
+
+The API does not return separate rates by vehicle type (new/used/electric), fixed/variable rate types, minimum/maximum loan amounts, or a structured loan-term field for car loans. Vehicle- or promotion-specific offers can appear as free text in the product name.
 
 ## Use Cases
 
 - Auto Finance Trend Analysis: Track how car loan rates change over time and across institutions
 - Vehicle Purchase Planning: Help buyers understand the best time to finance vehicle purchases
 - Dealer Financing Comparison: Compare dealership financing offers with historical bank rates
-- EV Incentive Tracking: Monitor special financing rates for electric vehicles
+- Product-Level Tracking: Watch how individual car loan products, including vehicle- or promotion-specific offers named by the lender, change rate over time
 - Market Seasonality Studies: Identify patterns in seasonal financing offers and promotions
 
 ## Notes on Data Storage
 
 The time series data is stored in Cloudflare D1, a serverless SQL database built on SQLite. This allows for efficient querying, fast retrieval, reliable persistence, and scalable performance for growing historical datasets.
+
+The scraper runs hourly, but a new snapshot is only written when the scraped data changes, and history holds at most one car-loan-rates snapshot per UTC date. Dates with no change have no historical row, so use the response's `availableDates` array to see which dates actually have data instead of assuming a complete daily series.

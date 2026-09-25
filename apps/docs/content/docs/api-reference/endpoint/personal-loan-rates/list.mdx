@@ -23,11 +23,12 @@ This endpoint returns a comprehensive list of personal loan rates from most fina
 ## Response Data
 
 - Institution name and ID
-- Interest rates (advertised and comparison rates)
-- Loan terms (minimum and maximum duration)
-- Secured and unsecured loan options
-- Fees and charges
-- Special features and eligibility criteria
+- Product name and ID
+- Interest rate for each product (`rate`)
+- Plan label when available (`plan`, for example `Secured`) — a free-text string, not a structured secured/unsecured flag
+- Condition notes when available (`condition`, for example an amount range or eligibility note) — also free text
+
+The API does not return separate advertised/comparison rates, minimum/maximum loan duration, or fee fields. `plan` and `condition` can be `null` when the source listing does not provide them.
 
 ## Use Cases
 

@@ -34,10 +34,11 @@ This endpoint provides historical time series data for mortgage rates, allowing 
 
 - Timestamp for each data point
 - Institution name and ID
+- Product name and ID (for example, `Standard` or `Special`)
 - Interest rates for different term periods (6 months, 1 year, 2 years, etc.)
 - Floating/variable rates
-- Special rates and promotional offers
-- Loan-to-value ratio requirements
+
+Loan-to-value ratio (LVR) limits are not returned as a structured field. Product names may indicate special or promotional offers, but eligibility conditions are not modeled separately.
 
 ## Use Cases
 
@@ -50,3 +51,5 @@ This endpoint provides historical time series data for mortgage rates, allowing 
 ## Notes on Data Storage
 
 The time series data is stored in Cloudflare D1, a serverless SQL database built on SQLite. This allows for efficient querying, fast retrieval, reliable persistence, and scalable performance for growing historical datasets.
+
+The scraper runs hourly, but a new snapshot is only written when the scraped data changes, and history holds at most one mortgage-rates snapshot per UTC date. Dates with no change have no historical row, so use the response's `availableDates` array to see which dates actually have data instead of assuming a complete daily series.

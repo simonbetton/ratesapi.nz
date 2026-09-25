@@ -61,7 +61,7 @@ bun run --filter api dev:remote
 
 ## Scraping Data
 
-The project includes scripts to scrape rate data from financial institution websites. These scripts are located in the `apps/api/bin/` directory.
+The project includes scripts to scrape rate data from interest.co.nz, which aggregates lending rates across New Zealand financial institutions. These scripts are located in the `apps/api/bin/` directory.
 
 Available scraper scripts:
 
@@ -84,7 +84,7 @@ Run the full local verification suite before opening a pull request:
 bun run check
 ```
 
-This runs Biome, type checks every app, and runs the Bun tests. To build every app the way CI does:
+This runs Oxlint and Oxfmt, type checks every app, and runs the Bun tests. To build every app the way CI does:
 
 ```bash
 bun run build

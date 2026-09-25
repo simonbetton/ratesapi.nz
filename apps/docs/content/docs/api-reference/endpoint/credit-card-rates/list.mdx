@@ -23,11 +23,14 @@ This endpoint returns a comprehensive list of credit card rates and offers from 
 ## Response Data
 
 - Institution/issuer name and ID
-- Purchase interest rates
-- Cash advance rates
-- Balance transfer rates and promotional offers
-- Reward program details
-- Interest-free days
+- Plan name and ID
+- Purchase interest rate (`purchaseRate`)
+- Cash advance rate (`cashAdvanceRate`)
+- Balance transfer rate and period (`balanceTransferRate`, `balanceTransferPeriod`)
+- Interest-free period in months (`interestFreePeriodInMonths`)
+- Primary card fee in NZD (`primaryFeeNZD`)
+
+Reward program details, minimum credit limits, and other plan benefits are not returned as structured fields.
 
 ## Use Cases
 
