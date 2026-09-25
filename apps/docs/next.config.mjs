@@ -2,6 +2,13 @@ import { createMDX } from "fumadocs-mdx/next";
 
 const withMDX = createMDX();
 
+// The API Worker serves the OpenAPI reference. Locally it runs on its own
+// port. Keep in sync with lib/api-url.ts.
+const openApiReferenceUrl =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:8787/openapi"
+    : "/openapi";
+
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -10,7 +17,7 @@ const nextConfig = {
       {
         // Endpoint pages moved to the OpenAPI reference served by the API Worker.
         source: "/api-reference/endpoint/:path*",
-        destination: "/openapi",
+        destination: openApiReferenceUrl,
         permanent: true,
       },
     ]);

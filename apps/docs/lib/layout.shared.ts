@@ -1,5 +1,7 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 
+import { toApiUrl } from "./api-url";
+
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
@@ -16,7 +18,7 @@ export function baseOptions(): BaseLayoutProps {
       {
         type: "main",
         text: "OpenAPI",
-        url: "/openapi",
+        url: toApiUrl("/openapi"),
       },
     ],
     themeSwitch: {
