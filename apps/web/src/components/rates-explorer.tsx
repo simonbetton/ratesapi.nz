@@ -22,6 +22,7 @@ import {
 } from "../lib/rates-data";
 import type { Category, RateRow, RatesSnapshot } from "../lib/rates-data";
 import {
+  bigFiveBankNames,
   defaultFilters,
   filterRows,
   formatRate,
@@ -303,6 +304,14 @@ function ExplorerFilters({
           type="search"
           value={filters.query}
         />
+      </label>
+      <label className="explorer-check" title={bigFiveBankNames}>
+        <input
+          checked={filters.bigFiveOnly}
+          onChange={(event) => onChange({ bigFiveOnly: event.target.checked })}
+          type="checkbox"
+        />
+        Big 5 banks
       </label>
       {category === "mortgage" && (
         <>

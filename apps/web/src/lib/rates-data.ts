@@ -51,6 +51,8 @@ export function categoryInfo(category: Category): CategoryInfo {
 /** One table row, flattened from any of the four API families. */
 export interface RateRow {
   key: string;
+  /** The API's institution or issuer ID, e.g. "institution:anz". */
+  providerId: string;
   provider: string;
   product: string;
   /** Headline rate for stats, charts, and the default sort: the mortgage or
@@ -173,6 +175,7 @@ export function toRows(category: Category, payload: ApiRates): RateRow[] {
     return payload.data.flatMap((issuer) =>
       (issuer.plans ?? []).map((plan) => ({
         key: nextKey(plan.id),
+        providerId: issuer.id,
         provider: issuer.name,
         product: plan.name,
         rate: plan.purchaseRate,
@@ -192,6 +195,7 @@ export function toRows(category: Category, payload: ApiRates): RateRow[] {
       product.rates.map((rate) => {
         const row: RateRow = {
           key: nextKey(rate.id),
+          providerId: institution.id,
           provider: institution.name,
           product: product.name,
           // No lender offers a 0% mortgage or loan; treat it as a source glitch.

@@ -9,6 +9,17 @@ export interface RateFilters {
   plan: string;
   specialsOnly: boolean;
   balanceTransferOnly: boolean;
+  /** Only rows from the Big 5 banks. */
+  bigFiveOnly: boolean;
+}
+
+export const bigFiveBankNames = "ANZ, ASB, BNZ, Kiwibank, and Westpac";
+// A bank has the same slug in its institution and card issuer IDs, e.g.
+// "institution:anz" and "issuer:anz".
+const bigFiveBankSlugs = new Set(["anz", "asb", "bnz", "kiwibank", "westpac"]);
+
+function isBigFiveBank(providerId: string) {
+  return bigFiveBankSlugs.has(providerId.slice(providerId.indexOf(":") + 1));
 }
 
 export function hasValue<T>(value: T | null | undefined): value is T {
@@ -22,6 +33,7 @@ export function defaultFilters(category: Category): RateFilters {
     plan: "",
     specialsOnly: false,
     balanceTransferOnly: false,
+    bigFiveOnly: false,
   };
 }
 
@@ -34,7 +46,8 @@ export function filterRows(rows: readonly RateRow[], filters: RateFilters) {
       (!filters.term || row.term === filters.term) &&
       (!filters.plan || row.plan === filters.plan) &&
       (!filters.specialsOnly || /special/iu.test(row.product)) &&
-      (!filters.balanceTransferOnly || hasValue(row.balanceTransferRate))
+      (!filters.balanceTransferOnly || hasValue(row.balanceTransferRate)) &&
+      (!filters.bigFiveOnly || isBigFiveBank(row.providerId))
   );
 }
 

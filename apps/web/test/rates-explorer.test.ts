@@ -89,6 +89,25 @@ const mortgages: ApiRates = {
 
 const rows = toRows("mortgage", mortgages);
 
+function cardIssuer(id: string, name: string) {
+  return {
+    id,
+    name,
+    plans: [
+      {
+        id: `plan:${id}`,
+        name: `${name} Visa`,
+        interestFreePeriodInMonths: null,
+        primaryFeeNZD: null,
+        balanceTransferRate: null,
+        balanceTransferPeriod: null,
+        cashAdvanceRate: null,
+        purchaseRate: 20.95,
+      },
+    ],
+  };
+}
+
 describe("site origins", () => {
   test("links to each local dev server in development", () => {
     expect(siteOrigins(true)).toEqual({
@@ -214,6 +233,55 @@ describe("rates explorer stats", () => {
       specialsOnly: true,
     });
     expect(specials.every((row) => row.product === "Special")).toBe(true);
+  });
+
+  test("keeps only the Big 5 banks, as lenders and as card issuers", () => {
+    const lenderRows = toRows("mortgage", {
+      ...mortgages,
+      data: [
+        ...mortgages.data,
+        {
+          id: "institution:sbs-bank",
+          name: "SBS Bank",
+          products: [
+            {
+              id: "product:sbs-bank:standard",
+              name: "Standard",
+              rates: [
+                {
+                  id: "rate:sbs-bank:standard:1-year",
+                  rate: 4.49,
+                  term: "1 year",
+                  termInMonths: 12,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    const bigFive = filterRows(lenderRows, {
+      ...defaultFilters("mortgage"),
+      bigFiveOnly: true,
+    });
+    expect(new Set(bigFive.map((row) => row.provider))).toEqual(
+      new Set(["ANZ", "Kiwibank"])
+    );
+
+    const cardRows = toRows("credit-card", {
+      type: "CreditCardRates",
+      lastUpdated: mortgages.lastUpdated,
+      data: [
+        cardIssuer("issuer:asb", "ASB"),
+        cardIssuer("issuer:amex", "Amex"),
+      ],
+    });
+    expect(
+      filterRows(cardRows, {
+        ...defaultFilters("credit-card"),
+        bigFiveOnly: true,
+      }).map((row) => row.provider)
+    ).toEqual(["ASB"]);
   });
 
   test("badges every row tied for the lowest rate in its term", () => {
