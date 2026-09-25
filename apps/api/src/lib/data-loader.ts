@@ -70,7 +70,7 @@ export function productionLatestDataFallbackUrl(
     return undefined;
   }
 
-  return `https://ratesapi.nz/api/v1/${dataType}`;
+  return `https://www.ratesapi.nz/api/v1/${dataType}`;
 }
 
 /**

@@ -35,7 +35,7 @@ Use OpenAPI and `llms.txt` to tell the agent which items are available. Use MCP 
 The MCP endpoint is at this URL:
 
 ```text
-POST https://ratesapi.nz/api/v1/mcp
+POST https://www.ratesapi.nz/api/v1/mcp
 ```
 
 The endpoint uses the Streamable HTTP transport and JSON-RPC 2.0. It accepts only `POST` requests. A `GET` or `DELETE` request gets HTTP 405.
@@ -96,7 +96,7 @@ All tool arguments are strings. For example, send `"termInMonths": "12"`, not `"
 ### Example Tool Call
 
 ```bash
-curl https://ratesapi.nz/api/v1/mcp \
+curl https://www.ratesapi.nz/api/v1/mcp \
   -H 'Content-Type: application/json' \
   -H 'MCP-Protocol-Version: 2026-07-28' \
   -H 'Mcp-Method: tools/call' \

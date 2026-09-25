@@ -3,9 +3,15 @@ main = ".open-next/worker.js"
 compatibility_date = "2025-06-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Next.js serves the docs under basePath /docs. These routes run before the
+# landing page Worker, which owns the www.ratesapi.nz Custom Domain.
 [[routes]]
-pattern = "ratesapi.nz"
-custom_domain = true
+pattern = "www.ratesapi.nz/docs"
+zone_name = "ratesapi.nz"
+
+[[routes]]
+pattern = "www.ratesapi.nz/docs/*"
+zone_name = "ratesapi.nz"
 
 [assets]
 directory = ".open-next/assets"

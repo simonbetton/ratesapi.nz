@@ -31,9 +31,12 @@ export const Route = createRootRoute({
           "Latest and historical NZ lending rates for products, dashboards, and agent tools.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://ratesapi.nz/" },
+      { property: "og:url", content: "https://www.ratesapi.nz/" },
       { property: "og:site_name", content: "Rates API" },
-      { property: "og:image", content: "https://ratesapi.nz/images/hero.webp" },
+      {
+        property: "og:image",
+        content: "https://www.ratesapi.nz/images/hero.webp",
+      },
       {
         property: "og:image:alt",
         content: "New Zealand mountain lake landscape",
@@ -42,7 +45,7 @@ export const Route = createRootRoute({
       { name: "theme-color", content: "#1a2035" },
     ],
     links: [
-      { rel: "canonical", href: "https://ratesapi.nz/" },
+      { rel: "canonical", href: "https://www.ratesapi.nz/" },
       {
         rel: "preload",
         href: "/fonts/Inter-Regular.woff2?v=3.19",

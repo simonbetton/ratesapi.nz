@@ -29,7 +29,7 @@ const validationLog = createLogger("rates-api-validation");
 const healthStatusOk = "ok";
 const healthStatusError = "error";
 const productionServer: OpenApiServer = {
-  url: "https://ratesapi.nz",
+  url: "https://www.ratesapi.nz",
   description: "Production",
 };
 

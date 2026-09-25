@@ -383,7 +383,7 @@ describe("v1 API contract", () => {
     const specResponse = await requestWithEnv(
       createProductionEnv,
       "/openapi/json",
-      "https://ratesapi.nz"
+      "https://www.ratesapi.nz"
     );
     expect(specResponse.status).toBe(200);
 
@@ -391,7 +391,7 @@ describe("v1 API contract", () => {
     const servers = readArray(spec, "servers");
     const defaultServer = readRecord(servers[0], "self");
 
-    expect(defaultServer?.url).toBe("https://ratesapi.nz");
+    expect(defaultServer?.url).toBe("https://www.ratesapi.nz");
     expect(defaultServer?.description).toBe("Production");
   });
 

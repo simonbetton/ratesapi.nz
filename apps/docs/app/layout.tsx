@@ -2,6 +2,8 @@ import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import { docsBasePath } from "@/lib/base-path";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,7 +19,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="flex min-h-screen flex-col">
-        <RootProvider>{children}</RootProvider>
+        <RootProvider
+          search={{ options: { api: `${docsBasePath}/api/search` } }}
+        >
+          {children}
+        </RootProvider>
       </body>
     </html>
   );

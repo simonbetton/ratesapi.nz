@@ -23,7 +23,7 @@ jobs:
       - name: Check
         run: bun run check
 
-      - name: Deploy API and docs Workers to Cloudflare
+      - name: Deploy API, docs, and web Workers to Cloudflare
         run: bun run deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

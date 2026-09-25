@@ -19,6 +19,7 @@ export function baseOptions(): BaseLayoutProps {
         type: "main",
         text: "OpenAPI",
         url: toApiUrl("/openapi"),
+        external: true,
       },
     ],
     themeSwitch: {

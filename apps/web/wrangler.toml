@@ -1,0 +1,22 @@
+name = "ratesapi-nz-web"
+main = "src/server.ts"
+compatibility_date = "2025-06-01"
+# The landing page fetches the API during SSR. Without
+# global_fetch_strictly_public, fetch() to a hostname on this zone goes straight
+# to the origin and skips the API Worker's routes.
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+# The landing page is the origin for both hostnames. The API and docs Workers
+# claim their paths with routes, which run before a Custom Domain Worker.
+[[routes]]
+pattern = "www.ratesapi.nz"
+custom_domain = true
+
+# src/server.ts redirects the apex to www.
+[[routes]]
+pattern = "ratesapi.nz"
+custom_domain = true
+
+[observability.logs]
+enabled = true
+invocation_logs = true

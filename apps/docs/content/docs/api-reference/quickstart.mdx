@@ -8,7 +8,7 @@ Do these steps to get data from Rates API. An API key is not necessary.
 ## 1. Get the Newest Mortgage Rates
 
 ```bash
-curl https://ratesapi.nz/api/v1/mortgage-rates
+curl https://www.ratesapi.nz/api/v1/mortgage-rates
 ```
 
 The response contains a list of institutions. Each institution has products, and each product has rates. Keep the `id` of an institution for the steps that follow.
@@ -16,7 +16,7 @@ The response contains a list of institutions. Each institution has products, and
 ## 2. Get the Rates for One Term
 
 ```bash
-curl "https://ratesapi.nz/api/v1/mortgage-rates?termInMonths=12"
+curl "https://www.ratesapi.nz/api/v1/mortgage-rates?termInMonths=12"
 ```
 
 The `termInMonths` parameter gives only the fixed rates for one term. The data contains terms of 6, 12, 18, 24, 36, 48, and 60 months. The response does not contain variable floating rates.
@@ -24,7 +24,7 @@ The `termInMonths` parameter gives only the fixed rates for one term. The data c
 ## 3. Get the Rates of One Institution
 
 ```bash
-curl https://ratesapi.nz/api/v1/mortgage-rates/institution:anz
+curl https://www.ratesapi.nz/api/v1/mortgage-rates/institution:anz
 ```
 
 Use this endpoint for a page about one lender. You can also use it to update the data of one lender only.
@@ -32,7 +32,7 @@ Use this endpoint for a page about one lender. You can also use it to update the
 ## 4. Get One Snapshot
 
 ```bash
-curl "https://ratesapi.nz/api/v1/mortgage-rates/time-series?date=2026-04-30&institutionId=institution:anz&termInMonths=12"
+curl "https://www.ratesapi.nz/api/v1/mortgage-rates/time-series?date=2026-04-30&institutionId=institution:anz&termInMonths=12"
 ```
 
 The `date` parameter gives the snapshot of that date. If that date has no snapshot, the API returns HTTP 404.
@@ -40,7 +40,7 @@ The `date` parameter gives the snapshot of that date. If that date has no snapsh
 ## 5. Get the Snapshots in a Range
 
 ```bash
-curl "https://ratesapi.nz/api/v1/mortgage-rates/time-series?startDate=2026-04-01&endDate=2026-04-30&institutionId=institution:anz"
+curl "https://www.ratesapi.nz/api/v1/mortgage-rates/time-series?startDate=2026-04-01&endDate=2026-04-30&institutionId=institution:anz"
 ```
 
 Send `startDate` and `endDate` together. The range contains the two dates. Do not send `date` with a range.
@@ -56,7 +56,7 @@ Open [`/openapi`](/openapi) to send requests from the Scalar API client. To get 
 If your agent can use the Model Context Protocol (MCP), send requests to the MCP endpoint:
 
 ```text
-POST https://ratesapi.nz/api/v1/mcp
+POST https://www.ratesapi.nz/api/v1/mcp
 ```
 
 To give an assistant a list of the documentation pages, use [`/llms.txt`](/llms.txt). To get the request and response schemas, use [`/openapi/json`](/openapi/json). Some AI frameworks can make tools from this OpenAPI contract.

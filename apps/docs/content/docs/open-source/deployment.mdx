@@ -3,14 +3,15 @@ title: "Deployment"
 description: "Deploy Rates API to Cloudflare Workers, prepare Cloudflare D1, and set the GitHub Actions secrets."
 ---
 
-Rates API deploys two Cloudflare Workers:
+Rates API deploys three Cloudflare Workers on `www.ratesapi.nz`:
 
-| Worker | Serves |
-| --- | --- |
-| `ratesapi-nz` | The API routes: `/api/v1/*`, `/openapi`, and `/openapi/*` |
-| `ratesapi-nz-docs` | The Fumadocs site and the routes of the docs site |
+| Worker | App | Serves |
+| --- | --- | --- |
+| `ratesapi-nz` | `apps/api` | The API routes: `/api/v1/*`, `/openapi`, and `/openapi/*` |
+| `ratesapi-nz-docs` | `apps/docs` | The Fumadocs site at `/docs` and `/docs/*` |
+| `ratesapi-nz-web` | `apps/web` | The landing page, and all other paths |
 
-Cloudflare D1 keeps the newest datasets and the historical snapshots for the API Worker. The landing page in `apps/web` deploys to Vercel. It does not have a deploy script.
+Cloudflare D1 keeps the newest datasets and the historical snapshots for the API Worker.
 
 ## Prerequisites
 
@@ -53,9 +54,39 @@ Do these steps before you deploy the API Worker for the first time.
 
 ## Worker Configuration
 
-The configuration of the API Worker is in `apps/api/wrangler.toml`. The API Worker controls the API paths on the apex domain:
+The landing page Worker is the origin for `www.ratesapi.nz` and the apex domain `ratesapi.nz`. The configuration is in `apps/web/wrangler.toml`:
 
 ```toml
+[[routes]]
+pattern = "www.ratesapi.nz"
+custom_domain = true
+
+[[routes]]
+pattern = "ratesapi.nz"
+custom_domain = true
+```
+
+The API Worker and the docs Worker use route patterns. Cloudflare runs a route Worker before the Worker of a Custom Domain. Thus these Workers get their paths before the landing page Worker.
+
+The configuration of the docs Worker is in `apps/docs/wrangler.toml`. Next.js serves the docs with `basePath: "/docs"`:
+
+```toml
+[[routes]]
+pattern = "www.ratesapi.nz/docs"
+zone_name = "ratesapi.nz"
+
+[[routes]]
+pattern = "www.ratesapi.nz/docs/*"
+zone_name = "ratesapi.nz"
+```
+
+The configuration of the API Worker is in `apps/api/wrangler.toml`. The API Worker controls the API paths on `www.ratesapi.nz` and on the apex domain:
+
+```toml
+[[routes]]
+pattern = "www.ratesapi.nz/api/v1/*"
+zone_name = "ratesapi.nz"
+
 [[routes]]
 pattern = "ratesapi.nz/api/v1/*"
 zone_name = "ratesapi.nz"
@@ -69,15 +100,17 @@ pattern = "ratesapi.nz/openapi/*"
 zone_name = "ratesapi.nz"
 ```
 
-The configuration of the docs Worker is in `apps/docs/wrangler.toml`. The docs Worker controls the apex Custom Domain:
+The file has the same `/openapi` routes for `www.ratesapi.nz`.
 
-```toml
-[[routes]]
-pattern = "ratesapi.nz"
-custom_domain = true
-```
+### Apex Redirect
 
-As a result, the docs app serves `https://ratesapi.nz/`. The API Worker serves `https://ratesapi.nz/api/v1/*` and the OpenAPI routes.
+`apps/web/src/server.ts` sends a `301` redirect from each apex request to the same path on `www.ratesapi.nz`. The API routes on the apex domain do not get this redirect, because the API Worker answers them first. Thus the API clients that use `https://ratesapi.nz` continue to operate.
+
+The landing page Worker also sends the old docs paths (`/api-reference/*`, `/open-source/*`, and `/llms.txt`) to the same paths under `/docs`.
+
+### Fetch Requests to the Same Zone
+
+The landing page gets rates from the API during server rendering. The landing page Worker has the `global_fetch_strictly_public` compatibility flag. Without this flag, a `fetch()` to `www.ratesapi.nz` goes directly to the origin and does not go through the API Worker routes.
 
 ## Build
 
@@ -87,11 +120,11 @@ Build each app in the same way as the CI build job:
 bun run build
 ```
 
-The API build is a Wrangler dry run. The docs build makes the OpenNext Worker bundle. The web build makes the landing page.
+The API build is a Wrangler dry run. The docs build makes the OpenNext Worker bundle. The web build uses the Cloudflare Vite plugin to make the landing page Worker bundle.
 
 ## Deploy
 
-Deploy the API Worker and the docs Worker:
+Deploy the three Workers:
 
 ```bash
 bun run deploy
@@ -102,6 +135,7 @@ To deploy one Worker only, use the name of the app:
 ```bash
 bun run --filter api deploy
 bun run --filter docs deploy
+bun run --filter web deploy
 ```
 
 ## GitHub Actions
@@ -115,15 +149,17 @@ Each workflow runs `bun run check` before it deploys or collects data.
 
 ## After Deployment
 
-- Make sure that `https://ratesapi.nz/` shows the docs app.
-- Make sure that `https://ratesapi.nz/api/v1/health` gives a response from the API Worker.
-- Make sure that `https://ratesapi.nz/openapi` shows the Scalar API client.
-- Make sure that `https://ratesapi.nz/openapi/json` gives the OpenAPI document.
+- Make sure that `https://www.ratesapi.nz/` shows the landing page.
+- Make sure that `https://www.ratesapi.nz/docs` shows the docs app.
+- Make sure that `https://ratesapi.nz/` gives a `301` redirect to `https://www.ratesapi.nz/`.
+- Make sure that `https://www.ratesapi.nz/api/v1/health` and `https://ratesapi.nz/api/v1/health` give a response from the API Worker.
+- Make sure that `https://www.ratesapi.nz/openapi` shows the Scalar API client.
+- Make sure that `https://www.ratesapi.nz/openapi/json` gives the OpenAPI document.
 - Make sure that the repository has the secrets that the workflows use.
 
 ## Production Rules
 
-- Keep the route control clear: the docs Worker controls the apex Custom Domain, and the API Worker controls the API paths.
+- Keep the route control clear: the landing page Worker controls the Custom Domains, the docs Worker controls `/docs`, and the API Worker controls the API paths.
 - When you change Worker bindings or route patterns, examine the CI build job.
 - Keep the OpenAPI descriptions and schemas aligned with the routes.
 - Monitor scraper failures separately from Worker uptime.

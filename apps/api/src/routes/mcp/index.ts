@@ -92,7 +92,7 @@ const MCP_SERVER_INFO = {
   version: "1.1.0",
   description:
     "Interest rates of New Zealand financial institutions for mortgages, personal loans, car loans, and credit cards.",
-  websiteUrl: "https://ratesapi.nz",
+  websiteUrl: "https://www.ratesapi.nz",
 };
 
 const MCP_INSTRUCTIONS = [

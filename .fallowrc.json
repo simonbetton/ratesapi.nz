@@ -18,6 +18,7 @@
     "apps/docs/next.config.mjs",
     "apps/docs/open-next.config.ts",
     "apps/docs/source.config.ts",
+    "apps/web/src/server.ts",
     "oxfmt.config.ts",
     "oxlint.config.ts",
     "apps/api/test/api-contract.test.ts",

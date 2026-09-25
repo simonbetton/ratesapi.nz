@@ -9,7 +9,8 @@
     "dev": "vite dev --host 127.0.0.1 --port 3002 --strictPort",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsgo --noEmit",
+    "deploy": "bun run build && wrangler deploy"
   },
   "dependencies": {
     "@fontsource/crimson-pro": "^5.2.8",
@@ -28,6 +29,7 @@
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.60.1",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-vite": "latest",
     "@types/node": "catalog:",
@@ -35,7 +37,7 @@
     "@types/react-dom": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitejs/plugin-react": "^6.0.1",
-    "nitro": "^3.0.260522-beta",
-    "vite": "^8.0.0"
+    "vite": "^8.0.0",
+    "wrangler": "catalog:"
   }
 }

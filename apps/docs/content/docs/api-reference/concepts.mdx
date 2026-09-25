@@ -10,7 +10,7 @@ The API collects data from interest.co.nz each hour. It saves a dataset only whe
 To see the time of the last change to each dataset, send a request to the health endpoint:
 
 ```bash
-curl https://ratesapi.nz/api/v1/health
+curl https://www.ratesapi.nz/api/v1/health
 ```
 
 In the health response, `lastUpdated` has the format `YYYY-MM-DD HH:MM:SS` (UTC). In the rate responses, `lastUpdated` has the ISO 8601 format.

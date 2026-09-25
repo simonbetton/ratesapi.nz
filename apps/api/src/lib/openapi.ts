@@ -37,7 +37,7 @@ export const openApiDocumentation = {
   },
   externalDocs: {
     description: "Guides, concepts, and AI integration",
-    url: "https://ratesapi.nz/api-reference",
+    url: "https://www.ratesapi.nz/docs/api-reference",
   },
   tags: [
     {

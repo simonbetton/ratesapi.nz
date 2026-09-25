@@ -37,7 +37,7 @@ describe("landing page live requests", () => {
     fetchSpy.mockResolvedValue(new Response("{}"));
     await fetchMortgageRates("");
     expect(fetchSpy.mock.calls[0]?.[0]).toBe(
-      "https://ratesapi.nz/api/v1/mortgage-rates"
+      "https://www.ratesapi.nz/api/v1/mortgage-rates"
     );
   });
 
@@ -75,7 +75,7 @@ describe("landing page live requests", () => {
 describe("copyable integration examples", () => {
   test("encodes filters before including them in request snippets", () => {
     expect(requestUrl("12&x=1")).toBe(
-      "https://ratesapi.nz/api/v1/mortgage-rates?termInMonths=12%26x%3D1"
+      "https://www.ratesapi.nz/api/v1/mortgage-rates?termInMonths=12%26x%3D1"
     );
   });
 

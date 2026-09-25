@@ -64,7 +64,7 @@ describe("data-loader serialization", () => {
   test("only enables production latest-data fallback for development", () => {
     expect(
       productionLatestDataFallbackUrl("personal-loan-rates", "development")
-    ).toBe("https://ratesapi.nz/api/v1/personal-loan-rates");
+    ).toBe("https://www.ratesapi.nz/api/v1/personal-loan-rates");
     expect(
       productionLatestDataFallbackUrl("personal-loan-rates", "production")
     ).toBeUndefined();

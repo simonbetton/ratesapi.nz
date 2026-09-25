@@ -93,14 +93,14 @@ describe("site origins", () => {
   test("links to each local dev server in development", () => {
     expect(siteOrigins(true)).toEqual({
       api: "http://localhost:8787",
-      docs: "http://localhost:3000",
+      docs: "http://localhost:3000/docs",
     });
   });
 
   test("links to the shared production origin otherwise", () => {
     expect(siteOrigins(false)).toEqual({
-      api: "https://ratesapi.nz",
-      docs: "https://ratesapi.nz",
+      api: "https://www.ratesapi.nz",
+      docs: "https://www.ratesapi.nz/docs",
     });
   });
 });

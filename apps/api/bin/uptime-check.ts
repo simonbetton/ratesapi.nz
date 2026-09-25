@@ -43,7 +43,7 @@ const endpoints = [
 ];
 
 const httpClient = createHttpClient("UptimeCheck", {
-  prefixUrl: "https://ratesapi.nz/api/",
+  prefixUrl: "https://www.ratesapi.nz/api/",
   headers: {
     "User-Agent": "RatesAPI/UptimeCheck",
   },

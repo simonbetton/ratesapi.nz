@@ -42,6 +42,7 @@ export default defineConfig({
         "apps/docs/next.config.mjs",
         "apps/docs/open-next.config.ts",
         "apps/web/src/routes/**",
+        "apps/web/src/server.ts",
         "apps/web/vite.config.ts",
       ],
       rules: { "import/no-default-export": "off" },

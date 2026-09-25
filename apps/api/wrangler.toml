@@ -3,6 +3,21 @@ main = "src/index.ts"
 compatibility_date = "2025-06-01"
 compatibility_flags = ["nodejs_compat"]
 
+# www.ratesapi.nz is the canonical host. The apex routes stay so existing API
+# and MCP clients keep working: these routes run before the landing page Worker,
+# which redirects every other apex request to www.
+[[routes]]
+pattern = "www.ratesapi.nz/api/v1/*"
+zone_name = "ratesapi.nz"
+
+[[routes]]
+pattern = "www.ratesapi.nz/openapi"
+zone_name = "ratesapi.nz"
+
+[[routes]]
+pattern = "www.ratesapi.nz/openapi/*"
+zone_name = "ratesapi.nz"
+
 [[routes]]
 pattern = "ratesapi.nz/api/v1/*"
 zone_name = "ratesapi.nz"

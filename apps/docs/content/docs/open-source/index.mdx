@@ -10,8 +10,8 @@ Rates API is an open source project that operates on Cloudflare Workers. The rep
 | Component | Function |
 | --- | --- |
 | API Worker | Serves `/api/v1/*`, `/openapi`, and `/openapi/json` |
-| Docs Worker | Serves this Fumadocs site at `ratesapi.nz` |
-| Landing page | A TanStack Start app in `apps/web`. It deploys to Vercel. |
+| Docs Worker | Serves this Fumadocs site at `www.ratesapi.nz/docs` |
+| Landing page Worker | Serves the TanStack Start app in `apps/web` at `www.ratesapi.nz`. It sends a redirect from the apex domain to `www`. |
 | Cloudflare D1 | Keeps the newest datasets and the historical snapshots |
 | Scraper scripts | Collect rates from the interest.co.nz pages |
 | GitHub Actions | Do checks, builds, data collection, deployment, and uptime checks |

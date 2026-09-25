@@ -10,7 +10,7 @@ Rates API uses GitHub Actions workflows to monitor the service. The workflows mo
 The `API Uptime Monitoring` workflow starts every 15 minutes. It does these steps:
 
 1. It installs the dependencies with Bun.
-2. It runs `apps/api/bin/uptime-check.ts`. This script sends requests to the production API at `https://ratesapi.nz/api/`.
+2. It runs `apps/api/bin/uptime-check.ts`. This script sends requests to the production API at `https://www.ratesapi.nz/api/`.
 3. If one or more requests fail, the workflow fails.
 4. If the workflow fails, it makes a GitHub issue with the failure details.
 

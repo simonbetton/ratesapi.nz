@@ -57,7 +57,7 @@ describe("docs MDX content", () => {
 
     expect(quickstart).toContain('title: "Quickstart"');
     expect(quickstart).toContain(
-      "curl https://ratesapi.nz/api/v1/mortgage-rates"
+      "curl https://www.ratesapi.nz/api/v1/mortgage-rates"
     );
     expect(aiIntegration).toContain('title: "AI Integration"');
     expect(aiIntegration).toContain("POST /api/v1/mcp");
@@ -76,8 +76,11 @@ describe("docs MDX content", () => {
     const nextConfig = await readDocsAppFile("next.config.mjs");
 
     expect(await endpointPage.exists()).toBe(false);
-    expect(nextConfig).toContain('source: "/api-reference/endpoint/:path*"');
+    expect(nextConfig).toContain('const basePath = "/docs";');
+    expect(nextConfig).toContain("/api-reference/endpoint/:path*`");
     expect(nextConfig).toContain("destination: openApiReferenceUrl");
+    // The OpenAPI reference is outside the docs basePath.
+    expect(nextConfig).toContain("basePath: false");
     expect(nextConfig).toContain('"http://localhost:8787/openapi"');
     expect(nextConfig).toContain(': "/openapi"');
   });
