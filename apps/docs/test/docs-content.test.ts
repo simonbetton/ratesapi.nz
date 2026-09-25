@@ -59,7 +59,9 @@ describe("docs MDX content", () => {
 
     expect(await endpointPage.exists()).toBe(false);
     expect(nextConfig).toContain('source: "/api-reference/endpoint/:path*"');
-    expect(nextConfig).toContain('destination: "/openapi"');
+    expect(nextConfig).toContain("destination: openApiReferenceUrl");
+    expect(nextConfig).toContain('"http://localhost:8787/openapi"');
+    expect(nextConfig).toContain(': "/openapi"');
   });
 
   test("keeps the deployment guide under open-source docs", async () => {

@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { source } from "@/lib/source";
+import { ApiLink } from "@/mdx-components";
 
 interface PageProps {
   params: Promise<{
@@ -30,7 +31,7 @@ export default async function Page({ params }: PageProps) {
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
-        <MDXContent />
+        <MDXContent components={{ a: ApiLink }} />
       </DocsBody>
     </DocsPage>
   );
