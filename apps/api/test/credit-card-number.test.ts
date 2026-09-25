@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { parseOptionalNumber } from "../apps/api/bin/parse-optional-number";
+import { parseOptionalNumber } from "../bin/parse-optional-number";
 
 describe("parseOptionalNumber", () => {
   test("preserves numeric zero for '0'", () => {

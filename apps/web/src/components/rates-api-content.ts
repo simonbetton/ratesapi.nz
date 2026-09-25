@@ -158,7 +158,7 @@ export const terminalFlowSteps = [
   { kind: "command", text: "bun i" },
   { kind: "output", text: "dependencies installed" },
 
-  { kind: "command", text: "bun run dev:api:local" },
+  { kind: "command", text: "bun run dev" },
   { kind: "output", text: "worker ready on localhost:8787" },
   { kind: "command", text: "curl localhost:8787/api/v1/mortgage-rates" },
   { kind: "output", text: "200 OK  |  latest mortgage rows returned" },

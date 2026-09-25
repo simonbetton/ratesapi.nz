@@ -28,7 +28,8 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Generate docs source
-        run: bun run --cwd apps/docs source
+        working-directory: apps/docs
+        run: bunx fumadocs-mdx
 
       - name: Run Fallow
         uses: fallow-rs/fallow@v2

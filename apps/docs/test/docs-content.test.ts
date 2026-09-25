@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
-const docsRoot = new URL("../apps/docs/content/docs/", import.meta.url);
-const docsAppRoot = new URL("../apps/docs/", import.meta.url);
+const docsRoot = new URL("../content/docs/", import.meta.url);
+const docsAppRoot = new URL("../", import.meta.url);
 
 describe("docs MDX content", () => {
   test("keeps the root documentation page as a concise overview", async () => {

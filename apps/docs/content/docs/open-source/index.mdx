@@ -37,16 +37,18 @@ Rates API is an open source Cloudflare Workers project. The repository contains 
 | `apps/api/src/models/` | Runtime schemas and exported TypeScript types |
 | `apps/api/src/lib/` | Shared API helpers |
 | `apps/api/bin/` | Scraper, D1, and uptime scripts |
+| `apps/api/test/` | API, scraper, and data loader tests |
 | `apps/docs/app/` | Next.js App Router routes for the docs site |
 | `apps/docs/content/docs/` | Filesystem MDX documentation |
-| `test/` | API and docs content tests |
+| `apps/docs/test/` | Docs content tests |
+| `apps/web/` | Landing page built with TanStack Start |
 | `.github/workflows/` | CI, deploy, scraping, monitoring, and Fallow workflows |
 
 ## Contribution Paths
 
 - API changes: update route handlers, schemas, contract tests, and endpoint docs together.
 - Scraper changes: update scraper normalization, validation, and D1 write behavior together.
-- Docs changes: edit MDX files under `apps/docs/content/docs` and run the docs source generation.
+- Docs changes: edit MDX files under `apps/docs/content/docs` and run `bun run check`.
 - Deployment changes: update Worker config and the dry-run deploy CI path together.
 
 Start with [Local Development](/open-source/local-development), then read [Deployment](/open-source/deployment) if you need to operate your own instance.

@@ -3,7 +3,13 @@ title: "Local Development"
 description: "Set up a local development environment for Rates API and start contributing to the project."
 ---
 
-This project is a small monorepo with separate API and docs apps. The root scripts are the normal entry point for local work.
+This project is a Bun workspace with three apps. The root scripts run a task across every app, and each app keeps its own scripts in its `package.json`.
+
+| App | Path | Runs on |
+| --- | --- | --- |
+| `api` | `apps/api` | `http://localhost:8787` |
+| `docs` | `apps/docs` | `http://localhost:3000` |
+| `web` | `apps/web` | `http://127.0.0.1:3002` |
 
 ## Prerequisites
 
@@ -27,39 +33,35 @@ cd ratesapi.nz
 bun i
 ```
 
-### 3. Run the API Worker
+One install at the repository root covers every app.
+
+### 3. Run Everything
 
 ```bash
 bun run dev
 ```
 
-This starts Wrangler for the API Worker at `http://localhost:8787` and uses the configured development environment.
+This starts the API, docs, and web apps together. The API runs against a local D1 database. Each start creates any missing tables and adds sample data without overwriting rows you already have, so no Cloudflare account is needed.
 
-### 4. Run the Docs App
+## Working With One App
 
-```bash
-bun run dev:docs
-```
-
-The docs app runs with Next.js. The docs content comes from MDX files under `apps/docs/content/docs`.
-
-## Local D1 Modes
-
-The default API development command is configured for remote development data. Use the explicit local path when you need an offline Miniflare D1 database:
+Use `--filter` with an app name to run a single app's script:
 
 ```bash
-bun run dev:api:local
+bun run --filter docs dev
 ```
 
-That command initializes and seeds the local D1 database before starting Wrangler.
+### Remote D1 Data
+
+To run the API against the remote development D1 database instead of local sample data, log in to Cloudflare and run:
+
+```bash
+bun run --filter api dev:remote
+```
 
 ## Scraping Data
 
 The project includes scripts to scrape rate data from financial institution websites. These scripts are located in the `apps/api/bin/` directory.
-
-```bash
-bun run apps/api/bin/scrape-mortgage-rates.ts
-```
 
 Available scraper scripts:
 
@@ -71,7 +73,7 @@ Available scraper scripts:
 To run all scrapers against local D1:
 
 ```bash
-bun run scrape:all:local
+bun run --filter api scrape:local
 ```
 
 ## Checks
@@ -82,17 +84,17 @@ Run the full local verification suite before opening a pull request:
 bun run check
 ```
 
-For docs-only type checking:
+This runs Biome, type checks every app, and runs the Bun tests. To build every app the way CI does:
 
 ```bash
-bun run typecheck:docs
+bun run build
 ```
 
 ## Common Workflows
 
 | Task | Files to start with |
 | --- | --- |
-| Add an endpoint | `apps/api/src/routes/`, `apps/api/src/models/`, `test/api-contract.test.ts` |
+| Add an endpoint | `apps/api/src/routes/`, `apps/api/src/models/`, `apps/api/test/api-contract.test.ts` |
 | Update docs content | `apps/docs/content/docs/` |
 | Update scraper behavior | `apps/api/bin/` and `apps/api/src/lib/schema.ts` |
 | Change deployment | `apps/api/wrangler.toml`, `apps/docs/wrangler.toml`, `.github/workflows/` |

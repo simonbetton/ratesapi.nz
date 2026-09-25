@@ -1,12 +1,29 @@
 {
-  "name": "@rates-api/docs",
+  "name": "docs",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "build:cloudflare": "opennextjs-cloudflare build",
     "dev": "next dev",
+    "build": "opennextjs-cloudflare build",
     "preview": "opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare deploy",
-    "source": "fumadocs-mdx source.config.ts .source"
+    "deploy": "bun run build && opennextjs-cloudflare deploy",
+    "typecheck": "fumadocs-mdx && next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "@opennextjs/cloudflare": "^1.20.6",
+    "fumadocs-core": "^16.15.14",
+    "fumadocs-mdx": "^15.4.4",
+    "fumadocs-ui": "^16.15.14",
+    "next": "^16.3.6",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "@types/mdx": "^2.0.14",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:",
+    "wrangler": "catalog:"
   }
 }
