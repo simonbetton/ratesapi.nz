@@ -3,12 +3,15 @@
     "amex",
     "domhandler",
     "elysia",
+    "elysiajs",
     "fumadocs",
     "hono",
     "Kiwibank",
     "openapi",
     "opennextjs",
-    "pino"
+    "pino",
+    "typebox",
+    "ultracite"
   ],
   "editor.formatOnSave": true,
   "[javascript]": {
