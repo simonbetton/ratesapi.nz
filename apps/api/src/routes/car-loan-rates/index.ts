@@ -12,12 +12,18 @@ import {
 import { getEntityTimeSeries } from "../../lib/entity-time-series";
 import { type Environment } from "../../lib/environment";
 import { createLogger } from "../../lib/logging";
+import { timeSeriesDescription } from "../../lib/openapi";
 import { type GetEnv } from "../../lib/routing";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
 import {
-  GenericApiError,
+  InstitutionIdPathParameter,
+  InstitutionIdQueryParameter,
+  InstitutionNotFoundError,
+  InvalidTimeSeriesRequestError,
+  ServerError,
   TimeSeriesDateParameter,
+  TimeSeriesNotFoundError,
   validateTimeSeriesDateQuery,
 } from "../../models/api";
 import { CarLoanRates } from "../../models/car-loan-rates";
@@ -34,27 +40,14 @@ const routesLog = createLogger("car-loan-rates-routes");
 const CarLoanTimeSeriesQuery = t.Object(
   {
     ...TimeSeriesDateParameter.properties,
-    institutionId: t.Optional(
-      t.String({
-        description: "Optional institution ID to filter time series data",
-        examples: ["institution:anz"],
-      }),
-    ),
+    institutionId: t.Optional(InstitutionIdQueryParameter),
   },
   { additionalProperties: false },
 );
 
 const CarLoanInstitutionParams = t.Object(
   {
-    institutionId: t.String({
-      examples: [
-        "institution:anz",
-        "institution:asb",
-        "institution:bnz",
-        "institution:kiwibank",
-        "institution:westpac",
-      ],
-    }),
+    institutionId: InstitutionIdPathParameter,
   },
   { additionalProperties: false },
 );
@@ -62,7 +55,7 @@ const CarLoanInstitutionParams = t.Object(
 export function carLoanRatesRoutes(getEnv: GetEnv) {
   return new Elysia({ prefix: "/car-loan-rates" })
     .get(
-      "/",
+      "",
       async () => {
         const result = await listCarLoanRates(getEnv());
         return jsonResult(result);
@@ -70,12 +63,19 @@ export function carLoanRatesRoutes(getEnv: GetEnv) {
       {
         response: {
           200: CarLoanRatesResponse,
-          500: GenericApiError,
+          500: ServerError,
         },
         detail: {
           operationId: "listCarLoanRates",
           tags: ["Car Loan Rates"],
-          summary: "List car loan rates",
+          summary: "Get car loan rates for all institutions",
+          description: [
+            "This endpoint gets the newest car loan rates for all institutions. Each institution contains products, and each product contains rates.",
+            "",
+            "A rate can have a plan, for example, `Secured`, and a condition, for example, a loan amount.",
+            "",
+            "Use this endpoint to compare car loan rates between institutions.",
+          ].join("\n"),
         },
       },
     )
@@ -89,14 +89,20 @@ export function carLoanRatesRoutes(getEnv: GetEnv) {
         query: CarLoanTimeSeriesQuery,
         response: {
           200: CarLoanRatesTimeSeriesResponse,
-          400: GenericApiError,
-          404: GenericApiError,
-          500: GenericApiError,
+          400: InvalidTimeSeriesRequestError,
+          404: TimeSeriesNotFoundError,
+          500: ServerError,
         },
         detail: {
           operationId: "getCarLoanRatesTimeSeries",
           tags: ["Car Loan Rates"],
-          summary: "Get car loan rates time series",
+          summary: "Get historical car loan rates",
+          description: timeSeriesDescription({
+            rates: "car loan rates",
+            filters: [
+              "To get only the data for one institution, send `institutionId`.",
+            ],
+          }),
         },
       },
     )
@@ -110,13 +116,15 @@ export function carLoanRatesRoutes(getEnv: GetEnv) {
         params: CarLoanInstitutionParams,
         response: {
           200: CarLoanRatesResponse,
-          404: GenericApiError,
-          500: GenericApiError,
+          404: InstitutionNotFoundError,
+          500: ServerError,
         },
         detail: {
           operationId: "getCarLoanRatesByInstitution",
           tags: ["Car Loan Rates"],
-          summary: "Get car loan rates by institution",
+          summary: "Get car loan rates for one institution",
+          description:
+            "This endpoint gets the newest car loan rates for one institution. The response has the same structure as the list endpoint, but `data` contains only one institution.",
         },
       },
     );

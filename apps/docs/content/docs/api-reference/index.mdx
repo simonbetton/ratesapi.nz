@@ -1,9 +1,9 @@
 ---
 title: "API Reference"
-description: "Reference material for Rates API endpoints, request parameters, responses, OpenAPI tooling, and AI integration."
+description: "Reference material for the Rates API base URL, response rules, OpenAPI reference, and AI integration."
 ---
 
-Use this section when you know which data you need and want endpoint-level details. If you are new to the API, start with the [Quickstart](/api-reference/quickstart), then read [AI Integration](/api-reference/ai-integration) and [Core Concepts](/api-reference/concepts).
+Use this section when you know which data you need. For the parameters, response fields, and errors of each endpoint, use the [OpenAPI reference](/openapi). If you are new to the API, start with the [Quickstart](/api-reference/quickstart), then read [AI Integration](/api-reference/ai-integration) and [Core Concepts](/api-reference/concepts).
 
 ## Base URL
 
@@ -21,13 +21,13 @@ http://localhost:8787
 
 No API key is required.
 
-## Interactive Reference
+## OpenAPI Reference
 
-The generated OpenAPI experience is available at:
+The OpenAPI reference is the full reference for each endpoint. It shows all parameters, response fields, and errors, and you can send requests from it.
 
 | Resource | URL |
 | --- | --- |
-| Scalar API client | [`/openapi`](/openapi) |
+| OpenAPI reference (Scalar) | [`/openapi`](/openapi) |
 | OpenAPI JSON | [`/openapi/json`](/openapi/json) |
 
 ## AI Integration
@@ -43,6 +43,8 @@ Rates API is designed for AI assistants and agent workflows:
 Read [AI Integration](/api-reference/ai-integration) for MCP behavior, `llms.txt`, and recommended agent patterns.
 
 ## Endpoint Groups
+
+For the full details of each endpoint, use the [OpenAPI reference](/openapi).
 
 | Category | List Endpoint | Get By ID | Time Series |
 | --- | --- | --- | --- |

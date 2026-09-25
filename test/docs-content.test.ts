@@ -14,12 +14,20 @@ describe("docs MDX content", () => {
   });
 
   test("keeps API navigation free of duplicate introduction links", async () => {
-    const body = await readDocsFile("api-reference/meta.json");
-
-    expect(body).toContain(
-      '"pages": ["index", "quickstart", "ai-integration", "concepts", "endpoint"]',
+    const meta: unknown = JSON.parse(
+      await readDocsFile("api-reference/meta.json"),
     );
-    expect(body).not.toContain('"introduction"');
+
+    expect(meta).toEqual({
+      title: "API Reference",
+      pages: [
+        "index",
+        "quickstart",
+        "ai-integration",
+        "concepts",
+        "[OpenAPI Reference](/openapi)",
+      ],
+    });
   });
 
   test("adds task-oriented API onboarding pages", async () => {
@@ -43,16 +51,18 @@ describe("docs MDX content", () => {
     );
   });
 
-  test("keeps the mortgage time-series endpoint page at the existing URL", async () => {
-    const body = await readDocsFile(
-      "api-reference/endpoint/mortgage-rates/time-series.mdx",
+  test("redirects old endpoint pages to the OpenAPI reference", async () => {
+    const endpointPage = Bun.file(
+      new URL(
+        "api-reference/endpoint/mortgage-rates/time-series.mdx",
+        docsRoot,
+      ),
     );
+    const nextConfig = await readDocsAppFile("next.config.mjs");
 
-    expect(body).toContain('title: "Mortgage Rates Time Series"');
-    expect(body).toContain("| Path | `/api/v1/mortgage-rates/time-series` |");
-    expect(body).toContain(
-      "| `termInMonths` | optional mortgage term filter |",
-    );
+    expect(await endpointPage.exists()).toBe(false);
+    expect(nextConfig).toContain('source: "/api-reference/endpoint/:path*"');
+    expect(nextConfig).toContain('destination: "/openapi"');
   });
 
   test("keeps the deployment guide under open-source docs", async () => {

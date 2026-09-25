@@ -12,12 +12,18 @@ import {
 import { getEntityTimeSeries } from "../../lib/entity-time-series";
 import { type Environment } from "../../lib/environment";
 import { createLogger } from "../../lib/logging";
+import { timeSeriesDescription } from "../../lib/openapi";
 import { type GetEnv } from "../../lib/routing";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
 import {
-  GenericApiError,
+  InvalidTimeSeriesRequestError,
+  IssuerIdPathParameter,
+  IssuerIdQueryParameter,
+  IssuerNotFoundError,
+  ServerError,
   TimeSeriesDateParameter,
+  TimeSeriesNotFoundError,
   validateTimeSeriesDateQuery,
 } from "../../models/api";
 import { CreditCardRates } from "../../models/credit-card-rates";
@@ -34,21 +40,14 @@ const routesLog = createLogger("credit-card-rates-routes");
 const CreditCardTimeSeriesQuery = t.Object(
   {
     ...TimeSeriesDateParameter.properties,
-    issuerId: t.Optional(
-      t.String({
-        description: "Optional issuer ID to filter time series data",
-        examples: ["issuer:anz"],
-      }),
-    ),
+    issuerId: t.Optional(IssuerIdQueryParameter),
   },
   { additionalProperties: false },
 );
 
 const CreditCardIssuerParams = t.Object(
   {
-    issuerId: t.String({
-      examples: ["issuer:anz", "issuer:amex", "issuer:gem"],
-    }),
+    issuerId: IssuerIdPathParameter,
   },
   { additionalProperties: false },
 );
@@ -56,7 +55,7 @@ const CreditCardIssuerParams = t.Object(
 export function creditCardRatesRoutes(getEnv: GetEnv) {
   return new Elysia({ prefix: "/credit-card-rates" })
     .get(
-      "/",
+      "",
       async () => {
         const result = await listCreditCardRates(getEnv());
         return jsonResult(result);
@@ -64,12 +63,19 @@ export function creditCardRatesRoutes(getEnv: GetEnv) {
       {
         response: {
           200: CreditCardRatesResponse,
-          500: GenericApiError,
+          500: ServerError,
         },
         detail: {
           operationId: "listCreditCardRates",
           tags: ["Credit Card Rates"],
-          summary: "List credit card rates",
+          summary: "Get credit card rates for all issuers",
+          description: [
+            "This endpoint gets the newest credit card rates and fees for all issuers. Each issuer contains plans.",
+            "",
+            "Each plan has interest rates for purchases, cash advances, and balance transfers. It also has a card fee and an interest-free period.",
+            "",
+            "Use this endpoint to compare credit cards between issuers.",
+          ].join("\n"),
         },
       },
     )
@@ -83,14 +89,18 @@ export function creditCardRatesRoutes(getEnv: GetEnv) {
         query: CreditCardTimeSeriesQuery,
         response: {
           200: CreditCardRatesTimeSeriesResponse,
-          400: GenericApiError,
-          404: GenericApiError,
-          500: GenericApiError,
+          400: InvalidTimeSeriesRequestError,
+          404: TimeSeriesNotFoundError,
+          500: ServerError,
         },
         detail: {
           operationId: "getCreditCardRatesTimeSeries",
           tags: ["Credit Card Rates"],
-          summary: "Get credit card rates time series",
+          summary: "Get historical credit card rates",
+          description: timeSeriesDescription({
+            rates: "credit card rates",
+            filters: ["To get only the data for one issuer, send `issuerId`."],
+          }),
         },
       },
     )
@@ -104,13 +114,15 @@ export function creditCardRatesRoutes(getEnv: GetEnv) {
         params: CreditCardIssuerParams,
         response: {
           200: CreditCardRatesResponse,
-          404: GenericApiError,
-          500: GenericApiError,
+          404: IssuerNotFoundError,
+          500: ServerError,
         },
         detail: {
           operationId: "getCreditCardRatesByIssuer",
           tags: ["Credit Card Rates"],
-          summary: "Get credit card rates by issuer",
+          summary: "Get credit card rates for one issuer",
+          description:
+            "This endpoint gets the newest credit card rates for one issuer. The response has the same structure as the list endpoint, but `data` contains only one issuer.",
         },
       },
     );
