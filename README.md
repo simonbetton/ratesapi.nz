@@ -5,38 +5,119 @@
 <p align="center">
   ✨ <a href="https://ratesapi.nz">https://ratesapi.nz</a> ✨
   <br />
-  Rates API is a free OpenAPI service to retrieve the latest lending rates offered by New Zealand financial institutions – updated hourly.
+  A free JSON API for New Zealand mortgage, personal loan, car loan, and credit card rates, updated hourly.
 </p>
 <br />
 
 <p align="center">
-  <a href="https://opensource.org/licenses/MIT" rel="nofollow"><img src="https://img.shields.io/github/license/decs/typeschema" alt="License"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/simonbetton/ratesapi.nz" alt="License"></a>
+  <a href="https://github.com/simonbetton/ratesapi.nz/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/simonbetton/ratesapi.nz/ci.yml?branch=main&label=CI" alt="CI"></a>
 </p>
 <br />
 
-This project uses [Bun](https://bun.sh/), [Elysia](https://elysiajs.com/), [Cloudflare Workers](https://workers.cloudflare.com/), and [Cloudflare D1](https://developers.cloudflare.com/d1/).
+Rates API collects the interest rates of New Zealand financial institutions from [interest.co.nz](https://www.interest.co.nz) every hour. It serves the newest rates and a daily snapshot history. You don't need an API key, and every response is JSON. AI agents can use the data through an MCP endpoint, the OpenAPI document, or `llms.txt`.
 
-Cloudflare Workers is a JavaScript edge runtime on Cloudflare CDN, while D1 is Cloudflare's serverless SQL database that integrates seamlessly with Workers.
+> [!NOTE] The data can be wrong. Check rates with the financial institution before you make a decision.
 
-You can develop the application locally and publish it with a few commands using [Wrangler](https://developers.cloudflare.com/workers/wrangler/). Wrangler includes a transcompiler, so we can write directly in TypeScript.
+## Usage
 
-## Documentation
+```bash
+# Newest mortgage rates from all institutions
+curl https://ratesapi.nz/api/v1/mortgage-rates
 
-Visit the [documentation](https://ratesapi.nz/) for more information.
+# Fixed 12-month rates only
+curl "https://ratesapi.nz/api/v1/mortgage-rates?termInMonths=12"
 
-## Quick Start
+# One institution
+curl https://ratesapi.nz/api/v1/mortgage-rates/institution:anz
 
-```zsh
-# Install dependencies
+# Snapshots in a date range
+curl "https://ratesapi.nz/api/v1/mortgage-rates/time-series?startDate=2026-04-01&endDate=2026-04-30&institutionId=institution:anz"
+```
+
+### Endpoints
+
+| Category | List | By ID | Time series |
+| --- | --- | --- | --- |
+| Mortgages | `/api/v1/mortgage-rates` | `/api/v1/mortgage-rates/{institutionId}` | `/api/v1/mortgage-rates/time-series` |
+| Personal loans | `/api/v1/personal-loan-rates` | `/api/v1/personal-loan-rates/{institutionId}` | `/api/v1/personal-loan-rates/time-series` |
+| Car loans | `/api/v1/car-loan-rates` | `/api/v1/car-loan-rates/{institutionId}` | `/api/v1/car-loan-rates/time-series` |
+| Credit cards | `/api/v1/credit-card-rates` | `/api/v1/credit-card-rates/{issuerId}` | `/api/v1/credit-card-rates/time-series` |
+
+The API stores at most one snapshot per dataset per UTC day, and only on days when the data changed. Each time-series response has an `availableDates` field that lists the dates with data.
+
+| Path | Purpose |
+| --- | --- |
+| `/api/v1/health` | Health check and the last update time of each dataset |
+| `/openapi` | Interactive API reference (Scalar) |
+| `/openapi/json` | OpenAPI document for SDK and tool generators |
+| `POST /api/v1/mcp` | [Model Context Protocol](https://modelcontextprotocol.io) endpoint with read-only tools for each category |
+| `/llms.txt` | Plain-text index of the documentation pages |
+
+Read the [documentation](https://ratesapi.nz) for IDs, date filters, errors, and the MCP protocol details.
+
+## How it works
+
+| Component | Path | Runs on |
+| --- | --- | --- |
+| API | `apps/api` | Cloudflare Workers ([Elysia](https://elysiajs.com)) serving `/api/v1/*` and `/openapi*` |
+| Docs | `apps/docs` | Cloudflare Workers ([Next.js](https://nextjs.org) + [Fumadocs](https://fumadocs.dev) via OpenNext), serving everything else on `ratesapi.nz` |
+| Landing page | `apps/web` | Vercel ([TanStack Start](https://tanstack.com/start)) |
+| Database | `apps/api/schema.sql` | [Cloudflare D1](https://developers.cloudflare.com/d1/), holding the newest datasets and snapshots |
+| Scrapers | `apps/api/bin` | GitHub Actions, every hour ([Cheerio](https://cheerio.js.org)) |
+
+GitHub Actions also run CI, deploy on every push to `main`, and check the production API every 15 minutes. A failed check opens an issue.
+
+## Development
+
+You need [Bun](https://bun.sh). A Cloudflare account is only needed for remote D1 access or deployment.
+
+```bash
+git clone https://github.com/simonbetton/ratesapi.nz.git
+cd ratesapi.nz
 bun i
-
-# Run the API, docs, and web apps locally
 bun run dev
+```
 
-# Deploy the API and docs to Cloudflare Workers
+`bun run dev` starts all three apps. The API creates a local D1 database and seeds it with a small sample dataset.
+
+| App    | URL                   |
+| ------ | --------------------- |
+| `api`  | http://localhost:8787 |
+| `docs` | http://localhost:3000 |
+| `web`  | http://127.0.0.1:3002 |
+
+To run one app, use `bun run --filter <app> dev`.
+
+To load real rates into your local database, run the scrapers:
+
+```bash
+bun run --filter api scrape:local
+```
+
+> [!WARNING] `bun run --filter api dev:remote` connects to the **production** D1 database. The API endpoints only read data, but don't run any script that writes while you use this connection.
+
+### Checks
+
+```bash
+bun run check   # Oxlint, Oxfmt, type checks, and Bun tests
+bun run build   # Builds each app the same way CI does
+```
+
+Run `bun run check` before you open a pull request.
+
+## Deployment
+
+```bash
 bun run deploy
 ```
 
+This deploys the API Worker (`ratesapi-nz`) and the docs Worker (`ratesapi-nz-docs`). The landing page deploys through Vercel. For D1 setup, route configuration, and the GitHub Actions secrets, read the [deployment guide](https://ratesapi.nz/open-source/deployment).
+
+## Contributing
+
+Issues and pull requests are welcome. When you change an endpoint, update its route, schema, OpenAPI description, and contract test together. Write the docs pages and OpenAPI descriptions in [ASD-STE100 Simplified Technical English](https://www.asd-ste100.org). The [open source guide](https://ratesapi.nz/open-source) covers the repository layout.
+
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT. See [LICENSE](LICENSE).
