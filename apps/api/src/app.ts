@@ -4,6 +4,12 @@ import type { ElysiaAdapter } from "elysia";
 import { Elysia } from "elysia";
 
 import { createLogger } from "./lib/logging";
+import {
+  openApiDocumentation,
+  openApiExclude,
+  toOpenApiDocument,
+} from "./lib/openapi";
+import type { OpenApiServer } from "./lib/openapi";
 import type { GetEnv } from "./lib/routing";
 import {
   HealthErrorResponse,
@@ -22,18 +28,9 @@ const log = createLogger("rates-api");
 const validationLog = createLogger("rates-api-validation");
 const healthStatusOk = "ok";
 const healthStatusError = "error";
-const productionServer = {
+const productionServer: OpenApiServer = {
   url: "https://ratesapi.nz",
   description: "Production",
-};
-const openApiExclude = {
-  paths: ["/api/v1/mcp", "/api/v1/mcp/"],
-};
-const openApiInfo = {
-  version: "1.0.0",
-  title: "Rates API",
-  description:
-    "Rates API is a free OpenAPI service to retrieve the latest lending rates offered by New Zealand financial institutions — updated hourly.",
 };
 
 export interface CreateAppOptions {
@@ -98,7 +95,9 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
         detail: {
           operationId: "getHealth",
           tags: ["Health"],
-          summary: "Get API data freshness",
+          summary: "Get the status of the API",
+          description:
+            "This endpoint shows if the API can read its database. For each dataset, the response shows the time of the last data change. The API collects data each hour, but it saves a dataset only when the data changes. Use this endpoint to make sure that the API operates correctly.",
         },
       }
     );
@@ -110,7 +109,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
     .use(
       openapi({
         documentation: {
-          info: openApiInfo,
+          ...openApiDocumentation,
           servers: [productionServer],
         },
         exclude: openApiExclude,
@@ -134,13 +133,10 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
       ({ request }) => {
         const generatedSchema = toOpenAPISchema(app, openApiExclude);
 
-        return {
-          openapi: "3.0.3",
-          info: openApiInfo,
-          servers: getOpenApiServers(request, getEnv().ENVIRONMENT),
-          paths: generatedSchema.paths,
-          components: generatedSchema.components,
-        };
+        return toOpenApiDocument(
+          generatedSchema,
+          getOpenApiServers(request, getEnv().ENVIRONMENT)
+        );
       },
       {
         detail: {
@@ -152,7 +148,10 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
   return app;
 }
 
-function getOpenApiServers(request: Request, environment: string | undefined) {
+function getOpenApiServers(
+  request: Request,
+  environment: string | undefined
+): OpenApiServer[] {
   const { origin } = new URL(request.url);
   const currentServer = {
     url: origin,

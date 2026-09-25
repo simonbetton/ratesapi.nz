@@ -1,4 +1,0 @@
-{
-  "title": "Car Loan Rates",
-  "pages": ["list", "get", "time-series"]
-}

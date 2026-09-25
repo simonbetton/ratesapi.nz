@@ -174,7 +174,7 @@ export function TeamStrategySection() {
                 className={cn(
                   "text-sm font-medium text-[#1a2035] no-underline hover:underline"
                 )}
-                href="https://ratesapi.nz/api-reference/endpoint/mortgage-rates/time-series"
+                href="https://ratesapi.nz/openapi#tag/mortgage-rates/GET/api/v1/mortgage-rates/time-series"
                 rel="noopener noreferrer"
                 target="_blank"
               >

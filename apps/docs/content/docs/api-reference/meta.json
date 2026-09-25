@@ -1,4 +1,10 @@
 {
   "title": "API Reference",
-  "pages": ["index", "quickstart", "ai-integration", "concepts", "endpoint"]
+  "pages": [
+    "index",
+    "quickstart",
+    "ai-integration",
+    "concepts",
+    "[OpenAPI Reference](/openapi)"
+  ]
 }

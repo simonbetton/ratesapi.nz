@@ -178,6 +178,13 @@ describe("v1 API contract", () => {
       expect(typeof body.termsOfUse).toBe("string");
       expect(typeof body.timestamp).toBe("string");
     });
+
+    test(`serves the ${type} list with a trailing slash`, async () => {
+      const response = await request(`${path}/`);
+
+      expect(response.status).toBe(200);
+      expect(parseSchema(schema, await jsonBody(response)).type).toBe(type);
+    });
   }
 
   test("returns the existing successful mortgage list shape", async () => {
@@ -340,8 +347,36 @@ describe("v1 API contract", () => {
     expect(info?.title).toBe("Rates API");
     expect(defaultServer?.url).toBe("http://localhost");
     expect(defaultServer?.description).toBe("Local");
-    expect(paths?.["/api/v1/mortgage-rates/"]).toBeDefined();
+    expect(paths?.["/api/v1/mortgage-rates"]).toBeDefined();
     expect(paths?.["/api/v1/mcp/"]).toBeUndefined();
+    expect(
+      Object.keys(paths ?? {}).filter((path) => path.endsWith("/"))
+    ).toEqual([]);
+  });
+
+  test("documents every OpenAPI operation, parameter, and response", async () => {
+    const specResponse = await request("/openapi/json");
+    const spec = requireRecord(await jsonBody(specResponse));
+    const tags = readArray(spec, "tags").map((tag) => readRecord(tag, "self"));
+    const tagNames = tags.map((tag) => tag?.name);
+    const operations = Object.values(readRecord(spec, "paths") ?? {}).flatMap(
+      (pathItem) => Object.values(requireRecord(pathItem)).map(requireRecord)
+    );
+    const problems = [
+      ...tags.flatMap((tag) =>
+        typeof tag?.description === "string"
+          ? []
+          : [`tag ${String(tag?.name)} has no description`]
+      ),
+      ...operations.flatMap((operation) =>
+        findOperationDocumentationProblems(operation, tagNames)
+      ),
+    ];
+
+    expect(spec.openapi).toBe("3.1.0");
+    expect(JSON.stringify(spec)).not.toContain('"nullable"');
+    expect(operations.length).toBe(13);
+    expect(problems).toEqual([]);
   });
 
   test("uses the production server as the OpenAPI default in production", async () => {
@@ -657,6 +692,45 @@ function readArray(value: unknown, key: string): unknown[] {
 
   const field = value[key];
   return Array.isArray(field) ? field : [];
+}
+
+function findOperationDocumentationProblems(
+  operation: Record<string, unknown>,
+  tagNames: unknown[]
+): string[] {
+  const id = String(operation.operationId);
+  const parameters = readArray(operation, "parameters").map((parameter) =>
+    readRecord(parameter, "self")
+  );
+  const responses = Object.entries(readRecord(operation, "responses") ?? {});
+
+  return [
+    typeof operation.summary === "string" ? [] : [`${id} has no summary`],
+    typeof operation.description === "string"
+      ? []
+      : [`${id} has no description`],
+    readArray(operation, "tags")
+      .filter((tag) => !tagNames.includes(tag))
+      .map((tag) => `${id} uses undeclared tag ${String(tag)}`),
+    parameters
+      .filter((parameter) => typeof parameter?.description !== "string")
+      .map(
+        (parameter) =>
+          `${id} parameter ${String(parameter?.name)} has no description`
+      ),
+    responses
+      .filter(([, response]) => !hasResponseDescription(response))
+      .map(([status]) => `${id} response ${status} has no description`),
+  ].flat();
+}
+
+function hasResponseDescription(response: unknown): boolean {
+  const description = readRecord(response, "self")?.description;
+
+  return (
+    typeof description === "string" &&
+    !description.startsWith("Response for status")
+  );
 }
 
 function readDataType(value: unknown): DataType | undefined {

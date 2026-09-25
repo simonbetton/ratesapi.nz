@@ -13,12 +13,18 @@ import {
 import { getEntityTimeSeries } from "../../lib/entity-time-series";
 import type { Environment } from "../../lib/environment";
 import { createLogger } from "../../lib/logging";
+import { timeSeriesDescription } from "../../lib/openapi";
 import type { GetEnv } from "../../lib/routing";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
 import {
-  GenericApiError,
+  InstitutionIdPathParameter,
+  InstitutionIdQueryParameter,
+  InstitutionNotFoundError,
+  InvalidTimeSeriesRequestError,
+  ServerError,
   TimeSeriesDateParameter,
+  TimeSeriesNotFoundError,
   validateTimeSeriesDateQuery,
 } from "../../models/api";
 import { PersonalLoanRates } from "../../models/personal-loan-rates";
@@ -36,27 +42,14 @@ const routesLog = createLogger("personal-loan-rates-routes");
 const PersonalLoanTimeSeriesQuery = t.Object(
   {
     ...TimeSeriesDateParameter.properties,
-    institutionId: t.Optional(
-      t.String({
-        description: "Optional institution ID to filter time series data",
-        examples: ["institution:anz"],
-      })
-    ),
+    institutionId: t.Optional(InstitutionIdQueryParameter),
   },
   { additionalProperties: false }
 );
 
 const PersonalLoanInstitutionParams = t.Object(
   {
-    institutionId: t.String({
-      examples: [
-        "institution:anz",
-        "institution:asb",
-        "institution:bnz",
-        "institution:kiwibank",
-        "institution:westpac",
-      ],
-    }),
+    institutionId: InstitutionIdPathParameter,
   },
   { additionalProperties: false }
 );
@@ -64,7 +57,7 @@ const PersonalLoanInstitutionParams = t.Object(
 export function personalLoanRatesRoutes(getEnv: GetEnv) {
   return new Elysia({ prefix: "/personal-loan-rates" })
     .get(
-      "/",
+      "",
       async () => {
         const result = await listPersonalLoanRates(getEnv());
         return jsonResult(result);
@@ -72,12 +65,19 @@ export function personalLoanRatesRoutes(getEnv: GetEnv) {
       {
         response: {
           200: PersonalLoanRatesResponse,
-          500: GenericApiError,
+          500: ServerError,
         },
         detail: {
           operationId: "listPersonalLoanRates",
           tags: ["Personal Loan Rates"],
-          summary: "List personal loan rates",
+          summary: "Get personal loan rates for all institutions",
+          description: [
+            "This endpoint gets the newest personal loan rates for all institutions. Each institution contains products, and each product contains rates.",
+            "",
+            "A rate can have a plan, for example, `Secured`, and a condition, for example, a loan amount.",
+            "",
+            "Use this endpoint to compare personal loan rates between institutions.",
+          ].join("\n"),
         },
       }
     )
@@ -91,14 +91,20 @@ export function personalLoanRatesRoutes(getEnv: GetEnv) {
         query: PersonalLoanTimeSeriesQuery,
         response: {
           200: PersonalLoanRatesTimeSeriesResponse,
-          400: GenericApiError,
-          404: GenericApiError,
-          500: GenericApiError,
+          400: InvalidTimeSeriesRequestError,
+          404: TimeSeriesNotFoundError,
+          500: ServerError,
         },
         detail: {
           operationId: "getPersonalLoanRatesTimeSeries",
           tags: ["Personal Loan Rates"],
-          summary: "Get personal loan rates time series",
+          summary: "Get historical personal loan rates",
+          description: timeSeriesDescription({
+            rates: "personal loan rates",
+            filters: [
+              "To get only the data for one institution, send `institutionId`.",
+            ],
+          }),
         },
       }
     )
@@ -115,13 +121,15 @@ export function personalLoanRatesRoutes(getEnv: GetEnv) {
         params: PersonalLoanInstitutionParams,
         response: {
           200: PersonalLoanRatesResponse,
-          404: GenericApiError,
-          500: GenericApiError,
+          404: InstitutionNotFoundError,
+          500: ServerError,
         },
         detail: {
           operationId: "getPersonalLoanRatesByInstitution",
           tags: ["Personal Loan Rates"],
-          summary: "Get personal loan rates by institution",
+          summary: "Get personal loan rates for one institution",
+          description:
+            "This endpoint gets the newest personal loan rates for one institution. The response has the same structure as the list endpoint, but `data` contains only one institution.",
         },
       }
     );

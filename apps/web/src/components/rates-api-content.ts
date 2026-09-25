@@ -32,25 +32,25 @@ export const endpointCards = [
     title: "Mortgage rates",
     body: "Fixed and floating rates, grouped by institution and product. Filter by mortgage term.",
     path: "/api/v1/mortgage-rates",
-    href: "https://ratesapi.nz/api-reference/endpoint/mortgage-rates/list",
+    href: "https://ratesapi.nz/openapi#tag/mortgage-rates/GET/api/v1/mortgage-rates",
   },
   {
     title: "Personal loan rates",
     body: "Secured and unsecured lending products, with rate conditions alongside each offer.",
     path: "/api/v1/personal-loan-rates",
-    href: "https://ratesapi.nz/api-reference/endpoint/personal-loan-rates/list",
+    href: "https://ratesapi.nz/openapi#tag/personal-loan-rates/GET/api/v1/personal-loan-rates",
   },
   {
     title: "Car loan rates",
     body: "Vehicle finance rates and conditions, organised by institution and product.",
     path: "/api/v1/car-loan-rates",
-    href: "https://ratesapi.nz/api-reference/endpoint/car-loan-rates/list",
+    href: "https://ratesapi.nz/openapi#tag/car-loan-rates/GET/api/v1/car-loan-rates",
   },
   {
     title: "Credit card rates",
     body: "Purchase rates, cash advances, fees, and balance transfer offers, grouped by issuer.",
     path: "/api/v1/credit-card-rates",
-    href: "https://ratesapi.nz/api-reference/endpoint/credit-card-rates/list",
+    href: "https://ratesapi.nz/openapi#tag/credit-card-rates/GET/api/v1/credit-card-rates",
   },
 ] as const;
 

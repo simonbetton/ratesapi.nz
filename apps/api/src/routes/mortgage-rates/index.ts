@@ -13,13 +13,20 @@ import {
 import type { Environment } from "../../lib/environment";
 import { createLogger } from "../../lib/logging";
 import { getMortgageTimeSeries } from "../../lib/mortgage-time-series";
+import { timeSeriesDescription } from "../../lib/openapi";
 import type { GetEnv } from "../../lib/routing";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
 import {
-  GenericApiError,
+  InstitutionIdPathParameter,
+  InstitutionIdQueryParameter,
+  InstitutionNotFoundError,
+  InvalidRequestError,
+  InvalidTimeSeriesRequestError,
+  ServerError,
   TermInMonthsParameter,
   TimeSeriesDateParameter,
+  TimeSeriesNotFoundError,
   validateTimeSeriesDateQuery,
 } from "../../models/api";
 import { MortgageRates } from "../../models/mortgage-rates";
@@ -44,12 +51,7 @@ const MortgageListQuery = t.Object(
 const MortgageTimeSeriesQuery = t.Object(
   {
     ...TimeSeriesDateParameter.properties,
-    institutionId: t.Optional(
-      t.String({
-        description: "Optional institution ID to filter time series data",
-        examples: ["institution:anz"],
-      })
-    ),
+    institutionId: t.Optional(InstitutionIdQueryParameter),
     termInMonths: t.Optional(TermInMonthsParameter),
   },
   { additionalProperties: false }
@@ -57,15 +59,7 @@ const MortgageTimeSeriesQuery = t.Object(
 
 const MortgageInstitutionParams = t.Object(
   {
-    institutionId: t.String({
-      examples: [
-        "institution:anz",
-        "institution:asb",
-        "institution:bnz",
-        "institution:kiwibank",
-        "institution:westpac",
-      ],
-    }),
+    institutionId: InstitutionIdPathParameter,
   },
   { additionalProperties: false }
 );
@@ -73,7 +67,7 @@ const MortgageInstitutionParams = t.Object(
 export function mortgageRatesRoutes(getEnv: GetEnv) {
   return new Elysia({ prefix: "/mortgage-rates" })
     .get(
-      "/",
+      "",
       async ({ query }) => {
         const result = await listMortgageRates(getEnv(), query);
         return jsonResult(result);
@@ -82,14 +76,20 @@ export function mortgageRatesRoutes(getEnv: GetEnv) {
         query: MortgageListQuery,
         response: {
           200: MortgageRatesResponse,
-          400: GenericApiError,
-          500: GenericApiError,
+          400: InvalidRequestError,
+          500: ServerError,
         },
         detail: {
           operationId: "listMortgageRates",
           tags: ["Mortgage Rates"],
-          summary: "List mortgage rates",
-          description: "Retrieve all mortgage rates for all institutions",
+          summary: "Get mortgage rates for all institutions",
+          description: [
+            "This endpoint gets the newest mortgage rates for all institutions. Each institution contains products, and each product contains rates.",
+            "",
+            "To get only the rates for one fixed term, send `termInMonths`.",
+            "",
+            "Use this endpoint to compare mortgage rates between institutions.",
+          ].join("\n"),
         },
       }
     )
@@ -103,14 +103,20 @@ export function mortgageRatesRoutes(getEnv: GetEnv) {
         query: MortgageTimeSeriesQuery,
         response: {
           200: MortgageRatesTimeSeriesResponse,
-          400: GenericApiError,
-          404: GenericApiError,
-          500: GenericApiError,
+          400: InvalidTimeSeriesRequestError,
+          404: TimeSeriesNotFoundError,
+          500: ServerError,
         },
         detail: {
           operationId: "getMortgageRatesTimeSeries",
           tags: ["Mortgage Rates"],
-          summary: "Get mortgage rates time series",
+          summary: "Get historical mortgage rates",
+          description: timeSeriesDescription({
+            rates: "mortgage rates",
+            filters: [
+              "To get only the data for one institution, send `institutionId`. To get only the rates for one fixed term, send `termInMonths`.",
+            ],
+          }),
         },
       }
     )
@@ -129,14 +135,19 @@ export function mortgageRatesRoutes(getEnv: GetEnv) {
         query: MortgageListQuery,
         response: {
           200: MortgageRatesResponse,
-          400: GenericApiError,
-          404: GenericApiError,
-          500: GenericApiError,
+          400: InvalidRequestError,
+          404: InstitutionNotFoundError,
+          500: ServerError,
         },
         detail: {
           operationId: "getMortgageRatesByInstitution",
           tags: ["Mortgage Rates"],
-          summary: "Get mortgage rates by institution",
+          summary: "Get mortgage rates for one institution",
+          description: [
+            "This endpoint gets the newest mortgage rates for one institution. The response has the same structure as the list endpoint, but `data` contains only one institution.",
+            "",
+            "To get only the rates for one fixed term, send `termInMonths`.",
+          ].join("\n"),
         },
       }
     );

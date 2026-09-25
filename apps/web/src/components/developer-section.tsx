@@ -114,7 +114,7 @@ export function QuestionsSection() {
             <code>date</code> for one day, or <code>startDate</code> and{" "}
             <code>endDate</code> together for a range. Responses include{" "}
             <code>availableDates</code>; coverage depends on stored snapshots.{" "}
-            <a href="https://ratesapi.nz/api-reference/endpoint/mortgage-rates/time-series">
+            <a href="https://ratesapi.nz/openapi#tag/mortgage-rates/GET/api/v1/mortgage-rates/time-series">
               See a mortgage history example.
             </a>
           </dd>
