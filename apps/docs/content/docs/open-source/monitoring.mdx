@@ -60,6 +60,8 @@ These workflows start for pull requests and for pushes to `main`:
 | `Fallow` | Static analysis of the code |
 | `React Doctor` | React diagnostics for the changed files |
 
+GitHub code scanning also runs CodeQL analysis through its default setup. This analysis does not have a workflow file in the repository.
+
 The `Deploy to Cloudflare` workflow starts on each push to `main`. It runs `bun run check` before it deploys.
 
 ## Add Checks

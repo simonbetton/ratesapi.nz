@@ -27,7 +27,8 @@ describe("docs MDX content", () => {
     expect(deployment).toContain('pattern = "ratesapi.nz/openapi/*"');
     // The development environment reuses the production D1 database ID.
     expect(localDevelopment).toContain("same database ID as production");
-    expect(monitoring).not.toContain("CodeQL");
+    // CodeQL runs through GitHub's default setup, not a workflow file.
+    expect(monitoring).toContain("CodeQL analysis through its default setup");
   });
 
   test("keeps API navigation free of duplicate introduction links", async () => {

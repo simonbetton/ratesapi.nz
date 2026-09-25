@@ -8,9 +8,7 @@ export function HeroSection() {
     <section className="hero" aria-labelledby="hero-title">
       <div className="page-container">
         <div className="hero-copy">
-          <p className="eyebrow">
-            New Zealand lending data
-          </p>
+          <p className="eyebrow">New Zealand lending data</p>
           <h1 id="hero-title">
             Build the product.
             <span className="text-pretty">We’ll bring the rates.</span>
