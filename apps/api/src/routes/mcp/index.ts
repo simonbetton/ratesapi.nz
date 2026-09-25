@@ -1,4 +1,7 @@
 // oxlint-disable max-classes-per-file -- small error types private to this route
+import { Type } from "@sinclair/typebox";
+import type { TObject } from "@sinclair/typebox";
+import { Value } from "@sinclair/typebox/value";
 import { Elysia } from "elysia";
 
 import type { ApiResult } from "../../lib/api-result";
@@ -40,15 +43,10 @@ interface JsonRpcResponse {
   error?: JsonRpcError;
 }
 
-interface McpTool {
+interface McpToolDefinition {
   name: string;
   description: string;
-  inputSchema: {
-    type: "object";
-    properties: Record<string, unknown>;
-    required?: string[];
-    additionalProperties: boolean;
-  };
+  inputSchema: TObject;
 }
 
 class JsonRpcResponseError extends Error {
@@ -82,244 +80,203 @@ const MCP_SERVER_INFO = {
   version: "1.0.0",
 };
 
-const MCP_TOOLS: McpTool[] = [
+// Each tool's discovery schema (advertised via tools/list) and its runtime
+// argument validation (enforced in handleToolCall) are derived from this one
+// TypeBox definition per tool, so the two can never drift apart.
+function optionalStringArg(description: string, examples: string[]) {
+  return Type.Optional(Type.String({ description, examples }));
+}
+
+function requiredStringArg(description: string, examples: string[]) {
+  return Type.String({ description, examples });
+}
+
+const MCP_TOOLS: McpToolDefinition[] = [
   {
     name: "list_mortgage_rates",
     description: "List latest mortgage rates for all institutions.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        termInMonths: {
-          type: "string",
-          description: "Optional mortgage term in months to filter by.",
-          examples: ["6", "12", "24", "36"],
-        },
+    inputSchema: Type.Object(
+      {
+        termInMonths: optionalStringArg(
+          "Optional mortgage term in months to filter by.",
+          ["6", "12", "24", "36"]
+        ),
       },
-      additionalProperties: false,
-    },
+      { additionalProperties: false }
+    ),
   },
   {
     name: "get_mortgage_rates_by_institution",
     description: "Get latest mortgage rates for a specific institution.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        institutionId: {
-          type: "string",
-          description: "Institution ID to filter by.",
-          examples: ["institution:anz"],
-        },
-        termInMonths: {
-          type: "string",
-          description: "Optional mortgage term in months to filter by.",
-          examples: ["6", "12", "24", "36"],
-        },
+    inputSchema: Type.Object(
+      {
+        institutionId: requiredStringArg("Institution ID to filter by.", [
+          "institution:anz",
+        ]),
+        termInMonths: optionalStringArg(
+          "Optional mortgage term in months to filter by.",
+          ["6", "12", "24", "36"]
+        ),
       },
-      required: ["institutionId"],
-      additionalProperties: false,
-    },
+      { additionalProperties: false }
+    ),
   },
   {
     name: "get_mortgage_rates_time_series",
     description: "Get mortgage rates time series for a date or range.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        date: {
-          type: "string",
-          description: "Date in YYYY-MM-DD format for historical data.",
-          examples: ["2025-03-01"],
-        },
-        startDate: {
-          type: "string",
-          description: "Start date in YYYY-MM-DD format for time series.",
-          examples: ["2025-01-01"],
-        },
-        endDate: {
-          type: "string",
-          description: "End date in YYYY-MM-DD format for time series.",
-          examples: ["2025-03-01"],
-        },
-        institutionId: {
-          type: "string",
-          description: "Optional institution ID to filter time series data.",
-          examples: ["institution:anz"],
-        },
-        termInMonths: {
-          type: "string",
-          description: "Optional mortgage term in months to filter by.",
-          examples: ["6", "12", "24", "36"],
-        },
+    inputSchema: Type.Object(
+      {
+        date: optionalStringArg(
+          "Date in YYYY-MM-DD format for historical data.",
+          ["2025-03-01"]
+        ),
+        startDate: optionalStringArg(
+          "Start date in YYYY-MM-DD format for time series.",
+          ["2025-01-01"]
+        ),
+        endDate: optionalStringArg(
+          "End date in YYYY-MM-DD format for time series.",
+          ["2025-03-01"]
+        ),
+        institutionId: optionalStringArg(
+          "Optional institution ID to filter time series data.",
+          ["institution:anz"]
+        ),
+        termInMonths: optionalStringArg(
+          "Optional mortgage term in months to filter by.",
+          ["6", "12", "24", "36"]
+        ),
       },
-      additionalProperties: false,
-    },
+      { additionalProperties: false }
+    ),
   },
   {
     name: "list_personal_loan_rates",
     description: "List latest personal loan rates for all institutions.",
-    inputSchema: {
-      type: "object",
-      properties: {},
-      additionalProperties: false,
-    },
+    inputSchema: Type.Object({}, { additionalProperties: false }),
   },
   {
     name: "get_personal_loan_rates_by_institution",
     description: "Get latest personal loan rates for a specific institution.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        institutionId: {
-          type: "string",
-          description: "Institution ID to filter by.",
-          examples: ["institution:anz"],
-        },
+    inputSchema: Type.Object(
+      {
+        institutionId: requiredStringArg("Institution ID to filter by.", [
+          "institution:anz",
+        ]),
       },
-      required: ["institutionId"],
-      additionalProperties: false,
-    },
+      { additionalProperties: false }
+    ),
   },
   {
     name: "get_personal_loan_rates_time_series",
     description: "Get personal loan rates time series for a date or range.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        date: {
-          type: "string",
-          description: "Date in YYYY-MM-DD format for historical data.",
-          examples: ["2025-03-01"],
-        },
-        startDate: {
-          type: "string",
-          description: "Start date in YYYY-MM-DD format for time series.",
-          examples: ["2025-01-01"],
-        },
-        endDate: {
-          type: "string",
-          description: "End date in YYYY-MM-DD format for time series.",
-          examples: ["2025-03-01"],
-        },
-        institutionId: {
-          type: "string",
-          description: "Optional institution ID to filter time series data.",
-          examples: ["institution:anz"],
-        },
+    inputSchema: Type.Object(
+      {
+        date: optionalStringArg(
+          "Date in YYYY-MM-DD format for historical data.",
+          ["2025-03-01"]
+        ),
+        startDate: optionalStringArg(
+          "Start date in YYYY-MM-DD format for time series.",
+          ["2025-01-01"]
+        ),
+        endDate: optionalStringArg(
+          "End date in YYYY-MM-DD format for time series.",
+          ["2025-03-01"]
+        ),
+        institutionId: optionalStringArg(
+          "Optional institution ID to filter time series data.",
+          ["institution:anz"]
+        ),
       },
-      additionalProperties: false,
-    },
+      { additionalProperties: false }
+    ),
   },
   {
     name: "list_car_loan_rates",
     description: "List latest car loan rates for all institutions.",
-    inputSchema: {
-      type: "object",
-      properties: {},
-      additionalProperties: false,
-    },
+    inputSchema: Type.Object({}, { additionalProperties: false }),
   },
   {
     name: "get_car_loan_rates_by_institution",
     description: "Get latest car loan rates for a specific institution.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        institutionId: {
-          type: "string",
-          description: "Institution ID to filter by.",
-          examples: ["institution:anz"],
-        },
+    inputSchema: Type.Object(
+      {
+        institutionId: requiredStringArg("Institution ID to filter by.", [
+          "institution:anz",
+        ]),
       },
-      required: ["institutionId"],
-      additionalProperties: false,
-    },
+      { additionalProperties: false }
+    ),
   },
   {
     name: "get_car_loan_rates_time_series",
     description: "Get car loan rates time series for a date or range.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        date: {
-          type: "string",
-          description: "Date in YYYY-MM-DD format for historical data.",
-          examples: ["2025-03-01"],
-        },
-        startDate: {
-          type: "string",
-          description: "Start date in YYYY-MM-DD format for time series.",
-          examples: ["2025-01-01"],
-        },
-        endDate: {
-          type: "string",
-          description: "End date in YYYY-MM-DD format for time series.",
-          examples: ["2025-03-01"],
-        },
-        institutionId: {
-          type: "string",
-          description: "Optional institution ID to filter time series data.",
-          examples: ["institution:anz"],
-        },
+    inputSchema: Type.Object(
+      {
+        date: optionalStringArg(
+          "Date in YYYY-MM-DD format for historical data.",
+          ["2025-03-01"]
+        ),
+        startDate: optionalStringArg(
+          "Start date in YYYY-MM-DD format for time series.",
+          ["2025-01-01"]
+        ),
+        endDate: optionalStringArg(
+          "End date in YYYY-MM-DD format for time series.",
+          ["2025-03-01"]
+        ),
+        institutionId: optionalStringArg(
+          "Optional institution ID to filter time series data.",
+          ["institution:anz"]
+        ),
       },
-      additionalProperties: false,
-    },
+      { additionalProperties: false }
+    ),
   },
   {
     name: "list_credit_card_rates",
     description: "List latest credit card rates for all issuers.",
-    inputSchema: {
-      type: "object",
-      properties: {},
-      additionalProperties: false,
-    },
+    inputSchema: Type.Object({}, { additionalProperties: false }),
   },
   {
     name: "get_credit_card_rates_by_issuer",
     description: "Get latest credit card rates for a specific issuer.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        issuerId: {
-          type: "string",
-          description: "Issuer ID to filter by.",
-          examples: ["issuer:anz"],
-        },
+    inputSchema: Type.Object(
+      {
+        issuerId: requiredStringArg("Issuer ID to filter by.", ["issuer:anz"]),
       },
-      required: ["issuerId"],
-      additionalProperties: false,
-    },
+      { additionalProperties: false }
+    ),
   },
   {
     name: "get_credit_card_rates_time_series",
     description: "Get credit card rates time series for a date or range.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        date: {
-          type: "string",
-          description: "Date in YYYY-MM-DD format for historical data.",
-          examples: ["2025-03-01"],
-        },
-        startDate: {
-          type: "string",
-          description: "Start date in YYYY-MM-DD format for time series.",
-          examples: ["2025-01-01"],
-        },
-        endDate: {
-          type: "string",
-          description: "End date in YYYY-MM-DD format for time series.",
-          examples: ["2025-03-01"],
-        },
-        issuerId: {
-          type: "string",
-          description: "Optional issuer ID to filter time series data.",
-          examples: ["issuer:anz"],
-        },
+    inputSchema: Type.Object(
+      {
+        date: optionalStringArg(
+          "Date in YYYY-MM-DD format for historical data.",
+          ["2025-03-01"]
+        ),
+        startDate: optionalStringArg(
+          "Start date in YYYY-MM-DD format for time series.",
+          ["2025-01-01"]
+        ),
+        endDate: optionalStringArg(
+          "End date in YYYY-MM-DD format for time series.",
+          ["2025-03-01"]
+        ),
+        issuerId: optionalStringArg(
+          "Optional issuer ID to filter time series data.",
+          ["issuer:anz"]
+        ),
       },
-      additionalProperties: false,
-    },
+      { additionalProperties: false }
+    ),
   },
 ];
+
+const MCP_TOOLS_BY_NAME = new Map(MCP_TOOLS.map((tool) => [tool.name, tool]));
 
 export function createMcpRoutes(getEnv: GetEnv) {
   return new Elysia({ prefix: "/mcp" }).post(
@@ -343,9 +300,27 @@ export function createMcpRoutes(getEnv: GetEnv) {
         return status(400, response);
       }
 
-      try {
-        const { id, hasId, method, params } = parseJsonRpcRequest(body);
+      // Parsing the envelope (jsonrpc/method/id shape) is tracked separately
+      // from dispatching the method: an invalid envelope must never be
+      // treated as a notification, and recovering an id for its error
+      // response must never itself throw.
+      let envelope: ReturnType<typeof parseJsonRpcRequest>;
 
+      try {
+        envelope = parseJsonRpcRequest(body);
+      } catch (error) {
+        const response: JsonRpcResponse = {
+          jsonrpc: "2.0",
+          id: recoverRequestId(body),
+          error: toJsonRpcError(error),
+        };
+
+        return response;
+      }
+
+      const { id, hasId, method, params } = envelope;
+
+      try {
         const result = await handleMethod(method, params, getEnv);
 
         if (!hasId) {
@@ -360,8 +335,8 @@ export function createMcpRoutes(getEnv: GetEnv) {
 
         return response;
       } catch (error) {
-        const { id, hasId } = parseRequestId(body);
-
+        // The envelope was valid, so a notification (no id) stays a
+        // notification even when the method or tool call fails.
         if (!hasId) {
           return status(204);
         }
@@ -425,6 +400,20 @@ function parseRequestId(body: unknown) {
   return { id: null, hasId };
 }
 
+// Best-effort id recovery for an envelope that failed to parse. Unlike
+// parseRequestId, this never throws: an id of the wrong type (or a body
+// that isn't even an object) simply recovers as null so the error handler
+// can always produce a response.
+function recoverRequestId(body: unknown): JsonRpcId {
+  if (!isRecord(body)) {
+    return null;
+  }
+
+  const { id } = body;
+
+  return typeof id === "string" || typeof id === "number" ? id : null;
+}
+
 function toJsonRpcError(error: unknown): JsonRpcError {
   if (error instanceof JsonRpcResponseError) {
     return {
@@ -486,15 +475,36 @@ async function handleToolCall(params: unknown, getEnv: GetEnv) {
     );
   }
 
-  if (args !== undefined && !isRecord(args)) {
-    throw new JsonRpcResponseError(
-      -32_602,
-      "Invalid params: arguments must be an object"
-    );
+  const tool = MCP_TOOLS_BY_NAME.get(name);
+
+  if (!tool) {
+    throw new JsonRpcResponseError(-32_601, `Tool not found: ${name}`);
+  }
+
+  // Optional arguments default to an empty object; everything else is
+  // checked against the tool's advertised inputSchema (the same TypeBox
+  // definition used to build its tools/list entry) before any database
+  // work happens. Value.Check/Value.Errors are used instead of
+  // Value.Parse/Clean/Convert so nothing is coerced or silently stripped:
+  // wrong types, unknown properties, arrays, and missing required fields
+  // are all rejected as-is.
+  const toolArguments = args === undefined ? {} : args;
+
+  if (!Value.Check(tool.inputSchema, toolArguments)) {
+    const [firstError] = Value.Errors(tool.inputSchema, toolArguments);
+    const detail = firstError
+      ? `${firstError.path || "/"} ${firstError.message}`
+      : "arguments do not match the tool's input schema";
+
+    throw new JsonRpcResponseError(-32_602, `Invalid params: ${detail}`);
   }
 
   try {
-    const result = await callTool(name, args ?? {}, getEnv());
+    const result = await callTool(
+      name,
+      toolArguments as Record<string, unknown>,
+      getEnv()
+    );
 
     return {
       content: [
@@ -648,19 +658,15 @@ function unwrapApiResult(result: ApiResult) {
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+// By the time these run, Value.Check has already confirmed the argument
+// (if present) matches the tool's string-typed schema field, so no numeric
+// coercion is needed or wanted here: a number is rejected earlier as an
+// invalid param, never silently stringified.
 function toOptionalString(value: unknown): string | undefined {
-  if (typeof value === "string") {
-    return value;
-  }
-
-  if (typeof value === "number") {
-    return value.toString();
-  }
-
-  return undefined;
+  return typeof value === "string" ? value : undefined;
 }
 
 function toRequiredString(value: unknown, name: string): string {
