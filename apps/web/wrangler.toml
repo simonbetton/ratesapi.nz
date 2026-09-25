@@ -1,10 +1,7 @@
 name = "ratesapi-nz-web"
 main = "src/server.ts"
 compatibility_date = "2025-06-01"
-# The landing page fetches the API during SSR. Without
-# global_fetch_strictly_public, fetch() to a hostname on this zone goes straight
-# to the origin and skips the API Worker's routes.
-compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+compatibility_flags = ["nodejs_compat"]
 
 # The landing page is the origin for both hostnames. The API and docs Workers
 # claim their paths with routes, which run before a Custom Domain Worker.

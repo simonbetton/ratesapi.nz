@@ -108,10 +108,6 @@ The file has the same `/openapi` routes for `www.ratesapi.nz`.
 
 The landing page Worker also sends the old docs paths (`/api-reference/*`, `/open-source/*`, and `/llms.txt`) to the same paths under `/docs`.
 
-### Fetch Requests to the Same Zone
-
-The landing page gets rates from the API during server rendering. The landing page Worker has the `global_fetch_strictly_public` compatibility flag. Without this flag, a `fetch()` to `www.ratesapi.nz` goes directly to the origin and does not go through the API Worker routes.
-
 ## Build
 
 Build each app in the same way as the CI build job:
