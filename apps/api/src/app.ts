@@ -1,14 +1,16 @@
 import { openapi, toOpenAPISchema } from "@elysia/openapi";
 import { cors } from "@elysiajs/cors";
-import { Elysia, type ElysiaAdapter } from "elysia";
+import type { ElysiaAdapter } from "elysia";
+import { Elysia } from "elysia";
+
 import { createLogger } from "./lib/logging";
 import {
-  type OpenApiServer,
   openApiDocumentation,
   openApiExclude,
   toOpenApiDocument,
 } from "./lib/openapi";
-import { type GetEnv } from "./lib/routing";
+import type { OpenApiServer } from "./lib/openapi";
+import type { GetEnv } from "./lib/routing";
 import {
   HealthErrorResponse,
   HealthResponse,
@@ -31,9 +33,9 @@ const productionServer: OpenApiServer = {
   description: "Production",
 };
 
-export type CreateAppOptions = {
+export interface CreateAppOptions {
   adapter?: ElysiaAdapter;
-};
+}
 
 export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
   const apiRoutes = new Elysia({ prefix: "/api/v1" })
@@ -42,7 +44,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
         origin: "*",
         credentials: false,
         maxAge: 600,
-      }),
+      })
     )
     .use(mortgageRatesRoutes(getEnv))
     .use(personalLoanRatesRoutes(getEnv))
@@ -55,7 +57,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
         try {
           const result = await getEnv()
             .RATESAPI_DB.prepare(
-              "SELECT data_type, last_updated FROM latest_data ORDER BY data_type ASC",
+              "SELECT data_type, last_updated FROM latest_data ORDER BY data_type ASC"
             )
             .all();
 
@@ -97,7 +99,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
           description:
             "This endpoint shows if the API can read its database. For each dataset, the response shows the time of the last data change. The API collects data each hour, but it saves a dataset only when the data changes. Use this endpoint to make sure that the API operates correctly.",
         },
-      },
+      }
     );
 
   const app = new Elysia({
@@ -111,19 +113,19 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
           servers: [productionServer],
         },
         exclude: openApiExclude,
-      }),
+      })
     )
     .onBeforeHandle({ as: "global" }, ({ request, set }) => {
       set.headers["x-request-id"] =
         request.headers.get("x-request-id") ?? crypto.randomUUID();
     })
     .onError({ as: "global" }, ({ code, error, status }) => {
-      if (code === "VALIDATION") {
-        validationLog.warn({ error }, "Request validation failed");
-        return status(400, invalidRequestParameters());
+      if (code !== "VALIDATION") {
+        return;
       }
 
-      return undefined;
+      validationLog.warn({ error }, "Request validation failed");
+      return status(400, invalidRequestParameters());
     })
     .use(apiRoutes)
     .get(
@@ -133,14 +135,14 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
 
         return toOpenApiDocument(
           generatedSchema,
-          getOpenApiServers(request, getEnv().ENVIRONMENT),
+          getOpenApiServers(request, getEnv().ENVIRONMENT)
         );
       },
       {
         detail: {
           hide: true,
         },
-      },
+      }
     );
 
   return app;
@@ -148,9 +150,9 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
 
 function getOpenApiServers(
   request: Request,
-  environment: string | undefined,
+  environment: string | undefined
 ): OpenApiServer[] {
-  const origin = new URL(request.url).origin;
+  const { origin } = new URL(request.url);
   const currentServer = {
     url: origin,
     description: environment === "production" ? "Production" : "Local",

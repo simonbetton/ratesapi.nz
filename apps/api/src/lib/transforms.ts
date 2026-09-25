@@ -6,7 +6,7 @@ export function toTitleFormat(str: string | null) {
   // Capitalize the first character
   let result = str.charAt(0).toUpperCase();
 
-  for (let i = 1; i < str.length; i++) {
+  for (let i = 1; i < str.length; i += 1) {
     // If the original character is uppercase, keep it, otherwise convert to lowercase
     result +=
       str.charAt(i) === str.charAt(i).toUpperCase()

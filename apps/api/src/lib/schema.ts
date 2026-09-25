@@ -1,10 +1,11 @@
-import { type SchemaOptions } from "@sinclair/typebox";
+import type { SchemaOptions } from "@sinclair/typebox";
 import { Value } from "@sinclair/typebox/value";
-import { type TSchema, t } from "elysia";
+import { t } from "elysia";
+import type { TSchema } from "elysia";
 
 export function parseSchema<Schema extends TSchema>(
   schema: Schema,
-  value: unknown,
+  value: unknown
 ): Schema["static"] {
   return Value.Parse<Schema, Schema["static"]>(schema, value);
 }
@@ -13,7 +14,7 @@ export function parseSchema<Schema extends TSchema>(
 // JSON Schema null type, which is invalid in the OpenAPI 3.1 document.
 export function nullable<Schema extends TSchema>(
   schema: Schema,
-  options: SchemaOptions = {},
+  options: SchemaOptions = {}
 ) {
   return t.Union([schema, t.Null()], options);
 }

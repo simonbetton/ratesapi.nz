@@ -1,19 +1,20 @@
 import { Elysia, t } from "elysia";
+
 import {
-  type ApiResult,
   apiResult,
   invalidRequestResult,
   jsonResult,
 } from "../../lib/api-result";
+import type { ApiResult } from "../../lib/api-result";
 import {
   loadLatestData,
   productionLatestDataFallbackUrl,
 } from "../../lib/data-loader";
-import { type Environment } from "../../lib/environment";
+import type { Environment } from "../../lib/environment";
 import { createLogger } from "../../lib/logging";
 import { getMortgageTimeSeries } from "../../lib/mortgage-time-series";
 import { timeSeriesDescription } from "../../lib/openapi";
-import { type GetEnv } from "../../lib/routing";
+import type { GetEnv } from "../../lib/routing";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
 import {
@@ -44,7 +45,7 @@ const MortgageListQuery = t.Object(
   {
     termInMonths: t.Optional(TermInMonthsParameter),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const MortgageTimeSeriesQuery = t.Object(
@@ -53,14 +54,14 @@ const MortgageTimeSeriesQuery = t.Object(
     institutionId: t.Optional(InstitutionIdQueryParameter),
     termInMonths: t.Optional(TermInMonthsParameter),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const MortgageInstitutionParams = t.Object(
   {
     institutionId: InstitutionIdPathParameter,
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export function mortgageRatesRoutes(getEnv: GetEnv) {
@@ -90,7 +91,7 @@ export function mortgageRatesRoutes(getEnv: GetEnv) {
             "Use this endpoint to compare mortgage rates between institutions.",
           ].join("\n"),
         },
-      },
+      }
     )
     .get(
       "/time-series",
@@ -117,7 +118,7 @@ export function mortgageRatesRoutes(getEnv: GetEnv) {
             ],
           }),
         },
-      },
+      }
     )
     .get(
       "/:institutionId",
@@ -125,7 +126,7 @@ export function mortgageRatesRoutes(getEnv: GetEnv) {
         const result = await getMortgageRatesByInstitution(
           getEnv(),
           params,
-          query,
+          query
         );
         return jsonResult(result);
       },
@@ -148,13 +149,13 @@ export function mortgageRatesRoutes(getEnv: GetEnv) {
             "To get only the rates for one fixed term, send `termInMonths`.",
           ].join("\n"),
         },
-      },
+      }
     );
 }
 
 export async function listMortgageRates(
   env: Environment,
-  query: MortgageListQuery = {},
+  query: MortgageListQuery = {}
 ): Promise<ApiResult> {
   if (hasInvalidTerm(query.termInMonths)) {
     return invalidRequestResult();
@@ -168,20 +169,20 @@ export async function listMortgageRates(
       {
         fallbackUrl: productionLatestDataFallbackUrl(
           "mortgage-rates",
-          env.ENVIRONMENT,
+          env.ENVIRONMENT
         ),
-      },
+      }
     );
 
     if (query.termInMonths) {
-      const termInMonths = parseInt(query.termInMonths, 10);
+      const termInMonths = Number.parseInt(query.termInMonths, 10);
       const filteredMortgageRates = mortgageRates.data.map((institution) => ({
         ...institution,
         products: institution.products
           .map((product) => ({
             ...product,
             rates: product.rates.filter(
-              (rate) => rate.termInMonths === termInMonths,
+              (rate) => rate.termInMonths === termInMonths
             ),
           }))
           .filter((product) => product.rates.length > 0),
@@ -211,7 +212,7 @@ export async function listMortgageRates(
 
 export async function getMortgageRatesTimeSeries(
   env: Environment,
-  query: MortgageTimeSeriesQuery = {},
+  query: MortgageTimeSeriesQuery = {}
 ): Promise<ApiResult> {
   if (
     !validateTimeSeriesDateQuery(query) ||
@@ -241,7 +242,7 @@ export async function getMortgageRatesTimeSeries(
 export async function getMortgageRatesByInstitution(
   env: Environment,
   params: MortgageInstitutionParams,
-  query: MortgageListQuery = {},
+  query: MortgageListQuery = {}
 ): Promise<ApiResult> {
   if (hasInvalidTerm(query.termInMonths)) {
     return invalidRequestResult();
@@ -255,14 +256,14 @@ export async function getMortgageRatesByInstitution(
       {
         fallbackUrl: productionLatestDataFallbackUrl(
           "mortgage-rates",
-          env.ENVIRONMENT,
+          env.ENVIRONMENT
         ),
-      },
+      }
     );
 
     const singleInstitution = mortgageRates.data.find(
       (institution) =>
-        institution.id.toLowerCase() === params.institutionId.toLowerCase(),
+        institution.id.toLowerCase() === params.institutionId.toLowerCase()
     );
 
     if (!singleInstitution) {
@@ -273,12 +274,12 @@ export async function getMortgageRatesByInstitution(
     }
 
     if (query.termInMonths) {
-      const termInMonths = parseInt(query.termInMonths, 10);
+      const termInMonths = Number.parseInt(query.termInMonths, 10);
       const filteredProducts = singleInstitution.products
         .map((product) => ({
           ...product,
           rates: product.rates.filter(
-            (rate) => rate.termInMonths === termInMonths,
+            (rate) => rate.termInMonths === termInMonths
           ),
         }))
         .filter((product) => product.rates.length > 0);
@@ -313,5 +314,5 @@ export async function getMortgageRatesByInstitution(
 }
 
 function hasInvalidTerm(termInMonths?: string): boolean {
-  return termInMonths !== undefined && !/^\d+$/.test(termInMonths);
+  return termInMonths !== undefined && !/^\d+$/u.test(termInMonths);
 }

@@ -23,16 +23,7 @@ jobs:
       - name: Check
         run: bun run check
 
-      - name: Build docs for Cloudflare
-        run: bun run build:docs
-
-      - name: Deploy API Worker to Cloudflare
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: deploy --config apps/api/wrangler.toml --minify
-
-      - name: Deploy docs Worker to Cloudflare
-        run: bun run deploy:docs
+      - name: Deploy API and docs Workers to Cloudflare
+        run: bun run deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

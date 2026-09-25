@@ -25,10 +25,10 @@ No API key is required.
 
 The OpenAPI reference is the full reference for each endpoint. It shows all parameters, response fields, and errors, and you can send requests from it.
 
-| Resource | URL |
-| --- | --- |
-| OpenAPI reference (Scalar) | [`/openapi`](/openapi) |
-| OpenAPI JSON | [`/openapi/json`](/openapi/json) |
+| Resource                   | URL                              |
+| -------------------------- | -------------------------------- |
+| OpenAPI reference (Scalar) | [`/openapi`](/openapi)           |
+| OpenAPI JSON               | [`/openapi/json`](/openapi/json) |
 
 ## AI Integration
 
@@ -68,13 +68,13 @@ Each response includes an `x-request-id` header. Send your own `x-request-id` wh
 
 ## Time Series Rules
 
-| Parameter | Description |
-| --- | --- |
-| `date` | Single historical snapshot date in `YYYY-MM-DD` format |
-| `startDate` | Range start date in `YYYY-MM-DD` format |
-| `endDate` | Range end date in `YYYY-MM-DD` format |
-| `institutionId` | Filter results by a specific institution ID |
-| `issuerId` | Filter credit card results by a specific issuer ID |
-| `termInMonths` | Filter mortgage results by term length |
+| Parameter       | Description                                            |
+| --------------- | ------------------------------------------------------ |
+| `date`          | Single historical snapshot date in `YYYY-MM-DD` format |
+| `startDate`     | Range start date in `YYYY-MM-DD` format                |
+| `endDate`       | Range end date in `YYYY-MM-DD` format                  |
+| `institutionId` | Filter results by a specific institution ID            |
+| `issuerId`      | Filter credit card results by a specific issuer ID     |
+| `termInMonths`  | Filter mortgage results by term length                 |
 
 Use either `date` or the `startDate` and `endDate` pair. Do not combine a single date with a range.

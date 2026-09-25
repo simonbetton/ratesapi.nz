@@ -1,4 +1,5 @@
 import { t } from "elysia";
+
 import { Issuer } from "./issuer";
 
 export const CreditCardRates = t.Object(
@@ -16,7 +17,7 @@ export const CreditCardRates = t.Object(
       examples: ["2021-08-01T00:00:00.000Z"],
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export type CreditCardRates = typeof CreditCardRates.static;

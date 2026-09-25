@@ -1,4 +1,5 @@
 import { t } from "elysia";
+
 import { nullable } from "../lib/schema";
 import { RateSchema } from "./rate";
 
@@ -12,7 +13,7 @@ const CarLoanRate = t.Object(
       {
         description:
           "The type of loan, for example, `Secured` or `Unsecured`. The value is `null` if the source does not give a type.",
-      },
+      }
     ),
     condition: nullable(
       t.String({
@@ -21,10 +22,10 @@ const CarLoanRate = t.Object(
       {
         description:
           "A condition for the rate, for example, a loan amount or a loan term. The value is `null` if the rate has no condition.",
-      },
+      }
     ),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const CarLoanProduct = t.Object(
@@ -42,7 +43,7 @@ const CarLoanProduct = t.Object(
       description: "The rates for this product.",
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const CarLoanInstitution = t.Object(
@@ -61,7 +62,7 @@ const CarLoanInstitution = t.Object(
       description: "The car loan products of this institution.",
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const CarLoanRates = t.Object(
@@ -79,7 +80,7 @@ export const CarLoanRates = t.Object(
       examples: ["2021-08-01T00:00:00.000Z"],
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export type CarLoanRate = typeof CarLoanRate.static;

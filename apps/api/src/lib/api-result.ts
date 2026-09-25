@@ -1,9 +1,9 @@
 import { invalidRequestParameters } from "../models/api";
 
-export type ApiResult<T = unknown> = {
+export interface ApiResult<T = unknown> {
   status: number;
   body: T;
-};
+}
 
 export function apiResult<T>(status: number, body: T): ApiResult<T> {
   return { status, body };

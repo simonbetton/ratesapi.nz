@@ -1,15 +1,45 @@
 {
-  "cSpell.words": ["amex", "hono", "Kiwibank", "openapi", "pino"],
+  "cSpell.words": [
+    "amex",
+    "domhandler",
+    "elysia",
+    "elysiajs",
+    "fumadocs",
+    "hono",
+    "Kiwibank",
+    "openapi",
+    "opennextjs",
+    "pino",
+    "typebox",
+    "ultracite"
+  ],
   "editor.formatOnSave": true,
   "[javascript]": {
-    "editor.defaultFormatter": "biomejs.biome"
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
   },
   "[typescript]": {
-    "editor.defaultFormatter": "biomejs.biome"
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll.biome": "explicit",
-    "source.organizeImports.biome": "explicit"
+    "source.fixAll.oxc": "explicit"
   },
   "typescript.tsdk": "node_modules/typescript/lib"
 }

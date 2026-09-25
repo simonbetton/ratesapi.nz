@@ -1,10 +1,12 @@
+import { setTimeout as sleep } from "node:timers/promises";
+
 import { createLogger } from "./logging";
 
-export type RetryOptions = {
+export interface RetryOptions {
   retries: number;
   retryDelay: number;
-  retryOn: Array<number>;
-};
+  retryOn: number[];
+}
 
 export type FetchOptions = RequestInit & {
   retryOptions?: RetryOptions;
@@ -16,13 +18,13 @@ export type DefaultFetchOptions = FetchOptions & {
 
 export function createHttpClient(
   name: string,
-  defaultOptions?: DefaultFetchOptions,
+  defaultOptions?: DefaultFetchOptions
 ) {
   const log = createLogger(name);
 
   const fetchWithRetry = async (
     url: string,
-    requestOptions: FetchOptions = {},
+    requestOptions: FetchOptions = {}
   ): Promise<Response> => {
     const composedUrl = defaultOptions?.prefixUrl
       ? new URL(url, defaultOptions.prefixUrl).toString()
@@ -49,7 +51,7 @@ export function createHttpClient(
             headers: mergedOptions.headers,
             method: mergedOptions.method,
           },
-          `${name}: ${mergedOptions.method ?? "GET"} ${composedUrl}`,
+          `${name}: ${mergedOptions.method ?? "GET"} ${composedUrl}`
         );
 
         if (response.ok) {
@@ -59,7 +61,7 @@ export function createHttpClient(
         if (retryOn.includes(response.status) && retries > 0) {
           log.info(`${name}: Retrying after status code: ${response.status}`);
           retries -= 1;
-          await new Promise((resolve) => setTimeout(resolve, retryDelay));
+          await sleep(retryDelay);
           return executeFetch();
         }
 
@@ -68,7 +70,7 @@ export function createHttpClient(
         if (retries > 0) {
           log.info(`${name}: Retrying due to error: ${error}`);
           retries -= 1;
-          await new Promise((resolve) => setTimeout(resolve, retryDelay));
+          await sleep(retryDelay);
           return executeFetch();
         }
 
@@ -76,7 +78,7 @@ export function createHttpClient(
       }
     };
 
-    return executeFetch();
+    return await executeFetch();
   };
 
   return fetchWithRetry;

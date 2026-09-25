@@ -1,4 +1,6 @@
-import { type TSchema, t } from "elysia";
+import { t } from "elysia";
+import type { TSchema } from "elysia";
+
 import { TimestampedFields } from "./api";
 import { CarLoanRates } from "./car-loan-rates";
 import { CreditCardRates } from "./credit-card-rates";
@@ -13,7 +15,7 @@ export const MortgageRatesResponse = t.Object(
   {
     additionalProperties: false,
     description: "The newest mortgage rates.",
-  },
+  }
 );
 
 export const PersonalLoanRatesResponse = t.Object(
@@ -24,7 +26,7 @@ export const PersonalLoanRatesResponse = t.Object(
   {
     additionalProperties: false,
     description: "The newest personal loan rates.",
-  },
+  }
 );
 
 export const CarLoanRatesResponse = t.Object(
@@ -35,7 +37,7 @@ export const CarLoanRatesResponse = t.Object(
   {
     additionalProperties: false,
     description: "The newest car loan rates.",
-  },
+  }
 );
 
 export const CreditCardRatesResponse = t.Object(
@@ -46,12 +48,12 @@ export const CreditCardRatesResponse = t.Object(
   {
     additionalProperties: false,
     description: "The newest credit card rates and fees.",
-  },
+  }
 );
 
 function timeSeriesResponse<Type extends string, Snapshot extends TSchema>(
   type: Type,
-  snapshot: Snapshot,
+  snapshot: Snapshot
 ) {
   return t.Object(
     {
@@ -69,7 +71,7 @@ function timeSeriesResponse<Type extends string, Snapshot extends TSchema>(
         {
           description:
             "All dates that have a snapshot, in YYYY-MM-DD format. The list starts with the oldest date.",
-        },
+        }
       ),
       ...TimestampedFields,
       message: t.Optional(
@@ -79,33 +81,33 @@ function timeSeriesResponse<Type extends string, Snapshot extends TSchema>(
           examples: [
             "Please specify a date or date range to retrieve time series data",
           ],
-        }),
+        })
       ),
     },
     {
       additionalProperties: false,
       description:
         "The snapshots for the dates in the request. If the request has no dates, `timeSeries` is empty and `availableDates` shows the dates that you can request.",
-    },
+    }
   );
 }
 
 export const MortgageRatesTimeSeriesResponse = timeSeriesResponse(
   "MortgageRatesTimeSeries",
-  MortgageRates,
+  MortgageRates
 );
 
 export const PersonalLoanRatesTimeSeriesResponse = timeSeriesResponse(
   "PersonalLoanRatesTimeSeries",
-  PersonalLoanRates,
+  PersonalLoanRates
 );
 
 export const CarLoanRatesTimeSeriesResponse = timeSeriesResponse(
   "CarLoanRatesTimeSeries",
-  CarLoanRates,
+  CarLoanRates
 );
 
 export const CreditCardRatesTimeSeriesResponse = timeSeriesResponse(
   "CreditCardRatesTimeSeries",
-  CreditCardRates,
+  CreditCardRates
 );

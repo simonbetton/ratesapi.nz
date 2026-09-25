@@ -1,13 +1,18 @@
-import { type CheerioAPI, load } from "cheerio";
-import { type Element } from "domhandler";
+import { load } from "cheerio";
+import type { CheerioAPI } from "cheerio";
+import type { Element } from "domhandler";
 import ora from "ora";
+
 import { generateId } from "../src/lib/generate-id";
 import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
 import { parseSchema } from "../src/lib/schema";
 import { toTitleFormat } from "../src/lib/transforms";
 import { CreditCardRates } from "../src/models/credit-card-rates";
-import { type Issuer } from "../src/models/issuer";
-import { type Plan } from "../src/models/plan";
+import type { Issuer } from "../src/models/issuer";
+import type { Plan } from "../src/models/plan";
+import { parseOptionalNumber } from "./parse-optional-number";
+import { assertScrapeHasRates, assertTableHasRows } from "./scrape-guards";
+import { runScrape } from "./scrape-runner";
 import { hasDataChanged, loadFromD1, saveToD1 } from "./utils";
 
 const config: {
@@ -33,77 +38,94 @@ const interestScraperAPI = InterestScraperAPI();
 
 // The main function to scrape and save credit card rates
 async function main() {
-  // Load current rates from D1
-  let currentRates: CreditCardRates | null = null;
-  const loading = ora("Loading current data from D1").start();
-  try {
-    currentRates = await loadFromD1("credit-card-rates", CreditCardRates);
-    loading.succeed("Loaded current data").stop();
-  } catch (error) {
-    loading.fail("Failed to load current data").stop();
-    console.error("Failed to load current data", error);
-    // Continue with the process even if loading fails
-  }
+  const outcome = await runScrape<CreditCardRates>({
+    loadCurrent: async () => {
+      const loading = ora("Loading current data from D1").start();
+      try {
+        const currentRates = await loadFromD1(
+          "credit-card-rates",
+          CreditCardRates
+        );
+        loading.succeed("Loaded current data").stop();
+        return currentRates;
+      } catch (error) {
+        loading.fail("Failed to load current data").stop();
+        console.error("Failed to load current data", error);
+        throw error;
+      }
+    },
+    fetchHtml: async () => {
+      const gather = ora("Scraping credit card rates").start();
+      try {
+        const response = await interestScraperAPI.getCreditCardRatesPage();
+        if (!response) {
+          throw new Error(`Failed to fetch credit card rates`);
+        }
+        gather.succeed("Scraped credit card rates").stop();
+        return response;
+      } catch (error) {
+        gather.fail("Failed to scrape credit card rates").stop();
+        console.error("Failed to scrape credit card rates", error);
+        throw error;
+      }
+    },
+    parseAndValidate: (data) => {
+      const handle = ora("Extracting and Validating").start();
+      try {
+        const $ = load(data);
+        assertTableHasRows(
+          $(config.tableSelector).length,
+          config.tableSelector
+        );
+        const unvalidatedData = getModelExtractedFromDOM($);
+        const validatedModel = parseSchema(CreditCardRates, {
+          type: "CreditCardRates",
+          data: unvalidatedData,
+          lastUpdated: new Date().toISOString(),
+        });
+        assertScrapeHasRates(validatedModel);
+        handle
+          .succeed(
+            `Extracted and Validated ${validatedModel.data.length} results`
+          )
+          .stop();
+        return validatedModel;
+      } catch (error) {
+        handle.fail("Failed to extract and/or validate").stop();
+        console.error("Failed to extract and/or validate", error);
+        throw error;
+      }
+    },
+    hasChanged: hasDataChanged,
+    save: async (validatedModel) => {
+      const saveDb = ora("Saving data to D1").start();
+      try {
+        const saved = await saveToD1(validatedModel, "credit-card-rates");
+        if (saved) {
+          saveDb.succeed("Data saved to D1 database").stop();
+        } else {
+          saveDb.fail("Failed to save to D1").stop();
+        }
+        return saved;
+      } catch (error) {
+        saveDb.fail("Failed to save data").stop();
+        console.error("Failed to save data", error);
+        throw error;
+      }
+    },
+  });
 
-  // Scrape new data
-  let data: string = "";
-  const gather = ora("Scraping credit card rates").start();
-  try {
-    const response = await interestScraperAPI.getCreditCardRatesPage();
-    if (!response) {
-      throw new Error(`Failed to fetch credit card rates`);
-    }
-    data = response;
-    gather.succeed("Scraped credit card rates").stop();
-  } catch (error) {
-    gather.fail("Failed to scrape credit card rates").stop();
-    console.error("Failed to scrape credit card rates", error);
-    return;
-  }
-
-  // Extract and validate data
-  let validatedModel: CreditCardRates;
-  const handle = ora("Extracting and Validating").start();
-  try {
-    const $ = load(data);
-    const unvalidatedData = getModelExtractedFromDOM($);
-    validatedModel = parseSchema(CreditCardRates, {
-      type: "CreditCardRates",
-      data: unvalidatedData,
-      lastUpdated: new Date().toISOString(),
-    });
-    handle
-      .succeed(`Extracted and Validated ${validatedModel.data.length} results`)
-      .stop();
-  } catch (error) {
-    handle.fail("Failed to extract and/or validate").stop();
-    console.error("Failed to extract and/or validate", error);
-    throw error;
-  }
-
-  // Check if the rates have changed
-  if (currentRates && !hasDataChanged(validatedModel, currentRates)) {
+  if (outcome.status === "unchanged") {
     const noChange = ora("No changes detected").start();
     noChange.succeed("No changes detected").stop();
-    return;
-  }
-
-  // Save new data to D1 database
-  const saveDb = ora("Saving data to D1").start();
-  try {
-    // Save to D1 database
-    const saved = await saveToD1(validatedModel, "credit-card-rates");
-
-    saveDb
-      .succeed(saved ? "Data saved to D1 database" : "Failed to save to D1")
-      .stop();
-  } catch (error) {
-    saveDb.fail("Failed to save data").stop();
-    console.error("Failed to save data", error);
-    return;
   }
 }
-main().catch(console.error);
+try {
+  await main();
+} catch (error) {
+  console.error(error);
+  process.exitCode = 1;
+}
 
 function getModelExtractedFromDOM($: CheerioAPI): Issuer[] {
   const issuers: Issuer[] = [];
@@ -111,7 +133,7 @@ function getModelExtractedFromDOM($: CheerioAPI): Issuer[] {
   let currentIssuer: Issuer | null = null;
 
   for (const row of rows) {
-    const cells = Array.from($(row).find("td"));
+    const cells = [...$(row).find("td")];
     const isPrimaryRow = $(row).hasClass("primary_row");
     if (isPrimaryRow && cells[0]) {
       currentIssuer = asIssuer($, cells[0]);
@@ -127,17 +149,18 @@ function getModelExtractedFromDOM($: CheerioAPI): Issuer[] {
 
 function addPlanTo(issuer: Issuer, $: CheerioAPI, cells: Element[]) {
   const productName = getPlanName($, cells);
-  const interestFreePeriodInMonths =
-    parseFloat($(cells[2]).text().trim()) || null;
-  const primaryFeeNZD = parseFloat($(cells[3]).text().trim()) || null;
-  const balanceTransferRate = parseFloat($(cells[4]).text().trim()) || null;
+  const interestFreePeriodInMonths = parseOptionalNumber(
+    $(cells[2]).text().trim()
+  );
+  const primaryFeeNZD = parseOptionalNumber($(cells[3]).text().trim());
+  const balanceTransferRate = parseOptionalNumber($(cells[4]).text().trim());
   const balanceTransferPeriod = toTitleFormat(
     String($(cells[5]).text().trim())
       .replace("mths", "months")
-      .replace("bal tsfrd", "balance transferred") || null,
+      .replace("bal tsfrd", "balance transferred") || null
   );
-  const cashAdvanceRate = parseFloat($(cells[6]).text().trim()) || null;
-  const purchaseRate = parseFloat($(cells[7]).text().trim()) || null;
+  const cashAdvanceRate = parseOptionalNumber($(cells[6]).text().trim());
+  const purchaseRate = parseOptionalNumber($(cells[7]).text().trim());
 
   const plan: Plan = {
     id: generateId(["plan", issuer.name, productName]),
@@ -165,9 +188,11 @@ function asIssuer($: CheerioAPI, cell: Element): Issuer {
 function getIssuerName($: CheerioAPI, cell: Element): string {
   const imgElement = $(cell).find("img");
   if (imgElement) {
-    return imgElement.attr("alt")?.trim() ?? $(cell).text().trim(); // Use alt text if image exists
+    // Use alt text if image exists
+    return imgElement.attr("alt")?.trim() ?? $(cell).text().trim();
   }
-  return $(cell).text().trim(); // Fallback to innerText
+  // Fallback to innerText
+  return $(cell).text().trim();
 }
 
 function getPlanName($: CheerioAPI, cells: Element[]): string {
@@ -178,9 +203,12 @@ function normalizePlanName(name: string) {
   if (config.alternativeSpecialPlanNames.includes(name)) {
     return "Special";
   }
-  return name
-    .replace(/airpoint /i, "Airpoints ")
-    .replace(/onesmart/i, "OneSmart")
-    .replace("FarmersCard", "Farmers Finance Card")
-    .replace("Warehose", "Warehouse"); // Typo in the source
+  return (
+    name
+      .replace(/airpoint /iu, "Airpoints ")
+      .replace(/onesmart/iu, "OneSmart")
+      .replace("FarmersCard", "Farmers Finance Card")
+      // Typo in the source
+      .replace("Warehose", "Warehouse")
+  );
 }

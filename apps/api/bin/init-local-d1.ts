@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 const databaseName = process.env.D1_DATABASE_NAME?.trim() || "ratesapi-data";
 const schemaPath = fileURLToPath(new URL("../schema.sql", import.meta.url));
 const wranglerConfigPath = fileURLToPath(
-  new URL("../wrangler.toml", import.meta.url),
+  new URL("../wrangler.toml", import.meta.url)
 );
 
 execFileSync(
@@ -22,5 +22,5 @@ execFileSync(
   ],
   {
     stdio: "inherit",
-  },
+  }
 );

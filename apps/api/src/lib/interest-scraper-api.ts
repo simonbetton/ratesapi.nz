@@ -1,11 +1,11 @@
 import { createHttpClient } from "./http-client";
 
-export type InterestScraperAPI = {
-  getCarLoanRatesPage(): Promise<string | undefined>;
-  getCreditCardRatesPage(): Promise<string | undefined>;
-  getMortgageRatesPage(): Promise<string | undefined>;
-  getPersonalLoanRatesPage(): Promise<string | undefined>;
-};
+export interface InterestScraperAPI {
+  getCarLoanRatesPage: () => Promise<string | undefined>;
+  getCreditCardRatesPage: () => Promise<string | undefined>;
+  getMortgageRatesPage: () => Promise<string | undefined>;
+  getPersonalLoanRatesPage: () => Promise<string | undefined>;
+}
 
 export function InterestScraperAPI(): InterestScraperAPI {
   const httpClient = createHttpClient("InterestScraperAPI", {

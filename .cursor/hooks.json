@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "postToolUse": [],
+    "stop": [
+      {
+        "command": "node .cursor/hooks/react-doctor.mjs",
+        "timeout": 120
+      }
+    ]
+  }
+}

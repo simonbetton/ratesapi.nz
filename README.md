@@ -18,8 +18,7 @@ This project uses [Bun](https://bun.sh/), [Elysia](https://elysiajs.com/), [Clou
 
 Cloudflare Workers is a JavaScript edge runtime on Cloudflare CDN, while D1 is Cloudflare's serverless SQL database that integrates seamlessly with Workers.
 
-You can develop the application locally and publish it with a few commands using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
-Wrangler includes a transcompiler, so we can write directly in TypeScript.
+You can develop the application locally and publish it with a few commands using [Wrangler](https://developers.cloudflare.com/workers/wrangler/). Wrangler includes a transcompiler, so we can write directly in TypeScript.
 
 ## Documentation
 
@@ -31,10 +30,10 @@ Visit the [documentation](https://ratesapi.nz/) for more information.
 # Install dependencies
 bun i
 
-# Run locally
+# Run the API, docs, and web apps locally
 bun run dev
 
-# Deploy to Cloudflare Workers
+# Deploy the API and docs to Cloudflare Workers
 bun run deploy
 ```
 

@@ -1,31 +1,29 @@
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { type TSchema } from "elysia";
+
+import type { TSchema } from "elysia";
 import ora from "ora";
-import {
-  type DataType,
-  fromSavableJson,
-  type SupportedModels,
-  toSavableJson,
-} from "../src/lib/data-loader";
+
+import { fromSavableJson, toSavableJson } from "../src/lib/data-loader";
+import type { DataType, SupportedModels } from "../src/lib/data-loader";
 import { parseSchema } from "../src/lib/schema";
 
-type D1Target = {
+interface D1Target {
   databaseName: string;
   flags: string[];
-};
+}
 
-type D1RunOptions = {
+interface D1RunOptions {
   json?: boolean;
-};
+}
 
 const wranglerConfigPath = fileURLToPath(
-  new URL("../wrangler.toml", import.meta.url),
+  new URL("../wrangler.toml", import.meta.url)
 );
 
 export function hasDataChanged(
   newData: SupportedModels,
-  oldData: SupportedModels,
+  oldData: SupportedModels
 ): boolean {
   return JSON.stringify(newData.data) !== JSON.stringify(oldData.data);
 }
@@ -34,14 +32,16 @@ export function hasDataChanged(
  * Directly save data to D1 using Wrangler.
  * This is the preferred method for saving data in CI environments.
  */
+// Wrangler runs synchronously today, but callers treat D1 I/O as async.
+// oxlint-disable-next-line require-await
 export async function saveToD1(
   data: SupportedModels,
-  dataType: DataType,
+  dataType: DataType
 ): Promise<boolean> {
   const envCheck = ora("Checking environment").start();
   envCheck
     .info(
-      `CI=${process.env.CI}, GITHUB_ACTIONS=${process.env.GITHUB_ACTIONS}, D1_DATABASE_NAME=${process.env.D1_DATABASE_NAME ? "set" : "not set"}`,
+      `CI=${process.env.CI}, GITHUB_ACTIONS=${process.env.GITHUB_ACTIONS}, D1_DATABASE_NAME=${process.env.D1_DATABASE_NAME ? "set" : "not set"}`
     )
     .stop();
 
@@ -51,40 +51,40 @@ export async function saveToD1(
     const noDbSpinner = ora("Checking D1 database name").start();
     noDbSpinner
       .fail(
-        "D1_DATABASE_NAME not set. Set this environment variable to enable database updates",
+        "D1_DATABASE_NAME not set. Set this environment variable to enable database updates"
       )
       .stop();
     return false;
   }
 
   try {
-    const timestamp = new Date().toISOString().split("T")[0];
+    const [timestamp] = new Date().toISOString().split("T");
     const dataJson = toSavableJson(data);
 
     const prepareSpinner = ora("Preparing data for D1").start();
     prepareSpinner
       .succeed(
-        `Data prepared for SQL insertion (${dataJson.length} characters, base64 encoded)`,
+        `Data prepared for SQL insertion (${dataJson.length} characters, base64 encoded)`
       )
       .stop();
 
     const testSpinner = ora(
-      `Testing D1 database access for ${formatTarget(target)}`,
+      `Testing D1 database access for ${formatTarget(target)}`
     ).start();
     const testResult = runWranglerD1(
       target,
-      "SELECT count(*) FROM sqlite_master",
+      "SELECT count(*) FROM sqlite_master"
     );
     testSpinner
       .succeed(`D1 access test successful: ${testResult.trim()}`)
       .stop();
 
     const historySpinner = ora(
-      `Saving historical data for ${dataType}`,
+      `Saving historical data for ${dataType}`
     ).start();
     runWranglerD1(
       target,
-      `INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES ('${dataType}', '${timestamp}', '${dataJson}')`,
+      `INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES ('${dataType}', '${timestamp}', '${dataJson}')`
     );
     historySpinner
       .succeed(`Historical data saved for ${dataType} on ${timestamp}`)
@@ -93,14 +93,14 @@ export async function saveToD1(
     const latestSpinner = ora(`Updating latest data for ${dataType}`).start();
     runWranglerD1(
       target,
-      `INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES ('${dataType}', '${dataJson}', CURRENT_TIMESTAMP)`,
+      `INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES ('${dataType}', '${dataJson}', CURRENT_TIMESTAMP)`
     );
     latestSpinner.succeed(`Latest data updated for ${dataType}`).stop();
 
     const verifySpinner = ora("Verifying data was saved").start();
     const verifyResult = runWranglerD1(
       target,
-      `SELECT data_type, last_updated FROM latest_data WHERE data_type='${dataType}'`,
+      `SELECT data_type, last_updated FROM latest_data WHERE data_type='${dataType}'`
     );
     verifySpinner
       .succeed(`Verification successful: ${verifyResult.trim()}`)
@@ -123,9 +123,11 @@ export async function saveToD1(
 /**
  * Load data from D1 database.
  */
+// Wrangler runs synchronously today, but callers treat D1 I/O as async.
+// oxlint-disable-next-line require-await
 export async function loadFromD1<Schema extends TSchema>(
   dataType: DataType,
-  schema: Schema,
+  schema: Schema
 ): Promise<Schema["static"] | null> {
   const envCheck = ora("Checking D1 environment").start();
   const isCI = process.env.CI === "true" || Boolean(process.env.GITHUB_ACTIONS);
@@ -140,12 +142,12 @@ export async function loadFromD1<Schema extends TSchema>(
 
   try {
     const loadSpinner = ora(
-      `Loading latest data for ${dataType} from D1`,
+      `Loading latest data for ${dataType} from D1`
     ).start();
     const result = runWranglerD1(
       target,
       `SELECT data FROM latest_data WHERE data_type = '${dataType}'`,
-      { json: true },
+      { json: true }
     );
 
     loadSpinner.succeed(`Data loaded from D1 database for ${dataType}`).stop();
@@ -173,7 +175,7 @@ function getD1Target(): D1Target | null {
     return null;
   }
 
-  const [databaseName, ...legacyFlags] = rawDatabaseName.split(/\s+/);
+  const [databaseName, ...legacyFlags] = rawDatabaseName.split(/\s+/u);
 
   if (!databaseName) {
     return null;
@@ -195,7 +197,7 @@ function getD1Target(): D1Target | null {
 function runWranglerD1(
   target: D1Target,
   command: string,
-  options: D1RunOptions = {},
+  options: D1RunOptions = {}
 ): string {
   const args = [
     "wrangler",
@@ -214,7 +216,7 @@ function runWranglerD1(
   }
 
   return execFileSync("npx", args, {
-    encoding: "utf8",
+    encoding: "utf-8",
     stdio: ["ignore", "pipe", "pipe"],
   });
 }

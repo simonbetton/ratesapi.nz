@@ -1,4 +1,5 @@
 import { t } from "elysia";
+
 import { nullable } from "../lib/schema";
 import { RateSchema } from "./rate";
 
@@ -51,10 +52,10 @@ const MortgageRate = t.Object(
       {
         description:
           "The fixed term in months. The value is `null` for a variable floating rate.",
-      },
+      }
     ),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const MortgageProduct = t.Object(
@@ -73,7 +74,7 @@ const MortgageProduct = t.Object(
         "The rates for this product. Each rate has a different term.",
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const MortgageInstitution = t.Object(
@@ -92,7 +93,7 @@ const MortgageInstitution = t.Object(
       description: "The mortgage products of this institution.",
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const MortgageRates = t.Object(
@@ -110,7 +111,7 @@ export const MortgageRates = t.Object(
       examples: ["2021-08-01T00:00:00.000Z"],
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export type MortgageRate = typeof MortgageRate.static;

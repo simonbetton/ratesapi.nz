@@ -1,19 +1,20 @@
 import { Elysia, t } from "elysia";
+
 import {
-  type ApiResult,
   apiResult,
   invalidRequestResult,
   jsonResult,
 } from "../../lib/api-result";
+import type { ApiResult } from "../../lib/api-result";
 import {
   loadLatestData,
   productionLatestDataFallbackUrl,
 } from "../../lib/data-loader";
 import { getEntityTimeSeries } from "../../lib/entity-time-series";
-import { type Environment } from "../../lib/environment";
+import type { Environment } from "../../lib/environment";
 import { createLogger } from "../../lib/logging";
 import { timeSeriesDescription } from "../../lib/openapi";
-import { type GetEnv } from "../../lib/routing";
+import type { GetEnv } from "../../lib/routing";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
 import {
@@ -42,14 +43,14 @@ const CreditCardTimeSeriesQuery = t.Object(
     ...TimeSeriesDateParameter.properties,
     issuerId: t.Optional(IssuerIdQueryParameter),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const CreditCardIssuerParams = t.Object(
   {
     issuerId: IssuerIdPathParameter,
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export function creditCardRatesRoutes(getEnv: GetEnv) {
@@ -77,7 +78,7 @@ export function creditCardRatesRoutes(getEnv: GetEnv) {
             "Use this endpoint to compare credit cards between issuers.",
           ].join("\n"),
         },
-      },
+      }
     )
     .get(
       "/time-series",
@@ -102,7 +103,7 @@ export function creditCardRatesRoutes(getEnv: GetEnv) {
             filters: ["To get only the data for one issuer, send `issuerId`."],
           }),
         },
-      },
+      }
     )
     .get(
       "/:issuerId",
@@ -124,12 +125,12 @@ export function creditCardRatesRoutes(getEnv: GetEnv) {
           description:
             "This endpoint gets the newest credit card rates for one issuer. The response has the same structure as the list endpoint, but `data` contains only one issuer.",
         },
-      },
+      }
     );
 }
 
 export async function listCreditCardRates(
-  env: Environment,
+  env: Environment
 ): Promise<ApiResult> {
   try {
     const creditCardRates = await loadLatestData(
@@ -139,9 +140,9 @@ export async function listCreditCardRates(
       {
         fallbackUrl: productionLatestDataFallbackUrl(
           "credit-card-rates",
-          env.ENVIRONMENT,
+          env.ENVIRONMENT
         ),
-      },
+      }
     );
 
     return apiResult(200, {
@@ -160,7 +161,7 @@ export async function listCreditCardRates(
 
 export async function getCreditCardRatesTimeSeries(
   env: Environment,
-  query: CreditCardTimeSeriesQuery = {},
+  query: CreditCardTimeSeriesQuery = {}
 ): Promise<ApiResult> {
   if (!validateTimeSeriesDateQuery(query)) {
     return invalidRequestResult();
@@ -193,7 +194,7 @@ export async function getCreditCardRatesTimeSeries(
 
 export async function getCreditCardRatesByIssuer(
   env: Environment,
-  params: CreditCardIssuerParams,
+  params: CreditCardIssuerParams
 ): Promise<ApiResult> {
   try {
     const creditCardRates = await loadLatestData(
@@ -203,13 +204,13 @@ export async function getCreditCardRatesByIssuer(
       {
         fallbackUrl: productionLatestDataFallbackUrl(
           "credit-card-rates",
-          env.ENVIRONMENT,
+          env.ENVIRONMENT
         ),
-      },
+      }
     );
 
     const singleIssuer = creditCardRates.data.find(
-      (issuer) => issuer.id.toLowerCase() === params.issuerId.toLowerCase(),
+      (issuer) => issuer.id.toLowerCase() === params.issuerId.toLowerCase()
     );
 
     if (!singleIssuer) {

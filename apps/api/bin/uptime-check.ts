@@ -54,50 +54,83 @@ const httpClient = createHttpClient("UptimeCheck", {
   },
 });
 
+type EndpointCheckResult =
+  | { endpoint: string; success: true }
+  | {
+      endpoint: string;
+      success: false;
+      reason: "Failed" | "Error";
+      errorDetails: string;
+    };
+
+// Never rejects: every outcome is captured in the result so one failing
+// endpoint can't cut the other checks short.
+async function checkEndpoint(endpoint: string): Promise<EndpointCheckResult> {
+  try {
+    const response = await httpClient(endpoint);
+    // Assuming a successful request implies the endpoint is up.
+    // You might want to add more specific checks on the response status or body.
+    if (response.ok) {
+      return { endpoint, success: true };
+    }
+    return {
+      endpoint,
+      success: false,
+      reason: "Failed",
+      errorDetails: `Status ${response.status}`,
+    };
+  } catch (error: unknown) {
+    return {
+      endpoint,
+      success: false,
+      reason: "Error",
+      errorDetails: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
 async function main() {
   const failedEndpoints = [];
 
   console.log(`Checking ${endpoints.length} endpoints...`);
 
-  for (const endpoint of endpoints) {
-    let success = false;
-    let errorDetails = "Unknown error";
-    try {
-      const response = await httpClient(endpoint);
-      // Assuming a successful request implies the endpoint is up.
-      // You might want to add more specific checks on the response status or body.
-      if (response.ok) {
-        success = true;
-        console.log(`✅ ${endpoint}`);
-      } else {
-        errorDetails = `Status ${response.status}`;
-        console.error(`❌ ${endpoint} - Failed: ${errorDetails}`);
-      }
-    } catch (error: unknown) {
-      errorDetails = error instanceof Error ? error.message : String(error);
-      console.error(`❌ ${endpoint} - Error: ${errorDetails}`);
-    }
+  // Each check is an independent read-only GET, so run them concurrently.
+  // Results come back in `endpoints` order, keeping the log output stable.
+  const results = await Promise.all(endpoints.map(checkEndpoint));
 
-    if (!success) {
-      failedEndpoints.push({ endpoint, error: errorDetails });
+  for (const result of results) {
+    if (result.success) {
+      console.log(`✅ ${result.endpoint}`);
+    } else {
+      console.error(
+        `❌ ${result.endpoint} - ${result.reason}: ${result.errorDetails}`
+      );
+      failedEndpoints.push({
+        endpoint: result.endpoint,
+        error: result.errorDetails,
+      });
     }
   }
 
   if (failedEndpoints.length > 0) {
     console.log("\n--- Uptime Check Failed ---");
     console.log("The following endpoints failed:");
-    failedEndpoints.forEach(({ endpoint, error }) => {
+    for (const { endpoint, error } of failedEndpoints) {
       console.log(`- ${endpoint} (${error})`);
-    });
-    process.exit(1); // Exit with non-zero code to indicate failure
+    }
+    // Exit with non-zero code to indicate failure
+    process.exit(1);
   } else {
     console.log("\n--- Uptime Check Successful ---");
     console.log("All endpoints are responding correctly.");
-    process.exit(0); // Exit with zero code for success
+    // Exit with zero code for success
+    process.exit(0);
   }
 }
 
-main().catch((error) => {
+try {
+  await main();
+} catch (error) {
   console.error("Unhandled error during uptime check:", error);
   process.exit(1);
-});
+}

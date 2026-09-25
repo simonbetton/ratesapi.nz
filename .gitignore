@@ -1,9 +1,12 @@
-node_modules
-dist
-.wrangler
-.next
-.open-next
+.claude
 .dev.vars
 .fallow/
+.next
+.open-next
 .source/
+.wrangler
+dist
+node_modules
+plans
 tsconfig.tsbuildinfo
+next-env.d.ts

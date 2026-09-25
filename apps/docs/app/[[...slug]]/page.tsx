@@ -4,15 +4,16 @@ import {
   DocsPage,
   DocsTitle,
 } from "fumadocs-ui/layouts/docs/page";
-import { type Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
 import { source } from "@/lib/source";
 
-type PageProps = {
+interface PageProps {
   params: Promise<{
     slug?: string[];
   }>;
-};
+}
 
 export default async function Page({ params }: PageProps) {
   const { slug } = await params;

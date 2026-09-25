@@ -1,4 +1,4 @@
-import { type toOpenAPISchema } from "@elysia/openapi";
+import type { toOpenAPISchema } from "@elysia/openapi";
 
 // Text in this file and in route `detail` blocks follows ASD-STE100
 // Simplified Technical English: approved words, active voice, short sentences.
@@ -7,10 +7,10 @@ type OpenApiPaths = ReturnType<typeof toOpenAPISchema>["paths"];
 type OpenApiOperation = NonNullable<NonNullable<OpenApiPaths[string]>["get"]>;
 type OpenApiParameter = NonNullable<OpenApiOperation["parameters"]>[number];
 
-export type OpenApiServer = {
+export interface OpenApiServer {
   url: string;
   description: string;
-};
+}
 
 export const openApiExclude = {
   paths: ["/api/v1/mcp", "/api/v1/mcp/"],
@@ -91,7 +91,7 @@ export function timeSeriesDescription(options: {
 
 export function toOpenApiDocument(
   generated: ReturnType<typeof toOpenAPISchema>,
-  servers: OpenApiServer[],
+  servers: OpenApiServer[]
 ) {
   return {
     openapi: "3.1.0",
@@ -114,17 +114,17 @@ function withParameterDescriptions(paths: OpenApiPaths): OpenApiPaths {
             get: {
               ...pathItem.get,
               parameters: pathItem.get.parameters?.map(
-                withParameterDescription,
+                withParameterDescription
               ),
             },
           }
         : pathItem,
-    ]),
+    ])
   );
 }
 
 function withParameterDescription(
-  parameter: OpenApiParameter,
+  parameter: OpenApiParameter
 ): OpenApiParameter {
   if ("$ref" in parameter || !parameter.schema || "$ref" in parameter.schema) {
     return parameter;

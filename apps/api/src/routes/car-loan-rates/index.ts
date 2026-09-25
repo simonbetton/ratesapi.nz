@@ -1,19 +1,20 @@
 import { Elysia, t } from "elysia";
+
 import {
-  type ApiResult,
   apiResult,
   invalidRequestResult,
   jsonResult,
 } from "../../lib/api-result";
+import type { ApiResult } from "../../lib/api-result";
 import {
   loadLatestData,
   productionLatestDataFallbackUrl,
 } from "../../lib/data-loader";
 import { getEntityTimeSeries } from "../../lib/entity-time-series";
-import { type Environment } from "../../lib/environment";
+import type { Environment } from "../../lib/environment";
 import { createLogger } from "../../lib/logging";
 import { timeSeriesDescription } from "../../lib/openapi";
-import { type GetEnv } from "../../lib/routing";
+import type { GetEnv } from "../../lib/routing";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
 import {
@@ -42,14 +43,14 @@ const CarLoanTimeSeriesQuery = t.Object(
     ...TimeSeriesDateParameter.properties,
     institutionId: t.Optional(InstitutionIdQueryParameter),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const CarLoanInstitutionParams = t.Object(
   {
     institutionId: InstitutionIdPathParameter,
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export function carLoanRatesRoutes(getEnv: GetEnv) {
@@ -77,7 +78,7 @@ export function carLoanRatesRoutes(getEnv: GetEnv) {
             "Use this endpoint to compare car loan rates between institutions.",
           ].join("\n"),
         },
-      },
+      }
     )
     .get(
       "/time-series",
@@ -104,7 +105,7 @@ export function carLoanRatesRoutes(getEnv: GetEnv) {
             ],
           }),
         },
-      },
+      }
     )
     .get(
       "/:institutionId",
@@ -126,7 +127,7 @@ export function carLoanRatesRoutes(getEnv: GetEnv) {
           description:
             "This endpoint gets the newest car loan rates for one institution. The response has the same structure as the list endpoint, but `data` contains only one institution.",
         },
-      },
+      }
     );
 }
 
@@ -139,9 +140,9 @@ export async function listCarLoanRates(env: Environment): Promise<ApiResult> {
       {
         fallbackUrl: productionLatestDataFallbackUrl(
           "car-loan-rates",
-          env.ENVIRONMENT,
+          env.ENVIRONMENT
         ),
-      },
+      }
     );
 
     return apiResult(200, {
@@ -160,7 +161,7 @@ export async function listCarLoanRates(env: Environment): Promise<ApiResult> {
 
 export async function getCarLoanRatesTimeSeries(
   env: Environment,
-  query: CarLoanTimeSeriesQuery = {},
+  query: CarLoanTimeSeriesQuery = {}
 ): Promise<ApiResult> {
   if (!validateTimeSeriesDateQuery(query)) {
     return invalidRequestResult();
@@ -193,7 +194,7 @@ export async function getCarLoanRatesTimeSeries(
 
 export async function getCarLoanRatesByInstitution(
   env: Environment,
-  params: CarLoanInstitutionParams,
+  params: CarLoanInstitutionParams
 ): Promise<ApiResult> {
   try {
     const carLoanRates = await loadLatestData(
@@ -203,14 +204,14 @@ export async function getCarLoanRatesByInstitution(
       {
         fallbackUrl: productionLatestDataFallbackUrl(
           "car-loan-rates",
-          env.ENVIRONMENT,
+          env.ENVIRONMENT
         ),
-      },
+      }
     );
 
     const singleInstitution = carLoanRates.data.find(
       (institution) =>
-        institution.id.toLowerCase() === params.institutionId.toLowerCase(),
+        institution.id.toLowerCase() === params.institutionId.toLowerCase()
     );
 
     if (!singleInstitution) {

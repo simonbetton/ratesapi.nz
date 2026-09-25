@@ -5,15 +5,15 @@ const withMDX = createMDX();
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  async redirects() {
-    return [
+  redirects() {
+    return Promise.resolve([
       {
         // Endpoint pages moved to the OpenAPI reference served by the API Worker.
         source: "/api-reference/endpoint/:path*",
         destination: "/openapi",
         permanent: true,
       },
-    ];
+    ]);
   },
 };
 

@@ -13,5 +13,5 @@ export const RateSchema = t.Object(
       examples: [4.29],
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
