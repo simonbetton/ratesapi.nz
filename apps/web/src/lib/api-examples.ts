@@ -11,12 +11,19 @@ export function requestUrl(term: string) {
 export function requestExample(language: ExampleLanguage, term: string) {
   const url = requestUrl(term);
   switch (language) {
-    case "cURL":
+    case "cURL": {
       return `curl --fail-with-body '${url}'`;
-    case "JavaScript":
+    }
+    case "JavaScript": {
       return `const response = await fetch(\n  '${url}'\n);\n\nif (!response.ok) {\n  throw new Error(\`Rates API: \${response.status}\`);\n}\n\nconst { data, lastUpdated } = await response.json();\nconsole.log(data, lastUpdated);`;
-    case "Python":
+    }
+    case "Python": {
       return `import json\nfrom urllib.request import urlopen\n\nurl = '${url}'\nwith urlopen(url, timeout=15) as response:\n    payload = json.load(response)\n\nprint(payload['data'])\nprint(payload['lastUpdated'])`;
+    }
+    default: {
+      const unsupported: never = language;
+      throw new Error(`Unsupported example language: ${unsupported}`);
+    }
   }
 }
 

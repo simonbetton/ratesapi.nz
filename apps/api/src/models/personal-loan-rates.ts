@@ -1,4 +1,5 @@
 import { t } from "elysia";
+
 import { RateSchema } from "./rate";
 
 const PersonalLoanRate = t.Object(
@@ -7,15 +8,15 @@ const PersonalLoanRate = t.Object(
     plan: t.Nullable(
       t.String({
         examples: ["Secured"],
-      }),
+      })
     ),
     condition: t.Nullable(
       t.String({
         examples: ["$3,000 to $50,000"],
-      }),
+      })
     ),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const PersonalLoanProduct = t.Object(
@@ -29,7 +30,7 @@ const PersonalLoanProduct = t.Object(
     }),
     rates: t.Array(PersonalLoanRate),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const PersonalLoanInstitution = t.Object(
@@ -43,7 +44,7 @@ const PersonalLoanInstitution = t.Object(
     }),
     products: t.Array(PersonalLoanProduct),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const PersonalLoanRates = t.Object(
@@ -56,7 +57,7 @@ export const PersonalLoanRates = t.Object(
       example: "2021-08-01T00:00:00.000Z",
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export type PersonalLoanRate = typeof PersonalLoanRate.static;

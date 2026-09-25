@@ -103,7 +103,7 @@ async function main() {
       console.log(`✅ ${result.endpoint}`);
     } else {
       console.error(
-        `❌ ${result.endpoint} - ${result.reason}: ${result.errorDetails}`,
+        `❌ ${result.endpoint} - ${result.reason}: ${result.errorDetails}`
       );
       failedEndpoints.push({
         endpoint: result.endpoint,
@@ -115,18 +115,22 @@ async function main() {
   if (failedEndpoints.length > 0) {
     console.log("\n--- Uptime Check Failed ---");
     console.log("The following endpoints failed:");
-    failedEndpoints.forEach(({ endpoint, error }) => {
+    for (const { endpoint, error } of failedEndpoints) {
       console.log(`- ${endpoint} (${error})`);
-    });
-    process.exit(1); // Exit with non-zero code to indicate failure
+    }
+    // Exit with non-zero code to indicate failure
+    process.exit(1);
   } else {
     console.log("\n--- Uptime Check Successful ---");
     console.log("All endpoints are responding correctly.");
-    process.exit(0); // Exit with zero code for success
+    // Exit with zero code for success
+    process.exit(0);
   }
 }
 
-main().catch((error) => {
+try {
+  await main();
+} catch (error) {
   console.error("Unhandled error during uptime check:", error);
   process.exit(1);
-});
+}

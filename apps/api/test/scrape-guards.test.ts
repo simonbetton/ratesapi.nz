@@ -1,9 +1,10 @@
 import { describe, expect, test } from "bun:test";
+
 import { assertScrapeHasRates, assertTableHasRows } from "../bin/scrape-guards";
-import { type CarLoanRates } from "../src/models/car-loan-rates";
-import { type CreditCardRates } from "../src/models/credit-card-rates";
-import { type MortgageRates } from "../src/models/mortgage-rates";
-import { type PersonalLoanRates } from "../src/models/personal-loan-rates";
+import type { CarLoanRates } from "../src/models/car-loan-rates";
+import type { CreditCardRates } from "../src/models/credit-card-rates";
+import type { MortgageRates } from "../src/models/mortgage-rates";
+import type { PersonalLoanRates } from "../src/models/personal-loan-rates";
 
 function minimalMortgage(): MortgageRates {
   return {
@@ -132,16 +133,16 @@ describe("assertScrapeHasRates", () => {
     };
 
     expect(() => assertScrapeHasRates(emptyMortgage)).toThrow(
-      /scrape returned no data/,
+      /scrape returned no data/u
     );
     expect(() => assertScrapeHasRates(emptyPersonalLoan)).toThrow(
-      /scrape returned no data/,
+      /scrape returned no data/u
     );
     expect(() => assertScrapeHasRates(emptyCarLoan)).toThrow(
-      /scrape returned no data/,
+      /scrape returned no data/u
     );
     expect(() => assertScrapeHasRates(emptyCreditCard)).toThrow(
-      /scrape returned no data/,
+      /scrape returned no data/u
     );
   });
 
@@ -153,7 +154,7 @@ describe("assertScrapeHasRates", () => {
     };
 
     expect(() => assertScrapeHasRates(model)).toThrow(
-      /no institution has any products/,
+      /no institution has any products/u
     );
   });
 
@@ -165,7 +166,7 @@ describe("assertScrapeHasRates", () => {
     };
 
     expect(() => assertScrapeHasRates(model)).toThrow(
-      /no institution has any products/,
+      /no institution has any products/u
     );
   });
 
@@ -177,7 +178,7 @@ describe("assertScrapeHasRates", () => {
     };
 
     expect(() => assertScrapeHasRates(model)).toThrow(
-      /no institution has any products/,
+      /no institution has any products/u
     );
   });
 
@@ -196,7 +197,7 @@ describe("assertScrapeHasRates", () => {
     };
 
     expect(() => assertScrapeHasRates(model)).toThrow(
-      /no product has any rates/,
+      /no product has any rates/u
     );
   });
 
@@ -219,7 +220,7 @@ describe("assertScrapeHasRates", () => {
     };
 
     expect(() => assertScrapeHasRates(model)).toThrow(
-      /no product has any rates/,
+      /no product has any rates/u
     );
   });
 
@@ -238,7 +239,7 @@ describe("assertScrapeHasRates", () => {
     };
 
     expect(() => assertScrapeHasRates(model)).toThrow(
-      /no product has any rates/,
+      /no product has any rates/u
     );
   });
 
@@ -249,7 +250,7 @@ describe("assertScrapeHasRates", () => {
     };
 
     expect(() => assertScrapeHasRates(model)).toThrow(
-      /no issuer has any plans/,
+      /no issuer has any plans/u
     );
   });
 
@@ -298,13 +299,13 @@ describe("assertScrapeHasRates", () => {
 describe("assertTableHasRows", () => {
   test("does not throw when there is at least one row", () => {
     expect(() =>
-      assertTableHasRows(1, "#interest_financial_datatable tbody tr"),
+      assertTableHasRows(1, "#interest_financial_datatable tbody tr")
     ).not.toThrow();
   });
 
   test("throws when there are no rows", () => {
     expect(() =>
-      assertTableHasRows(0, "#interest_financial_datatable tbody tr"),
-    ).toThrow(/No rows found for selector/);
+      assertTableHasRows(0, "#interest_financial_datatable tbody tr")
+    ).toThrow(/No rows found for selector/u);
   });
 });

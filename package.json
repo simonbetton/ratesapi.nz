@@ -10,29 +10,36 @@
       "@types/node": "^26.6.2",
       "@types/react": "^19.3.0",
       "@types/react-dom": "^19.3.0",
+      "@typescript/native-preview": "7.0.0-dev.20260707.2",
       "react": "^19.3.0",
       "react-dom": "^19.3.0",
       "typescript": "^7.0.2",
       "wrangler": "^4.137.0"
     }
   },
+  "type": "module",
   "scripts": {
     "dev": "bun run --filter '*' dev",
     "build": "bun run --filter '*' build",
     "deploy": "bun run --filter '*' deploy",
     "check": "bun run lint && bun run typecheck && bun run test",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
+    "lint": "oxlint && oxfmt --check",
+    "lint:fix": "oxlint --fix && oxfmt",
     "typecheck": "bun run --filter '*' typecheck",
     "test": "bun test",
     "doctor": "react-doctor",
     "prepare": "husky"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.14",
     "fallow": "^3.28.0",
     "husky": "^9.1.7",
+    "oxfmt": "^0.70.0",
+    "oxlint": "^1.85.0",
     "react-doctor": "^0.9.14",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "ultracite": "^7.12.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,mjs,ts,tsx,json,jsonc,css,md,mdx}": "ultracite fix"
   }
 }

@@ -3,32 +3,30 @@ title: "Mortgage Rates Time Series"
 description: "Retrieve historical time series data for mortgage rates from New Zealand financial institutions."
 ---
 
-
 ## Endpoint
 
-| Field | Value |
-| --- | --- |
-| Method | `GET` |
-| Path | `/api/v1/mortgage-rates/time-series` |
-| Operation ID | `getMortgageRatesTimeSeries` |
+| Field        | Value                                |
+| ------------ | ------------------------------------ |
+| Method       | `GET`                                |
+| Path         | `/api/v1/mortgage-rates/time-series` |
+| Operation ID | `getMortgageRatesTimeSeries`         |
 
 ## Parameters
 
-| Parameter | Description |
-| --- | --- |
-| `date` | optional single date in YYYY-MM-DD format |
-| `startDate` | optional range start date in YYYY-MM-DD format |
-| `endDate` | optional range end date in YYYY-MM-DD format |
-| `institutionId` | optional institution ID filter |
-| `termInMonths` | optional mortgage term filter |
+| Parameter       | Description                                    |
+| --------------- | ---------------------------------------------- |
+| `date`          | optional single date in YYYY-MM-DD format      |
+| `startDate`     | optional range start date in YYYY-MM-DD format |
+| `endDate`       | optional range end date in YYYY-MM-DD format   |
+| `institutionId` | optional institution ID filter                 |
+| `termInMonths`  | optional mortgage term filter                  |
 
 ## Responses
 
-| Status | Description |
-| --- | --- |
-| `200` | Retrieve mortgage rates time series data |
-| `500` | Server error |
-
+| Status | Description                              |
+| ------ | ---------------------------------------- |
+| `200`  | Retrieve mortgage rates time series data |
+| `500`  | Server error                             |
 
 This endpoint provides historical time series data for mortgage rates, allowing you to analyze trends and changes over time. The data is stored in Cloudflare D1 database, enabling efficient querying of historical datasets.
 

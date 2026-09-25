@@ -1,10 +1,9 @@
-import { type ReactNode } from "react";
+import type { ReactNode } from "react";
+
 import { cn } from "@/lib/utils";
-import {
-  type ApiGlyphType,
-  type EndpointIconName,
-  rateTableRows,
-} from "./rates-api-content";
+
+import { rateTableRows } from "./rates-api-content";
+import type { ApiGlyphType, EndpointIconName } from "./rates-api-content";
 
 const pillClass =
   "inline-flex items-center gap-[7px] rounded-[40px] bg-white px-3.5 py-[7px] text-[13px] font-medium text-[#1a2035] shadow-[0_2px_4px_#12376914,0_1px_1px_#1237690a,0_0_0_1px_#12376914] [&_svg]:shrink-0";
@@ -65,7 +64,7 @@ export function SmallIcon({
     <div
       className={cn(
         "flex size-9 shrink-0 items-center justify-center rounded-[9px] border border-black/10 bg-white text-[#1a2035]",
-        className,
+        className
       )}
     >
       {children}
@@ -336,13 +335,13 @@ export function EndpointCard({
     <div
       className={cn(
         "flex w-[300px] shrink-0 flex-col rounded-[10px] bg-[#f7fafc] p-6 [&_h3]:mb-2 [&_p]:mb-4 [&_p]:flex-1 [&_p]:text-sm [&_p]:leading-[22px]",
-        className,
+        className
       )}
     >
       <div className={cn("mb-4 flex w-full items-start")}>
         <div
           className={cn(
-            "flex size-9 shrink-0 items-center justify-center rounded-[9px] border border-black/10 bg-white text-[#1a2035]",
+            "flex size-9 shrink-0 items-center justify-center rounded-[9px] border border-black/10 bg-white text-[#1a2035]"
           )}
         >
           <EndpointIcon icon={icon} />
@@ -352,7 +351,7 @@ export function EndpointCard({
       <p>{body}</p>
       <a
         className={cn(
-          "font-medium text-[#1a2035] text-sm no-underline hover:underline",
+          "text-sm font-medium text-[#1a2035] no-underline hover:underline"
         )}
         href={href}
         rel="noopener noreferrer"
@@ -373,12 +372,12 @@ export function MiniBrowser({
     <div
       className={cn(
         "overflow-hidden rounded-[10px] bg-[#0e1117] text-left shadow-[0_2px_4px_#12376914,0_1px_1px_#1237690a,0_0_0_1px_#12376914]",
-        className,
+        className
       )}
     >
       <div
         className={cn(
-          "flex items-center gap-2 border-white/10 border-b bg-[#161b22] px-4 py-3",
+          "flex items-center gap-2 border-b border-white/10 bg-[#161b22] px-4 py-3"
         )}
       >
         <span className={cn("size-2 rounded-full bg-[#ff5f57]")} />
@@ -386,7 +385,7 @@ export function MiniBrowser({
         <span className={cn("size-2 rounded-full bg-[#28c840]")} />
         <code
           className={cn(
-            "ml-2 rounded bg-white/5 px-2 py-1 text-[#9fa3b5] text-[11px]",
+            "ml-2 rounded bg-white/5 px-2 py-1 text-[11px] text-[#9fa3b5]"
           )}
         >
           {label}
@@ -402,25 +401,25 @@ export function RateTableMock({ className }: ClassNameProp) {
     <div
       className={cn(
         "rounded-[14px] bg-white p-5 text-[13px] shadow-[0_2px_4px_#12376914,0_1px_1px_#1237690a,0_0_0_1px_#12376914]",
-        className,
+        className
       )}
     >
       <div
         className={cn(
-          "mb-4 flex items-center justify-between border-[#eaecf0] border-b pb-3.5",
+          "mb-4 flex items-center justify-between border-b border-[#eaecf0] pb-3.5"
         )}
       >
         <div>
           <strong
-            className={cn("block font-medium text-[#1a2035] text-[15px]")}
+            className={cn("block text-[15px] font-medium text-[#1a2035]")}
           >
             ANZ mortgage rates
           </strong>
-          <span className={cn("text-[#717583] text-xs")}>institution:anz</span>
+          <span className={cn("text-xs text-[#717583]")}>institution:anz</span>
         </div>
         <span
           className={cn(
-            "rounded-[30px] bg-[#e4f5ff] px-2 py-1 font-mono text-[#00a0ff] text-[10px]",
+            "rounded-[30px] bg-[#e4f5ff] px-2 py-1 font-mono text-[10px] text-[#00a0ff]"
           )}
         >
           JSON
@@ -429,7 +428,7 @@ export function RateTableMock({ className }: ClassNameProp) {
       {rateTableRows.map(([product, term, rate]) => (
         <div
           className={cn(
-            "grid grid-cols-[1fr_90px_64px] gap-3 border-[#f1f3f6] border-b py-2.5 last:border-b-0",
+            "grid grid-cols-[1fr_90px_64px] gap-3 border-b border-[#f1f3f6] py-2.5 last:border-b-0"
           )}
           key={`${product}-${term}`}
         >
@@ -448,8 +447,8 @@ export function JsonSnippet({ className }: ClassNameProp) {
   return (
     <pre
       className={cn(
-        "max-h-[420px] overflow-auto p-6 font-mono text-[#c9d1d9] text-[13px] leading-6",
-        className,
+        "max-h-[420px] overflow-auto p-6 font-mono text-[13px] leading-6 text-[#c9d1d9]",
+        className
       )}
     >
       <code>{`{
@@ -491,7 +490,7 @@ export function FeatureCard({
       {href ? (
         <a
           className={cn(
-            "font-medium text-[#1a2035] text-sm no-underline hover:underline",
+            "text-sm font-medium text-[#1a2035] no-underline hover:underline"
           )}
           href={href}
           rel="noopener noreferrer"

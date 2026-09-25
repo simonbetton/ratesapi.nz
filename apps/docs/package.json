@@ -6,7 +6,7 @@
     "build": "opennextjs-cloudflare build",
     "preview": "opennextjs-cloudflare preview",
     "deploy": "bun run build && opennextjs-cloudflare deploy",
-    "typecheck": "fumadocs-mdx && next typegen && tsc --noEmit"
+    "typecheck": "fumadocs-mdx && next typegen && tsgo --noEmit"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.20.6",
@@ -23,6 +23,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "typescript": "catalog:",
     "wrangler": "catalog:"
   }

@@ -1,18 +1,19 @@
 import { Elysia, t } from "elysia";
+
 import {
-  type ApiResult,
   apiResult,
   invalidRequestResult,
   jsonResult,
 } from "../../lib/api-result";
+import type { ApiResult } from "../../lib/api-result";
 import {
   loadLatestData,
   productionLatestDataFallbackUrl,
 } from "../../lib/data-loader";
 import { getEntityTimeSeries } from "../../lib/entity-time-series";
-import { type Environment } from "../../lib/environment";
+import type { Environment } from "../../lib/environment";
 import { createLogger } from "../../lib/logging";
-import { type GetEnv } from "../../lib/routing";
+import type { GetEnv } from "../../lib/routing";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
 import {
@@ -38,10 +39,10 @@ const CarLoanTimeSeriesQuery = t.Object(
       t.String({
         description: "Optional institution ID to filter time series data",
         examples: ["institution:anz"],
-      }),
+      })
     ),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const CarLoanInstitutionParams = t.Object(
@@ -56,7 +57,7 @@ const CarLoanInstitutionParams = t.Object(
       ],
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export function carLoanRatesRoutes(getEnv: GetEnv) {
@@ -77,7 +78,7 @@ export function carLoanRatesRoutes(getEnv: GetEnv) {
           tags: ["Car Loan Rates"],
           summary: "List car loan rates",
         },
-      },
+      }
     )
     .get(
       "/time-series",
@@ -98,7 +99,7 @@ export function carLoanRatesRoutes(getEnv: GetEnv) {
           tags: ["Car Loan Rates"],
           summary: "Get car loan rates time series",
         },
-      },
+      }
     )
     .get(
       "/:institutionId",
@@ -118,7 +119,7 @@ export function carLoanRatesRoutes(getEnv: GetEnv) {
           tags: ["Car Loan Rates"],
           summary: "Get car loan rates by institution",
         },
-      },
+      }
     );
 }
 
@@ -131,9 +132,9 @@ export async function listCarLoanRates(env: Environment): Promise<ApiResult> {
       {
         fallbackUrl: productionLatestDataFallbackUrl(
           "car-loan-rates",
-          env.ENVIRONMENT,
+          env.ENVIRONMENT
         ),
-      },
+      }
     );
 
     return apiResult(200, {
@@ -152,7 +153,7 @@ export async function listCarLoanRates(env: Environment): Promise<ApiResult> {
 
 export async function getCarLoanRatesTimeSeries(
   env: Environment,
-  query: CarLoanTimeSeriesQuery = {},
+  query: CarLoanTimeSeriesQuery = {}
 ): Promise<ApiResult> {
   if (!validateTimeSeriesDateQuery(query)) {
     return invalidRequestResult();
@@ -185,7 +186,7 @@ export async function getCarLoanRatesTimeSeries(
 
 export async function getCarLoanRatesByInstitution(
   env: Environment,
-  params: CarLoanInstitutionParams,
+  params: CarLoanInstitutionParams
 ): Promise<ApiResult> {
   try {
     const carLoanRates = await loadLatestData(
@@ -195,14 +196,14 @@ export async function getCarLoanRatesByInstitution(
       {
         fallbackUrl: productionLatestDataFallbackUrl(
           "car-loan-rates",
-          env.ENVIRONMENT,
+          env.ENVIRONMENT
         ),
-      },
+      }
     );
 
     const singleInstitution = carLoanRates.data.find(
       (institution) =>
-        institution.id.toLowerCase() === params.institutionId.toLowerCase(),
+        institution.id.toLowerCase() === params.institutionId.toLowerCase()
     );
 
     if (!singleInstitution) {

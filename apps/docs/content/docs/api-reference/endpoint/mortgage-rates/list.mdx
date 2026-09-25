@@ -3,28 +3,26 @@ title: "List Mortgage Rates"
 description: "Retrieve current mortgage rates from New Zealand financial institutions."
 ---
 
-
 ## Endpoint
 
-| Field | Value |
-| --- | --- |
-| Method | `GET` |
-| Path | `/api/v1/mortgage-rates` |
-| Operation ID | `listMortgageRates` |
+| Field        | Value                    |
+| ------------ | ------------------------ |
+| Method       | `GET`                    |
+| Path         | `/api/v1/mortgage-rates` |
+| Operation ID | `listMortgageRates`      |
 
 ## Parameters
 
-| Parameter | Description |
-| --- | --- |
+| Parameter      | Description                   |
+| -------------- | ----------------------------- |
 | `termInMonths` | optional mortgage term filter |
 
 ## Responses
 
-| Status | Description |
-| --- | --- |
-| `200` | Retrieve all mortgage rates |
-| `500` | Server error |
-
+| Status | Description                 |
+| ------ | --------------------------- |
+| `200`  | Retrieve all mortgage rates |
+| `500`  | Server error                |
 
 This endpoint returns a comprehensive list of mortgage rates from most financial institutions in New Zealand. The data includes interest rates, loan terms, and special conditions for various mortgage products including fixed and floating rate options.
 

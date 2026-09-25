@@ -1,7 +1,10 @@
 import { describe, expect, test } from "bun:test";
+
 import { runScrape } from "../bin/scrape-runner";
 
-type FakeData = { data: string[] };
+interface FakeData {
+  data: string[];
+}
 
 function callCounter() {
   let count = 0;
@@ -68,7 +71,7 @@ describe("runScrape", () => {
           save.increment();
           return true;
         },
-      }),
+      })
     ).rejects.toThrow(fetchError);
     expect(save.count).toBe(0);
   });
@@ -89,7 +92,7 @@ describe("runScrape", () => {
           save.increment();
           return true;
         },
-      }),
+      })
     ).rejects.toThrow(guardError);
     expect(save.count).toBe(0);
   });
@@ -107,7 +110,7 @@ describe("runScrape", () => {
           save.increment();
           return false;
         },
-      }),
+      })
     ).rejects.toThrow();
     expect(save.count).toBe(1);
   });
@@ -126,7 +129,7 @@ describe("runScrape", () => {
           save.increment();
           throw saveError;
         },
-      }),
+      })
     ).rejects.toThrow(saveError);
     expect(save.count).toBe(1);
   });

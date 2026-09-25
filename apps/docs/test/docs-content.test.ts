@@ -17,7 +17,7 @@ describe("docs MDX content", () => {
     const body = await readDocsFile("api-reference/meta.json");
 
     expect(body).toContain(
-      '"pages": ["index", "quickstart", "ai-integration", "concepts", "endpoint"]',
+      '"pages": ["index", "quickstart", "ai-integration", "concepts", "endpoint"]'
     );
     expect(body).not.toContain('"introduction"');
   });
@@ -25,13 +25,13 @@ describe("docs MDX content", () => {
   test("adds task-oriented API onboarding pages", async () => {
     const quickstart = await readDocsFile("api-reference/quickstart.mdx");
     const aiIntegration = await readDocsFile(
-      "api-reference/ai-integration.mdx",
+      "api-reference/ai-integration.mdx"
     );
     const concepts = await readDocsFile("api-reference/concepts.mdx");
 
     expect(quickstart).toContain('title: "Quickstart"');
     expect(quickstart).toContain(
-      "curl https://ratesapi.nz/api/v1/mortgage-rates",
+      "curl https://ratesapi.nz/api/v1/mortgage-rates"
     );
     expect(aiIntegration).toContain('title: "AI Integration"');
     expect(aiIntegration).toContain("POST /api/v1/mcp");
@@ -39,19 +39,21 @@ describe("docs MDX content", () => {
     expect(aiIntegration).toContain("/llms.txt");
     expect(concepts).toContain('title: "Core Concepts"');
     expect(concepts).toContain(
-      "Use either `date` or the `startDate` and `endDate` pair",
+      "Use either `date` or the `startDate` and `endDate` pair"
     );
   });
 
   test("keeps the mortgage time-series endpoint page at the existing URL", async () => {
     const body = await readDocsFile(
-      "api-reference/endpoint/mortgage-rates/time-series.mdx",
+      "api-reference/endpoint/mortgage-rates/time-series.mdx"
     );
 
     expect(body).toContain('title: "Mortgage Rates Time Series"');
-    expect(body).toContain("| Path | `/api/v1/mortgage-rates/time-series` |");
-    expect(body).toContain(
-      "| `termInMonths` | optional mortgage term filter |",
+    expect(body).toMatch(
+      /\|\s*Path\s*\|\s*`\/api\/v1\/mortgage-rates\/time-series`\s*\|/u
+    );
+    expect(body).toMatch(
+      /\|\s*`termInMonths`\s*\|\s*optional mortgage term filter\s*\|/u
     );
   });
 
@@ -68,7 +70,7 @@ describe("docs MDX content", () => {
     const llmsRoute = await readDocsAppFile("app/llms.txt/route.ts");
 
     expect(searchRoute).toContain('import { searchApi } from "@/lib/source";');
-    expect(searchRoute).toContain("export const GET = searchApi.GET;");
+    expect(searchRoute).toContain("export const { GET } = searchApi;");
     expect(llmsRoute).toContain('import { docsLlms } from "@/lib/source";');
     expect(llmsRoute).toContain("docsLlms.index()");
   });

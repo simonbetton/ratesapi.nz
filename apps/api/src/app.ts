@@ -1,8 +1,10 @@
 import { openapi, toOpenAPISchema } from "@elysia/openapi";
 import { cors } from "@elysiajs/cors";
-import { Elysia, type ElysiaAdapter } from "elysia";
+import type { ElysiaAdapter } from "elysia";
+import { Elysia } from "elysia";
+
 import { createLogger } from "./lib/logging";
-import { type GetEnv } from "./lib/routing";
+import type { GetEnv } from "./lib/routing";
 import {
   HealthErrorResponse,
   HealthResponse,
@@ -34,9 +36,9 @@ const openApiInfo = {
     "Rates API is a free OpenAPI service to retrieve the latest lending rates offered by New Zealand financial institutions — updated hourly.",
 };
 
-export type CreateAppOptions = {
+export interface CreateAppOptions {
   adapter?: ElysiaAdapter;
-};
+}
 
 export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
   const apiRoutes = new Elysia({ prefix: "/api/v1" })
@@ -45,7 +47,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
         origin: "*",
         credentials: false,
         maxAge: 600,
-      }),
+      })
     )
     .use(mortgageRatesRoutes(getEnv))
     .use(personalLoanRatesRoutes(getEnv))
@@ -58,7 +60,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
         try {
           const result = await getEnv()
             .RATESAPI_DB.prepare(
-              "SELECT data_type, last_updated FROM latest_data ORDER BY data_type ASC",
+              "SELECT data_type, last_updated FROM latest_data ORDER BY data_type ASC"
             )
             .all();
 
@@ -98,7 +100,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
           tags: ["Health"],
           summary: "Get API data freshness",
         },
-      },
+      }
     );
 
   const app = new Elysia({
@@ -112,19 +114,19 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
           servers: [productionServer],
         },
         exclude: openApiExclude,
-      }),
+      })
     )
     .onBeforeHandle({ as: "global" }, ({ request, set }) => {
       set.headers["x-request-id"] =
         request.headers.get("x-request-id") ?? crypto.randomUUID();
     })
     .onError({ as: "global" }, ({ code, error, status }) => {
-      if (code === "VALIDATION") {
-        validationLog.warn({ error }, "Request validation failed");
-        return status(400, invalidRequestParameters());
+      if (code !== "VALIDATION") {
+        return;
       }
 
-      return undefined;
+      validationLog.warn({ error }, "Request validation failed");
+      return status(400, invalidRequestParameters());
     })
     .use(apiRoutes)
     .get(
@@ -144,14 +146,14 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
         detail: {
           hide: true,
         },
-      },
+      }
     );
 
   return app;
 }
 
 function getOpenApiServers(request: Request, environment: string | undefined) {
-  const origin = new URL(request.url).origin;
+  const { origin } = new URL(request.url);
   const currentServer = {
     url: origin,
     description: environment === "production" ? "Production" : "Local",

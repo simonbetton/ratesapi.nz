@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+
 import {
   fromSavableJson,
   productionLatestDataFallbackUrl,
@@ -39,7 +40,7 @@ describe("data-loader serialization", () => {
     const decoded = atob(toSavableJson(value));
 
     expect(decoded).toContain("\\u0101");
-    expect(/[\u0080-\uffff]/.test(decoded)).toBe(false);
+    expect(/[\u0080-\u{10FFFF}]/u.test(decoded)).toBe(false);
   });
 
   test("still decodes legacy base64 blobs produced by the old btoa(JSON.stringify(value)) formula", () => {
@@ -62,10 +63,10 @@ describe("data-loader serialization", () => {
 
   test("only enables production latest-data fallback for development", () => {
     expect(
-      productionLatestDataFallbackUrl("personal-loan-rates", "development"),
+      productionLatestDataFallbackUrl("personal-loan-rates", "development")
     ).toBe("https://ratesapi.nz/api/v1/personal-loan-rates");
     expect(
-      productionLatestDataFallbackUrl("personal-loan-rates", "production"),
+      productionLatestDataFallbackUrl("personal-loan-rates", "production")
     ).toBeUndefined();
   });
 });

@@ -40,11 +40,11 @@ POST https://ratesapi.nz/api/v1/mcp
 
 The endpoint supports standard MCP JSON-RPC requests such as:
 
-| Method | Purpose |
-| --- | --- |
+| Method       | Purpose                                                |
+| ------------ | ------------------------------------------------------ |
 | `initialize` | Establish client capabilities and read server metadata |
-| `tools/list` | Discover the available Rates API tools |
-| `tools/call` | Call a specific rates tool with structured arguments |
+| `tools/list` | Discover the available Rates API tools                 |
+| `tools/call` | Call a specific rates tool with structured arguments   |
 
 The MCP server reports `listChanged: false` because the tool list is static for a running API version. The underlying rates data can still change when the hourly scraper publishes new snapshots.
 
@@ -86,10 +86,10 @@ This is useful for:
 
 ## Choosing an Integration Path
 
-| If you are building | Start with |
-| --- | --- |
-| MCP-capable agent | `POST /api/v1/mcp` |
-| SDK or typed client | `/openapi/json` |
-| Chat assistant with docs context | `/llms.txt` |
-| Browser-based prototype | `/openapi` |
-| Direct product feature | `/api/v1/*` endpoints |
+| If you are building              | Start with            |
+| -------------------------------- | --------------------- |
+| MCP-capable agent                | `POST /api/v1/mcp`    |
+| SDK or typed client              | `/openapi/json`       |
+| Chat assistant with docs context | `/llms.txt`           |
+| Browser-based prototype          | `/openapi`            |
+| Direct product feature           | `/api/v1/*` endpoints |

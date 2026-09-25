@@ -9,6 +9,11 @@ export function CopyButton({
   label?: string;
 }) {
   const [status, setStatus] = useState<"ready" | "copied" | "error">("ready");
+  const statusMessages = {
+    ready: "",
+    copied: `${label}: copied to clipboard.`,
+    error: "Copy unavailable. Select and copy the code below.",
+  };
 
   async function copy() {
     try {
@@ -36,13 +41,10 @@ export function CopyButton({
       </button>
       <span
         className={status === "error" ? "copy-error" : "sr-only"}
+        // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- <output> is not announced as a live region consistently across screen readers
         role="status"
       >
-        {status === "copied"
-          ? `${label}: copied to clipboard.`
-          : status === "error"
-            ? "Copy unavailable. Select and copy the code below."
-            : ""}
+        {statusMessages[status]}
       </span>
     </span>
   );

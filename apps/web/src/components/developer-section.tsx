@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+
 import { mcpRequest } from "../lib/api-examples";
 import { CopyButton } from "./copy-button";
 import { apiLinks } from "./rates-api-content";
@@ -47,8 +48,7 @@ export function DeveloperSection() {
             <span>POST /api/v1/mcp</span>
             <CopyButton text={mcpRequest} label="Copy MCP request" />
           </div>
-          {/* biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable code block must be reachable by keyboard to scroll */}
-          {/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: the label names the focusable code block for screen readers */}
+          {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- scrollable code block must be reachable by keyboard to scroll */}
           <pre tabIndex={0} aria-label="MCP curl request">
             <code>{mcpRequest}</code>
           </pre>

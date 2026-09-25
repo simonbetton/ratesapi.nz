@@ -1,4 +1,4 @@
-import { type SupportedModels } from "../src/lib/data-loader";
+import type { SupportedModels } from "../src/lib/data-loader";
 
 /**
  * Guards against persisting a scrape that produced no usable data.
@@ -31,14 +31,14 @@ export function assertScrapeHasRates(model: SupportedModels): void {
   }
 
   const hasAnyProduct = model.data.some(
-    (institution) => institution.products.length > 0,
+    (institution) => institution.products.length > 0
   );
   if (!hasAnyProduct) {
     throw new Error(`${model.type}: no institution has any products`);
   }
 
   const hasAnyRate = model.data.some((institution) =>
-    institution.products.some((product) => product.rates.length > 0),
+    institution.products.some((product) => product.rates.length > 0)
   );
   if (!hasAnyRate) {
     throw new Error(`${model.type}: no product has any rates`);
@@ -52,11 +52,11 @@ export function assertScrapeHasRates(model: SupportedModels): void {
  */
 export function assertTableHasRows(
   rowCount: number,
-  tableSelector: string,
+  tableSelector: string
 ): void {
   if (rowCount === 0) {
     throw new Error(
-      `No rows found for selector "${tableSelector}"; the page layout may have changed`,
+      `No rows found for selector "${tableSelector}"; the page layout may have changed`
     );
   }
 }

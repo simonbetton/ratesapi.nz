@@ -1,18 +1,19 @@
 import { Elysia, t } from "elysia";
+
 import {
-  type ApiResult,
   apiResult,
   invalidRequestResult,
   jsonResult,
 } from "../../lib/api-result";
+import type { ApiResult } from "../../lib/api-result";
 import {
   loadLatestData,
   productionLatestDataFallbackUrl,
 } from "../../lib/data-loader";
 import { getEntityTimeSeries } from "../../lib/entity-time-series";
-import { type Environment } from "../../lib/environment";
+import type { Environment } from "../../lib/environment";
 import { createLogger } from "../../lib/logging";
-import { type GetEnv } from "../../lib/routing";
+import type { GetEnv } from "../../lib/routing";
 import { termsOfUse } from "../../lib/terms-of-use";
 import { getCurrentTimestamp } from "../../lib/transforms";
 import {
@@ -39,10 +40,10 @@ const PersonalLoanTimeSeriesQuery = t.Object(
       t.String({
         description: "Optional institution ID to filter time series data",
         examples: ["institution:anz"],
-      }),
+      })
     ),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 const PersonalLoanInstitutionParams = t.Object(
@@ -57,7 +58,7 @@ const PersonalLoanInstitutionParams = t.Object(
       ],
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export function personalLoanRatesRoutes(getEnv: GetEnv) {
@@ -78,7 +79,7 @@ export function personalLoanRatesRoutes(getEnv: GetEnv) {
           tags: ["Personal Loan Rates"],
           summary: "List personal loan rates",
         },
-      },
+      }
     )
     .get(
       "/time-series",
@@ -99,14 +100,14 @@ export function personalLoanRatesRoutes(getEnv: GetEnv) {
           tags: ["Personal Loan Rates"],
           summary: "Get personal loan rates time series",
         },
-      },
+      }
     )
     .get(
       "/:institutionId",
       async ({ params }) => {
         const result = await getPersonalLoanRatesByInstitution(
           getEnv(),
-          params,
+          params
         );
         return jsonResult(result);
       },
@@ -122,12 +123,12 @@ export function personalLoanRatesRoutes(getEnv: GetEnv) {
           tags: ["Personal Loan Rates"],
           summary: "Get personal loan rates by institution",
         },
-      },
+      }
     );
 }
 
 export async function listPersonalLoanRates(
-  env: Environment,
+  env: Environment
 ): Promise<ApiResult> {
   try {
     const personalLoanRates = await loadLatestData(
@@ -137,9 +138,9 @@ export async function listPersonalLoanRates(
       {
         fallbackUrl: productionLatestDataFallbackUrl(
           "personal-loan-rates",
-          env.ENVIRONMENT,
+          env.ENVIRONMENT
         ),
-      },
+      }
     );
 
     return apiResult(200, {
@@ -158,7 +159,7 @@ export async function listPersonalLoanRates(
 
 export async function getPersonalLoanRatesTimeSeries(
   env: Environment,
-  query: PersonalLoanTimeSeriesQuery = {},
+  query: PersonalLoanTimeSeriesQuery = {}
 ): Promise<ApiResult> {
   if (!validateTimeSeriesDateQuery(query)) {
     return invalidRequestResult();
@@ -191,7 +192,7 @@ export async function getPersonalLoanRatesTimeSeries(
 
 export async function getPersonalLoanRatesByInstitution(
   env: Environment,
-  params: PersonalLoanInstitutionParams,
+  params: PersonalLoanInstitutionParams
 ): Promise<ApiResult> {
   try {
     const personalLoanRates = await loadLatestData(
@@ -201,14 +202,14 @@ export async function getPersonalLoanRatesByInstitution(
       {
         fallbackUrl: productionLatestDataFallbackUrl(
           "personal-loan-rates",
-          env.ENVIRONMENT,
+          env.ENVIRONMENT
         ),
-      },
+      }
     );
 
     const singleInstitution = personalLoanRates.data.find(
       (institution) =>
-        institution.id.toLowerCase() === params.institutionId.toLowerCase(),
+        institution.id.toLowerCase() === params.institutionId.toLowerCase()
     );
 
     if (!singleInstitution) {
@@ -227,7 +228,7 @@ export async function getPersonalLoanRatesByInstitution(
   } catch (error) {
     routesLog.error(
       { error },
-      "Error loading personal loan rates for institution",
+      "Error loading personal loan rates for institution"
     );
     return apiResult(500, {
       code: 500,

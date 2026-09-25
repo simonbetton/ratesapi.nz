@@ -1,17 +1,18 @@
-import { type CheerioAPI, load } from "cheerio";
-import { type Element } from "domhandler";
+import { load } from "cheerio";
+import type { CheerioAPI } from "cheerio";
+import type { Element } from "domhandler";
 import ora from "ora";
+
 import { generateId } from "../src/lib/generate-id";
 import { InterestScraperAPI } from "../src/lib/interest-scraper-api";
 import { parseSchema } from "../src/lib/schema";
 import { toTitleFormat } from "../src/lib/transforms";
-import {
-  isRateTerm,
-  type MortgageInstitution,
-  type MortgageProduct,
-  type MortgageRate,
-  MortgageRates,
-  type RateTerm,
+import { isRateTerm, MortgageRates } from "../src/models/mortgage-rates";
+import type {
+  MortgageInstitution,
+  MortgageProduct,
+  MortgageRate,
+  RateTerm,
 } from "../src/models/mortgage-rates";
 import { assertScrapeHasRates, assertTableHasRows } from "./scrape-guards";
 import { runScrape } from "./scrape-runner";
@@ -79,7 +80,7 @@ async function main() {
         const $ = load(data);
         assertTableHasRows(
           $(config.tableSelector).length,
-          config.tableSelector,
+          config.tableSelector
         );
         const unvalidatedData = getModelExtractedFromDOM($);
         const validatedModel = parseSchema(MortgageRates, {
@@ -90,7 +91,7 @@ async function main() {
         assertScrapeHasRates(validatedModel);
         handle
           .succeed(
-            `Extracted and Validated ${validatedModel.data.length} results`,
+            `Extracted and Validated ${validatedModel.data.length} results`
           )
           .stop();
         return validatedModel;
@@ -124,10 +125,12 @@ async function main() {
     noChange.succeed("No changes detected").stop();
   }
 }
-main().catch((error) => {
+try {
+  await main();
+} catch (error) {
   console.error(error);
   process.exitCode = 1;
-});
+}
 
 function getModelExtractedFromDOM($: CheerioAPI): MortgageInstitution[] {
   const institutions: MortgageInstitution[] = [];
@@ -135,7 +138,7 @@ function getModelExtractedFromDOM($: CheerioAPI): MortgageInstitution[] {
   let currentInstitution: MortgageInstitution | null = null;
 
   for (const row of rows) {
-    const cells = Array.from($(row).find("td"));
+    const cells = [...$(row).find("td")];
     const isPrimaryRow = $(row).hasClass("primary_row");
     if (isPrimaryRow && cells[0]) {
       currentInstitution = asInstitution($, cells[0]);
@@ -157,10 +160,10 @@ function getModelExtractedFromDOM($: CheerioAPI): MortgageInstitution[] {
 
 function asProduct(
   institution: MortgageInstitution,
-  productName: string,
+  productName: string
 ): MortgageProduct {
   let product = institution.products.find(
-    (p: MortgageProduct) => p.name === productName,
+    (p: MortgageProduct) => p.name === productName
   );
   if (!product) {
     product = {
@@ -186,26 +189,27 @@ function asRatesForProduct(
   institution: MortgageInstitution,
   product: MortgageProduct,
   $: CheerioAPI,
-  cells: Element[],
+  cells: Element[]
 ): MortgageRate[] {
   const rates: MortgageRate[] = [];
 
-  for (let i = 2; i < cells.length; i++) {
+  for (let i = 2; i < cells.length; i += 1) {
     const cell = cells[i];
     const colspan = $(cell).hasClass("special-line");
     // Check for "18 months" lines. These are spanned across multiple columns 🤷
     if (colspan) {
       const specialRate = getSpecialRate(
-        $(cell).text().replace(/\n|\r/g, "").trim(),
+        $(cell).text().replaceAll(/\n|\r/gu, "").trim()
       );
       if (specialRate && isRateTerm(specialRate.term) && product.name) {
         rates.push(
-          asRate(institution, product.name, specialRate.term, specialRate.rate),
+          asRate(institution, product.name, specialRate.term, specialRate.rate)
         );
       }
     } else {
       const rate = $(cell).text().trim();
-      const term = config.tableColumnHeaders[i - 2]?.replace(/\n|\r/g, ""); // Need to zero-base the index back to the tableColumnHeaders array
+      // Need to zero-base the index back to the tableColumnHeaders array
+      const term = config.tableColumnHeaders[i - 2]?.replaceAll(/\n|\r/gu, "");
       if (rate && term && isRateTerm(term) && product.name) {
         rates.push(asRate(institution, product.name, term, rate));
       }
@@ -219,22 +223,24 @@ function asRate(
   institution: MortgageInstitution,
   productName: string,
   term: RateTerm,
-  rate: string,
+  rate: string
 ): MortgageRate {
   return {
     id: generateId(["rate", institution.name, productName, term]),
     term,
     termInMonths: convertTermToMonthsNumber(term),
-    rate: parseFloat(rate),
+    rate: Number.parseFloat(rate),
   };
 }
 
 function getInstitutionName($: CheerioAPI, cell: Element): string {
   const imgElement = $(cell).find("img");
   if (imgElement) {
-    return imgElement.attr("alt")?.trim() ?? $(cell).text().trim(); // Use alt text if image exists
+    // Use alt text if image exists
+    return imgElement.attr("alt")?.trim() ?? $(cell).text().trim();
   }
-  return $(cell).text().trim(); // Fallback to innerText
+  // Fallback to innerText
+  return $(cell).text().trim();
 }
 
 function getProductName($: CheerioAPI, cells: Element[]): string {
@@ -242,9 +248,10 @@ function getProductName($: CheerioAPI, cells: Element[]): string {
 }
 
 function getSpecialRate(text: string): { term: string; rate: string } | null {
-  const matches = text.match(/(\d+ months) = (.+)/);
-  if (matches && matches.length === 3 && matches[1] && matches[2]) {
-    return { term: matches[1], rate: matches[2] };
+  const { term, rate } =
+    text.match(/(?<term>\d+ months) = (?<rate>.+)/u)?.groups ?? {};
+  if (term && rate) {
+    return { term, rate };
   }
   return null;
 }
@@ -257,21 +264,19 @@ function normalizeProductName(name: string) {
 }
 
 function sortProductRatesByTermInMonths(rates: MortgageRate[]) {
-  rates.sort((a, b) => {
-    return (a.termInMonths ?? 0) - (b.termInMonths ?? 0);
-  });
+  rates.sort((a, b) => (a.termInMonths ?? 0) - (b.termInMonths ?? 0));
 }
 
 function convertTermToMonthsNumber(term: RateTerm): number | null {
   // If term has "months" in it, parse the number of months
-  const matches = term.match(/(\d+) months?/);
-  if (matches && matches.length === 2 && matches[1]) {
-    return parseInt(matches[1], 10);
+  const months = term.match(/(?<months>\d+) months?/u)?.groups?.months;
+  if (months) {
+    return Number.parseInt(months, 10);
   }
   // If term has "year" in it, parse the number of years
-  const matchesYears = term.match(/(\d+) years?/);
-  if (matchesYears && matchesYears.length === 2 && matchesYears[1]) {
-    return parseInt(matchesYears[1], 10) * 12;
+  const years = term.match(/(?<years>\d+) years?/u)?.groups?.years;
+  if (years) {
+    return Number.parseInt(years, 10) * 12;
   }
   return null;
 }

@@ -1,18 +1,16 @@
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import {
-  type DataType,
-  type SupportedModels,
-  toSavableJson,
-} from "../src/lib/data-loader";
-import { type CarLoanRates } from "../src/models/car-loan-rates";
-import { type CreditCardRates } from "../src/models/credit-card-rates";
-import { type MortgageRates } from "../src/models/mortgage-rates";
-import { type PersonalLoanRates } from "../src/models/personal-loan-rates";
+
+import { toSavableJson } from "../src/lib/data-loader";
+import type { DataType, SupportedModels } from "../src/lib/data-loader";
+import type { CarLoanRates } from "../src/models/car-loan-rates";
+import type { CreditCardRates } from "../src/models/credit-card-rates";
+import type { MortgageRates } from "../src/models/mortgage-rates";
+import type { PersonalLoanRates } from "../src/models/personal-loan-rates";
 
 const seedDate = "2026-04-30";
 const wranglerConfigPath = fileURLToPath(
-  new URL("../wrangler.toml", import.meta.url),
+  new URL("../wrangler.toml", import.meta.url)
 );
 
 const mortgageRates: MortgageRates = {
@@ -119,7 +117,7 @@ const creditCardRates: CreditCardRates = {
   ],
 };
 
-const seedRows: Array<{ dataType: DataType; data: SupportedModels }> = [
+const seedRows: { dataType: DataType; data: SupportedModels }[] = [
   { dataType: "mortgage-rates", data: mortgageRates },
   { dataType: "personal-loan-rates", data: personalLoanRates },
   { dataType: "car-loan-rates", data: carLoanRates },
@@ -133,7 +131,7 @@ for (const row of seedRows) {
 
   seedStatements.push(
     `INSERT OR IGNORE INTO latest_data (data_type, data, last_updated) VALUES ('${row.dataType}', '${data}', '${row.data.lastUpdated}')`,
-    `INSERT OR IGNORE INTO historical_data (data_type, date, data) VALUES ('${row.dataType}', '${seedDate}', '${data}')`,
+    `INSERT OR IGNORE INTO historical_data (data_type, date, data) VALUES ('${row.dataType}', '${seedDate}', '${data}')`
   );
 }
 
@@ -157,6 +155,6 @@ function runLocalD1(command: string): void {
     ],
     {
       stdio: "inherit",
-    },
+    }
   );
 }

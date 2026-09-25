@@ -1,17 +1,15 @@
 import { describe, expect, test } from "bun:test";
+
 import { createApp } from "../src/app";
-import {
-  type DataType,
-  type SupportedModels,
-  toSavableJson,
-} from "../src/lib/data-loader";
-import { type Environment } from "../src/lib/environment";
+import { toSavableJson } from "../src/lib/data-loader";
+import type { DataType, SupportedModels } from "../src/lib/data-loader";
+import type { Environment } from "../src/lib/environment";
 import { parseSchema } from "../src/lib/schema";
 import { HealthResponse } from "../src/models/api";
-import { type CarLoanRates } from "../src/models/car-loan-rates";
-import { type CreditCardRates } from "../src/models/credit-card-rates";
-import { type MortgageRates } from "../src/models/mortgage-rates";
-import { type PersonalLoanRates } from "../src/models/personal-loan-rates";
+import type { CarLoanRates } from "../src/models/car-loan-rates";
+import type { CreditCardRates } from "../src/models/credit-card-rates";
+import type { MortgageRates } from "../src/models/mortgage-rates";
+import type { PersonalLoanRates } from "../src/models/personal-loan-rates";
 import {
   CarLoanRatesResponse,
   CreditCardRatesResponse,
@@ -32,11 +30,11 @@ type ListSchema =
   | typeof CarLoanRatesResponse
   | typeof CreditCardRatesResponse;
 
-type ListCase = {
+interface ListCase {
   path: string;
   type: ListResponseType;
   schema: ListSchema;
-};
+}
 
 const mortgageRates: MortgageRates = {
   type: "MortgageRates",
@@ -223,7 +221,7 @@ describe("v1 API contract", () => {
 
     const body = parseSchema(
       MortgageRatesTimeSeriesResponse,
-      await jsonBody(response),
+      await jsonBody(response)
     );
 
     expect(body.type).toBe("MortgageRatesTimeSeries");
@@ -232,20 +230,20 @@ describe("v1 API contract", () => {
     expect(typeof body.termsOfUse).toBe("string");
     expect(typeof body.timestamp).toBe("string");
     expect(body.message).toBe(
-      "Please specify a date or date range to retrieve time series data",
+      "Please specify a date or date range to retrieve time series data"
     );
   });
 
   test("returns historical mortgage data with the same nested data shape", async () => {
     const response = await request(
-      "/api/v1/mortgage-rates/time-series?date=2026-04-30&institutionId=institution:anz&termInMonths=12",
+      "/api/v1/mortgage-rates/time-series?date=2026-04-30&institutionId=institution:anz&termInMonths=12"
     );
 
     expect(response.status).toBe(200);
 
     const body = parseSchema(
       MortgageRatesTimeSeriesResponse,
-      await jsonBody(response),
+      await jsonBody(response)
     );
     const day = body.timeSeries["2026-04-30"];
 
@@ -268,7 +266,7 @@ describe("v1 API contract", () => {
 
   test("returns validation errors as 400s instead of server errors", async () => {
     const response = await request(
-      "/api/v1/mortgage-rates/time-series?date=2026-02-30",
+      "/api/v1/mortgage-rates/time-series?date=2026-02-30"
     );
 
     expect(response.status).toBe(400);
@@ -300,7 +298,7 @@ describe("v1 API contract", () => {
 
   test("leaves API reference documentation pages to the docs app", async () => {
     const response = await request(
-      "/api-reference/endpoint/mortgage-rates/time-series",
+      "/api-reference/endpoint/mortgage-rates/time-series"
     );
 
     expect(response.status).toBe(404);
@@ -320,7 +318,7 @@ describe("v1 API contract", () => {
 
   test("leaves documentation search to the docs app", async () => {
     const response = await request(
-      "/api/search?query=mortgage%20time%20series",
+      "/api/search?query=mortgage%20time%20series"
     );
 
     expect(response.status).toBe(404);
@@ -350,8 +348,7 @@ describe("v1 API contract", () => {
     const specResponse = await requestWithEnv(
       createProductionEnv,
       "/openapi/json",
-      {},
-      "https://ratesapi.nz",
+      "https://ratesapi.nz"
     );
     expect(specResponse.status).toBe(200);
 
@@ -444,10 +441,10 @@ describe("v1 API contract", () => {
     const callBody = requireRecord(await jsonBody(callResponse));
     const callResult = readRecord(callBody, "result");
     const content = readArray(callResult, "content");
-    const firstContent = content[0];
+    const [firstContent] = content;
     const text = readRecord(firstContent, "self")?.text;
     if (typeof text !== "string") {
-      throw new Error("Expected MCP tool call to return text content");
+      throw new TypeError("Expected MCP tool call to return text content");
     }
 
     const parsedText: unknown = JSON.parse(text);
@@ -471,14 +468,14 @@ describe("v1 API contract", () => {
 });
 
 function request(path: string, init: RequestInit = {}) {
-  return requestWithEnv(createEnv, path, init, "http://localhost");
+  return requestWithEnv(createEnv, path, "http://localhost", init);
 }
 
 function requestWithEnv(
   getEnv: () => Environment,
   path: string,
-  init: RequestInit = {},
   origin: string,
+  init: RequestInit = {}
 ) {
   const app = createApp(getEnv);
   return app.handle(new Request(new URL(path, origin).toString(), init));
@@ -529,7 +526,7 @@ function createStatement(
   data: {
     latest: Partial<Record<DataType, SupportedModels>>;
     historical: Partial<Record<DataType, Record<string, SupportedModels>>>;
-  },
+  }
 ) {
   return {
     bind(...values: unknown[]) {
@@ -553,7 +550,7 @@ function selectFirst(
   data: {
     latest: Partial<Record<DataType, SupportedModels>>;
     historical: Partial<Record<DataType, Record<string, SupportedModels>>>;
-  },
+  }
 ): Record<string, unknown> | null {
   if (sql.includes("FROM latest_data")) {
     const dataType = readDataType(boundValues[0]);
@@ -585,7 +582,7 @@ function selectAll(
   data: {
     latest: Partial<Record<DataType, SupportedModels>>;
     historical: Partial<Record<DataType, Record<string, SupportedModels>>>;
-  },
+  }
 ): Record<string, unknown>[] {
   if (sql.includes("FROM latest_data")) {
     return Object.keys(data.latest).map((dataType) => ({
@@ -639,7 +636,7 @@ function requireRecord(value: unknown): Record<string, unknown> {
 
 function readRecord(
   value: unknown,
-  key: string,
+  key: string
 ): Record<string, unknown> | undefined {
   if (!isRecord(value)) {
     return undefined;

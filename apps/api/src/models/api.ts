@@ -1,16 +1,17 @@
 import { t } from "elysia";
 
 export function isValidIsoDate(value: string): boolean {
-  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const groups = value.match(
+    /^(?<yearValue>\d{4})-(?<monthValue>\d{2})-(?<dayValue>\d{2})$/u
+  )?.groups;
 
-  if (!match) {
+  if (!groups) {
     return false;
   }
 
-  const [, yearValue, monthValue, dayValue] = match;
-  const year = Number(yearValue);
-  const month = Number(monthValue);
-  const day = Number(dayValue);
+  const year = Number(groups.yearValue);
+  const month = Number(groups.monthValue);
+  const day = Number(groups.dayValue);
   const date = new Date(Date.UTC(year, month - 1, day));
 
   return (
@@ -34,7 +35,7 @@ export const GenericApiError = t.Object(
       examples: ["Internal Server Error"],
     }),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const TimeSeriesDateParameter = t.Object(
@@ -44,34 +45,34 @@ export const TimeSeriesDateParameter = t.Object(
         pattern: "^\\d{4}-\\d{2}-\\d{2}$",
         description: "Date in YYYY-MM-DD format for historical data",
         example: "2025-03-01",
-      }),
+      })
     ),
     startDate: t.Optional(
       t.String({
         pattern: "^\\d{4}-\\d{2}-\\d{2}$",
         description: "Start date in YYYY-MM-DD format for time series range",
         example: "2025-01-01",
-      }),
+      })
     ),
     endDate: t.Optional(
       t.String({
         pattern: "^\\d{4}-\\d{2}-\\d{2}$",
         description: "End date in YYYY-MM-DD format for time series range",
         example: "2025-03-01",
-      }),
+      })
     ),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export type TimeSeriesDateQuery = typeof TimeSeriesDateParameter.static;
 
 export function validateTimeSeriesDateQuery(
-  value: TimeSeriesDateQuery,
+  value: TimeSeriesDateQuery
 ): boolean {
   if (
     [value.date, value.startDate, value.endDate].some(
-      (date) => date !== undefined && !isValidIsoDate(date),
+      (date) => date !== undefined && !isValidIsoDate(date)
     )
   ) {
     return false;
@@ -96,12 +97,12 @@ export const HealthResponse = t.Object(
           dataType: t.String(),
           lastUpdated: t.String(),
         },
-        { additionalProperties: false },
-      ),
+        { additionalProperties: false }
+      )
     ),
     timestamp: t.String(),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const HealthErrorResponse = t.Object(
@@ -110,7 +111,7 @@ export const HealthErrorResponse = t.Object(
     message: t.String(),
     timestamp: t.String(),
   },
-  { additionalProperties: false },
+  { additionalProperties: false }
 );
 
 export const TimestampedFields = {
@@ -121,10 +122,10 @@ export const TimestampedFields = {
   }),
 };
 
-export type ValidationErrorResponseBody = {
+export interface ValidationErrorResponseBody {
   code: 400;
   message: "Invalid request parameters";
-};
+}
 
 export const ValidationErrorResponse: ValidationErrorResponseBody = {
   code: 400,

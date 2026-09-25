@@ -9,7 +9,7 @@
     "dev": "vite dev --host 127.0.0.1 --port 3002 --strictPort",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@fontsource/crimson-pro": "^5.2.8",
@@ -33,9 +33,9 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "@vitejs/plugin-react": "^6.0.1",
     "nitro": "^3.0.260522-beta",
-    "typescript": "catalog:",
     "vite": "^8.0.0"
   }
 }

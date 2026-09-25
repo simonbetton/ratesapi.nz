@@ -1,4 +1,5 @@
 import { ArrowRight, Check } from "lucide-react";
+
 import { DemoPlayer } from "./demo-player";
 import { apiLinks } from "./rates-api-content";
 
@@ -36,7 +37,7 @@ export function HeroSection() {
                   <Check size={14} aria-hidden="true" />
                   {feature}
                 </li>
-              ),
+              )
             )}
           </ul>
         </div>

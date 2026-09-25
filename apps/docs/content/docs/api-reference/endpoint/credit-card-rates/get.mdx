@@ -3,28 +3,26 @@ title: "Get Credit Card Rates by Issuer"
 description: "Retrieve current credit card rates and offers for one issuer."
 ---
 
-
 ## Endpoint
 
-| Field | Value |
-| --- | --- |
-| Method | `GET` |
-| Path | `/api/v1/credit-card-rates/{issuerId}` |
-| Operation ID | `getCreditCardRatesIssuer` |
+| Field        | Value                                  |
+| ------------ | -------------------------------------- |
+| Method       | `GET`                                  |
+| Path         | `/api/v1/credit-card-rates/{issuerId}` |
+| Operation ID | `getCreditCardRatesIssuer`             |
 
 ## Parameters
 
-| Parameter | Description |
-| --- | --- |
+| Parameter  | Description                         |
+| ---------- | ----------------------------------- |
 | `issuerId` | issuer identifier, e.g. issuer:amex |
 
 ## Responses
 
-| Status | Description |
-| --- | --- |
-| `200` | Retrieve credit card rates for the issuer |
-| `404` | Issuer not found |
-| `500` | Server error |
-
+| Status | Description                               |
+| ------ | ----------------------------------------- |
+| `200`  | Retrieve credit card rates for the issuer |
+| `404`  | Issuer not found                          |
+| `500`  | Server error                              |
 
 Retrieve credit card rates for a specific issuer.

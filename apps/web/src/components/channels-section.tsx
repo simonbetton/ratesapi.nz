@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+
 import { endpointCards } from "./rates-api-content";
 
 export function ChannelsSection() {

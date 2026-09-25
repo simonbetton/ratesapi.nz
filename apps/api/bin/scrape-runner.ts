@@ -19,7 +19,7 @@
 
 export type ScrapeOutcome = { status: "saved" } | { status: "unchanged" };
 
-export type RunScrapeOptions<TData> = {
+export interface RunScrapeOptions<TData> {
   /** Loads the currently persisted data. A rejection is treated as `null`. */
   loadCurrent: () => Promise<TData | null>;
   /** Fetches the raw upstream HTML. A rejection propagates. */
@@ -30,10 +30,10 @@ export type RunScrapeOptions<TData> = {
   hasChanged: (newData: TData, oldData: TData) => boolean;
   /** Persists the scraped data. Resolving `false` is treated as a failure. */
   save: (data: TData) => Promise<boolean>;
-};
+}
 
 export async function runScrape<TData>(
-  options: RunScrapeOptions<TData>,
+  options: RunScrapeOptions<TData>
 ): Promise<ScrapeOutcome> {
   let currentData: TData | null = null;
   try {
