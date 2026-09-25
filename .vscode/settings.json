@@ -1,5 +1,15 @@
 {
-  "cSpell.words": ["amex", "hono", "Kiwibank", "openapi", "pino"],
+  "cSpell.words": [
+    "amex",
+    "domhandler",
+    "elysia",
+    "fumadocs",
+    "hono",
+    "Kiwibank",
+    "openapi",
+    "opennextjs",
+    "pino"
+  ],
   "editor.formatOnSave": true,
   "[javascript]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
