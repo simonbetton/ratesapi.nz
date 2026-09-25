@@ -14,7 +14,7 @@ Use this page when you are adding Rates API to a chat assistant, internal resear
 | MCP endpoint | `POST /api/v1/mcp` | Tool-calling agents that support Model Context Protocol |
 | Scalar OpenAPI UI | [`/openapi`](/openapi) | Interactive request testing and endpoint discovery |
 | OpenAPI JSON | [`/openapi/json`](/openapi/json) | SDK generation, agent tool generation, and contract checks |
-| LLM docs feed | [`/llms.txt`](/llms.txt) | Giving assistants the full docs as plain text |
+| LLM docs feed | [`/llms.txt`](/llms.txt) | A plain-text discovery index of doc pages, with titles and links |
 | Search API | `/api/search` | Docs search inside the Fumadocs site |
 
 ## Recommended AI Architecture
@@ -56,14 +56,16 @@ The public OpenAPI document includes the `/api/v1/*` data endpoints and intentio
 
 ## LLM Documentation Feed
 
-Use [`/llms.txt`](/llms.txt) when an assistant, coding agent, or retrieval system needs the documentation in a compact text format.
+Use [`/llms.txt`](/llms.txt) when an assistant, coding agent, or retrieval system needs a compact, plain-text map of the documentation.
+
+`/llms.txt` lists every doc page as a Markdown link with its title and description. It is a discovery index, not the full page content — fetch a linked page directly to read its full text, and use [`/openapi/json`](/openapi/json) for request and response schemas.
 
 This is useful for:
 
-- Adding Rates API docs to a custom assistant system prompt
-- Indexing the docs for retrieval-augmented generation
-- Giving coding agents enough context to generate API clients
-- Keeping docs context separate from live API data
+- Adding a list of Rates API doc pages to a custom assistant system prompt
+- Letting a retrieval system enumerate available pages before fetching the ones it needs
+- Giving coding agents a starting map of the docs to follow up on with individual page fetches
+- Keeping docs discovery separate from live API data
 
 ## Agent-Friendly API Conventions
 
