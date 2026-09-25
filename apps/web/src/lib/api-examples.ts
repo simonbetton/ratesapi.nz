@@ -58,14 +58,24 @@ export const exampleResponse = {
   timestamp: "2026-09-24T05:41:12.125Z",
 };
 
+// A stateless MCP 2026-07-28 request: the version and client capabilities
+// travel in `_meta`, mirrored by the MCP-Protocol-Version, Mcp-Method, and
+// Mcp-Name headers.
 export const mcpRequest = `curl --fail-with-body ${apiUrl("/api/v1/mcp")} \\
   -H 'Content-Type: application/json' \\
+  -H 'MCP-Protocol-Version: 2026-07-28' \\
+  -H 'Mcp-Method: tools/call' \\
+  -H 'Mcp-Name: list_mortgage_rates' \\
   -d '{
     "jsonrpc": "2.0",
     "id": "rates-1",
     "method": "tools/call",
     "params": {
       "name": "list_mortgage_rates",
-      "arguments": { "termInMonths": "12" }
+      "arguments": { "termInMonths": "12" },
+      "_meta": {
+        "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+        "io.modelcontextprotocol/clientCapabilities": {}
+      }
     }
   }'`;

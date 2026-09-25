@@ -27,6 +27,18 @@ import {
   getPersonalLoanRatesTimeSeries,
   listPersonalLoanRates,
 } from "../personal-loan-rates";
+import {
+  hasFeature,
+  isProtocolError,
+  JSON_RPC_ERRORS,
+  META_SERVER_INFO,
+  MODERN_PROTOCOL_VERSION,
+  negotiateLegacyVersion,
+  resolveEra,
+  SUPPORTED_PROTOCOL_VERSIONS,
+  validateModernRequest,
+} from "./protocol";
+import type { Era, ProtocolError } from "./protocol";
 
 type JsonRpcId = string | number | null;
 
@@ -45,6 +57,7 @@ interface JsonRpcResponse {
 
 interface McpToolDefinition {
   name: string;
+  title: string;
   description: string;
   inputSchema: TObject;
 }
@@ -73,12 +86,28 @@ class McpToolError extends Error {
   }
 }
 
-const MCP_PROTOCOL_VERSION = "2024-11-05";
-
 const MCP_SERVER_INFO = {
   name: "ratesapi-mcp",
-  version: "1.0.0",
+  title: "Rates API",
+  version: "1.1.0",
+  description:
+    "Interest rates of New Zealand financial institutions for mortgages, personal loans, car loans, and credit cards.",
+  websiteUrl: "https://ratesapi.nz",
 };
+
+const MCP_INSTRUCTIONS = [
+  "Rates API gives the interest rates of New Zealand financial institutions.",
+  "Use a list tool to get the newest rates, a by-institution or by-issuer tool for one provider, and a time-series tool for snapshots of earlier rates.",
+  "Send all tool arguments as strings. Dates use the YYYY-MM-DD format.",
+].join(" ");
+
+const MCP_CAPABILITIES = { tools: { listChanged: false } };
+
+// The tool list only changes when the API is deployed.
+const TOOLS_CACHE_HINT = { ttlMs: 3_600_000, cacheScope: "public" } as const;
+
+// Every tool only reads the Rates API dataset.
+const READ_ONLY_ANNOTATIONS = { readOnlyHint: true, openWorldHint: false };
 
 // Each tool's discovery schema (advertised via tools/list) and its runtime
 // argument validation (enforced in handleToolCall) are derived from this one
@@ -94,6 +123,7 @@ function requiredStringArg(description: string, examples: string[]) {
 const MCP_TOOLS: McpToolDefinition[] = [
   {
     name: "list_mortgage_rates",
+    title: "List mortgage rates",
     description: "List latest mortgage rates for all institutions.",
     inputSchema: Type.Object(
       {
@@ -107,6 +137,7 @@ const MCP_TOOLS: McpToolDefinition[] = [
   },
   {
     name: "get_mortgage_rates_by_institution",
+    title: "Get mortgage rates for one institution",
     description: "Get latest mortgage rates for a specific institution.",
     inputSchema: Type.Object(
       {
@@ -123,6 +154,7 @@ const MCP_TOOLS: McpToolDefinition[] = [
   },
   {
     name: "get_mortgage_rates_time_series",
+    title: "Get historical mortgage rates",
     description: "Get mortgage rates time series for a date or range.",
     inputSchema: Type.Object(
       {
@@ -152,11 +184,13 @@ const MCP_TOOLS: McpToolDefinition[] = [
   },
   {
     name: "list_personal_loan_rates",
+    title: "List personal loan rates",
     description: "List latest personal loan rates for all institutions.",
     inputSchema: Type.Object({}, { additionalProperties: false }),
   },
   {
     name: "get_personal_loan_rates_by_institution",
+    title: "Get personal loan rates for one institution",
     description: "Get latest personal loan rates for a specific institution.",
     inputSchema: Type.Object(
       {
@@ -169,6 +203,7 @@ const MCP_TOOLS: McpToolDefinition[] = [
   },
   {
     name: "get_personal_loan_rates_time_series",
+    title: "Get historical personal loan rates",
     description: "Get personal loan rates time series for a date or range.",
     inputSchema: Type.Object(
       {
@@ -194,11 +229,13 @@ const MCP_TOOLS: McpToolDefinition[] = [
   },
   {
     name: "list_car_loan_rates",
+    title: "List car loan rates",
     description: "List latest car loan rates for all institutions.",
     inputSchema: Type.Object({}, { additionalProperties: false }),
   },
   {
     name: "get_car_loan_rates_by_institution",
+    title: "Get car loan rates for one institution",
     description: "Get latest car loan rates for a specific institution.",
     inputSchema: Type.Object(
       {
@@ -211,6 +248,7 @@ const MCP_TOOLS: McpToolDefinition[] = [
   },
   {
     name: "get_car_loan_rates_time_series",
+    title: "Get historical car loan rates",
     description: "Get car loan rates time series for a date or range.",
     inputSchema: Type.Object(
       {
@@ -236,11 +274,13 @@ const MCP_TOOLS: McpToolDefinition[] = [
   },
   {
     name: "list_credit_card_rates",
+    title: "List credit card rates",
     description: "List latest credit card rates for all issuers.",
     inputSchema: Type.Object({}, { additionalProperties: false }),
   },
   {
     name: "get_credit_card_rates_by_issuer",
+    title: "Get credit card rates for one issuer",
     description: "Get latest credit card rates for a specific issuer.",
     inputSchema: Type.Object(
       {
@@ -251,6 +291,7 @@ const MCP_TOOLS: McpToolDefinition[] = [
   },
   {
     name: "get_credit_card_rates_time_series",
+    title: "Get historical credit card rates",
     description: "Get credit card rates time series for a date or range.",
     inputSchema: Type.Object(
       {
@@ -278,84 +319,202 @@ const MCP_TOOLS: McpToolDefinition[] = [
 
 const MCP_TOOLS_BY_NAME = new Map(MCP_TOOLS.map((tool) => [tool.name, tool]));
 
+// Deterministic order (the MCP_TOOLS order), as 2026-07-28 recommends.
+const MCP_TOOL_LIST = MCP_TOOLS.map((tool) => ({
+  ...tool,
+  annotations: READ_ONLY_ANNOTATIONS,
+}));
+
 export function createMcpRoutes(getEnv: GetEnv) {
-  return new Elysia({ prefix: "/mcp" }).post(
-    "/",
-    async ({ request, status }) => {
-      let body: unknown;
+  return (
+    new Elysia({ prefix: "/mcp" })
+      .post(
+        "/",
+        async ({ request, status }) => {
+          let body: unknown;
 
-      try {
-        body = await request.json();
-      } catch (error) {
-        const response: JsonRpcResponse = {
-          jsonrpc: "2.0",
-          id: null,
-          error: {
-            code: -32_700,
-            message: "Parse error",
-            data: error instanceof Error ? error.message : undefined,
-          },
-        };
+          try {
+            body = await request.json();
+          } catch (error) {
+            return status(
+              400,
+              errorResponse(null, {
+                code: JSON_RPC_ERRORS.parseError,
+                message: "Parse error",
+                data: error instanceof Error ? error.message : undefined,
+              })
+            );
+          }
 
-        return status(400, response);
-      }
+          const reply = Array.isArray(body)
+            ? await handleBatch(body, request.headers, getEnv)
+            : await handleMessage(body, request.headers, getEnv);
 
-      // Parsing the envelope (jsonrpc/method/id shape) is tracked separately
-      // from dispatching the method: an invalid envelope must never be
-      // treated as a notification, and recovering an id for its error
-      // response must never itself throw.
-      let envelope: ReturnType<typeof parseJsonRpcRequest>;
-
-      try {
-        envelope = parseJsonRpcRequest(body);
-      } catch (error) {
-        const response: JsonRpcResponse = {
-          jsonrpc: "2.0",
-          id: recoverRequestId(body),
-          error: toJsonRpcError(error),
-        };
-
-        return response;
-      }
-
-      const { id, hasId, method, params } = envelope;
-
-      try {
-        const result = await handleMethod(method, params, getEnv);
-
-        if (!hasId) {
-          return status(204);
-        }
-
-        const response: JsonRpcResponse = {
-          jsonrpc: "2.0",
-          id,
-          result,
-        };
-
-        return response;
-      } catch (error) {
-        // The envelope was valid, so a notification (no id) stays a
-        // notification even when the method or tool call fails.
-        if (!hasId) {
-          return status(204);
-        }
-
-        const response: JsonRpcResponse = {
-          jsonrpc: "2.0",
-          id,
-          error: toJsonRpcError(error),
-        };
-
-        return response;
-      }
-    },
-    {
-      detail: {
-        hide: true,
-      },
-    }
+          // Notifications and all-notification batches get 202 with no body
+          // (transports/streamable-http, "Sending Messages").
+          return reply.body === undefined
+            ? new Response(null, { status: reply.httpStatus })
+            : status(reply.httpStatus, reply.body);
+        },
+        { detail: { hide: true } }
+      )
+      // Streamable HTTP servers without a standalone SSE stream answer GET
+      // (and DELETE, for legacy session teardown) with 405.
+      .get("/", ({ set, status }) => methodNotAllowed(set, status), {
+        detail: { hide: true },
+      })
+      .delete("/", ({ set, status }) => methodNotAllowed(set, status), {
+        detail: { hide: true },
+      })
   );
+}
+
+interface Reply {
+  httpStatus: number;
+  body?: JsonRpcResponse | JsonRpcResponse[];
+}
+
+function methodNotAllowed(
+  set: { headers: Record<string, unknown> },
+  status: (code: 405, body: JsonRpcResponse) => unknown
+) {
+  set.headers.allow = "POST";
+  return status(
+    405,
+    errorResponse(null, {
+      code: JSON_RPC_ERRORS.invalidRequest,
+      message: "Method not allowed. Send each JSON-RPC message in a POST.",
+    })
+  );
+}
+
+function errorResponse(id: JsonRpcId, error: JsonRpcError): JsonRpcResponse {
+  return { jsonrpc: "2.0", id, error };
+}
+
+function protocolFailure(id: JsonRpcId, failure: ProtocolError): Reply {
+  return {
+    httpStatus: failure.httpStatus,
+    body: errorResponse(id, {
+      code: failure.code,
+      message: failure.message,
+      data: failure.data,
+    }),
+  };
+}
+
+// JSON-RPC batches exist only in 2025-03-26, which clients without the
+// MCP-Protocol-Version header may be speaking. Later revisions forbid them.
+async function handleBatch(
+  messages: unknown[],
+  headers: Headers,
+  getEnv: GetEnv
+): Promise<Reply> {
+  const headerVersion = headers.get("mcp-protocol-version");
+  if (headerVersion !== null && headerVersion !== "2025-03-26") {
+    return protocolFailure(null, {
+      httpStatus: 400,
+      code: JSON_RPC_ERRORS.invalidRequest,
+      message: `Batch requests are not supported in protocol version ${headerVersion}`,
+    });
+  }
+  if (messages.length === 0) {
+    return {
+      httpStatus: 200,
+      body: errorResponse(null, {
+        code: JSON_RPC_ERRORS.invalidRequest,
+        message: "Invalid Request",
+      }),
+    };
+  }
+
+  const replies = await Promise.all(
+    messages.map((message) => handleMessage(message, headers, getEnv))
+  );
+  const responses = replies.flatMap((reply) =>
+    reply.body === undefined || Array.isArray(reply.body) ? [] : [reply.body]
+  );
+  return responses.length === 0
+    ? { httpStatus: 202 }
+    : { httpStatus: 200, body: responses };
+}
+
+async function handleMessage(
+  body: unknown,
+  headers: Headers,
+  getEnv: GetEnv
+): Promise<Reply> {
+  // Parsing the envelope (jsonrpc/method/id shape) is tracked separately
+  // from dispatching the method: an invalid envelope must never be
+  // treated as a notification, and recovering an id for its error
+  // response must never itself throw.
+  let envelope: ReturnType<typeof parseJsonRpcRequest>;
+
+  try {
+    envelope = parseJsonRpcRequest(body);
+  } catch (error) {
+    const modern =
+      headers.get("mcp-protocol-version") === MODERN_PROTOCOL_VERSION;
+    return {
+      httpStatus: modern ? 400 : 200,
+      body: errorResponse(recoverRequestId(body), toJsonRpcError(error)),
+    };
+  }
+
+  const { id, hasId, method, params } = envelope;
+  const era = resolveEra(headers.get("mcp-protocol-version"), method, params);
+
+  if (isProtocolError(era)) {
+    return protocolFailure(id, era);
+  }
+
+  // A notification needs no reply, and none of this server's methods act on
+  // one, so it is accepted without being dispatched.
+  if (!hasId) {
+    return { httpStatus: 202 };
+  }
+
+  if (era.kind === "modern") {
+    const invalid =
+      id === null
+        ? {
+            httpStatus: 400,
+            code: JSON_RPC_ERRORS.invalidRequest,
+            message: "Invalid Request: id must not be null",
+          }
+        : validateModernRequest(headers, method, params);
+    if (invalid) {
+      return protocolFailure(id, invalid);
+    }
+  }
+
+  try {
+    const result = await handleMethod(era, method, params, getEnv);
+    return {
+      httpStatus: 200,
+      body: {
+        jsonrpc: "2.0",
+        id,
+        result:
+          era.kind === "modern"
+            ? {
+                resultType: "complete",
+                ...result,
+                _meta: { [META_SERVER_INFO]: MCP_SERVER_INFO },
+              }
+            : result,
+      },
+    };
+  } catch (error) {
+    const rpcError = toJsonRpcError(error);
+    // Modern servers answer an unknown RPC method with 404 so clients can
+    // tell it apart from a legacy HTTP+SSE endpoint.
+    const httpStatus =
+      era.kind === "modern" && rpcError.code === JSON_RPC_ERRORS.methodNotFound
+        ? 404
+        : 200;
+    return { httpStatus, body: errorResponse(id, rpcError) };
+  }
 }
 
 function parseJsonRpcRequest(body: unknown) {
@@ -430,39 +589,77 @@ function toJsonRpcError(error: unknown): JsonRpcError {
   };
 }
 
-async function handleMethod(method: string, params: unknown, getEnv: GetEnv) {
+async function handleMethod(
+  era: Era,
+  method: string,
+  params: unknown,
+  getEnv: GetEnv
+): Promise<Record<string, unknown>> {
+  if (era.kind === "modern") {
+    switch (method) {
+      case "server/discover": {
+        return {
+          supportedVersions: SUPPORTED_PROTOCOL_VERSIONS,
+          capabilities: MCP_CAPABILITIES,
+          instructions: MCP_INSTRUCTIONS,
+          ...TOOLS_CACHE_HINT,
+        };
+      }
+      case "tools/list": {
+        return { tools: MCP_TOOL_LIST, ...TOOLS_CACHE_HINT };
+      }
+      case "tools/call": {
+        return await handleToolCall(era, params, getEnv);
+      }
+      default: {
+        // Includes `ping`, which 2026-07-28 removed.
+        throw new JsonRpcResponseError(
+          JSON_RPC_ERRORS.methodNotFound,
+          `Method not found: ${method}`
+        );
+      }
+    }
+  }
+
   switch (method) {
     case "initialize": {
       return {
-        protocolVersion: MCP_PROTOCOL_VERSION,
+        protocolVersion: negotiateLegacyVersion(
+          isRecord(params) ? params.protocolVersion : undefined
+        ),
+        capabilities: MCP_CAPABILITIES,
         serverInfo: MCP_SERVER_INFO,
-        capabilities: {
-          tools: {
-            listChanged: false,
-          },
-        },
+        instructions: MCP_INSTRUCTIONS,
       };
     }
     case "ping": {
       return {};
     }
     case "tools/list": {
-      return {
-        tools: MCP_TOOLS,
-      };
+      return { tools: MCP_TOOL_LIST };
     }
     case "tools/call": {
-      return await handleToolCall(params, getEnv);
+      return await handleToolCall(era, params, getEnv);
     }
     default: {
-      throw new JsonRpcResponseError(-32_601, `Method not found: ${method}`);
+      throw new JsonRpcResponseError(
+        JSON_RPC_ERRORS.methodNotFound,
+        `Method not found: ${method}`
+      );
     }
   }
 }
 
-async function handleToolCall(params: unknown, getEnv: GetEnv) {
+function toolErrorResult(text: string) {
+  return { isError: true, content: [{ type: "text", text }] };
+}
+
+async function handleToolCall(era: Era, params: unknown, getEnv: GetEnv) {
   if (!isRecord(params)) {
-    throw new JsonRpcResponseError(-32_602, "Invalid params");
+    throw new JsonRpcResponseError(
+      JSON_RPC_ERRORS.invalidParams,
+      "Invalid params"
+    );
   }
 
   const { name } = params;
@@ -470,15 +667,26 @@ async function handleToolCall(params: unknown, getEnv: GetEnv) {
 
   if (typeof name !== "string" || name.length === 0) {
     throw new JsonRpcResponseError(
-      -32_602,
+      JSON_RPC_ERRORS.invalidParams,
       "Invalid params: missing tool name"
     );
   }
 
+  // 2025-11-25 (SEP-1303) moved unknown tools to -32602, and input
+  // validation failures into tool results so the model can correct them.
+  const toolErrorsInResults = hasFeature(era, "2025-11-25");
   const tool = MCP_TOOLS_BY_NAME.get(name);
 
   if (!tool) {
-    throw new JsonRpcResponseError(-32_601, `Tool not found: ${name}`);
+    throw toolErrorsInResults
+      ? new JsonRpcResponseError(
+          JSON_RPC_ERRORS.invalidParams,
+          `Unknown tool: ${name}`
+        )
+      : new JsonRpcResponseError(
+          JSON_RPC_ERRORS.methodNotFound,
+          `Tool not found: ${name}`
+        );
   }
 
   // Optional arguments default to an empty object; everything else is
@@ -496,7 +704,13 @@ async function handleToolCall(params: unknown, getEnv: GetEnv) {
       ? `${firstError.path || "/"} ${firstError.message}`
       : "arguments do not match the tool's input schema";
 
-    throw new JsonRpcResponseError(-32_602, `Invalid params: ${detail}`);
+    if (toolErrorsInResults) {
+      return toolErrorResult(`Invalid arguments: ${detail}`);
+    }
+    throw new JsonRpcResponseError(
+      JSON_RPC_ERRORS.invalidParams,
+      `Invalid params: ${detail}`
+    );
   }
 
   try {
@@ -505,34 +719,26 @@ async function handleToolCall(params: unknown, getEnv: GetEnv) {
       toolArguments as Record<string, unknown>,
       getEnv()
     );
+    const content = [{ type: "text", text: JSON.stringify(result, null, 2) }];
 
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-    };
+    // `structuredContent` exists from 2025-06-18; the text block keeps the
+    // same JSON for older clients.
+    return hasFeature(era, "2025-06-18")
+      ? { content, structuredContent: result }
+      : { content };
   } catch (error) {
     if (error instanceof McpToolError) {
-      return {
-        isError: true,
-        content: [
+      return toolErrorResult(
+        JSON.stringify(
           {
-            type: "text",
-            text: JSON.stringify(
-              {
-                message: error.message,
-                status: error.status,
-                body: error.body,
-              },
-              null,
-              2
-            ),
+            message: error.message,
+            status: error.status,
+            body: error.body,
           },
-        ],
-      };
+          null,
+          2
+        )
+      );
     }
 
     throw error;

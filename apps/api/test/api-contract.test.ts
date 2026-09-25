@@ -502,7 +502,7 @@ describe("v1 API contract", () => {
   });
 });
 
-// The hand-authored shape MCP_TOOLS advertised before this change. Kept here
+// The hand-authored shape MCP_TOOLS advertises. Kept here
 // (not imported) so the test fails if the discovery output's shape drifts,
 // including if a TypeBox-derived schema were to leak internal keys: an HTTP
 // JSON response can never carry the TypeBox.Kind/Optional symbols, but this
@@ -510,6 +510,7 @@ describe("v1 API contract", () => {
 const EXPECTED_MCP_TOOLS: unknown[] = [
   {
     name: "list_mortgage_rates",
+    title: "List mortgage rates",
     description: "List latest mortgage rates for all institutions.",
     inputSchema: {
       type: "object",
@@ -522,9 +523,11 @@ const EXPECTED_MCP_TOOLS: unknown[] = [
       },
       additionalProperties: false,
     },
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
   {
     name: "get_mortgage_rates_by_institution",
+    title: "Get mortgage rates for one institution",
     description: "Get latest mortgage rates for a specific institution.",
     inputSchema: {
       type: "object",
@@ -543,9 +546,11 @@ const EXPECTED_MCP_TOOLS: unknown[] = [
       required: ["institutionId"],
       additionalProperties: false,
     },
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
   {
     name: "get_mortgage_rates_time_series",
+    title: "Get historical mortgage rates",
     description: "Get mortgage rates time series for a date or range.",
     inputSchema: {
       type: "object",
@@ -578,18 +583,22 @@ const EXPECTED_MCP_TOOLS: unknown[] = [
       },
       additionalProperties: false,
     },
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
   {
     name: "list_personal_loan_rates",
+    title: "List personal loan rates",
     description: "List latest personal loan rates for all institutions.",
     inputSchema: {
       type: "object",
       properties: {},
       additionalProperties: false,
     },
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
   {
     name: "get_personal_loan_rates_by_institution",
+    title: "Get personal loan rates for one institution",
     description: "Get latest personal loan rates for a specific institution.",
     inputSchema: {
       type: "object",
@@ -603,9 +612,11 @@ const EXPECTED_MCP_TOOLS: unknown[] = [
       required: ["institutionId"],
       additionalProperties: false,
     },
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
   {
     name: "get_personal_loan_rates_time_series",
+    title: "Get historical personal loan rates",
     description: "Get personal loan rates time series for a date or range.",
     inputSchema: {
       type: "object",
@@ -633,18 +644,22 @@ const EXPECTED_MCP_TOOLS: unknown[] = [
       },
       additionalProperties: false,
     },
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
   {
     name: "list_car_loan_rates",
+    title: "List car loan rates",
     description: "List latest car loan rates for all institutions.",
     inputSchema: {
       type: "object",
       properties: {},
       additionalProperties: false,
     },
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
   {
     name: "get_car_loan_rates_by_institution",
+    title: "Get car loan rates for one institution",
     description: "Get latest car loan rates for a specific institution.",
     inputSchema: {
       type: "object",
@@ -658,9 +673,11 @@ const EXPECTED_MCP_TOOLS: unknown[] = [
       required: ["institutionId"],
       additionalProperties: false,
     },
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
   {
     name: "get_car_loan_rates_time_series",
+    title: "Get historical car loan rates",
     description: "Get car loan rates time series for a date or range.",
     inputSchema: {
       type: "object",
@@ -688,18 +705,22 @@ const EXPECTED_MCP_TOOLS: unknown[] = [
       },
       additionalProperties: false,
     },
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
   {
     name: "list_credit_card_rates",
+    title: "List credit card rates",
     description: "List latest credit card rates for all issuers.",
     inputSchema: {
       type: "object",
       properties: {},
       additionalProperties: false,
     },
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
   {
     name: "get_credit_card_rates_by_issuer",
+    title: "Get credit card rates for one issuer",
     description: "Get latest credit card rates for a specific issuer.",
     inputSchema: {
       type: "object",
@@ -713,9 +734,11 @@ const EXPECTED_MCP_TOOLS: unknown[] = [
       required: ["issuerId"],
       additionalProperties: false,
     },
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
   {
     name: "get_credit_card_rates_time_series",
+    title: "Get historical credit card rates",
     description: "Get credit card rates time series for a date or range.",
     inputSchema: {
       type: "object",
@@ -743,6 +766,7 @@ const EXPECTED_MCP_TOOLS: unknown[] = [
       },
       additionalProperties: false,
     },
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
 ];
 
@@ -811,15 +835,21 @@ describe("MCP envelope validation", () => {
     });
   });
 
-  test("rejects an array envelope instead of crashing", async () => {
+  test("answers each invalid member of a legacy batch instead of crashing", async () => {
+    // 2025-03-26 clients (no MCP-Protocol-Version header) may send batches.
     const response = await mcpRequest(createEnv, [1, 2, 3]);
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toMatchObject({
-      jsonrpc: "2.0",
-      id: null,
-      error: { code: -32_600 },
-    });
+    const body = await response.json();
+    expect(body).toHaveLength(3);
+    expect(body).toEqual(
+      Array.from({ length: 3 }, () =>
+        expect.objectContaining({
+          id: null,
+          error: expect.objectContaining({ code: -32_600 }),
+        })
+      )
+    );
   });
 
   test("rejects a missing jsonrpc version but still echoes a recoverable id", async () => {
@@ -878,23 +908,26 @@ describe("MCP envelope validation", () => {
     });
   });
 
-  test("suppresses the response for a valid notification (no id key)", async () => {
+  test("accepts a notification (no id key) with 202 and no body", async () => {
     const response = await mcpRequest(createEnv, {
       jsonrpc: "2.0",
-      method: "ping",
+      method: "notifications/initialized",
     });
 
-    expect(response.status).toBe(204);
+    expect(response.status).toBe(202);
+    expect(await response.text()).toBe("");
   });
 
-  test("suppresses the response for a valid notification even when the call fails", async () => {
-    const response = await mcpRequest(createEnv, {
+  test("does not dispatch a notification, even for a method that would fail", async () => {
+    const spy = createSpyEnv();
+    const response = await mcpRequest(spy.getEnv, {
       jsonrpc: "2.0",
       method: "tools/call",
-      params: { name: "does_not_exist" },
+      params: { name: "list_mortgage_rates" },
     });
 
-    expect(response.status).toBe(204);
+    expect(response.status).toBe(202);
+    expect(spy.getCallCount()).toBe(0);
   });
 
   test("treats request id 0 as a real request, not a notification", async () => {
@@ -1122,6 +1155,431 @@ describe("MCP tool argument validation", () => {
     expect(spy.getCallCount()).toBe(0);
   });
 });
+
+const MODERN_META = {
+  "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+  "io.modelcontextprotocol/clientInfo": {
+    name: "test-client",
+    version: "1.0.0",
+  },
+  "io.modelcontextprotocol/clientCapabilities": {},
+};
+
+// A 2026-07-28 request: per-request _meta plus the mirrored headers.
+function modernMcpRequest(
+  getEnv: () => Environment,
+  method: string,
+  params: Record<string, unknown> = {},
+  headerOverrides: Record<string, string | null> = {}
+) {
+  const defaults: Record<string, string | null> = {
+    "content-type": "application/json",
+    "mcp-protocol-version": "2026-07-28",
+    "mcp-method": method,
+    "mcp-name": typeof params.name === "string" ? params.name : null,
+  };
+  const headers = Object.fromEntries(
+    Object.entries({ ...defaults, ...headerOverrides }).filter(
+      (entry): entry is [string, string] => entry[1] !== null
+    )
+  );
+  return requestWithEnv(getEnv, "/api/v1/mcp", "http://localhost", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      method,
+      params: { ...params, _meta: MODERN_META },
+    }),
+  });
+}
+
+describe("MCP 2026-07-28 (stateless) requests", () => {
+  test("server/discover lists versions, capabilities, and cache hints", async () => {
+    const response = await modernMcpRequest(createEnv, "server/discover");
+
+    expect(response.status).toBe(200);
+    const body = requireRecord(await jsonBody(response));
+    expect(body.result).toEqual({
+      resultType: "complete",
+      supportedVersions: [
+        "2026-07-28",
+        "2025-11-25",
+        "2025-06-18",
+        "2025-03-26",
+        "2024-11-05",
+      ],
+      capabilities: { tools: { listChanged: false } },
+      instructions: expect.stringContaining("Rates API"),
+      ttlMs: 3_600_000,
+      cacheScope: "public",
+      _meta: {
+        "io.modelcontextprotocol/serverInfo": expect.objectContaining({
+          name: "ratesapi-mcp",
+          version: expect.any(String),
+        }),
+      },
+    });
+  });
+
+  test("tools/list returns the same tools with cache hints", async () => {
+    const response = await modernMcpRequest(createEnv, "tools/list");
+
+    expect(response.status).toBe(200);
+    const result = readRecord(
+      requireRecord(await jsonBody(response)),
+      "result"
+    );
+    expect(result?.resultType).toBe("complete");
+    expect(result?.ttlMs).toBe(3_600_000);
+    expect(result?.cacheScope).toBe("public");
+    expect(readArray(result, "tools")).toEqual(EXPECTED_MCP_TOOLS);
+  });
+
+  test("tools/call returns structured and text content", async () => {
+    const response = await modernMcpRequest(createEnv, "tools/call", {
+      name: "list_mortgage_rates",
+      arguments: { termInMonths: "12" },
+    });
+
+    expect(response.status).toBe(200);
+    const result = readRecord(
+      requireRecord(await jsonBody(response)),
+      "result"
+    );
+    expect(result?.resultType).toBe("complete");
+    expect(result?.structuredContent).toMatchObject({ type: "MortgageRates" });
+    const [text] = readArray(result, "content");
+    expect(JSON.parse(String(readRecord(text, "self")?.text))).toEqual(
+      result?.structuredContent
+    );
+  });
+
+  test("reports invalid arguments as a tool error without touching the database", async () => {
+    const spy = createSpyEnv();
+    const response = await modernMcpRequest(spy.getEnv, "tools/call", {
+      name: "list_mortgage_rates",
+      arguments: { termInMonths: 12 },
+    });
+
+    expect(response.status).toBe(200);
+    const result = readRecord(
+      requireRecord(await jsonBody(response)),
+      "result"
+    );
+    expect(result).toMatchObject({ resultType: "complete", isError: true });
+    expect(spy.getCallCount()).toBe(0);
+  });
+
+  test("rejects an unknown tool with -32602", async () => {
+    const response = await modernMcpRequest(createEnv, "tools/call", {
+      name: "does_not_exist",
+    });
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: -32_602, message: "Unknown tool: does_not_exist" },
+    });
+  });
+
+  for (const method of ["ping", "resources/list"]) {
+    test(`answers the unknown or removed method ${method} with 404 and -32601`, async () => {
+      const response = await modernMcpRequest(createEnv, method);
+      expect(response.status).toBe(404);
+      await expect(response.json()).resolves.toMatchObject({
+        error: { code: -32_601 },
+      });
+    });
+  }
+
+  test("returns UnsupportedProtocolVersionError for an unknown version", async () => {
+    const response = await requestWithEnv(
+      createEnv,
+      "/api/v1/mcp",
+      "http://localhost",
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "mcp-protocol-version": "2099-01-01",
+          "mcp-method": "tools/list",
+        },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          method: "tools/list",
+          params: {
+            _meta: {
+              ...MODERN_META,
+              "io.modelcontextprotocol/protocolVersion": "2099-01-01",
+            },
+          },
+        }),
+      }
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      error: {
+        code: -32_022,
+        data: {
+          supported: expect.arrayContaining(["2026-07-28", "2025-11-25"]),
+          requested: "2099-01-01",
+        },
+      },
+    });
+  });
+
+  const headerCases: {
+    description: string;
+    overrides: Record<string, string | null>;
+  }[] = [
+    {
+      description: "a missing Mcp-Method header",
+      overrides: { "mcp-method": null },
+    },
+    {
+      description: "a mismatched Mcp-Method header",
+      overrides: { "mcp-method": "tools/list" },
+    },
+    {
+      description: "a missing Mcp-Name header",
+      overrides: { "mcp-name": null },
+    },
+    {
+      description: "a mismatched Mcp-Name header",
+      overrides: { "mcp-name": "list_car_loan_rates" },
+    },
+    {
+      description: "a malformed Base64 Mcp-Name header",
+      overrides: { "mcp-name": "=?base64?%%%?=" },
+    },
+    {
+      description: "a mismatched MCP-Protocol-Version header",
+      overrides: { "mcp-protocol-version": "2025-11-25" },
+    },
+    {
+      description: "a missing MCP-Protocol-Version header",
+      overrides: { "mcp-protocol-version": null },
+    },
+  ];
+
+  for (const { description, overrides } of headerCases) {
+    test(`rejects ${description} with 400 and -32020`, async () => {
+      const spy = createSpyEnv();
+      const response = await modernMcpRequest(
+        spy.getEnv,
+        "tools/call",
+        { name: "list_mortgage_rates" },
+        overrides
+      );
+
+      expect(response.status).toBe(400);
+      await expect(response.json()).resolves.toMatchObject({
+        error: { code: -32_020 },
+      });
+      expect(spy.getCallCount()).toBe(0);
+    });
+  }
+
+  test("accepts a Base64-encoded Mcp-Name header", async () => {
+    const response = await modernMcpRequest(
+      createEnv,
+      "tools/call",
+      { name: "list_car_loan_rates" },
+      { "mcp-name": `=?base64?${btoa("list_car_loan_rates")}?=` }
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      result: { resultType: "complete" },
+    });
+  });
+
+  test("rejects a request without the required client capabilities", async () => {
+    const response = await requestWithEnv(
+      createEnv,
+      "/api/v1/mcp",
+      "http://localhost",
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "mcp-protocol-version": "2026-07-28",
+          "mcp-method": "tools/list",
+        },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          method: "tools/list",
+          params: {
+            _meta: { "io.modelcontextprotocol/protocolVersion": "2026-07-28" },
+          },
+        }),
+      }
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: -32_602 },
+    });
+  });
+});
+
+describe("MCP legacy (initialize-based) requests", () => {
+  for (const version of [
+    "2025-11-25",
+    "2025-06-18",
+    "2025-03-26",
+    "2024-11-05",
+  ]) {
+    test(`echoes the supported legacy version ${version} from initialize`, async () => {
+      const response = await mcpRequest(createEnv, {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "initialize",
+        params: { protocolVersion: version, capabilities: {} },
+      });
+      await expect(response.json()).resolves.toMatchObject({
+        result: {
+          protocolVersion: version,
+          capabilities: { tools: { listChanged: false } },
+          instructions: expect.stringContaining("Rates API"),
+        },
+      });
+    });
+  }
+
+  for (const version of ["2099-01-01", "2026-07-28", null]) {
+    test(`answers initialize for ${String(version)} with the newest legacy version`, async () => {
+      const response = await mcpRequest(createEnv, {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "initialize",
+        params: { protocolVersion: version, capabilities: {} },
+      });
+      await expect(response.json()).resolves.toMatchObject({
+        result: { protocolVersion: "2025-11-25" },
+      });
+    });
+  }
+
+  test("follows the 2025-11-25 tool error rules when that header is sent", async () => {
+    const response = await requestWithEnv(
+      createEnv,
+      "/api/v1/mcp",
+      "http://localhost",
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "mcp-protocol-version": "2025-11-25",
+        },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          method: "tools/call",
+          params: {
+            name: "list_mortgage_rates",
+            arguments: { termInMonths: 12 },
+          },
+        }),
+      }
+    );
+
+    const body = requireRecord(await jsonBody(response));
+    expect(body.error).toBeUndefined();
+    expect(readRecord(body, "result")).toMatchObject({ isError: true });
+    expect(readRecord(body, "result")?.resultType).toBeUndefined();
+  });
+
+  test("adds structuredContent only for 2025-06-18 and later", async () => {
+    const newer = readRecord(
+      requireRecord(
+        await jsonBody(
+          await callCarLoansTool({ "mcp-protocol-version": "2025-06-18" })
+        )
+      ),
+      "result"
+    );
+    const older = readRecord(
+      requireRecord(await jsonBody(await callCarLoansTool({}))),
+      "result"
+    );
+    expect(newer?.structuredContent).toMatchObject({ type: "CarLoanRates" });
+    expect(older?.structuredContent).toBeUndefined();
+  });
+
+  test("answers a batch, leaving out its notifications", async () => {
+    const response = await mcpRequest(createEnv, [
+      { jsonrpc: "2.0", id: 1, method: "ping" },
+      { jsonrpc: "2.0", method: "notifications/initialized" },
+      { jsonrpc: "2.0", id: 2, method: "tools/list" },
+    ]);
+
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body).toMatchObject([
+      { id: 1, result: {} },
+      { id: 2, result: { tools: expect.any(Array) } },
+    ]);
+  });
+
+  test("accepts an all-notification batch with 202", async () => {
+    const response = await mcpRequest(createEnv, [
+      { jsonrpc: "2.0", method: "notifications/initialized" },
+    ]);
+    expect(response.status).toBe(202);
+  });
+
+  test("rejects an empty batch with a single Invalid Request error", async () => {
+    const response = await mcpRequest(createEnv, []);
+    await expect(response.json()).resolves.toMatchObject({
+      id: null,
+      error: { code: -32_600 },
+    });
+  });
+
+  test("rejects a batch from a revision that removed batching", async () => {
+    const response = await requestWithEnv(
+      createEnv,
+      "/api/v1/mcp",
+      "http://localhost",
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "mcp-protocol-version": "2025-06-18",
+        },
+        body: JSON.stringify([{ jsonrpc: "2.0", id: 1, method: "ping" }]),
+      }
+    );
+    expect(response.status).toBe(400);
+  });
+
+  for (const method of ["GET", "DELETE"]) {
+    test(`answers ${method} with 405 and Allow: POST`, async () => {
+      const response = await request("/api/v1/mcp", { method });
+      expect(response.status).toBe(405);
+      expect(response.headers.get("allow")).toBe("POST");
+    });
+  }
+});
+
+// A legacy tools/call with no arguments, with extra request headers.
+function callCarLoansTool(headers: Record<string, string>) {
+  return requestWithEnv(createEnv, "/api/v1/mcp", "http://localhost", {
+    method: "POST",
+    headers: { "content-type": "application/json", ...headers },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      method: "tools/call",
+      params: { name: "list_car_loan_rates" },
+    }),
+  });
+}
 
 function mcpRequest(
   getEnv: () => Environment,

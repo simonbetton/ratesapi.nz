@@ -38,16 +38,47 @@ The MCP endpoint is at this URL:
 POST https://ratesapi.nz/api/v1/mcp
 ```
 
-The endpoint uses JSON-RPC 2.0 and MCP protocol version `2024-11-05`. It accepts only `POST` requests. It accepts these methods:
+The endpoint uses the Streamable HTTP transport and JSON-RPC 2.0. It accepts only `POST` requests. A `GET` or `DELETE` request gets HTTP 405.
+
+### Protocol Versions
+
+| Version | Type | How a client uses it |
+| --- | --- | --- |
+| `2026-07-28` | Current | Each request contains its protocol version. An `initialize` request is not necessary. |
+| `2025-11-25`, `2025-06-18`, `2025-03-26`, and `2024-11-05` | Legacy | The client sends `initialize` first. If the server supports the requested version, it uses that version. If not, it uses `2025-11-25`. |
+
+To get the list of supported versions, send `server/discover`. If you send a version that the server does not support, the server returns HTTP 400 and error `-32022`. The error data contains the list of supported versions.
+
+The server does not use sessions. It does not send an `Mcp-Session-Id` header.
+
+### Requests for 2026-07-28
+
+Each request must contain these items:
+
+- In `params._meta`, the `io.modelcontextprotocol/protocolVersion` and `io.modelcontextprotocol/clientCapabilities` fields
+- The `MCP-Protocol-Version` header, with the same version as `_meta`
+- The `Mcp-Method` header, with the same value as `method`
+- For `tools/call`, the `Mcp-Name` header, with the same value as `params.name`
+
+If a header is missing or does not match the body, the server returns HTTP 400 and error `-32020`. If a `_meta` field is missing, the server returns HTTP 400 and error `-32602`.
 
 | Method | Function |
 | --- | --- |
-| `initialize` | Gives the protocol version, the server data, and the capabilities |
-| `ping` | Gives an empty result. Use it to make sure that the server operates. |
+| `server/discover` | Gives the supported versions, the capabilities, the server information, and instructions for LLMs |
 | `tools/list` | Gives the list of Rates API tools and their input schemas |
 | `tools/call` | Uses one tool with the arguments that you send |
 
-A request without an `id` is a notification. The endpoint returns HTTP 204 with no body for a notification.
+Each result contains `resultType: "complete"` and the server information in `_meta`. The results of `server/discover` and `tools/list` also contain `ttlMs` and `cacheScope`. A client can keep these results for one hour.
+
+An unknown method gets HTTP 404 and error `-32601`. The `ping` method does not exist in `2026-07-28`.
+
+### Legacy Requests
+
+A legacy client sends `initialize`, then `tools/list` and `tools/call`. The server also accepts `ping`.
+
+Clients for `2025-06-18` and later send the `MCP-Protocol-Version` header with the negotiated version. The server uses a request without this header as a `2025-03-26` request. Such a request can also be a JSON-RPC batch.
+
+A notification (a message without an `id`) gets HTTP 202 with no body.
 
 ### Tools
 
@@ -58,25 +89,36 @@ A request without an `id` is a notification. The endpoint returns HTTP 204 with 
 | Car loans | `list_car_loan_rates`, `get_car_loan_rates_by_institution`, `get_car_loan_rates_time_series` |
 | Credit cards | `list_credit_card_rates`, `get_credit_card_rates_by_issuer`, `get_credit_card_rates_time_series` |
 
-All tool arguments are strings. For example, send `"termInMonths": "12"`, not `"termInMonths": 12`. The endpoint rejects an argument of the incorrect type.
+Each tool has a title and the `readOnlyHint: true` annotation. The tools only read data.
+
+All tool arguments are strings. For example, send `"termInMonths": "12"`, not `"termInMonths": 12`.
 
 ### Example Tool Call
 
 ```bash
 curl https://ratesapi.nz/api/v1/mcp \
   -H 'Content-Type: application/json' \
+  -H 'MCP-Protocol-Version: 2026-07-28' \
+  -H 'Mcp-Method: tools/call' \
+  -H 'Mcp-Name: list_mortgage_rates' \
   -d '{
     "jsonrpc": "2.0",
     "id": "rates-1",
     "method": "tools/call",
     "params": {
       "name": "list_mortgage_rates",
-      "arguments": { "termInMonths": "12" }
+      "arguments": { "termInMonths": "12" },
+      "_meta": {
+        "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+        "io.modelcontextprotocol/clientCapabilities": {}
+      }
     }
   }'
 ```
 
-The result contains one `text` item. The text is the same JSON that the related REST endpoint returns. If the tool fails, the result has `isError: true`.
+The result contains one `text` item. The text is the same JSON that the related REST endpoint returns. For `2025-06-18` and later, `structuredContent` also contains this JSON.
+
+If the tool fails, the result contains `isError: true`. For `2025-11-25` and later, an incorrect argument also gives a result with `isError: true`. The model can then read the error and correct the argument.
 
 ### Errors
 
@@ -84,9 +126,11 @@ The result contains one `text` item. The text is the same JSON that the related 
 | --- | --- | --- |
 | `-32700` | `Parse error` | The request body is not JSON. The HTTP status is 400. |
 | `-32600` | `Invalid Request` | The body is not a JSON-RPC 2.0 request. |
-| `-32601` | `Method not found` or `Tool not found` | The method or the tool does not exist. |
-| `-32602` | `Invalid params` | You did not send a necessary argument, an argument has the incorrect type, or an argument is unknown. |
+| `-32601` | `Method not found` | The method does not exist. For versions before `2025-11-25`, an unknown tool also gives this error, with the message `Tool not found`. |
+| `-32602` | `Invalid params` | A `_meta` field is missing, or the tool does not exist. For versions before `2025-11-25`, an incorrect argument also gives this error. |
 | `-32603` | `Internal error` | An error occurred on the server. |
+| `-32020` | `Header mismatch` | A necessary header is missing, or it does not match the body. The HTTP status is 400. |
+| `-32022` | `Unsupported protocol version` | The server does not support the version. The HTTP status is 400. |
 
 The MCP server sends `listChanged: false`, because the list of tools does not change while the API version stays the same. The rate data can change each hour.
 
