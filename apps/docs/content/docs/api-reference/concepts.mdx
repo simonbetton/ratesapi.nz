@@ -31,7 +31,7 @@ Identifiers are intentionally stable enough for API routing and filtering, but p
 | One historical snapshot | Time-series endpoint with `date` |
 | Range for charts or analysis | Time-series endpoint with `startDate` and `endDate` |
 
-Historical snapshots are written only when scraped data changes: the scraper runs hourly, but a snapshot is saved at most once per dataset per UTC date, and a later change on the same date replaces the earlier snapshot. Dates without a change have no historical row. Use each time-series response's `availableDates` array to see which dates actually have data instead of assuming a complete daily series.
+Historical snapshots are written only when scraped data changes: the scraper runs hourly, but history keeps at most one snapshot per dataset per UTC date; a later change on the same date replaces the earlier snapshot. Dates without a change have no historical row. Use each time-series response's `availableDates` array to see which dates actually have data instead of assuming a complete daily series.
 
 ## Date Filtering
 
