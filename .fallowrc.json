@@ -20,9 +20,9 @@
     "apps/docs/source.config.ts",
     "oxfmt.config.ts",
     "oxlint.config.ts",
-    "test/api-contract.test.ts",
-    "test/data-loader.test.ts",
-    "test/docs-content.test.ts"
+    "apps/api/test/api-contract.test.ts",
+    "apps/api/test/data-loader.test.ts",
+    "apps/docs/test/docs-content.test.ts"
   ],
   "ignorePatterns": [
     "node_modules/**",

@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
 import { toSavableJson } from "../src/lib/data-loader";
 import type { DataType, SupportedModels } from "../src/lib/data-loader";
@@ -8,6 +9,9 @@ import type { MortgageRates } from "../src/models/mortgage-rates";
 import type { PersonalLoanRates } from "../src/models/personal-loan-rates";
 
 const seedDate = "2026-04-30";
+const wranglerConfigPath = fileURLToPath(
+  new URL("../wrangler.toml", import.meta.url)
+);
 
 const mortgageRates: MortgageRates = {
   type: "MortgageRates",
@@ -142,7 +146,7 @@ function runLocalD1(command: string): void {
       "execute",
       "ratesapi-data",
       "--config",
-      "apps/api/wrangler.toml",
+      wranglerConfigPath,
       "--env",
       "development",
       "--local",

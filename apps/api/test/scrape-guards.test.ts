@@ -1,13 +1,10 @@
 import { describe, expect, test } from "bun:test";
 
-import {
-  assertScrapeHasRates,
-  assertTableHasRows,
-} from "../apps/api/bin/scrape-guards";
-import type { CarLoanRates } from "../apps/api/src/models/car-loan-rates";
-import type { CreditCardRates } from "../apps/api/src/models/credit-card-rates";
-import type { MortgageRates } from "../apps/api/src/models/mortgage-rates";
-import type { PersonalLoanRates } from "../apps/api/src/models/personal-loan-rates";
+import { assertScrapeHasRates, assertTableHasRows } from "../bin/scrape-guards";
+import type { CarLoanRates } from "../src/models/car-loan-rates";
+import type { CreditCardRates } from "../src/models/credit-card-rates";
+import type { MortgageRates } from "../src/models/mortgage-rates";
+import type { PersonalLoanRates } from "../src/models/personal-loan-rates";
 
 function minimalMortgage(): MortgageRates {
   return {

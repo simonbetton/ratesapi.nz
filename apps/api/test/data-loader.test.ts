@@ -4,7 +4,7 @@ import {
   fromSavableJson,
   productionLatestDataFallbackUrl,
   toSavableJson,
-} from "../apps/api/src/lib/data-loader";
+} from "../src/lib/data-loader";
 
 describe("data-loader serialization", () => {
   test("round-trips savable JSON without changing the object shape", () => {

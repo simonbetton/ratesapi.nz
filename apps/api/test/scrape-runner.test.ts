@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { runScrape } from "../apps/api/bin/scrape-runner";
+import { runScrape } from "../bin/scrape-runner";
 
 interface FakeData {
   data: string[];

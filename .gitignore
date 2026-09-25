@@ -9,3 +9,4 @@ dist
 node_modules
 plans
 tsconfig.tsbuildinfo
+next-env.d.ts

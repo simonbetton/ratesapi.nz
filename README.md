@@ -30,10 +30,10 @@ Visit the [documentation](https://ratesapi.nz/) for more information.
 # Install dependencies
 bun i
 
-# Run locally
+# Run the API, docs, and web apps locally
 bun run dev
 
-# Deploy to Cloudflare Workers
+# Deploy the API and docs to Cloudflare Workers
 bun run deploy
 ```
 

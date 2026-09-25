@@ -52,30 +52,30 @@ custom_domain = true
 
 This lets the docs app serve `https://ratesapi.nz/`, while the API Worker still handles `https://ratesapi.nz/api/v1/*` and OpenAPI routes.
 
-## Dry-Run Deployment
+## Build
 
-Run the same deployability checks used by CI:
+Build every app the same way CI checks deployability. The API build is a Wrangler dry run, and the docs build is the OpenNext Worker bundle:
 
 ```bash
-bun run deploy:dry-run
-bun run build:docs
-bun run deploy:docs:dry-run
+bun run build
 ```
 
 ## Deploy
 
-Deploy the API Worker:
+Deploy the API and docs Workers:
 
 ```bash
 bun run deploy
 ```
 
-Build and deploy the docs Worker:
+To deploy only one Worker, filter by app name:
 
 ```bash
-bun run build:docs
-bun run deploy:docs
+bun run --filter api deploy
+bun run --filter docs deploy
 ```
+
+The web app deploys to Vercel from `apps/web` and has no deploy script.
 
 ## Post-Deployment Setup
 
@@ -88,6 +88,6 @@ bun run deploy:docs
 ## Production Considerations
 
 - Keep route ownership clear: docs Worker owns the apex Custom Domain, API Worker owns API path routes.
-- Review the deploy dry-run job when Worker bindings or route patterns change.
+- Review the CI build job when Worker bindings or route patterns change.
 - Keep endpoint docs and OpenAPI schemas aligned with route changes.
 - Monitor scraper failures separately from Worker uptime.
