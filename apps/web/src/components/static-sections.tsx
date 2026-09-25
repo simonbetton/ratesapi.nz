@@ -369,7 +369,7 @@ export function FooterCtaSection() {
   return (
     <section
       className={cn(
-        "block bg-white bg-[linear-gradient(180deg,#fff_0%,#fff_16%,rgba(255,255,255,0.92)_30%,rgba(255,255,255,0)_58%),url(/images/footer.webp)] [background-size:100%_100%,100%_auto] [background-position:top,bottom] bg-no-repeat px-6 pt-20 pb-[22%] max-[640px]:bg-[linear-gradient(180deg,#fff_0%,#fff_28%,rgba(255,255,255,0.94)_42%,rgba(255,255,255,0.28)_68%,rgba(255,255,255,0)_86%),url(/images/footer.webp)] max-[640px]:[background-size:100%_100%,auto_64%] max-[640px]:pb-[42%]"
+        "block bg-white bg-[linear-gradient(180deg,#fff_0%,#fff_16%,rgba(255,255,255,0.92)_30%,rgba(255,255,255,0)_58%),url(/images/footer.webp)] [background-size:100%_100%,100%_auto] [background-position:top,bottom] bg-no-repeat px-6 pt-20 pb-[22%] max-[640px]:bg-[linear-gradient(180deg,#fff_0%,#fff_28%,rgba(255,255,255,0.94)_42%,rgba(255,255,255,0.28)_68%,rgba(255,255,255,0)_86%),url(/images/footer-mobile.webp)] max-[640px]:[background-size:100%_100%,auto_64%] max-[640px]:pb-[42%]"
       )}
     >
       <div className={cn("flex flex-col items-center p-0 text-center")}>
