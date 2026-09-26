@@ -4,6 +4,7 @@ import { createApp } from "../src/app";
 import { toSavableJson } from "../src/lib/data-loader";
 import type { DataType, SupportedModels } from "../src/lib/data-loader";
 import type { Environment } from "../src/lib/environment";
+import { scalarBundle } from "../src/lib/openapi-page";
 import { parseSchema } from "../src/lib/schema";
 import { HealthResponse } from "../src/models/api";
 import type { CarLoanRates } from "../src/models/car-loan-rates";
@@ -294,6 +295,8 @@ describe("v1 API contract", () => {
     expect(body.dataSets).toContainEqual({
       dataType: "mortgage-rates",
       lastUpdated: "2026-04-30 00:00:00",
+      lastChecked: "2026-04-30 01:00:00",
+      stale: true,
     });
   });
 
@@ -1588,6 +1591,418 @@ describe("MCP legacy (initialize-based) requests", () => {
   }
 });
 
+async function requestHealth(lastChecked: MockData["lastChecked"]) {
+  const response = await requestWithEnv(
+    () => createEnv(lastChecked),
+    "/api/v1/health",
+    "http://localhost"
+  );
+
+  expect(response.status).toBe(200);
+  return parseSchema(HealthResponse, await jsonBody(response));
+}
+
+describe("health data freshness", () => {
+  const hour = 60 * 60 * 1000;
+
+  test("keeps lastUpdated and adds lastChecked and stale after the existing fields", async () => {
+    const lastChecked = toD1Timestamp(new Date(Date.now() - hour));
+    const body = await requestHealth(lastChecked);
+
+    expect(body.status).toBe("ok");
+    expect(body.dataSets).toHaveLength(4);
+    for (const dataSet of body.dataSets) {
+      expect(Object.keys(dataSet)).toEqual([
+        "dataType",
+        "lastUpdated",
+        "lastChecked",
+        "stale",
+      ]);
+      expect(dataSet.lastUpdated).toBe("2026-04-30 00:00:00");
+      expect(dataSet.lastChecked).toBe(lastChecked);
+      expect(dataSet.stale).toBe(false);
+    }
+  });
+
+  test("marks a dataset stale after 3 hours without a check, and keeps status ok", async () => {
+    const body = await requestHealth(
+      toD1Timestamp(new Date(Date.now() - 4 * hour))
+    );
+
+    expect(body.status).toBe("ok");
+    expect(body.dataSets.every((dataSet) => dataSet.stale === true)).toBe(true);
+  });
+
+  test("does not mark a dataset stale just inside 3 hours", async () => {
+    const body = await requestHealth(
+      toD1Timestamp(new Date(Date.now() - 3 * hour + 60_000))
+    );
+
+    expect(body.dataSets.every((dataSet) => dataSet.stale === false)).toBe(
+      true
+    );
+  });
+
+  test("returns null lastChecked and stale when a dataset has no check yet", async () => {
+    const body = await requestHealth(null);
+
+    expect(body.status).toBe("ok");
+    expect(body.dataSets).toContainEqual({
+      dataType: "mortgage-rates",
+      lastUpdated: "2026-04-30 00:00:00",
+      lastChecked: null,
+      stale: null,
+    });
+  });
+
+  test("falls back to the old query when the database has no last_checked column", async () => {
+    const body = await requestHealth("missing-column");
+
+    expect(body.status).toBe("ok");
+    expect(body.dataSets).toHaveLength(4);
+    expect(body.dataSets).toContainEqual({
+      dataType: "mortgage-rates",
+      lastUpdated: "2026-04-30 00:00:00",
+      lastChecked: null,
+      stale: null,
+    });
+  });
+
+  test("still returns the error response when the database cannot be read", async () => {
+    const failingDb: Environment["RATESAPI_DB"] = {
+      prepare() {
+        throw new Error("D1 is not available");
+      },
+    };
+    const response = await requestWithEnv(
+      () => ({ ENVIRONMENT: "test", RATESAPI_DB: failingDb }),
+      "/api/v1/health",
+      "http://localhost"
+    );
+
+    expect(response.status).toBe(500);
+    const body = requireRecord(await jsonBody(response));
+    expect(Object.keys(body)).toEqual(["status", "message", "timestamp"]);
+    expect(body.status).toBe("error");
+    expect(body.message).toBe("Unable to read data freshness");
+  });
+});
+
+function expectSecurityHeaders(response: Response) {
+  expect(response.headers.get("x-content-type-options")).toBe("nosniff");
+  expect(response.headers.get("referrer-policy")).toBe(
+    "strict-origin-when-cross-origin"
+  );
+  // Only headers that JSON clients ignore. A frame policy or HSTS could
+  // change how existing clients use the API.
+  expect(response.headers.get("x-frame-options")).toBeNull();
+  expect(response.headers.get("content-security-policy")).toBeNull();
+  expect(response.headers.get("strict-transport-security")).toBeNull();
+}
+
+describe("response headers", () => {
+  const cacheControl = "public, max-age=300";
+
+  for (const path of [
+    "/api/v1/mortgage-rates",
+    "/api/v1/mortgage-rates/",
+    "/api/v1/mortgage-rates?termInMonths=12",
+    "/api/v1/mortgage-rates/institution:anz",
+    "/api/v1/mortgage-rates/time-series",
+    "/api/v1/mortgage-rates/time-series?date=2026-04-30",
+    "/api/v1/personal-loan-rates",
+    "/api/v1/personal-loan-rates/institution:asb",
+    "/api/v1/car-loan-rates",
+    "/api/v1/car-loan-rates/institution:asb",
+    "/api/v1/credit-card-rates",
+    "/api/v1/credit-card-rates/issuer:amex",
+    "/openapi/json",
+  ]) {
+    test(`caches the successful GET ${path} and asks crawlers not to index it`, async () => {
+      const response = await request(path);
+
+      expect(response.status).toBe(200);
+      expect(response.headers.get("cache-control")).toBe(cacheControl);
+      expect(response.headers.get("x-robots-tag")).toBe("noindex");
+      expect(response.headers.get("access-control-allow-origin")).toBe("*");
+      expectSecurityHeaders(response);
+    });
+  }
+
+  test("does not cache health, so monitors get a fresh answer", async () => {
+    const response = await request("/api/v1/health");
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBeNull();
+    expect(response.headers.get("x-robots-tag")).toBe("noindex");
+    expectSecurityHeaders(response);
+  });
+
+  for (const [description, path, status] of [
+    ["an unknown institution", "/api/v1/mortgage-rates/institution:nope", 404],
+    [
+      "a missing snapshot",
+      "/api/v1/mortgage-rates/time-series?date=2026-01-01",
+      404,
+    ],
+    [
+      "an impossible date",
+      "/api/v1/mortgage-rates/time-series?date=2026-02-30",
+      400,
+    ],
+    [
+      "a query that fails validation",
+      "/api/v1/mortgage-rates?termInMonths=abc",
+      400,
+    ],
+    ["an unknown API path", "/api/v1/unknown", 404],
+  ] as const) {
+    test(`does not cache the error for ${description}`, async () => {
+      const response = await request(path);
+
+      expect(response.status).toBe(status);
+      expect(response.headers.get("cache-control")).toBeNull();
+      expect(response.headers.get("x-robots-tag")).toBe("noindex");
+      expectSecurityHeaders(response);
+    });
+  }
+
+  test("keeps the validation error body unchanged", async () => {
+    const response = await request("/api/v1/mortgage-rates?termInMonths=abc");
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({
+      code: 400,
+      message: "Invalid request parameters",
+    });
+  });
+
+  test("adds only the security headers to MCP POST responses", async () => {
+    const responses = await Promise.all(
+      [
+        { jsonrpc: "2.0", id: 1, method: "tools/list" },
+        { jsonrpc: "2.0", method: "notifications/initialized" },
+      ].map((body) =>
+        request("/api/v1/mcp", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(body),
+        })
+      )
+    );
+
+    expect(responses.map((response) => response.status)).toEqual([200, 202]);
+    for (const response of responses) {
+      expect(response.headers.get("cache-control")).toBeNull();
+      expect(response.headers.get("x-robots-tag")).toBeNull();
+      expectSecurityHeaders(response);
+    }
+  });
+
+  test("adds the security headers to CORS preflight and unknown paths", async () => {
+    const preflight = await request("/api/v1/mortgage-rates", {
+      method: "OPTIONS",
+      headers: {
+        origin: "https://example.com",
+        "access-control-request-method": "GET",
+      },
+    });
+    const notFound = await request("/unknown");
+
+    expect(preflight.status).toBe(204);
+    expect(preflight.headers.get("cache-control")).toBeNull();
+    expectSecurityHeaders(preflight);
+    expect(notFound.status).toBe(404);
+    expect(notFound.headers.get("x-robots-tag")).toBeNull();
+    expectSecurityHeaders(notFound);
+  });
+
+  test("lets crawlers index the /openapi page", async () => {
+    const response = await request("/openapi");
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("x-robots-tag")).toBeNull();
+    expect(response.headers.get("cache-control")).toBeNull();
+    expectSecurityHeaders(response);
+  });
+});
+
+async function openApiHtml(origin = "http://localhost") {
+  const response = await requestWithEnv(createEnv, "/openapi", origin);
+
+  expect(response.status).toBe(200);
+  expect(response.headers.get("content-type")).toBe("text/html; charset=utf-8");
+  return response.text();
+}
+
+function metaContent(html: string, attribute: string, name: string) {
+  return [
+    ...html.matchAll(
+      new RegExp(`<meta ${attribute}="${name}" content="([^"]*)"`, "gu")
+    ),
+  ].map((match) => match[1]);
+}
+
+describe("OpenAPI page", () => {
+  test("sets the language, title, and a short plain description", async () => {
+    const html = await openApiHtml();
+    const [description] = metaContent(html, "name", "description");
+
+    expect(html).toContain('<html lang="en">');
+    expect(html.match(/<title>/gu)).toHaveLength(1);
+    expect(html).toContain(
+      "<title>NZ Interest Rates API Reference (OpenAPI) | Rates API</title>"
+    );
+    expect(metaContent(html, "name", "description")).toHaveLength(1);
+    expect(description?.length).toBeGreaterThan(50);
+    expect(description?.length).toBeLessThanOrEqual(160);
+    expect(description).not.toContain("\n");
+    expect(description).not.toMatch(/[[\]()`*]/u);
+  });
+
+  test("has a canonical URL, Open Graph properties, and icons", async () => {
+    const html = await openApiHtml();
+
+    expect(html).toContain(
+      '<link rel="canonical" href="https://www.ratesapi.nz/openapi" />'
+    );
+    expect(html).not.toContain('name="og:');
+    expect(metaContent(html, "property", "og:title")).toEqual([
+      "NZ Interest Rates API Reference (OpenAPI) | Rates API",
+    ]);
+    expect(metaContent(html, "property", "og:description")).toEqual(
+      metaContent(html, "name", "description")
+    );
+    expect(metaContent(html, "property", "og:url")).toEqual([
+      "https://www.ratesapi.nz/openapi",
+    ]);
+    expect(metaContent(html, "property", "og:type")).toEqual(["website"]);
+    expect(metaContent(html, "property", "og:site_name")).toEqual([
+      "Rates API",
+    ]);
+    expect(metaContent(html, "property", "og:image")).toEqual([
+      "https://www.ratesapi.nz/images/og-card.png",
+    ]);
+    expect(metaContent(html, "property", "og:image:width")).toEqual(["1200"]);
+    expect(metaContent(html, "property", "og:image:height")).toEqual(["630"]);
+    expect(metaContent(html, "property", "og:image:alt")).toEqual([
+      "Rates API: free New Zealand interest rates API",
+    ]);
+    expect(metaContent(html, "name", "twitter:card")).toEqual([
+      "summary_large_image",
+    ]);
+    expect(metaContent(html, "name", "theme-color")).toEqual(["#1a2035"]);
+    expect(html).toContain(
+      '<link rel="icon" href="/favicon.ico" sizes="48x48" />'
+    );
+    expect(html).toContain(
+      'href="/ratesapi-terminal-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)"'
+    );
+    expect(html).toContain(
+      'href="/ratesapi-terminal-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)"'
+    );
+    expect(html.indexOf('<meta charset="utf-8" />')).toBeLessThan(
+      html.indexOf("<title>")
+    );
+  });
+
+  test("gives readers without JavaScript a heading, the endpoints, and links", async () => {
+    const html = await openApiHtml();
+    const noscript = html.match(/<noscript>(?<content>[\s\S]*)<\/noscript>/u)
+      ?.groups?.content;
+
+    expect(noscript).toBeDefined();
+    expect(noscript).toContain(
+      "<h1>NZ Interest Rates API Reference (OpenAPI)</h1>"
+    );
+    for (const endpoint of [
+      "GET /api/v1/mortgage-rates",
+      "GET /api/v1/personal-loan-rates",
+      "GET /api/v1/car-loan-rates",
+      "GET /api/v1/credit-card-rates",
+      "GET /api/v1/mortgage-rates/time-series",
+      "GET /api/v1/health",
+      "POST /api/v1/mcp",
+    ]) {
+      expect(noscript).toContain(`<code>${endpoint}</code>`);
+    }
+    for (const href of [
+      "https://www.ratesapi.nz/docs/api-reference/quickstart",
+      "https://www.ratesapi.nz/docs/api-reference",
+      "/openapi/json",
+    ]) {
+      expect(noscript).toContain(`<a href="${href}">`);
+    }
+  });
+
+  test("loads the pinned Scalar bundle with defer and Subresource Integrity", async () => {
+    const html = await openApiHtml();
+    const bundleUrl = `https://cdn.jsdelivr.net/npm/@scalar/api-reference@${scalarBundle.version}/dist/browser/standalone.js`;
+
+    expect(scalarBundle.version).toMatch(/^\d+\.\d+\.\d+$/u);
+    expect(scalarBundle.integrity).toMatch(/^sha384-[A-Za-z0-9+/]{64}$/u);
+    expect(html).not.toContain("@latest");
+    expect(html).toContain(
+      `<script src="${bundleUrl}" integrity="${scalarBundle.integrity}" crossorigin defer></script>`
+    );
+    expect(html.match(/<script src=/gu)).toHaveLength(1);
+  });
+
+  test("keeps the Scalar configuration and the Elysia theme", async () => {
+    const html = await openApiHtml();
+    const configuration = html.match(/data-configuration='(?<json>[^']*)'/u)
+      ?.groups?.json;
+
+    expect(JSON.parse(configuration ?? "{}")).toMatchObject({
+      url: "openapi/json",
+      _integration: "elysiajs",
+    });
+    expect(html).toContain("--scalar-color-accent");
+    expect(html).toContain(".section-flare");
+  });
+
+  test("builds the same page for every host", async () => {
+    expect(await openApiHtml("https://www.ratesapi.nz")).toBe(
+      await openApiHtml("http://localhost")
+    );
+  });
+
+  test("keeps the page out of the OpenAPI document, which the app still serves", async () => {
+    const response = await request("/openapi/json");
+    const spec = requireRecord(await jsonBody(response));
+
+    expect(response.headers.get("content-type")).toBe(
+      "application/json;charset=utf-8"
+    );
+    expect(Object.keys(spec)).toEqual([
+      "openapi",
+      "info",
+      "externalDocs",
+      "tags",
+      "security",
+      "servers",
+      "paths",
+      "components",
+    ]);
+    expect(Object.keys(readRecord(spec, "paths") ?? {}).toSorted()).toEqual([
+      "/api/v1/car-loan-rates",
+      "/api/v1/car-loan-rates/time-series",
+      "/api/v1/car-loan-rates/{institutionId}",
+      "/api/v1/credit-card-rates",
+      "/api/v1/credit-card-rates/time-series",
+      "/api/v1/credit-card-rates/{issuerId}",
+      "/api/v1/health",
+      "/api/v1/mcp",
+      "/api/v1/mortgage-rates",
+      "/api/v1/mortgage-rates/time-series",
+      "/api/v1/mortgage-rates/{institutionId}",
+      "/api/v1/personal-loan-rates",
+      "/api/v1/personal-loan-rates/time-series",
+      "/api/v1/personal-loan-rates/{institutionId}",
+    ]);
+  });
+});
+
 // A legacy tools/call with no arguments, with extra request headers.
 function callCarLoansTool(headers: Record<string, string>) {
   return requestWithEnv(createEnv, "/api/v1/mcp", "http://localhost", {
@@ -1649,7 +2064,9 @@ function requestWithEnv(
   return app.handle(new Request(new URL(path, origin).toString(), init));
 }
 
-function createEnv(): Environment {
+function createEnv(
+  lastChecked: MockData["lastChecked"] = "2026-04-30 01:00:00"
+): Environment {
   return {
     ENVIRONMENT: "test",
     RATESAPI_DB: createD1Mock({
@@ -1664,6 +2081,7 @@ function createEnv(): Environment {
           "2026-04-30": mortgageRates,
         },
       },
+      lastChecked,
     }),
   };
 }
@@ -1677,10 +2095,15 @@ function createProductionEnv(): Environment {
   };
 }
 
-function createD1Mock(data: {
+interface MockData {
   latest: Partial<Record<DataType, SupportedModels>>;
   historical: Partial<Record<DataType, Record<string, SupportedModels>>>;
-}): Environment["RATESAPI_DB"] {
+  // The last_checked value of every latest_data row. "missing-column" acts
+  // like a database without the migration: a query of the column fails.
+  lastChecked?: string | null | "missing-column";
+}
+
+function createD1Mock(data: MockData): Environment["RATESAPI_DB"] {
   return {
     prepare(sql: string) {
       return createStatement(sql, [], data);
@@ -1688,14 +2111,7 @@ function createD1Mock(data: {
   };
 }
 
-function createStatement(
-  sql: string,
-  boundValues: unknown[],
-  data: {
-    latest: Partial<Record<DataType, SupportedModels>>;
-    historical: Partial<Record<DataType, Record<string, SupportedModels>>>;
-  }
-) {
+function createStatement(sql: string, boundValues: unknown[], data: MockData) {
   return {
     bind(...values: unknown[]) {
       return createStatement(sql, values, data);
@@ -1715,10 +2131,7 @@ function createStatement(
 function selectFirst(
   sql: string,
   boundValues: unknown[],
-  data: {
-    latest: Partial<Record<DataType, SupportedModels>>;
-    historical: Partial<Record<DataType, Record<string, SupportedModels>>>;
-  }
+  data: MockData
 ): Record<string, unknown> | null {
   if (sql.includes("FROM latest_data")) {
     const dataType = readDataType(boundValues[0]);
@@ -1747,12 +2160,21 @@ function selectFirst(
 function selectAll(
   sql: string,
   boundValues: unknown[],
-  data: {
-    latest: Partial<Record<DataType, SupportedModels>>;
-    historical: Partial<Record<DataType, Record<string, SupportedModels>>>;
-  }
+  data: MockData
 ): Record<string, unknown>[] {
   if (sql.includes("FROM latest_data")) {
+    if (sql.includes("last_checked")) {
+      if (data.lastChecked === "missing-column") {
+        throw new Error("D1_ERROR: no such column: last_checked: SQLITE_ERROR");
+      }
+
+      return Object.keys(data.latest).map((dataType) => ({
+        data_type: dataType,
+        last_updated: "2026-04-30 00:00:00",
+        last_checked: data.lastChecked ?? null,
+      }));
+    }
+
     return Object.keys(data.latest).map((dataType) => ({
       data_type: dataType,
       last_updated: "2026-04-30 00:00:00",
@@ -1787,6 +2209,10 @@ function selectAll(
   }
 
   return [];
+}
+
+function toD1Timestamp(date: Date): string {
+  return date.toISOString().slice(0, 19).replace("T", " ");
 }
 
 async function jsonBody(response: Response): Promise<unknown> {

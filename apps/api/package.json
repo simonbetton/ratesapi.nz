@@ -8,6 +8,7 @@
     "deploy": "wrangler deploy --env '' --minify",
     "typecheck": "tsgo --noEmit",
     "db:setup": "bun bin/init-local-d1.ts && bun bin/seed-local-d1.ts",
+    "db:migrate": "bun bin/migrate-d1.ts",
     "scrape": "bun bin/scrape-mortgage-rates.ts && bun bin/scrape-personal-loan-rates.ts && bun bin/scrape-car-loan-rates.ts && bun bin/scrape-credit-card-rates.ts",
     "scrape:local": "D1_DATABASE_NAME=ratesapi-data D1_LOCAL=true bun run scrape",
     "uptime": "bun bin/uptime-check.ts"

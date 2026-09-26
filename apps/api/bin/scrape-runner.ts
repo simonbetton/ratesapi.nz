@@ -15,6 +15,11 @@
  *  - `save` is called exactly once for changed data, and never for
  *    unchanged data. If `save` resolves `false`, the runner throws so the
  *    caller can exit the process non-zero.
+ *  - `markChecked` (optional) is called exactly once for unchanged data, and
+ *    never for changed data, because `save` records the check in the same
+ *    write. A `markChecked` rejection is ignored: the scrape succeeded, and
+ *    a missing check only makes the health endpoint report the data as
+ *    stale later.
  */
 
 export type ScrapeOutcome = { status: "saved" } | { status: "unchanged" };
@@ -30,6 +35,8 @@ export interface RunScrapeOptions<TData> {
   hasChanged: (newData: TData, oldData: TData) => boolean;
   /** Persists the scraped data. Resolving `false` is treated as a failure. */
   save: (data: TData) => Promise<boolean>;
+  /** Records a successful check of unchanged data. A rejection is ignored. */
+  markChecked?: () => Promise<unknown>;
 }
 
 export async function runScrape<TData>(
@@ -46,6 +53,11 @@ export async function runScrape<TData>(
   const validatedData = await options.parseAndValidate(html);
 
   if (currentData !== null && !options.hasChanged(validatedData, currentData)) {
+    try {
+      await options.markChecked?.();
+    } catch {
+      // See the module comment: a failed check record does not fail the run.
+    }
     return { status: "unchanged" };
   }
 

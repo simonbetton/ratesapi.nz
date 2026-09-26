@@ -34,6 +34,9 @@ const wranglerConfigPath = fileURLToPath(
   new URL("../wrangler.toml", import.meta.url)
 );
 
+const missingLastCheckedWarning =
+  "latest_data has no last_checked column, so the check is not recorded. Run `bun run db:migrate` to add it.";
+
 export function hasDataChanged(
   newData: SupportedModels,
   oldData: SupportedModels
@@ -93,11 +96,34 @@ export async function saveToD1(
       .stop();
 
     const saveSpinner = ora(`Saving ${dataType} snapshot`).start();
-    const mutationCommand = [
-      `INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES ('${dataType}', '${timestamp}', '${dataJson}')`,
-      `INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES ('${dataType}', '${dataJson}', CURRENT_TIMESTAMP)`,
-    ].join("; ");
-    run(target, mutationCommand);
+    const historyStatement = `INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES ('${dataType}', '${timestamp}', '${dataJson}')`;
+
+    try {
+      // A save is also a successful check, so last_checked is written in
+      // the same batch as last_updated.
+      run(
+        target,
+        [
+          historyStatement,
+          `INSERT OR REPLACE INTO latest_data (data_type, data, last_updated, last_checked) VALUES ('${dataType}', '${dataJson}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+        ].join("; ")
+      );
+    } catch (error) {
+      if (!isMissingLastCheckedError(error)) {
+        throw error;
+      }
+
+      // D1 rolled back the failed batch. Save without last_checked until
+      // `bun run db:migrate` adds the column.
+      saveSpinner.warn(missingLastCheckedWarning).stop();
+      run(
+        target,
+        [
+          historyStatement,
+          `INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES ('${dataType}', '${dataJson}', CURRENT_TIMESTAMP)`,
+        ].join("; ")
+      );
+    }
     saveSpinner
       .succeed(`Snapshot saved for ${dataType} on ${timestamp}`)
       .stop();
@@ -121,6 +147,46 @@ export async function saveToD1(
       stackSpinner.fail(`Error stack: ${error.stack}`).stop();
     }
 
+    return false;
+  }
+}
+
+/**
+ * Record a successful check of unchanged data: set `last_checked` for the
+ * data type. This never throws. A failure (for example, a database without
+ * the `last_checked` column) only logs a warning, because the scrape itself
+ * succeeded.
+ */
+// Wrangler runs synchronously today, but callers treat D1 I/O as async.
+// oxlint-disable-next-line require-await
+export async function markCheckedInD1(
+  dataType: DataType,
+  deps: Omit<D1SaveDeps, "now"> = {}
+): Promise<boolean> {
+  const target = deps.target === undefined ? getD1Target() : deps.target;
+  const run = deps.run ?? runWranglerD1;
+  const spinner = ora(`Recording the check of ${dataType}`).start();
+
+  if (!target) {
+    spinner.warn("D1_DATABASE_NAME not set. The check is not recorded").stop();
+    return false;
+  }
+
+  try {
+    run(
+      target,
+      `UPDATE latest_data SET last_checked = CURRENT_TIMESTAMP WHERE data_type='${dataType}'`
+    );
+    spinner.succeed(`Check recorded for ${dataType}`).stop();
+    return true;
+  } catch (error) {
+    spinner
+      .warn(
+        isMissingLastCheckedError(error)
+          ? missingLastCheckedWarning
+          : `Failed to record the check of ${dataType}: ${error}`
+      )
+      .stop();
     return false;
   }
 }
@@ -173,7 +239,34 @@ export async function loadFromD1<Schema extends TSchema>(
   return null;
 }
 
-function getD1Target(): D1Target | null {
+// Wrangler prints the SQLite error on stderr. The command (and so the error
+// message) always contains "last_checked", so match the SQLite text only.
+function isMissingLastCheckedError(error: unknown): boolean {
+  const output = [
+    error instanceof Error ? error.message : String(error),
+    readOutput(error, "stdout"),
+    readOutput(error, "stderr"),
+  ].join("\n");
+
+  return /no such column: last_checked|has no column named last_checked/u.test(
+    output
+  );
+}
+
+function readOutput(error: unknown, key: "stdout" | "stderr"): string {
+  if (!isRecord(error)) {
+    return "";
+  }
+
+  const value = error[key];
+  if (typeof value === "string") {
+    return value;
+  }
+
+  return value instanceof Uint8Array ? new TextDecoder().decode(value) : "";
+}
+
+export function getD1Target(): D1Target | null {
   const rawDatabaseName = process.env.D1_DATABASE_NAME?.trim();
 
   if (!rawDatabaseName) {
@@ -199,7 +292,7 @@ function getD1Target(): D1Target | null {
   return { databaseName, flags };
 }
 
-function runWranglerD1(
+export function runWranglerD1(
   target: D1Target,
   command: string,
   options: D1RunOptions = {}
@@ -226,7 +319,7 @@ function runWranglerD1(
   });
 }
 
-function extractWranglerRows(output: string): Record<string, unknown>[] {
+export function extractWranglerRows(output: string): Record<string, unknown>[] {
   const parsed: unknown = JSON.parse(output);
   const entries = Array.isArray(parsed) ? parsed : [parsed];
   const rows: Record<string, unknown>[] = [];
@@ -246,7 +339,7 @@ function extractWranglerRows(output: string): Record<string, unknown>[] {
   return rows;
 }
 
-function formatTarget(target: D1Target): string {
+export function formatTarget(target: D1Target): string {
   return [target.databaseName, ...target.flags].join(" ");
 }
 

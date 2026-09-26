@@ -159,4 +159,81 @@ describe("runScrape", () => {
     // hasChanged must not be consulted when current data is null.
     expect(hasChangedCalls.count).toBe(0);
   });
+
+  test("marks the check once for unchanged data", async () => {
+    const save = callCounter();
+    const markChecked = callCounter();
+
+    const outcome = await runScrape<FakeData>({
+      loadCurrent: async () => ({ data: ["same"] }),
+      fetchHtml: async () => "<html></html>",
+      parseAndValidate: async () => ({ data: ["same"] }),
+      hasChanged: () => false,
+      save: async () => {
+        save.increment();
+        return true;
+      },
+      markChecked: async () => {
+        markChecked.increment();
+      },
+    });
+
+    expect(outcome).toEqual({ status: "unchanged" });
+    expect(save.count).toBe(0);
+    expect(markChecked.count).toBe(1);
+  });
+
+  test("does not mark the check separately for saved data", async () => {
+    const markChecked = callCounter();
+
+    const outcome = await runScrape<FakeData>({
+      loadCurrent: async () => ({ data: ["old"] }),
+      fetchHtml: async () => "<html></html>",
+      parseAndValidate: async () => ({ data: ["new"] }),
+      hasChanged: () => true,
+      save: async () => true,
+      markChecked: async () => {
+        markChecked.increment();
+      },
+    });
+
+    expect(outcome).toEqual({ status: "saved" });
+    // save writes last_checked in the same batch as last_updated.
+    expect(markChecked.count).toBe(0);
+  });
+
+  test("does not mark the check when the scrape fails", async () => {
+    const markChecked = callCounter();
+
+    await expect(
+      runScrape<FakeData>({
+        loadCurrent: async () => ({ data: ["same"] }),
+        fetchHtml: async () => {
+          throw new Error("fetch failed");
+        },
+        parseAndValidate: async () => ({ data: ["same"] }),
+        hasChanged: () => false,
+        save: async () => true,
+        markChecked: async () => {
+          markChecked.increment();
+        },
+      })
+    ).rejects.toThrow("fetch failed");
+    expect(markChecked.count).toBe(0);
+  });
+
+  test("still returns 'unchanged' when markChecked rejects", async () => {
+    const outcome = await runScrape<FakeData>({
+      loadCurrent: async () => ({ data: ["same"] }),
+      fetchHtml: async () => "<html></html>",
+      parseAndValidate: async () => ({ data: ["same"] }),
+      hasChanged: () => false,
+      save: async () => true,
+      markChecked: async () => {
+        throw new Error("no such column: last_checked");
+      },
+    });
+
+    expect(outcome).toEqual({ status: "unchanged" });
+  });
 });

@@ -10,6 +10,12 @@ export interface RetryOptions {
 
 export type FetchOptions = RequestInit & {
   retryOptions?: RetryOptions;
+  /**
+   * Aborts each attempt after this many milliseconds, so a server that
+   * hangs gives an error. The limit also applies when the caller reads the
+   * response body.
+   */
+  timeoutMs?: number;
 };
 
 export type DefaultFetchOptions = FetchOptions & {
@@ -35,14 +41,22 @@ export function createHttpClient(
       ...defaultOptions,
       ...requestOptions,
     };
-    const { retryOptions } = mergedOptions;
+    const { retryOptions, timeoutMs } = mergedOptions;
     let retries = retryOptions?.retries ?? 0;
     const retryDelay = retryOptions?.retryDelay ?? 0;
     const retryOn = retryOptions?.retryOn ?? [];
 
     const executeFetch = async (): Promise<Response> => {
       try {
-        const response = await fetch(composedUrl, mergedOptions);
+        const response = await fetch(
+          composedUrl,
+          timeoutMs === undefined
+            ? mergedOptions
+            : {
+                ...mergedOptions,
+                signal: withTimeout(mergedOptions, timeoutMs),
+              }
+        );
 
         // Log the request
         log.debug(
@@ -82,4 +96,10 @@ export function createHttpClient(
   };
 
   return fetchWithRetry;
+}
+
+function withTimeout(options: RequestInit, timeoutMs: number): AbortSignal {
+  const timeout = AbortSignal.timeout(timeoutMs);
+
+  return options.signal ? AbortSignal.any([options.signal, timeout]) : timeout;
 }

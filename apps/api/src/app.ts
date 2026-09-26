@@ -3,9 +3,12 @@ import { cors } from "@elysiajs/cors";
 import type { ElysiaAdapter } from "elysia";
 import { Elysia } from "elysia";
 
+import { readDataSetFreshness } from "./lib/data-freshness";
 import { createLogger } from "./lib/logging";
 import { openApiDocumentation, toOpenApiDocument } from "./lib/openapi";
 import type { OpenApiServer } from "./lib/openapi";
+import { openApiPage } from "./lib/openapi-page";
+import { responseHeaders } from "./lib/response-headers";
 import type { GetEnv } from "./lib/routing";
 import {
   HealthErrorResponse,
@@ -51,27 +54,11 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
       "/health",
       async ({ status }) => {
         try {
-          const result = await getEnv()
-            .RATESAPI_DB.prepare(
-              "SELECT data_type, last_updated FROM latest_data ORDER BY data_type ASC"
-            )
-            .all();
+          const dataSets = await readDataSetFreshness(getEnv().RATESAPI_DB);
 
           return {
             status: healthStatusOk,
-            dataSets: result.results.flatMap((row) => {
-              const dataType = row.data_type;
-              const lastUpdated = row.last_updated;
-
-              if (
-                typeof dataType !== "string" ||
-                typeof lastUpdated !== "string"
-              ) {
-                return [];
-              }
-
-              return [{ dataType, lastUpdated }];
-            }),
+            dataSets,
             timestamp: new Date().toISOString(),
           };
         } catch (error) {
@@ -92,8 +79,16 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
           operationId: "getHealth",
           tags: ["Health"],
           summary: "Get the status of the API",
-          description:
-            "This endpoint shows if the API can read its database. For each dataset, the response shows the time of the last data change. The API collects data each hour, but it saves a dataset only when the data changes. Use this endpoint to make sure that the API operates correctly.",
+          description: [
+            "This endpoint shows if the API can read its database. Use this endpoint to make sure that the API operates correctly.",
+            "",
+            "The API collects data each hour, but it saves a dataset only when the data changes. Thus, for each dataset, the response shows two times:",
+            "",
+            "- `lastUpdated` is the time of the last change to the data. This time can be old when the data is correct.",
+            "- `lastChecked` is the time of the last correct data collection.",
+            "",
+            "`stale` is `true` when the API did not collect the dataset correctly in the last 3 hours. The `status` stays `ok` when a dataset is stale.",
+          ].join("\n"),
         },
       }
     );
@@ -108,8 +103,11 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
           ...openApiDocumentation,
           servers: [productionServer],
         },
+        // The app serves the /openapi page itself (see below).
+        provider: null,
       })
     )
+    .use(responseHeaders)
     .onBeforeHandle({ as: "global" }, ({ request, set }) => {
       set.headers["x-request-id"] =
         request.headers.get("x-request-id") ?? crypto.randomUUID();
@@ -133,6 +131,18 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
           getOpenApiServers(request, getEnv().ENVIRONMENT)
         );
       },
+      {
+        detail: {
+          hide: true,
+        },
+      }
+    )
+    .get(
+      "/openapi",
+      () =>
+        new Response(openApiPage(), {
+          headers: { "content-type": "text/html; charset=utf-8" },
+        }),
       {
         detail: {
           hide: true,

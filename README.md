@@ -48,7 +48,7 @@ The API stores at most one snapshot per dataset per UTC day, and only on days wh
 
 | Path | Purpose |
 | --- | --- |
-| `/api/v1/health` | Health check and the last update time of each dataset |
+| `/api/v1/health` | Health check, with the last change and last successful collection of each dataset |
 | `/openapi` | Interactive API reference (Scalar) |
 | `/openapi/json` | OpenAPI document for SDK and tool generators |
 | `POST /api/v1/mcp` | [Model Context Protocol](https://modelcontextprotocol.io) endpoint with read-only tools for each category |

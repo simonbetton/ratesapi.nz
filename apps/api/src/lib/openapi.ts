@@ -60,7 +60,7 @@ export const openApiDocumentation = {
     {
       name: "Health",
       description:
-        "The status of the API and the time of the last change to each dataset.",
+        "The status of the API, and the time of the last change and the last data collection for each dataset.",
     },
     {
       name: "MCP",

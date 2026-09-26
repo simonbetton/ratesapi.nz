@@ -16,7 +16,7 @@ import type {
 } from "../src/models/personal-loan-rates";
 import { assertScrapeHasRates, assertTableHasRows } from "./scrape-guards";
 import { runScrape } from "./scrape-runner";
-import { hasDataChanged, loadFromD1, saveToD1 } from "./utils";
+import { hasDataChanged, loadFromD1, markCheckedInD1, saveToD1 } from "./utils";
 
 const config: {
   tableSelector: string;
@@ -112,6 +112,7 @@ async function main() {
         throw error;
       }
     },
+    markChecked: () => markCheckedInD1("personal-loan-rates"),
   });
 
   if (outcome.status === "unchanged") {
