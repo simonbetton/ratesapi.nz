@@ -78,13 +78,15 @@ export function RatesExplorer() {
         </p>
       </div>
       <div className="explorer">
-        {inView ? <ExplorerApp /> : <ExplorerSkeleton withToolbar />}
+        <ExplorerApp inView={inView} />
       </div>
     </section>
   );
 }
 
-function ExplorerApp() {
+// The toolbar renders on the server too, so only the data area changes when
+// the explorer scrolls into view.
+function ExplorerApp({ inView }: { inView: boolean }) {
   const [category, setCategory] = useState<Category>("mortgage");
   const [attempt, setAttempt] = useState(0);
   // The previous category stays on screen, dimmed, while the next one loads.
@@ -127,14 +129,18 @@ function ExplorerApp() {
           <span className="sr-only"> (opens in a new tab)</span>
         </a>
       </div>
-      <Suspense fallback={<ExplorerSkeleton />}>
-        <CategoryView
-          category={shownCategory}
-          key={`${shownCategory}:${attempt}`}
-          onRetry={retry}
-          stale={stale}
-        />
-      </Suspense>
+      {inView ? (
+        <Suspense fallback={<ExplorerSkeleton />}>
+          <CategoryView
+            category={shownCategory}
+            key={`${shownCategory}:${attempt}`}
+            onRetry={retry}
+            stale={stale}
+          />
+        </Suspense>
+      ) : (
+        <ExplorerSkeleton />
+      )}
     </>
   );
 }
@@ -228,11 +234,14 @@ function CategoryData({
         )}
         <Suspense
           fallback={
+            // Same subtitle as the loaded card, so its height doesn't change.
             <ChartCard
-              subtitle="Loading stored snapshots…"
+              subtitle={historySubtitle(category, filters)}
               title="12-month history"
             >
-              <div className="chart-loading" />
+              <div className="chart-loading">
+                <span className="sr-only">Loading stored snapshots…</span>
+              </div>
             </ChartCard>
           }
         >
@@ -500,6 +509,17 @@ function TermCurveCard({
   );
 }
 
+function historyTerm(category: Category, filters: RateFilters) {
+  return category === "mortgage" ? filters.term || fallbackHistoryTerm : "";
+}
+
+function historySubtitle(category: Category, filters: RateFilters) {
+  const term = historyTerm(category, filters);
+  return term
+    ? `Lowest and median ${term} rate, one stored snapshot a month`
+    : "Lowest and median rate, one stored snapshot a month";
+}
+
 function HistoryCard({
   category,
   filters,
@@ -510,11 +530,8 @@ function HistoryCard({
   latestDate: string;
 }) {
   const result = use(loadHistory(category, latestDate));
-  const term =
-    category === "mortgage" ? filters.term || fallbackHistoryTerm : "";
-  const subtitle = term
-    ? `Lowest and median ${term} rate, one stored snapshot a month`
-    : "Lowest and median rate, one stored snapshot a month";
+  const term = historyTerm(category, filters);
+  const subtitle = historySubtitle(category, filters);
 
   if (result.status === "error") {
     return (
@@ -848,10 +865,17 @@ function RateTableCell({
   );
 }
 
-function ExplorerSkeleton({ withToolbar = false }: { withToolbar?: boolean }) {
+// Mirrors the loaded mortgage view (the default) block for block, and
+// styles.css sizes each block to match, so nothing moves when data arrives.
+function ExplorerSkeleton() {
   return (
     <div aria-hidden="true" className="explorer-skeleton">
-      {withToolbar && <span className="explorer-skeleton-bar" />}
+      <div className="explorer-skeleton-filters">
+        <span />
+        <span />
+        <span />
+        <span />
+      </div>
       <div className="explorer-skeleton-stats">
         <span />
         <span />

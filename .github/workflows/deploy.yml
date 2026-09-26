@@ -13,6 +13,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # The docs sitemap reads each page's last commit date from git history.
+          fetch-depth: 0
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -27,3 +30,9 @@ jobs:
         run: bun run deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      # Tells Bing and other IndexNow engines about the deployed pages. The
+      # script never fails, and a failed ping must not fail the deploy.
+      - name: Ping IndexNow
+        run: bun run --cwd apps/web indexnow
+        continue-on-error: true

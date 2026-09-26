@@ -1,0 +1,71 @@
+---
+title: "About, Data Source, and Terms"
+seoTitle: "About Rates API: Data Source, Terms and Contact"
+description: "Who runs Rates API, where the New Zealand rate data comes from, its limits, fair use, the licences of the code and the data, and how to get help."
+---
+
+## Who Operates Rates API
+
+Simon Betton, an independent software developer, makes and operates Rates API. For more information about him, go to [simonbetton.com](https://www.simonbetton.com).
+
+Rates API is an open source project. The source code, the issues, and the history of changes are in the [GitHub repository](https://github.com/simonbetton/ratesapi.nz).
+
+Rates API is independent. It is not affiliated with interest.co.nz or with a lender. interest.co.nz and the lenders do not endorse Rates API.
+
+## How Data Collection Operates
+
+1. Each hour, a GitHub Actions workflow runs the scraper scripts.
+2. The scripts read the rate pages of [interest.co.nz](https://www.interest.co.nz) for mortgages, personal loans, car loans, and credit cards.
+3. If the data of a dataset changed, the API saves the new data. The API does not save data that did not change.
+4. The API keeps a maximum of one snapshot for each dataset on each UTC date.
+
+The history starts on 8 March 2025. Rates API does not get data directly from lenders.
+
+To see the time of the last change to each dataset, send a request to [`/api/v1/health`](/api/v1/health). For more information, read [Core Concepts](/api-reference/concepts).
+
+## Limitations
+
+- The data can be incorrect, incomplete, or late. A lender can change a rate before the next check.
+- If interest.co.nz changes its pages, the data collection can fail. Then the data stays the same until the scripts are repaired.
+- Before you make a decision, check the rate with the lender.
+- Rates API does not give financial advice.
+- Rates API is free and has no service level agreement. The service can be unavailable.
+
+## Fair Use
+
+An API key is not necessary, and Rates API has no published rate limit. Obey these rules, so that the service stays available for all users:
+
+- Keep the responses in a cache. The API checks for new data only one time each hour.
+- Do not send many requests in a short time. For example, do not send one request for each visitor to your site.
+- To get earlier rates, use the time-series endpoints. Do not use the list endpoints to make your own history.
+
+Rates API can block traffic that causes problems for the service.
+
+## Data Source and Licence [#data-source-and-licence]
+
+| Item | Licence or terms |
+| --- | --- |
+| Source code | The [MIT licence](https://github.com/simonbetton/ratesapi.nz/blob/main/LICENSE) |
+| Rate data | The [terms of interest.co.nz](https://www.interest.co.nz/terms-conditions) |
+
+The MIT licence applies only to the source code. It does not apply to the rate data.
+
+The rate data comes from interest.co.nz, and the terms of interest.co.nz apply to it. Rates API cannot give you permission to use the data. Before you republish, distribute, or sell the data, read the terms of interest.co.nz.
+
+If you show the data in your product, tell your users that the data comes from interest.co.nz.
+
+## Frequently Asked Questions
+
+### Is Rates API affiliated with interest.co.nz?
+
+No. Rates API is an independent project. It is not affiliated with interest.co.nz, and interest.co.nz does not endorse it. Rates API reads the rate pages of interest.co.nz each hour.
+
+### Can I use the data commercially?
+
+The source code has the MIT licence. Thus you can use and change the code in commercial work.
+
+The rate data is different. It comes from interest.co.nz, and the terms of interest.co.nz apply to it. Before you use the data in a commercial product, read the [terms of interest.co.nz](https://www.interest.co.nz/terms-conditions). If the terms do not permit your use, ask interest.co.nz for permission.
+
+## Contact
+
+To report an incorrect rate or a problem, ask a question, or suggest a change, [open an issue on GitHub](https://github.com/simonbetton/ratesapi.nz/issues).

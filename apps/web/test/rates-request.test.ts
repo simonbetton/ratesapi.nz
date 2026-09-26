@@ -79,6 +79,13 @@ describe("copyable integration examples", () => {
     );
   });
 
+  test("Python example names its app, since urllib's default agent is blocked", () => {
+    const source = requestExample("Python", "12");
+    expect(source).toContain(`url = '${requestUrl("12")}'`);
+    expect(source).toContain("headers = {'User-Agent': ");
+    expect(source).toContain("urlopen(Request(url, headers=headers)");
+  });
+
   test("JavaScript example returns the documented data and checks failed responses", async () => {
     const source = requestExample("JavaScript", "24");
     const messages: unknown[][] = [];

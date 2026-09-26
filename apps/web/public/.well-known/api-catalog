@@ -1,0 +1,25 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://www.ratesapi.nz/api/v1",
+      "service-desc": [
+        {
+          "href": "https://www.ratesapi.nz/openapi/json",
+          "type": "application/vnd.oai.openapi+json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://www.ratesapi.nz/docs/api-reference",
+          "type": "text/html"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://www.ratesapi.nz/api/v1/health",
+          "type": "application/json"
+        }
+      ]
+    }
+  ]
+}

@@ -721,6 +721,60 @@ pre:focus-visible {
 .endpoint-footnote code {
   margin-left: 0.5rem;
 }
+/* Live coverage numbers, rendered on the server under the endpoint cards. */
+.key-facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.75rem 4rem;
+  align-items: center;
+  padding-block: 1.75rem;
+  border-bottom: 1px solid #dde4e0;
+}
+.key-facts.is-static {
+  grid-template-columns: minmax(0, 1fr);
+}
+#rates-home .key-facts h3 {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--accent-ink);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+#rates-home .key-facts p {
+  max-width: 640px;
+  margin: 0;
+}
+.key-facts-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+/* The number reads first; the label stays first for screen readers. */
+.key-facts-stats div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  padding-left: 1rem;
+  border-left: 1px solid #dde4e0;
+}
+.key-facts-stats dt {
+  color: var(--muted-ink);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+.key-facts-stats dd {
+  margin: 0;
+  color: var(--ink);
+  font-family: "Crimson Pro", Georgia, "Times New Roman", serif;
+  font-size: 2.5rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
 .developer-section {
   background: #f4f7f5;
   padding-block: 4.5rem;
@@ -1037,8 +1091,9 @@ pre:focus-visible {
   background-size: 200% 100%;
   animation: explorer-shimmer 1.4s ease-in-out infinite;
 }
+/* A loaded chart: the legend (18px + 4px margin) and the 216px plot. */
 .chart-loading {
-  height: 236px;
+  height: 238px;
 }
 @keyframes explorer-shimmer {
   from {
@@ -1369,36 +1424,102 @@ pre:focus-visible {
   margin: 1rem 0 0;
   font-size: 0.72rem;
 }
+/* The skeleton copies .explorer-body's padding and block spacing, and each
+   block is sized to the loaded mortgage view (the default), as measured in
+   Chromium. Swapping in the data then doesn't move the page. */
 .explorer-skeleton {
-  display: grid;
-  gap: 1rem;
   padding: 1.25rem;
 }
-.explorer-skeleton-bar {
-  height: 44px;
+/* Stand-ins the size of the search box, "Big 5 banks", the term select, and
+   "Specials only", so they wrap onto the same rows as the real filters. */
+.explorer-skeleton-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+}
+.explorer-skeleton-filters span {
+  height: 19.5px;
+}
+.explorer-skeleton-filters span:nth-child(1) {
+  flex: 1 1 240px;
+  max-width: 340px;
+  height: 40.7px;
+}
+.explorer-skeleton-filters span:nth-child(2) {
+  width: 94.8px;
+}
+.explorer-skeleton-filters span:nth-child(3) {
+  width: 182.6px;
+  height: 39.1px;
+}
+.explorer-skeleton-filters span:nth-child(4) {
+  width: 103.9px;
 }
 .explorer-skeleton-stats,
 .explorer-skeleton-charts {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
+  margin-top: 1.25rem;
 }
 .explorer-skeleton-stats span {
-  height: 92px;
+  height: 106.7px;
 }
 .explorer-skeleton-charts {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 1rem;
 }
 .explorer-skeleton-charts span {
-  height: 320px;
+  height: 330px;
 }
+/* The table (550px) and the footnote under it (1rem gap, then one line). */
 .explorer-skeleton-table {
-  height: 360px;
+  height: 585.6px;
+  margin-top: 1.25rem;
 }
 @media (max-width: 1000px) {
   .explorer-charts,
   .explorer-skeleton-charts {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* Below these widths the loaded view's text wraps onto more lines: the
+   footnote at 907, 484 and 374px, the table summary at 603 and 340px, and
+   the chart subtitles at 457 and 401px. */
+@media (max-width: 907px) {
+  .explorer-skeleton-table {
+    height: 605.1px;
+  }
+}
+@media (max-width: 603px) {
+  .explorer-skeleton-table {
+    height: 625.5px;
+  }
+}
+@media (max-width: 484px) {
+  .explorer-skeleton-table {
+    height: 645.1px;
+  }
+}
+@media (max-width: 457px) {
+  .explorer-skeleton-charts span:last-child {
+    height: 348px;
+  }
+}
+@media (max-width: 401px) {
+  .explorer-skeleton-charts span {
+    height: 348px;
+  }
+}
+@media (max-width: 374px) {
+  .explorer-skeleton-table {
+    height: 664.7px;
+  }
+}
+@media (max-width: 340px) {
+  .explorer-skeleton-table {
+    height: 685.1px;
   }
 }
 @media (max-width: 640px) {
@@ -1438,11 +1559,16 @@ pre:focus-visible {
     align-self: start;
     margin: 0;
   }
+  .explorer-skeleton-filters span:nth-child(1) {
+    flex-basis: 100%;
+    max-width: none;
+  }
   .explorer-skeleton-stats {
     grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
   }
   .explorer-skeleton-stats span {
-    height: 56px;
+    height: 60.8px;
   }
   .explorer-tabs {
     display: grid;
@@ -1733,6 +1859,13 @@ pre:focus-visible {
   #rates-home .endpoint-card p {
     min-height: 0;
   }
+  .key-facts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+  .key-facts-stats {
+    margin-top: 0.5rem;
+  }
   .developer-grid,
   .questions-section {
     gap: 2.5rem;
@@ -1857,6 +1990,13 @@ pre:focus-visible {
   .endpoint-footnote span {
     display: block;
     font-size: 0;
+  }
+  .key-facts-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem 1rem;
+  }
+  .key-facts-stats dd {
+    font-size: 2.25rem;
   }
 }
 @media (prefers-reduced-motion: reduce) {

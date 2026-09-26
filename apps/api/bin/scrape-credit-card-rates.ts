@@ -13,7 +13,7 @@ import type { Plan } from "../src/models/plan";
 import { parseOptionalNumber } from "./parse-optional-number";
 import { assertScrapeHasRates, assertTableHasRows } from "./scrape-guards";
 import { runScrape } from "./scrape-runner";
-import { hasDataChanged, loadFromD1, saveToD1 } from "./utils";
+import { hasDataChanged, loadFromD1, markCheckedInD1, saveToD1 } from "./utils";
 
 const config: {
   tableSelector: string;
@@ -113,6 +113,7 @@ async function main() {
         throw error;
       }
     },
+    markChecked: () => markCheckedInD1("credit-card-rates"),
   });
 
   if (outcome.status === "unchanged") {

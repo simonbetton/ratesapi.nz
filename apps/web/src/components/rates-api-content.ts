@@ -10,6 +10,10 @@ export const apiLinks = {
   personalLoanRatesOpenApi: `${openApiUrl}#tag/personal-loan-rates`,
   carLoanRatesOpenApi: `${openApiUrl}#tag/car-loan-rates`,
   creditCardRatesOpenApi: `${openApiUrl}#tag/credit-card-rates`,
+  docs: docsUrl(""),
+  quickstart: docsUrl("/api-reference/quickstart"),
+  about: docsUrl("/about"),
+  aboutData: docsUrl("/about#data-source-and-licence"),
   concepts: docsUrl("/api-reference/concepts"),
   llmsTxt: docsUrl("/llms.txt"),
   mcpDocs: docsUrl("/api-reference/ai-integration"),
@@ -17,6 +21,7 @@ export const apiLinks = {
   openSource: docsUrl("/open-source"),
   localDevelopment: docsUrl("/open-source/local-development"),
   deployment: docsUrl("/open-source/deployment"),
+  monitoring: docsUrl("/open-source/monitoring"),
   health: apiUrl("/api/v1/health"),
   author: "https://www.simonbetton.com",
 } as const;

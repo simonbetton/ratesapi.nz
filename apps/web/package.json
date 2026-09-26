@@ -10,7 +10,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsgo --noEmit",
-    "deploy": "bun run build && wrangler deploy"
+    "deploy": "bun run build && wrangler deploy",
+    "indexnow": "bun bin/indexnow.ts"
   },
   "dependencies": {
     "@fontsource/crimson-pro": "^5.2.8",

@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS historical_data (
 CREATE TABLE IF NOT EXISTS latest_data (
   data_type TEXT PRIMARY KEY,  -- 'mortgage-rates', 'car-loan-rates', 'personal-loan-rates', 'credit-card-rates'
   data TEXT NOT NULL,          -- JSON string containing the entire data snapshot
-  last_updated DATETIME DEFAULT CURRENT_TIMESTAMP
+  last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,  -- Time of the last change to the data
+  last_checked DATETIME                             -- Time of the last successful scrape, changed or not (bin/migrate-d1.ts adds it to older databases)
 );
 
 -- Create indexes for performance

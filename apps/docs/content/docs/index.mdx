@@ -1,15 +1,16 @@
 ---
 title: "Overview"
-description: "Rates API is a free JSON API that gives the interest rates of New Zealand financial institutions. AI agents can use it through MCP."
+seoTitle: "NZ Interest Rates API Documentation"
+description: "Get New Zealand mortgage, personal loan, car loan, and credit card interest rates as JSON. Use the free Rates API with curl, OpenAPI, or MCP."
 ---
 
-Rates API gives the interest rates of New Zealand financial institutions. It has data for mortgages, personal loans, car loans, and credit cards.
+[Rates API](https://www.ratesapi.nz/) gives the interest rates of New Zealand financial institutions. You can get the newest rates and snapshots of earlier rates. An API key is not necessary. All responses are JSON.
 
-The API collects data from [interest.co.nz](https://www.interest.co.nz) each hour. You can get the newest rates and snapshots of earlier rates.
+The data can be incorrect. For correct rates, refer to the financial institution. For the data source and the terms of use, read [About](/about).
 
-An API key is not necessary. All responses are JSON.
+## Key Facts
 
-The data can be incorrect. For correct rates, refer to the financial institution.
+Rates API is a free JSON API for New Zealand interest rates. It has four datasets: mortgage, personal loan, car loan, and credit card rates. Each dataset has more than 30 lenders or issuers. The API checks [interest.co.nz](https://www.interest.co.nz) each hour. It saves a maximum of one snapshot each day, when the data changes. The history starts on 8 March 2025.
 
 ## Start Here
 
@@ -21,6 +22,7 @@ The data can be incorrect. For correct rates, refer to the financial institution
 | Find the base URL, the endpoints, and the response rules | [API Reference](/api-reference) |
 | Find all parameters and response fields, and send requests from the browser | [OpenAPI Reference](/openapi) |
 | Run or deploy the project | [Open Source](/open-source) |
+| Read about the data source, the terms of use, and how to get help | [About](/about) |
 
 ## Example
 
@@ -52,6 +54,8 @@ AI agents can find the data, get it, and check it without special work.
 | Car Loan Rates | `GET /api/v1/car-loan-rates` | `GET /api/v1/car-loan-rates/{institutionId}` | `GET /api/v1/car-loan-rates/time-series` |
 | Credit Card Rates | `GET /api/v1/credit-card-rates` | `GET /api/v1/credit-card-rates/{issuerId}` | `GET /api/v1/credit-card-rates/time-series` |
 
+The mortgage data has fixed terms of 6 months to 5 years, and floating rates.
+
 ## Use Cases
 
 - Compare mortgages, personal loans, car loans, and credit cards.
@@ -74,4 +78,5 @@ AI agents can find the data, get it, and check it without special work.
 | OpenAPI JSON | `/openapi/json` |
 | MCP endpoint | `POST /api/v1/mcp` |
 | Documentation list for LLMs | `/llms.txt` |
+| Full documentation text for LLMs | `/llms-full.txt` |
 | Source code | [github.com/simonbetton/ratesapi.nz](https://github.com/simonbetton/ratesapi.nz) |

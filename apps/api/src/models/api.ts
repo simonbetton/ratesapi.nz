@@ -1,5 +1,7 @@
 import { t } from "elysia";
 
+import { nullable } from "../lib/schema";
+
 export function isValidIsoDate(value: string): boolean {
   const groups = value.match(
     /^(?<yearValue>\d{4})-(?<monthValue>\d{2})-(?<dayValue>\d{2})$/u
@@ -192,8 +194,19 @@ export const HealthResponse = t.Object(
           }),
           lastUpdated: t.String({
             description:
-              "The date and time (UTC) of the last change to this dataset, in YYYY-MM-DD HH:MM:SS format.",
+              "The date and time (UTC) of the last change to this dataset, in YYYY-MM-DD HH:MM:SS format. This time does not change when the API collects the same data again.",
             examples: ["2025-03-04 01:00:00"],
+          }),
+          lastChecked: nullable(
+            t.String({ examples: ["2025-03-05 09:00:00"] }),
+            {
+              description:
+                "The date and time (UTC) of the last correct data collection for this dataset, in YYYY-MM-DD HH:MM:SS format. The API collects each dataset each hour, also when the data does not change. The value is `null` if the API has no record of a collection.",
+            }
+          ),
+          stale: nullable(t.Boolean(), {
+            description:
+              "The value is `true` if the API did not collect this dataset correctly in the last 3 hours. Then the data can be old. The value is `false` if the API collected the dataset in the last 3 hours. The value is `null` if `lastChecked` is `null`.",
           }),
         },
         { additionalProperties: false }
@@ -208,7 +221,7 @@ export const HealthResponse = t.Object(
   {
     additionalProperties: false,
     description:
-      "The API can read its database. The response shows the time of the last change to each dataset.",
+      "The API can read its database. The response shows the time of the last change and the time of the last data collection for each dataset.",
   }
 );
 

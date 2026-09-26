@@ -9,6 +9,9 @@ describe("docs MDX content", () => {
 
     expect(body).toContain('title: "Overview"');
     expect(body).toContain("free JSON API");
+    expect(body).toContain("## Key Facts");
+    // The docs link back to the landing page.
+    expect(body).toContain("[Rates API](https://www.ratesapi.nz/)");
     expect(body).toContain("## Made for AI Agents");
     expect(body).toContain("| Mortgage Rates |");
   });
@@ -25,6 +28,8 @@ describe("docs MDX content", () => {
       "wrangler d1 execute ratesapi-data --remote --file=schema.sql"
     );
     expect(deployment).toContain('pattern = "ratesapi.nz/openapi/*"');
+    // Without the trailing *, the route does not match /docs?query.
+    expect(deployment).toContain('pattern = "www.ratesapi.nz/docs*"');
     // The development environment reuses the production D1 database ID.
     expect(localDevelopment).toContain("same database ID as production");
     // CodeQL runs through GitHub's default setup, not a workflow file.
@@ -96,11 +101,82 @@ describe("docs MDX content", () => {
   test("keeps docs search and LLM routes owned by the docs app", async () => {
     const searchRoute = await readDocsAppFile("app/api/search/route.ts");
     const llmsRoute = await readDocsAppFile("app/llms.txt/route.ts");
+    const llmsFullRoute = await readDocsAppFile("app/llms-full.txt/route.ts");
 
     expect(searchRoute).toContain('import { searchApi } from "@/lib/source";');
     expect(searchRoute).toContain("export const { GET } = searchApi;");
-    expect(llmsRoute).toContain('import { docsLlms } from "@/lib/source";');
-    expect(llmsRoute).toContain("docsLlms.index()");
+    // Both LLM files list the sidebar pages and are made at build time.
+    expect(llmsRoute).toContain("renderLlmsIndex(getNavPages())");
+    expect(llmsRoute).toContain('export const dynamic = "force-static";');
+    expect(llmsFullRoute).toContain('page.data.getText("processed")');
+    expect(llmsFullRoute).toContain('export const dynamic = "force-static";');
+  });
+
+  test("serves the prerendered docs pages without a render per request", async () => {
+    const openNextConfig = await readDocsAppFile("open-next.config.ts");
+    const wrangler = await readDocsAppFile("wrangler.toml");
+
+    expect(openNextConfig).toContain(
+      "incrementalCache: staticAssetsIncrementalCache"
+    );
+    expect(openNextConfig).toContain("enableCacheInterception: true");
+    // One route for /docs, /docs?query, and /docs/*.
+    expect(wrangler).toContain('pattern = "www.ratesapi.nz/docs*"');
+    expect(wrangler).not.toContain('pattern = "www.ratesapi.nz/docs"');
+    expect(wrangler).toContain("[observability.logs]");
+  });
+
+  test("redirects the old introduction page to the API reference", async () => {
+    const introductionPage = Bun.file(
+      new URL("api-reference/introduction.mdx", docsRoot)
+    );
+    const nextConfig = await readDocsAppFile("next.config.mjs");
+
+    expect(await introductionPage.exists()).toBe(false);
+    expect(nextConfig).toContain("/api-reference/introduction`,");
+    expect(nextConfig).toContain("/api-reference`,");
+  });
+
+  test("adds the about page with the data source and terms", async () => {
+    const about = await readDocsFile("about.mdx");
+    const meta: unknown = JSON.parse(await readDocsFile("meta.json"));
+
+    expect(meta).toEqual({
+      title: "Rates API",
+      pages: ["index", "api-reference", "open-source", "about"],
+    });
+    // The landing page links to this anchor.
+    expect(about).toContain(
+      "## Data Source and Licence [#data-source-and-licence]"
+    );
+    expect(about).toContain("It does not apply to the rate data.");
+    expect(about).toContain("### Is Rates API affiliated with interest.co.nz?");
+    expect(about).toContain("### Can I use the data commercially?");
+    expect(about).toContain(
+      "https://github.com/simonbetton/ratesapi.nz/issues"
+    );
+  });
+
+  test("gives each page a search description about New Zealand", async () => {
+    const paths = await Array.fromAsync(
+      new Bun.Glob("**/*.mdx").scan({ cwd: docsRoot.pathname })
+    );
+    const bodies = await Promise.all(paths.map(readDocsFile));
+
+    expect(paths.length).toBeGreaterThan(0);
+
+    for (const [index, path] of paths.entries()) {
+      const description =
+        /^description: "(?<description>.+)"$/mu.exec(bodies[index] ?? "")
+          ?.groups?.description ?? "";
+
+      expect({ path, description }).toEqual({
+        path,
+        description: expect.stringContaining("New Zealand"),
+      });
+      // Search results cut descriptions that are longer.
+      expect(description.length).toBeLessThanOrEqual(155);
+    }
   });
 });
 

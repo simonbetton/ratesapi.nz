@@ -23,7 +23,7 @@ export function SiteHeader() {
           <a className="nav-secondary" href={apiLinks.source}>
             GitHub
           </a>
-          <a className="nav-docs" href={apiLinks.openapi}>
+          <a className="nav-docs" href={apiLinks.docs}>
             API docs <span aria-hidden="true">↗</span>
           </a>
           <a className="nav-start" href="#quickstart">

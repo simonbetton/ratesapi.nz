@@ -44,7 +44,7 @@ export function MobileNav() {
               <ChartLine aria-hidden="true" />
               Explore
             </a>
-            <a href={apiLinks.openapi} onClick={closeMenu}>
+            <a href={apiLinks.docs} onClick={closeMenu}>
               <BookOpen aria-hidden="true" />
               Docs
             </a>

@@ -1,6 +1,7 @@
 ---
 title: "API Reference"
-description: "The base URL, the endpoint groups, the filters, the response rules, and the time-series rules of Rates API."
+seoTitle: "NZ Mortgage & Loan Rates API Endpoints"
+description: "The base URL, endpoints, filters, errors, and time-series rules for New Zealand mortgage, personal loan, car loan, and credit card rates."
 ---
 
 Use this section when you know which data you must get. The [OpenAPI reference](/openapi) shows the parameters, the response fields, and the errors of each endpoint. If Rates API is new to you, start with the [Quickstart](/api-reference/quickstart). Then read [AI Integration](/api-reference/ai-integration) and [Core Concepts](/api-reference/concepts).
@@ -55,7 +56,7 @@ Each category has three endpoints:
 | Car Loan Rates | `GET /api/v1/car-loan-rates` | `GET /api/v1/car-loan-rates/{institutionId}` | `GET /api/v1/car-loan-rates/time-series` |
 | Credit Card Rates | `GET /api/v1/credit-card-rates` | `GET /api/v1/credit-card-rates/{issuerId}` | `GET /api/v1/credit-card-rates/time-series` |
 
-The health endpoint, `GET /api/v1/health`, shows if the API can read its database. It also shows the time of the last change to each dataset.
+The health endpoint, `GET /api/v1/health`, shows if the API can read its database. For each dataset, it also shows the time of the last change, the time of the last successful data collection, and if the data collection stopped.
 
 ## Filters
 

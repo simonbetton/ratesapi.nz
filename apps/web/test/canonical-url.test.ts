@@ -29,6 +29,47 @@ describe("canonical redirects", () => {
     expect(canonicalRedirect("https://www.ratesapi.nz/llms.txt")).toBe(
       "https://www.ratesapi.nz/docs/llms.txt"
     );
+    expect(canonicalRedirect("https://www.ratesapi.nz/llms-full.txt")).toBe(
+      "https://www.ratesapi.nz/docs/llms-full.txt"
+    );
+  });
+
+  test("sends the old introduction straight to the API reference", () => {
+    expect(
+      canonicalRedirect("http://ratesapi.nz/api-reference/introduction")
+    ).toBe("https://www.ratesapi.nz/docs/api-reference");
+    expect(
+      canonicalRedirect("https://www.ratesapi.nz/api-reference/introduction/")
+    ).toBe("https://www.ratesapi.nz/docs/api-reference");
+  });
+
+  test("moves every docs.ratesapi.nz page in one hop, keeping the query", () => {
+    expect(canonicalRedirect("https://docs.ratesapi.nz/")).toBe(
+      "https://www.ratesapi.nz/docs"
+    );
+    expect(canonicalRedirect("http://docs.ratesapi.nz/?utm_source=x")).toBe(
+      "https://www.ratesapi.nz/docs?utm_source=x"
+    );
+    expect(
+      canonicalRedirect("https://docs.ratesapi.nz/api-reference/quickstart?a=1")
+    ).toBe("https://www.ratesapi.nz/docs/api-reference/quickstart?a=1");
+    expect(
+      canonicalRedirect("https://docs.ratesapi.nz/api-reference/introduction")
+    ).toBe("https://www.ratesapi.nz/docs/api-reference");
+    expect(canonicalRedirect("https://docs.ratesapi.nz/llms-full.txt")).toBe(
+      "https://www.ratesapi.nz/docs/llms-full.txt"
+    );
+  });
+
+  test("sends the old endpoint pages to the OpenAPI reference", () => {
+    expect(
+      canonicalRedirect(
+        "https://docs.ratesapi.nz/api-reference/endpoint/mortgage-rates/list"
+      )
+    ).toBe("https://www.ratesapi.nz/openapi");
+    expect(
+      canonicalRedirect("https://docs.ratesapi.nz/api-reference/endpoint")
+    ).toBe("https://www.ratesapi.nz/openapi");
   });
 
   test("leaves look-alike paths alone", () => {
@@ -38,5 +79,8 @@ describe("canonical redirects", () => {
     expect(
       canonicalRedirect("https://www.ratesapi.nz/llms.txt.bak")
     ).toBeNull();
+    expect(
+      canonicalRedirect("https://docs.ratesapi.nz/api-reference/endpoints")
+    ).toBe("https://www.ratesapi.nz/docs/api-reference/endpoints");
   });
 });

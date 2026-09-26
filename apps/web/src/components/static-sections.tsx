@@ -110,7 +110,7 @@ export function TeamStrategySection() {
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                View schema -&gt;
+                Institution and product IDs -&gt;
               </a>
             </div>
           </div>
@@ -180,7 +180,7 @@ export function TeamStrategySection() {
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                View history docs -&gt;
+                Time-series docs -&gt;
               </a>
             </div>
           </div>
@@ -232,7 +232,7 @@ export function TeamStrategySection() {
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                View schema -&gt;
+                Institution and product IDs -&gt;
               </a>
             </div>
           </div>
@@ -436,17 +436,54 @@ export function FooterCtaSection() {
   );
 }
 
+const footerLabelClass =
+  "mb-2 text-[13px] leading-5 font-medium text-[#1a2035]";
+
+const footerLinkGroups = [
+  {
+    id: "footer-docs",
+    label: "Docs",
+    links: [
+      ["Documentation", apiLinks.docs],
+      ["Quickstart", apiLinks.quickstart],
+      ["API reference", apiLinks.openapi],
+      ["About", apiLinks.about],
+    ],
+  },
+  {
+    id: "footer-product",
+    label: "Product",
+    links: [
+      ["OpenAPI JSON", apiLinks.openapiJson],
+      ["MCP endpoint", apiLinks.mcpDocs],
+      ["llms.txt", apiLinks.llmsTxt],
+      ["Health check", apiLinks.health],
+    ],
+  },
+  {
+    id: "footer-open-source",
+    label: "Open source",
+    links: [
+      ["GitHub repository", apiLinks.source],
+      ["Project architecture", apiLinks.openSource],
+      ["Local development", apiLinks.localDevelopment],
+      ["Deployment", apiLinks.deployment],
+      ["Monitoring", apiLinks.monitoring],
+    ],
+  },
+] as const;
+
 export function SiteFooter() {
   return (
     <footer
       className={cn(
-        "border-t border-[#eaecf0] [&_h4]:mb-2 [&_h4]:text-[13px] [&_h4]:leading-5 [&_h4]:font-medium [&_h4]:text-[#1a2035] [&_li]:m-0 [&_ul]:m-0 [&_ul]:list-none [&_ul]:p-0 [&_ul_a]:block [&_ul_a]:py-1.5 [&_ul_a]:text-[14px] [&_ul_a]:leading-5 [&_ul_a]:no-underline [&_ul_a]:transition-colors [&_ul_a]:duration-150"
+        "border-t border-[#eaecf0] [&_li]:m-0 [&_ul]:m-0 [&_ul]:list-none [&_ul]:p-0 [&_ul_a]:block [&_ul_a]:py-1.5 [&_ul_a]:text-[14px] [&_ul_a]:leading-5 [&_ul_a]:no-underline [&_ul_a]:transition-colors [&_ul_a]:duration-150"
       )}
     >
       <div className={cn("mx-auto w-full max-w-[1330px] px-5")}>
         <div
           className={cn(
-            "flex justify-between gap-12 pt-14 pb-12 max-[640px]:flex-col max-[640px]:gap-9 max-[640px]:pt-10 max-[640px]:pb-9"
+            "flex justify-between gap-12 pt-14 pb-12 max-[1000px]:flex-col max-[1000px]:gap-9 max-[640px]:pt-10 max-[640px]:pb-9"
           )}
         >
           <div className={cn("max-w-[300px]")}>
@@ -461,45 +498,25 @@ export function SiteFooter() {
           </div>
           <nav
             aria-label="Footer"
-            className={cn("grid grid-cols-2 gap-x-16 max-[640px]:gap-x-6")}
+            className={cn(
+              "grid grid-cols-3 gap-x-16 max-[640px]:grid-cols-2 max-[640px]:gap-x-6 max-[640px]:gap-y-8"
+            )}
           >
-            <div>
-              <h4>Product</h4>
-              <ul>
-                <li>
-                  <a href={apiLinks.openapi}>OpenAPI</a>
-                </li>
-                <li>
-                  <a href={apiLinks.openapiJson}>OpenAPI JSON</a>
-                </li>
-                <li>
-                  <a href={apiLinks.mcpDocs}>MCP endpoint</a>
-                </li>
-                <li>
-                  <a href={apiLinks.llmsTxt}>llms.txt</a>
-                </li>
-                <li>
-                  <a href={apiLinks.health}>Health check</a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4>Open source</h4>
-              <ul>
-                <li>
-                  <a href={apiLinks.source}>GitHub repository</a>
-                </li>
-                <li>
-                  <a href={apiLinks.openSource}>Project architecture</a>
-                </li>
-                <li>
-                  <a href={apiLinks.localDevelopment}>Local development</a>
-                </li>
-                <li>
-                  <a href={apiLinks.deployment}>Deployment</a>
-                </li>
-              </ul>
-            </div>
+            {footerLinkGroups.map((group) => (
+              <div key={group.id}>
+                {/* Not a heading: these labels don't outline the page. */}
+                <div className={footerLabelClass} id={group.id}>
+                  {group.label}
+                </div>
+                <ul aria-labelledby={group.id}>
+                  {group.links.map(([label, href]) => (
+                    <li key={label}>
+                      <a href={href}>{label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </nav>
         </div>
         <div

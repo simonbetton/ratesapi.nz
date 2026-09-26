@@ -23,7 +23,7 @@ export function HeroSection() {
               Make your first request{" "}
               <ArrowRight size={17} aria-hidden="true" />
             </a>
-            <a className="text-link" href={apiLinks.openapi}>
+            <a className="text-link" href={apiLinks.quickstart}>
               Explore the API docs <span aria-hidden="true">↗</span>
             </a>
           </div>

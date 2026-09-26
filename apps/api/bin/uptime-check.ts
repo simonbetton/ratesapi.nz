@@ -1,9 +1,17 @@
-// This script is used to check the uptime of the API endpoints
+// This script is used to check the uptime of the API endpoints and the docs site
 
 import { createHttpClient } from "../src/lib/http-client";
 
 const KNOWN_HISTORICAL_START_DATE = "2026-04-24";
 const KNOWN_HISTORICAL_END_DATE = "2026-04-30";
+
+// A new query value for each run, so Cloudflare cannot answer the docs checks
+// from its cache: the docs Worker itself must answer.
+const CACHE_BUSTER = `uptime-check=${Date.now()}`;
+
+// Each attempt fails after this time, so a server that hangs is a failure
+// instead of a check that never ends.
+const REQUEST_TIMEOUT_MS = 15_000;
 
 const endpoints = [
   // Base endpoints
@@ -40,6 +48,10 @@ const endpoints = [
   // Time Series with combined filters
   `v1/mortgage-rates/time-series?startDate=${KNOWN_HISTORICAL_START_DATE}&endDate=${KNOWN_HISTORICAL_END_DATE}&institutionId=institution:anz`,
   `v1/mortgage-rates/time-series?institutionId=institution:anz&termInMonths=12`,
+
+  // Docs site (a separate Worker). These paths resolve against the origin.
+  `/docs?${CACHE_BUSTER}`,
+  `/docs/api-reference/quickstart?${CACHE_BUSTER}`,
 ];
 
 const httpClient = createHttpClient("UptimeCheck", {
@@ -52,6 +64,7 @@ const httpClient = createHttpClient("UptimeCheck", {
     retryDelay: 1000,
     retryOn: [500, 502, 503, 504],
   },
+  timeoutMs: REQUEST_TIMEOUT_MS,
 });
 
 type EndpointCheckResult =
@@ -71,6 +84,8 @@ async function checkEndpoint(endpoint: string): Promise<EndpointCheckResult> {
     // Assuming a successful request implies the endpoint is up.
     // You might want to add more specific checks on the response status or body.
     if (response.ok) {
+      // Read the whole body: a response that stops part way is a failure too.
+      await response.arrayBuffer();
       return { endpoint, success: true };
     }
     return {

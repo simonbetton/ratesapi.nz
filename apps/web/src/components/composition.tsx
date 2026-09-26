@@ -1,3 +1,4 @@
+import type { KeyFacts } from "../lib/key-facts";
 import { ChannelsSection } from "./channels-section";
 import { DeveloperSection, QuestionsSection } from "./developer-section";
 import { SiteHeader } from "./header";
@@ -11,7 +12,7 @@ import {
   TeamStrategySection,
 } from "./static-sections";
 
-export function Page() {
+export function Page({ keyFacts }: { keyFacts: KeyFacts | null }) {
   return (
     <div id="rates-home">
       <a className="skip-link" href="#main-content">
@@ -20,7 +21,7 @@ export function Page() {
       <SiteHeader />
       <main id="main-content" tabIndex={-1}>
         <HeroSection />
-        <ChannelsSection />
+        <ChannelsSection keyFacts={keyFacts} />
         <RatesExplorer />
         <TeamStrategySection />
         <DeveloperSection />

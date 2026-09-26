@@ -1,3 +1,6 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Disallow:
+
+Sitemap: https://www.ratesapi.nz/sitemap.xml
+Sitemap: https://www.ratesapi.nz/docs/sitemap.xml

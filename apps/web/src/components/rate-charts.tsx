@@ -208,6 +208,8 @@ export function LineChart({
         onKeyDown={onKeyDown}
         // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- a range input cannot host the SVG plot and tooltip it controls
         role="slider"
+        // Holds the plot's height until the width is measured and it draws.
+        style={{ minHeight: chartHeight }}
         tabIndex={0}
       >
         {width > 0 && (

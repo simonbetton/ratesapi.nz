@@ -20,7 +20,8 @@ export function requestExample(language: ExampleLanguage, term: string) {
       return `const response = await fetch(\n  '${url}'\n);\n\nif (!response.ok) {\n  throw new Error(\`Rates API: \${response.status}\`);\n}\n\nconst { data, lastUpdated } = await response.json();\nconsole.log(data, lastUpdated);`;
     }
     case "Python": {
-      return `import json\nfrom urllib.request import urlopen\n\nurl = '${url}'\nwith urlopen(url, timeout=15) as response:\n    payload = json.load(response)\n\nprint(payload['data'])\nprint(payload['lastUpdated'])`;
+      // urllib's default User-Agent is blocked, so the example names its app.
+      return `import json\nfrom urllib.request import Request, urlopen\n\nurl = '${url}'\nheaders = {'User-Agent': 'my-app/1.0 (+https://example.com)'}\nwith urlopen(Request(url, headers=headers), timeout=15) as response:\n    payload = json.load(response)\n\nprint(payload['data'])\nprint(payload['lastUpdated'])`;
     }
     default: {
       const unsupported: never = language;
