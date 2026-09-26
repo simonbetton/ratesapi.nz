@@ -4,11 +4,7 @@ import type { ElysiaAdapter } from "elysia";
 import { Elysia } from "elysia";
 
 import { createLogger } from "./lib/logging";
-import {
-  openApiDocumentation,
-  openApiExclude,
-  toOpenApiDocument,
-} from "./lib/openapi";
+import { openApiDocumentation, toOpenApiDocument } from "./lib/openapi";
 import type { OpenApiServer } from "./lib/openapi";
 import type { GetEnv } from "./lib/routing";
 import {
@@ -112,7 +108,6 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
           ...openApiDocumentation,
           servers: [productionServer],
         },
-        exclude: openApiExclude,
       })
     )
     .onBeforeHandle({ as: "global" }, ({ request, set }) => {
@@ -131,7 +126,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
     .get(
       "/openapi/json",
       ({ request }) => {
-        const generatedSchema = toOpenAPISchema(app, openApiExclude);
+        const generatedSchema = toOpenAPISchema(app);
 
         return toOpenApiDocument(
           generatedSchema,

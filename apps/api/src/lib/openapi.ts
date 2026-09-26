@@ -12,10 +12,6 @@ export interface OpenApiServer {
   description: string;
 }
 
-export const openApiExclude = {
-  paths: ["/api/v1/mcp", "/api/v1/mcp/"],
-};
-
 export const openApiDocumentation = {
   info: {
     version: "1.0.0",
@@ -27,6 +23,7 @@ export const openApiDocumentation = {
       "- The API keeps one snapshot of each dataset for each day on which the data changes. Use the time-series endpoints to get these snapshots.",
       "- You do not need an API key.",
       "- All responses are JSON.",
+      "- AI agents can get the same data through the MCP endpoint.",
       "",
       "The data can be incorrect. For correct rates, refer to the financial institution.",
     ].join("\n"),
@@ -64,6 +61,11 @@ export const openApiDocumentation = {
       name: "Health",
       description:
         "The status of the API and the time of the last change to each dataset.",
+    },
+    {
+      name: "MCP",
+      description:
+        "The Model Context Protocol (MCP) endpoint. AI agents and MCP clients use it to find and call tools that get Rates API data.",
     },
   ],
   // The API has no authentication.

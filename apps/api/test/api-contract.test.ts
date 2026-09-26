@@ -331,7 +331,7 @@ describe("v1 API contract", () => {
     expect(response.status).toBe(404);
   });
 
-  test("exposes OpenAPI UI and JSON without documenting MCP", async () => {
+  test("exposes OpenAPI UI and JSON, including the MCP endpoint", async () => {
     const uiResponse = await request("/openapi");
     expect(uiResponse.status).toBe(200);
 
@@ -348,7 +348,13 @@ describe("v1 API contract", () => {
     expect(defaultServer?.url).toBe("http://localhost");
     expect(defaultServer?.description).toBe("Local");
     expect(paths?.["/api/v1/mortgage-rates"]).toBeDefined();
-    expect(paths?.["/api/v1/mcp/"]).toBeUndefined();
+    // Only POST is documented; GET and DELETE exist to answer 405.
+    const mcpPath = readRecord(paths, "/api/v1/mcp");
+    expect(Object.keys(mcpPath ?? {})).toEqual(["post"]);
+    expect(readRecord(mcpPath, "post")?.operationId).toBe("sendMcpMessage");
+    const schemas = readRecord(readRecord(spec, "components"), "schemas");
+    expect(readRecord(schemas, "McpMessage")).toBeDefined();
+    expect(readRecord(schemas, "McpResponse")).toBeDefined();
     expect(
       Object.keys(paths ?? {}).filter((path) => path.endsWith("/"))
     ).toEqual([]);
@@ -375,7 +381,7 @@ describe("v1 API contract", () => {
 
     expect(spec.openapi).toBe("3.1.0");
     expect(JSON.stringify(spec)).not.toContain('"nullable"');
-    expect(operations.length).toBe(13);
+    expect(operations.length).toBe(14);
     expect(problems).toEqual([]);
   });
 
@@ -407,6 +413,21 @@ describe("v1 API contract", () => {
     expect(response.status).toBe(204);
     expect(response.headers.get("access-control-allow-origin")).toBe("*");
     expect(response.headers.get("access-control-max-age")).toBe("600");
+  });
+
+  test("serves MCP with a trailing slash", async () => {
+    const response = await request("/api/v1/mcp/", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "ping" }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(await jsonBody(response)).toEqual({
+      jsonrpc: "2.0",
+      id: 1,
+      result: {},
+    });
   });
 
   test("handles MCP initialize, tools list, and tool call", async () => {

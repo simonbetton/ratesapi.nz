@@ -27,6 +27,7 @@ import {
   getPersonalLoanRatesTimeSeries,
   listPersonalLoanRates,
 } from "../personal-loan-rates";
+import { mcpModels, mcpOperationDetail } from "./openapi";
 import {
   hasFeature,
   isProtocolError,
@@ -328,8 +329,10 @@ const MCP_TOOL_LIST = MCP_TOOLS.map((tool) => ({
 export function createMcpRoutes(getEnv: GetEnv) {
   return (
     new Elysia({ prefix: "/mcp" })
+      .model(mcpModels)
+      // "" publishes /api/v1/mcp in OpenAPI. Elysia serves /api/v1/mcp/ too.
       .post(
-        "/",
+        "",
         async ({ request, status }) => {
           let body: unknown;
 
@@ -356,14 +359,14 @@ export function createMcpRoutes(getEnv: GetEnv) {
             ? new Response(null, { status: reply.httpStatus })
             : status(reply.httpStatus, reply.body);
         },
-        { detail: { hide: true } }
+        { detail: mcpOperationDetail(MCP_TOOLS) }
       )
       // Streamable HTTP servers without a standalone SSE stream answer GET
       // (and DELETE, for legacy session teardown) with 405.
-      .get("/", ({ set, status }) => methodNotAllowed(set, status), {
+      .get("", ({ set, status }) => methodNotAllowed(set, status), {
         detail: { hide: true },
       })
-      .delete("/", ({ set, status }) => methodNotAllowed(set, status), {
+      .delete("", ({ set, status }) => methodNotAllowed(set, status), {
         detail: { hide: true },
       })
   );

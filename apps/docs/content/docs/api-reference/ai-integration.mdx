@@ -138,7 +138,9 @@ The MCP server sends `listChanged: false`, because the list of tools does not ch
 
 Use [`/openapi/json`](/openapi/json) if your AI framework can change OpenAPI operations into tools.
 
-The OpenAPI document contains the `/api/v1/*` data endpoints. It does not contain `/api/v1/mcp`, because MCP is a protocol endpoint and not a REST data endpoint. This page gives the MCP information.
+The OpenAPI document contains the `/api/v1/*` data endpoints and the MCP endpoint, `POST /api/v1/mcp`. The MCP operation (`sendMcpMessage`) shows the headers, the JSON-RPC message schemas, and the tool names. This page gives all the MCP information.
+
+If your framework makes a tool from each OpenAPI operation, do not make a tool from `sendMcpMessage`. To use MCP, connect an MCP client to the MCP endpoint.
 
 ## Documentation List for LLMs
 

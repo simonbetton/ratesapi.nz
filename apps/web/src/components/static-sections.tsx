@@ -476,6 +476,9 @@ export function SiteFooter() {
                   <a href={apiLinks.mcpDocs}>MCP endpoint</a>
                 </li>
                 <li>
+                  <a href={apiLinks.llmsTxt}>llms.txt</a>
+                </li>
+                <li>
                   <a href={apiLinks.health}>Health check</a>
                 </li>
               </ul>
