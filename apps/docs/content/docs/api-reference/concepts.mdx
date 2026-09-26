@@ -1,21 +1,30 @@
 ---
 title: "Core Concepts"
-description: "The rules for data freshness, IDs, snapshots, dates, errors, request IDs, CORS, and OpenAPI in Rates API."
+seoTitle: "Data Freshness, Lender IDs & Snapshots"
+description: "How Rates API collects New Zealand rates from interest.co.nz each hour, and how snapshots, lender IDs, date filters, and errors operate."
 ---
 
 ## Data Freshness
 
 The API collects data from interest.co.nz each hour. It saves a dataset only when the data changes. Cloudflare D1 keeps the newest version of each dataset and snapshots of earlier versions.
 
-To see the time of the last change to each dataset, send a request to the health endpoint:
+To see the freshness of each dataset, send a request to the health endpoint:
 
 ```bash
 curl https://www.ratesapi.nz/api/v1/health
 ```
 
-In the health response, `lastUpdated` has the format `YYYY-MM-DD HH:MM:SS` (UTC). In the rate responses, `lastUpdated` has the ISO 8601 format.
+For each dataset, the health response has these fields:
 
-An old `lastUpdated` value has two possible causes: the rates did not change, or the data collection failed. The health endpoint does not show which cause is correct.
+| Field | Value |
+| --- | --- |
+| `lastUpdated` | The time of the last change to the data. |
+| `lastChecked` | The time of the last successful data collection, also when the data did not change. The value is `null` if the time is not known. |
+| `stale` | `true` if no data collection was successful in the last 3 hours. `false` if a data collection was successful in the last 3 hours. `null` if `lastChecked` is `null`. |
+
+In the health response, `lastUpdated` and `lastChecked` have the format `YYYY-MM-DD HH:MM:SS` (UTC). In the rate responses, `lastUpdated` has the ISO 8601 format.
+
+An old `lastUpdated` value has two possible causes: the rates did not change, or the data collection failed. To find the cause, examine `stale`. If `stale` is `false`, the data collection operates correctly and the rates did not change.
 
 ## Identifiers
 

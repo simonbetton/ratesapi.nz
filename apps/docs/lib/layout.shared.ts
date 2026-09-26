@@ -1,15 +1,25 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 
 import { toApiUrl } from "./api-url";
+import { repositoryUrl, siteOrigin } from "./site";
 
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
       title: "Rates API",
+      // Relative to the /docs base path, so the title opens the docs root.
       url: "/",
     },
-    githubUrl: "https://github.com/simonbetton/ratesapi.nz",
+    githubUrl: repositoryUrl,
     links: [
+      {
+        type: "main",
+        text: "Home",
+        // The landing page is outside the /docs base path.
+        url: `${siteOrigin}/`,
+        // Open it in the same tab. Fumadocs opens absolute URLs in a new tab.
+        external: false,
+      },
       {
         type: "main",
         text: "AI integration",

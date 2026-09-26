@@ -1,6 +1,7 @@
 ---
 title: "Deployment"
-description: "Deploy Rates API to Cloudflare Workers, prepare Cloudflare D1, and set the GitHub Actions secrets."
+seoTitle: "Deploy Rates API to Cloudflare Workers"
+description: "Deploy your own New Zealand interest rates API to Cloudflare Workers: prepare D1, set the Worker routes, build, and set GitHub Actions secrets."
 ---
 
 Rates API deploys three Cloudflare Workers on `www.ratesapi.nz`:
@@ -72,13 +73,13 @@ The configuration of the docs Worker is in `apps/docs/wrangler.toml`. Next.js se
 
 ```toml
 [[routes]]
-pattern = "www.ratesapi.nz/docs"
-zone_name = "ratesapi.nz"
-
-[[routes]]
-pattern = "www.ratesapi.nz/docs/*"
+pattern = "www.ratesapi.nz/docs*"
 zone_name = "ratesapi.nz"
 ```
+
+The `*` at the end of the pattern matches `/docs`, `/docs` with a query string, and all paths under `/docs/`. A pattern without `*` does not match a URL that has a query string.
+
+The docs Worker serves the prerendered pages from Workers static assets. It does not render the pages again for each request. The configuration of this cache is in `apps/docs/open-next.config.ts`.
 
 The configuration of the API Worker is in `apps/api/wrangler.toml`. The API Worker controls the API paths on `www.ratesapi.nz` and on the apex domain:
 

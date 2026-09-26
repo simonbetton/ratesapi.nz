@@ -1,6 +1,7 @@
 ---
 title: "AI Integration"
-description: "Use Rates API with AI agents, LLM applications, MCP clients, OpenAPI tools, and assistants that read documentation."
+seoTitle: "MCP Server for NZ Interest Rates"
+description: "Connect AI agents to New Zealand mortgage and loan rates. Use the free MCP endpoint, the OpenAPI JSON for tool generation, and llms.txt."
 ---
 
 You can use Rates API in AI products without a private integration. The API gives documentation that machines can read, JSON responses with a fixed shape, an MCP endpoint, and a plain-text list of the documentation pages.
@@ -15,6 +16,7 @@ Use this page when you add Rates API to an AI product. Examples are chat assista
 | Scalar OpenAPI reference | [`/openapi`](/openapi) | Find endpoints and send test requests from the browser |
 | OpenAPI JSON | [`/openapi/json`](/openapi/json) | Make SDKs and agent tools, and check the contract |
 | Documentation list for LLMs | [`/llms.txt`](/llms.txt) | A plain-text list of the documentation pages, with titles and links |
+| Full documentation for LLMs | [`/llms-full.txt`](/llms-full.txt) | The full text of all documentation pages in one Markdown file |
 | Search API | `/api/search` | Search in this documentation site |
 
 ## Recommended Architecture
@@ -50,6 +52,55 @@ The endpoint uses the Streamable HTTP transport and JSON-RPC 2.0. It accepts onl
 To get the list of supported versions, send `server/discover`. If you send a version that the server does not support, the server returns HTTP 400 and error `-32022`. The error data contains the list of supported versions.
 
 The server does not use sessions. It does not send an `Mcp-Session-Id` header.
+
+### Connect a Client
+
+The MCP server does not use an API key or OAuth. Give the endpoint URL to your MCP client.
+
+#### Claude Code
+
+Run this command:
+
+```bash
+claude mcp add --transport http ratesapi https://www.ratesapi.nz/api/v1/mcp
+```
+
+To share the server with your team, add it to the `.mcp.json` file at the root of your project:
+
+```json
+{
+  "mcpServers": {
+    "ratesapi": {
+      "type": "http",
+      "url": "https://www.ratesapi.nz/api/v1/mcp"
+    }
+  }
+}
+```
+
+#### Claude and Claude Desktop
+
+Add Rates API as a custom connector:
+
+1. Go to **Customize > Connectors**.
+2. Select **+**, then select **Add custom connector**.
+3. Type `https://www.ratesapi.nz/api/v1/mcp` as the remote MCP server URL. Then select **Add**.
+
+Claude Desktop does not read remote servers from `claude_desktop_config.json`. Use a custom connector.
+
+#### Cursor
+
+Add the server to `.cursor/mcp.json` in your project. To use it in all projects, add it to `~/.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "ratesapi": {
+      "url": "https://www.ratesapi.nz/api/v1/mcp"
+    }
+  }
+}
+```
 
 ### Requests for 2026-07-28
 
@@ -146,7 +197,9 @@ If your framework makes a tool from each OpenAPI operation, do not make a tool f
 
 Use [`/llms.txt`](/llms.txt) when an assistant, a coding agent, or a search system must have a short plain-text list of the documentation.
 
-`/llms.txt` shows each documentation page as a Markdown link, with its title and description. It does not contain the full text of the pages. To read a page, get the linked page. For request schemas and response schemas, use [`/openapi/json`](/openapi/json).
+`/llms.txt` shows each documentation page as a Markdown link, with its title and description. It also shows the OpenAPI document, the MCP endpoint, and the data endpoints. It does not contain the full text of the pages. To read a page, get the linked page. For request schemas and response schemas, use [`/openapi/json`](/openapi/json).
+
+To get the full text of all pages in one file, use [`/llms-full.txt`](/llms-full.txt).
 
 Use `/llms.txt` for these tasks:
 
