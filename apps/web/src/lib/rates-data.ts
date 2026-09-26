@@ -173,20 +173,24 @@ export function toRows(category: Category, payload: ApiRates): RateRow[] {
 
   if (category === "credit-card") {
     return payload.data.flatMap((issuer) =>
-      (issuer.plans ?? []).map((plan) => ({
-        key: nextKey(plan.id),
-        providerId: issuer.id,
-        provider: issuer.name,
-        product: plan.name,
-        rate: plan.purchaseRate,
-        group: "Purchase rate",
-        cashAdvanceRate: plan.cashAdvanceRate,
-        balanceTransferRate: plan.balanceTransferRate,
-        balanceTransferPeriod: plan.balanceTransferPeriod,
-        // The API names this field in months, but the value is in days.
-        interestFreeDays: plan.interestFreePeriodInMonths,
-        fee: plan.primaryFeeNZD,
-      }))
+      (issuer.plans ?? [])
+        // Debit, prepaid, and charge cards are listed with a 0% purchase rate.
+        // They are not credit, and would always show as the cheapest card.
+        .filter((plan) => plan.purchaseRate !== 0)
+        .map((plan) => ({
+          key: nextKey(plan.id),
+          providerId: issuer.id,
+          provider: issuer.name,
+          product: plan.name,
+          rate: plan.purchaseRate,
+          group: "Purchase rate",
+          cashAdvanceRate: plan.cashAdvanceRate,
+          balanceTransferRate: plan.balanceTransferRate,
+          balanceTransferPeriod: plan.balanceTransferPeriod,
+          // The API names this field in months, but the value is in days.
+          interestFreeDays: plan.interestFreePeriodInMonths,
+          fee: plan.primaryFeeNZD,
+        }))
     );
   }
 

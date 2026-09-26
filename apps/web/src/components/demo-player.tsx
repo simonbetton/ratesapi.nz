@@ -1,5 +1,6 @@
 import { ArrowUpRight, Play } from "lucide-react";
 import { useState } from "react";
+import type { ReactNode } from "react";
 
 import {
   exampleResponse,
@@ -22,12 +23,16 @@ const responseLabels: Record<RequestState["status"], string> = {
   error: "Request failed",
 };
 
-const responseNotes: Record<RequestState["status"], string> = {
+const responseNotes: Record<RequestState["status"], ReactNode> = {
   example:
     "Illustrative 1-year mortgage data. Run a request for the selected term’s latest available rates.",
   loading: "Fetching the selected mortgage term from ratesapi.nz.",
-  success:
-    "Check lastUpdated for data freshness; timestamp is the request time.",
+  success: (
+    <>
+      Check <code>lastUpdated</code> for data freshness; <code>timestamp</code>{" "}
+      is the request time.
+    </>
+  ),
   error: "No live data loaded. You can retry using Run request.",
 };
 

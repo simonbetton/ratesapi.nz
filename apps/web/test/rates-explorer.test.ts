@@ -89,20 +89,20 @@ const mortgages: ApiRates = {
 
 const rows = toRows("mortgage", mortgages);
 
-function cardIssuer(id: string, name: string) {
+function cardIssuer(id: string, name: string, purchaseRate = 20.95) {
   return {
     id,
     name,
     plans: [
       {
-        id: `plan:${id}`,
+        id: `plan:${id}:${purchaseRate}`,
         name: `${name} Visa`,
         interestFreePeriodInMonths: null,
         primaryFeeNZD: null,
         balanceTransferRate: null,
         balanceTransferPeriod: null,
         cashAdvanceRate: null,
-        purchaseRate: 20.95,
+        purchaseRate,
       },
     ],
   };
@@ -163,6 +163,18 @@ describe("rates explorer data", () => {
       ],
     });
     expect(row?.rate).toBeNull();
+  });
+
+  test("leaves out cards with a 0% purchase rate, such as debit cards", () => {
+    const cards = toRows("credit-card", {
+      type: "CreditCardRates",
+      lastUpdated: "2026-09-25T00:00:00.000Z",
+      data: [
+        cardIssuer("issuer:asb", "ASB", 0),
+        cardIssuer("issuer:asb", "ASB"),
+      ],
+    });
+    expect(cards.map((card) => card.rate)).toEqual([20.95]);
   });
 
   test("reads credit card interest-free periods as days", () => {

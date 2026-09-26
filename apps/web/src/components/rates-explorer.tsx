@@ -266,8 +266,9 @@ function CategoryData({
       <p className="explorer-footnote">
         Updated {updatedFormat.format(new Date(snapshot.lastUpdated))} (NZ time)
         from interest.co.nz.{" "}
-        {category !== "credit-card" &&
-          "Rates listed as 0% are shown as missing. "}
+        {category === "credit-card"
+          ? "Debit, prepaid, and charge cards (0% purchase rate) are left out. "
+          : "Rates listed as 0% are shown as missing. "}
         Rates are indicative; confirm with the provider.
       </p>
     </div>

@@ -616,9 +616,12 @@ pre:focus-visible {
   font-size: 0.65rem;
 }
 .response-code {
+  /* Fill the panel when it stretches to the request column's height, so the
+     note sits right below the code instead of floating at the bottom. */
+  flex-grow: 1;
   height: 305px;
   overflow: auto;
-  margin: 1rem 0;
+  margin: 1rem 0 0.75rem;
   color: #b9e2ce;
   scrollbar-color: #4c6058 #10191d;
 }
@@ -626,6 +629,14 @@ pre:focus-visible {
   margin-top: auto;
   font-size: 0.7rem;
   color: #b3c3be;
+}
+#rates-home .response-note code {
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.3rem;
+  background: #ffffff1c;
+  color: #dce9e3;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.95em;
 }
 .request-error {
   min-height: 305px;

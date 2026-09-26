@@ -282,35 +282,57 @@ export function AutomationsSection() {
               <div aria-hidden="true">
                 <strong
                   className={cn(
-                    "mb-3 block text-[11px] tracking-[1px] text-[#656977] uppercase"
+                    "mb-5 block text-[11px] tracking-[1px] text-[#656977] uppercase"
                   )}
                 >
                   Hourly collection schedule
                 </strong>
-                {collectionSteps.map(([label, body], index) => (
-                  <div
-                    className={cn(
-                      "relative mt-5 rounded-lg bg-white p-4 shadow-[0_1px_1px_#12376905,0_0_0_1px_#1237690f]"
-                    )}
-                    key={label}
-                  >
-                    <span
+                <ol className={cn("m-0 grid list-none gap-3 p-0")}>
+                  {collectionSteps.map(([label, body], index) => (
+                    <li
                       className={cn(
-                        "absolute top-5 -left-3 flex size-6 items-center justify-center rounded-full bg-[#00a0ff] text-[11px] font-medium text-white"
+                        "relative grid grid-cols-[1.75rem_minmax(0,1fr)] items-start gap-x-3.5"
                       )}
+                      key={label}
                     >
-                      {index + 1}
-                    </span>
-                    <strong
-                      className={cn(
-                        "block text-[15px] font-normal text-[#1a2035]"
+                      <span
+                        className={cn(
+                          "mt-3 flex size-7 items-center justify-center rounded-full bg-[#e4f5ff] text-xs font-semibold text-[#0071b8] shadow-[0_0_0_1px_#00a0ff2e]"
+                        )}
+                      >
+                        {index + 1}
+                      </span>
+                      {index < collectionSteps.length - 1 && (
+                        // Joins this step's number to the next one.
+                        <span
+                          className={cn(
+                            "absolute top-11 -bottom-5 left-[13.5px] w-px bg-[#cfe3f1]"
+                          )}
+                        />
                       )}
-                    >
-                      {label}
-                    </strong>
-                    <span className={cn("text-sm text-[#717583]")}>{body}</span>
-                  </div>
-                ))}
+                      <div
+                        className={cn(
+                          "rounded-[10px] bg-white px-4 py-3.5 shadow-[0_1px_2px_#1237690a,0_0_0_1px_#12376912]"
+                        )}
+                      >
+                        <strong
+                          className={cn(
+                            "block text-[15px] leading-6 font-medium text-[#1a2035]"
+                          )}
+                        >
+                          {label}
+                        </strong>
+                        <span
+                          className={cn(
+                            "mt-0.5 block text-[13px] leading-5 text-[#717583]"
+                          )}
+                        >
+                          {body}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
               </div>
             </figure>
           </div>
