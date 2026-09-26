@@ -10,3 +10,4 @@ node_modules
 plans
 tsconfig.tsbuildinfo
 next-env.d.ts
+ratesapi.nz-audit/
