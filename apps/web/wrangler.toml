@@ -14,6 +14,21 @@ custom_domain = true
 pattern = "ratesapi.nz"
 custom_domain = true
 
+# src/lib/canonical-url.ts moves every old docs.ratesapi.nz page to its new
+# home in one hop. This only takes effect once the Cloudflare dashboard
+# redirect rule for docs.ratesapi.nz is removed: that rule runs first and sends
+# every path to the homepage.
+[[routes]]
+pattern = "docs.ratesapi.nz/*"
+zone_name = "ratesapi.nz"
+
+# The homepage's key facts are read from the API Worker (apps/api) at render
+# time. Locally the binding has no API Worker to reach, so the page falls back
+# to static wording.
+[[services]]
+binding = "RATES_API"
+service = "ratesapi-nz"
+
 [observability.logs]
 enabled = true
 invocation_logs = true

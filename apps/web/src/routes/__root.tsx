@@ -1,8 +1,12 @@
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
+import { NotFoundPage } from "#/components/not-found-page";
+
 import appCss from "../styles.css?url";
 
+// Only tags every page shares. The title, description, canonical, social tags
+// and JSON-LD belong to the homepage route, so a 404 never repeats them.
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -13,39 +17,10 @@ export const Route = createRootRoute({
         name: "viewport",
         content: "width=device-width, initial-scale=1",
       },
-      {
-        title: "Rates API - Free NZ Interest Rates API",
-      },
-      {
-        name: "description",
-        content:
-          "Build with free New Zealand mortgage, loan, and credit card data. JSON endpoints, historical rates, OpenAPI, and MCP. No account or API key required.",
-      },
-      {
-        property: "og:title",
-        content: "Rates API - Free NZ Interest Rates API",
-      },
-      {
-        property: "og:description",
-        content:
-          "Latest and historical NZ lending rates for products, dashboards, and agent tools.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://www.ratesapi.nz/" },
-      { property: "og:site_name", content: "Rates API" },
-      {
-        property: "og:image",
-        content: "https://www.ratesapi.nz/images/hero.webp",
-      },
-      {
-        property: "og:image:alt",
-        content: "New Zealand mountain lake landscape",
-      },
-      { name: "twitter:card", content: "summary_large_image" },
+      // Keep in sync with theme_color in public/manifest.json.
       { name: "theme-color", content: "#1a2035" },
     ],
     links: [
-      { rel: "canonical", href: "https://www.ratesapi.nz/" },
       {
         rel: "preload",
         href: "/fonts/Inter-Regular.woff2?v=3.19",
@@ -57,6 +32,8 @@ export const Route = createRootRoute({
         rel: "stylesheet",
         href: appCss,
       },
+      // For browsers and crawlers that don't use the SVG icons below.
+      { rel: "icon", href: "/favicon.ico", sizes: "48x48" },
       {
         rel: "icon",
         href: "/ratesapi-terminal-light.svg",
@@ -71,7 +48,8 @@ export const Route = createRootRoute({
       },
       {
         rel: "apple-touch-icon",
-        href: "/ratesapi-terminal-light.svg",
+        href: "/apple-touch-icon.png",
+        sizes: "180x180",
       },
       {
         rel: "manifest",
@@ -79,6 +57,7 @@ export const Route = createRootRoute({
       },
     ],
   }),
+  notFoundComponent: NotFoundPage,
   shellComponent: RootDocument,
 });
 

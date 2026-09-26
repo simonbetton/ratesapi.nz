@@ -1,9 +1,12 @@
 import { ArrowUpRight } from "lucide-react";
 
+import { keyFactStats, keyFactsSummary } from "../lib/key-facts";
+import type { KeyFacts } from "../lib/key-facts";
 import { apiOrigin } from "../lib/site-urls";
+import { cn } from "../lib/utils";
 import { endpointCards } from "./rates-api-content";
 
-export function ChannelsSection() {
+export function ChannelsSection({ keyFacts }: { keyFacts: KeyFacts | null }) {
   return (
     <section
       className="page-container section-space"
@@ -36,10 +39,32 @@ export function ChannelsSection() {
           </article>
         ))}
       </div>
+      <KeyFactsBlock facts={keyFacts} />
       <p className="endpoint-footnote">
         Base URL <code>{apiOrigin}</code>
         <span aria-hidden="true"> · </span>JSON responses · Browser CORS enabled
       </p>
     </section>
+  );
+}
+
+// Rendered on the server from live API data (see routes/index.tsx), so the
+// numbers are in the HTML that search engines and assistants read.
+function KeyFactsBlock({ facts }: { facts: KeyFacts | null }) {
+  return (
+    <div className={cn("key-facts", !facts && "is-static")}>
+      <h3>Key facts</h3>
+      <p>{keyFactsSummary(facts)}</p>
+      {facts && (
+        <dl className="key-facts-stats">
+          {keyFactStats(facts).map((stat) => (
+            <div key={stat.label}>
+              <dt>{stat.label}</dt>
+              <dd>{stat.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+    </div>
   );
 }

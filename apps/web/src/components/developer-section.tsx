@@ -92,7 +92,10 @@ export function QuestionsSection() {
             <a href="https://www.interest.co.nz/">interest.co.nz</a>. Collection
             is scheduled hourly, but freshness varies by dataset. Check{" "}
             <code>lastUpdated</code> and confirm rates and eligibility with the
-            provider before relying on an offer.
+            provider before relying on an offer.{" "}
+            <a href={apiLinks.aboutData}>
+              Read about the data source and its limits.
+            </a>
           </dd>
         </div>
         <div>
