@@ -1,0 +1,27 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.simonbetton/ratesapi-nz",
+  "title": "Rates API: New Zealand Interest Rates",
+  "description": "Free New Zealand mortgage, personal loan, car loan and credit card interest rates, with history.",
+  "version": "1.0.0",
+  "websiteUrl": "https://www.ratesapi.nz/docs/api-reference/ai-integration",
+  "repository": {
+    "url": "https://github.com/simonbetton/ratesapi.nz",
+    "source": "github",
+    "id": "760220641",
+    "subfolder": "apps/api"
+  },
+  "icons": [
+    {
+      "src": "https://www.ratesapi.nz/apple-touch-icon.png",
+      "mimeType": "image/png",
+      "sizes": ["180x180"]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://www.ratesapi.nz/api/v1/mcp"
+    }
+  ]
+}

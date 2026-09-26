@@ -44,6 +44,16 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
+      # Adds latest_data.last_checked when it is missing. The scrapers still
+      # save data without the column, so a failed migration must not stop them.
+      - name: Migrate the D1 schema
+        working-directory: apps/api
+        continue-on-error: true
+        run: bun bin/migrate-d1.ts
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
       - name: Run the scraper script for mortgage rates
         working-directory: apps/api
         run: bun bin/scrape-mortgage-rates.ts
