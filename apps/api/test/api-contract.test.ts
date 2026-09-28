@@ -6,7 +6,16 @@ import type { DataType, SupportedModels } from "../src/lib/data-loader";
 import type { Environment } from "../src/lib/environment";
 import { scalarBundle } from "../src/lib/openapi-page";
 import { parseSchema } from "../src/lib/schema";
-import { HealthResponse } from "../src/models/api";
+import {
+  HealthResponse,
+  InstitutionNotFoundError,
+  InvalidRequestError,
+  InvalidTimeSeriesRequestError,
+  IssuerNotFoundError,
+  IssuerTimeSeriesNotFoundError,
+  ServerError,
+  TimeSeriesNotFoundError,
+} from "../src/models/api";
 import type { CarLoanRates } from "../src/models/car-loan-rates";
 import type { CreditCardRates } from "../src/models/credit-card-rates";
 import type { MortgageRates } from "../src/models/mortgage-rates";
@@ -139,6 +148,16 @@ const creditCardRates: CreditCardRates = {
       ],
     },
   ],
+};
+
+// The error body of every 400 response. `code` and `message` are the fields
+// of the first API version; the other fields help clients correct a request.
+const invalidRequestBody = {
+  code: 400,
+  error: "invalid_request",
+  message: "Invalid request parameters",
+  hint: "Make sure that each parameter has the correct name and format. Dates use the YYYY-MM-DD format. For the parameters of each endpoint, refer to https://www.ratesapi.nz/openapi.json.",
+  documentationUrl: "https://www.ratesapi.nz/docs/api-reference#filters",
 };
 
 describe("v1 API contract", () => {
@@ -278,10 +297,7 @@ describe("v1 API contract", () => {
     );
 
     expect(response.status).toBe(400);
-    await expect(response.json()).resolves.toEqual({
-      code: 400,
-      message: "Invalid request parameters",
-    });
+    await expect(response.json()).resolves.toEqual(invalidRequestBody);
   });
 
   test("exposes data freshness through health", async () => {
@@ -402,6 +418,35 @@ describe("v1 API contract", () => {
 
     expect(defaultServer?.url).toBe("https://www.ratesapi.nz");
     expect(defaultServer?.description).toBe("Production");
+  });
+
+  test("serves the same OpenAPI document at /openapi.json and /openapi/json", async () => {
+    const conventional = await request("/openapi.json");
+    const plugin = await request("/openapi/json");
+
+    expect(conventional.status).toBe(200);
+    expect(conventional.headers.get("content-type")).toBe(
+      "application/json;charset=utf-8"
+    );
+    expect(await jsonBody(conventional)).toEqual(await jsonBody(plugin));
+  });
+
+  test("makes each operation usable as an LLM function", async () => {
+    const spec = requireRecord(await jsonBody(await request("/openapi.json")));
+    const operations = Object.values(readRecord(spec, "paths") ?? {}).flatMap(
+      (pathItem) => Object.values(requireRecord(pathItem)).map(requireRecord)
+    );
+    const operationIds = operations.map((operation) => operation.operationId);
+
+    // OpenAI and Anthropic tool names allow at most 64 letters, digits,
+    // underscores and hyphens.
+    expect(new Set(operationIds).size).toBe(operations.length);
+    for (const operationId of operationIds) {
+      expect(String(operationId)).toMatch(/^[A-Za-z][\w-]{0,63}$/u);
+    }
+    expect(
+      operations.flatMap((operation) => findFunctionCallingProblems(operation))
+    ).toEqual([]);
   });
 
   test("handles CORS preflight for API routes", async () => {
@@ -1716,6 +1761,7 @@ describe("response headers", () => {
     "/api/v1/car-loan-rates/institution:asb",
     "/api/v1/credit-card-rates",
     "/api/v1/credit-card-rates/issuer:amex",
+    "/openapi.json",
     "/openapi/json",
   ]) {
     test(`caches the successful GET ${path} and asks crawlers not to index it`, async () => {
@@ -1756,6 +1802,7 @@ describe("response headers", () => {
       400,
     ],
     ["an unknown API path", "/api/v1/unknown", 404],
+    ["a path outside /api/v1", "/api/v2/mortgage-rates", 404],
   ] as const) {
     test(`does not cache the error for ${description}`, async () => {
       const response = await request(path);
@@ -1771,10 +1818,7 @@ describe("response headers", () => {
     const response = await request("/api/v1/mortgage-rates?termInMonths=abc");
 
     expect(response.status).toBe(400);
-    await expect(response.json()).resolves.toEqual({
-      code: 400,
-      message: "Invalid request parameters",
-    });
+    await expect(response.json()).resolves.toEqual(invalidRequestBody);
   });
 
   test("adds only the security headers to MCP POST responses", async () => {
@@ -1824,6 +1868,185 @@ describe("response headers", () => {
     expect(response.headers.get("x-robots-tag")).toBeNull();
     expect(response.headers.get("cache-control")).toBeNull();
     expectSecurityHeaders(response);
+  });
+});
+
+describe("JSON error responses", () => {
+  for (const [description, method, path] of [
+    ["an unknown API path", "GET", "/api/v1/unknown"],
+    ["the API root", "GET", "/api"],
+    ["an API version that does not exist", "GET", "/api/v2/mortgage-rates"],
+    ["a path outside the API", "GET", "/unknown"],
+    ["a method that the endpoint does not accept", "POST", "/api/v1/health"],
+  ] as const) {
+    test(`answers ${description} with a JSON 404 and a hint`, async () => {
+      const response = await request(path, { method });
+
+      expect(response.status).toBe(404);
+      expect(response.headers.get("content-type")).toBe(
+        "application/json;charset=utf-8"
+      );
+      expect(await jsonBody(response)).toEqual({
+        code: 404,
+        error: "not_found",
+        message: "No endpoint matches this method and path",
+        hint: "Make sure that the method and the path are correct. The data endpoints start with /api/v1/. For all endpoints, refer to https://www.ratesapi.nz/openapi.json.",
+        documentationUrl:
+          "https://www.ratesapi.nz/docs/api-reference#endpoint-groups",
+      });
+    });
+  }
+
+  test("lets browsers read the error of an unknown API path", async () => {
+    const response = await request("/api/v1/unknown", {
+      headers: { origin: "https://example.com" },
+    });
+
+    expect(response.status).toBe(404);
+    expect(response.headers.get("access-control-allow-origin")).toBe("*");
+  });
+
+  const endpointErrorCases = [
+    {
+      path: "/api/v1/mortgage-rates/institution:nope",
+      schema: InstitutionNotFoundError,
+      error: "institution_not_found",
+      hint: "Use the id of an institution from GET /api/v1/mortgage-rates.",
+    },
+    {
+      path: "/api/v1/personal-loan-rates/institution:nope",
+      schema: InstitutionNotFoundError,
+      error: "institution_not_found",
+      hint: "Use the id of an institution from GET /api/v1/personal-loan-rates.",
+    },
+    {
+      path: "/api/v1/car-loan-rates/institution:nope",
+      schema: InstitutionNotFoundError,
+      error: "institution_not_found",
+      hint: "Use the id of an institution from GET /api/v1/car-loan-rates.",
+    },
+    {
+      path: "/api/v1/credit-card-rates/issuer:nope",
+      schema: IssuerNotFoundError,
+      error: "issuer_not_found",
+      hint: "Use the id of an issuer from GET /api/v1/credit-card-rates.",
+    },
+    {
+      path: "/api/v1/mortgage-rates/time-series?date=2026-01-01",
+      schema: TimeSeriesNotFoundError,
+      error: "no_data",
+      hint: "Send a date from availableDates. To get this list, send the request with no dates.",
+    },
+    {
+      path: "/api/v1/mortgage-rates/time-series?date=2026-04-30&institutionId=institution:nope",
+      schema: TimeSeriesNotFoundError,
+      error: "institution_not_found",
+      hint: "Use the id of an institution from GET /api/v1/mortgage-rates/time-series?date=2026-04-30.",
+    },
+    {
+      path: "/api/v1/mortgage-rates/time-series?date=2026-04-30&termInMonths=7",
+      schema: TimeSeriesNotFoundError,
+      error: "no_data",
+      hint: "Send a different termInMonths. The data contains terms of 6, 12, 18, 24, 36, 48, and 60 months.",
+    },
+    {
+      path: "/api/v1/credit-card-rates/time-series?date=2026-04-30",
+      schema: IssuerTimeSeriesNotFoundError,
+      error: "no_data",
+      hint: "The API has no snapshots of this dataset. To get the newest data, send GET /api/v1/credit-card-rates.",
+    },
+    {
+      path: "/api/v1/mortgage-rates/time-series?startDate=2026-04-30&endDate=2026-04-01",
+      schema: InvalidTimeSeriesRequestError,
+      error: "invalid_request",
+      hint: "Send a startDate that is on or before endDate.",
+    },
+    {
+      path: "/api/v1/mortgage-rates?termInMonths=abc",
+      schema: InvalidRequestError,
+      error: "invalid_request",
+      hint: invalidRequestBody.hint,
+    },
+  ] as const;
+
+  for (const { path, schema, error, hint } of endpointErrorCases) {
+    test(`answers ${path} with the documented ${error} error`, async () => {
+      const response = await request(path);
+      const body = parseSchema(schema, await jsonBody(response));
+
+      expect(response.status).toBe(body.code);
+      expect(body.error).toBe(error);
+      expect(body.hint).toBe(hint);
+      expect(body.documentationUrl).toStartWith(
+        "https://www.ratesapi.nz/docs/api-reference"
+      );
+    });
+  }
+
+  test("answers a database failure with the documented server error", async () => {
+    const response = await requestWithEnv(
+      createBrokenDatabaseEnv,
+      "/api/v1/mortgage-rates",
+      "http://localhost"
+    );
+    const body = parseSchema(ServerError, await jsonBody(response));
+
+    expect(response.status).toBe(500);
+    expect(body).toEqual({
+      code: 500,
+      error: "server_error",
+      message: "An error occurred while retrieving mortgage rates data",
+      hint: "Send the request again later. If the error continues, send GET /api/v1/health to see the status of each dataset.",
+      documentationUrl:
+        "https://www.ratesapi.nz/docs/api-reference/concepts#data-freshness",
+    });
+  });
+
+  test("answers an unexpected error with a JSON 500, not the error text", async () => {
+    const response = await requestWithEnv(
+      () => {
+        throw new Error("secret internal detail");
+      },
+      "/api/v1/mortgage-rates",
+      "http://localhost"
+    );
+    const text = await response.text();
+
+    expect(response.status).toBe(500);
+    expect(response.headers.get("content-type")).toBe(
+      "application/json;charset=utf-8"
+    );
+    expect(text).not.toContain("secret internal detail");
+    expect(parseSchema(ServerError, JSON.parse(text)).message).toBe(
+      "An unexpected error occurred"
+    );
+  });
+
+  test("gives MCP tool errors the same code and hint", async () => {
+    const response = await mcpRequest(createEnv, {
+      jsonrpc: "2.0",
+      id: 1,
+      method: "tools/call",
+      params: {
+        name: "get_mortgage_rates_by_institution",
+        arguments: { institutionId: "institution:nope" },
+      },
+    });
+    const result = readRecord(
+      requireRecord(await jsonBody(response)),
+      "result"
+    );
+    const [content] = readArray(result, "content");
+    const toolError = requireRecord(
+      JSON.parse(String(readRecord(content, "self")?.text))
+    );
+
+    expect(result?.isError).toBe(true);
+    expect(readRecord(toolError, "body")).toMatchObject({
+      code: 404,
+      error: "institution_not_found",
+      hint: "Use the id of an institution from GET /api/v1/mortgage-rates.",
+    });
   });
 });
 
@@ -1929,7 +2152,7 @@ describe("OpenAPI page", () => {
     for (const href of [
       "https://www.ratesapi.nz/docs/api-reference/quickstart",
       "https://www.ratesapi.nz/docs/api-reference",
-      "/openapi/json",
+      "/openapi.json",
     ]) {
       expect(noscript).toContain(`<a href="${href}">`);
     }
@@ -2083,6 +2306,18 @@ function createEnv(
       },
       lastChecked,
     }),
+  };
+}
+
+// A database that fails every query, like D1 during an outage.
+function createBrokenDatabaseEnv(): Environment {
+  return {
+    ENVIRONMENT: "test",
+    RATESAPI_DB: {
+      prepare() {
+        throw new Error("D1_ERROR: database unavailable");
+      },
+    },
   };
 }
 
@@ -2281,6 +2516,55 @@ function findOperationDocumentationProblems(
       .filter(([, response]) => !hasResponseDescription(response))
       .map(([status]) => `${id} response ${status} has no description`),
   ].flat();
+}
+
+// Tool generators need a type for each parameter and a JSON schema for each
+// response. Error responses of the data endpoints must name their `error`
+// codes, so that an agent can find the cause of an error. MCP errors are
+// JSON-RPC errors, and the health error keeps the shape that monitors read.
+const operationsWithOwnErrorShape = new Set(["sendMcpMessage", "getHealth"]);
+
+function findFunctionCallingProblems(
+  operation: Record<string, unknown>
+): string[] {
+  const id = String(operation.operationId);
+  const parameters = readArray(operation, "parameters").map((parameter) =>
+    readRecord(parameter, "self")
+  );
+  const responses = Object.entries(readRecord(operation, "responses") ?? {});
+
+  return [
+    parameters
+      .filter(
+        (parameter) => typeof readRecord(parameter, "schema")?.type !== "string"
+      )
+      .map(
+        (parameter) => `${id} parameter ${String(parameter?.name)} has no type`
+      ),
+    responses
+      .filter(([status]) => status !== "202")
+      .filter(([, response]) => !readJsonSchema(response))
+      .map(([status]) => `${id} response ${status} has no JSON schema`),
+    responses
+      .filter(
+        ([status]) =>
+          Number(status) >= 400 && !operationsWithOwnErrorShape.has(id)
+      )
+      .filter(([, response]) => {
+        const properties = readRecord(readJsonSchema(response), "properties");
+        return readArray(readRecord(properties, "error"), "enum").length === 0;
+      })
+      .map(([status]) => `${id} response ${status} has no error codes`),
+  ].flat();
+}
+
+function readJsonSchema(
+  response: unknown
+): Record<string, unknown> | undefined {
+  return readRecord(
+    readRecord(readRecord(response, "content"), "application/json"),
+    "schema"
+  );
 }
 
 function hasResponseDescription(response: unknown): boolean {

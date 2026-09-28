@@ -1,6 +1,6 @@
 import { openapi, toOpenAPISchema } from "@elysia/openapi";
 import { cors } from "@elysiajs/cors";
-import type { ElysiaAdapter } from "elysia";
+import type { AnyElysia, ElysiaAdapter } from "elysia";
 import { Elysia } from "elysia";
 
 import { readDataSetFreshness } from "./lib/data-freshness";
@@ -11,10 +11,12 @@ import { openApiPage } from "./lib/openapi-page";
 import { responseHeaders } from "./lib/response-headers";
 import type { GetEnv } from "./lib/routing";
 import {
+  apiError,
   HealthErrorResponse,
   HealthResponse,
   invalidRequestParameters,
 } from "./models/api";
+import type { ApiErrorBody } from "./models/api";
 import {
   carLoanRatesRoutes,
   createMcpRoutes,
@@ -112,25 +114,34 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
       set.headers["x-request-id"] =
         request.headers.get("x-request-id") ?? crypto.randomUUID();
     })
+    // Every error is JSON with the same shape as the endpoint errors, also
+    // for a path that does not exist, so that clients and agents can read it.
     .onError({ as: "global" }, ({ code, error, status }) => {
-      if (code !== "VALIDATION") {
+      const body = errorBody(code, error);
+      if (body === null) {
         return;
       }
 
-      validationLog.warn({ error }, "Request validation failed");
-      return status(400, invalidRequestParameters());
+      return status(body.code, body);
     })
     .use(apiRoutes)
+    // /openapi.json is the conventional path, which agents and tools try
+    // first. /openapi/json is the path of the openapi() plugin, and existing
+    // clients use it. Both paths give the same document.
+    .get(
+      "/openapi.json",
+      ({ request }): OpenApiDocument =>
+        openApiDocument(app, request, getEnv().ENVIRONMENT),
+      {
+        detail: {
+          hide: true,
+        },
+      }
+    )
     .get(
       "/openapi/json",
-      ({ request }) => {
-        const generatedSchema = toOpenAPISchema(app);
-
-        return toOpenApiDocument(
-          generatedSchema,
-          getOpenApiServers(request, getEnv().ENVIRONMENT)
-        );
-      },
+      ({ request }): OpenApiDocument =>
+        openApiDocument(app, request, getEnv().ENVIRONMENT),
       {
         detail: {
           hide: true,
@@ -151,6 +162,42 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
     );
 
   return app;
+}
+
+// The JSON body for an error that Elysia raises, or null for a custom status
+// that a handler set, which keeps its own response.
+function errorBody(code: number | string, error: unknown): ApiErrorBody | null {
+  switch (code) {
+    case "VALIDATION":
+    case "PARSE": {
+      validationLog.warn({ error }, "Request validation failed");
+      return invalidRequestParameters();
+    }
+    case "NOT_FOUND": {
+      return apiError("not_found", "No endpoint matches this method and path");
+    }
+    case "UNKNOWN":
+    case "INTERNAL_SERVER_ERROR": {
+      log.error({ error }, "Unhandled error");
+      return apiError("server_error", "An unexpected error occurred");
+    }
+    default: {
+      return null;
+    }
+  }
+}
+
+type OpenApiDocument = ReturnType<typeof toOpenApiDocument>;
+
+function openApiDocument(
+  app: AnyElysia,
+  request: Request,
+  environment: string | undefined
+): OpenApiDocument {
+  return toOpenApiDocument(
+    toOpenAPISchema(app),
+    getOpenApiServers(request, environment)
+  );
 }
 
 function getOpenApiServers(

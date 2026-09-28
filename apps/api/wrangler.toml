@@ -6,8 +6,17 @@ compatibility_flags = ["nodejs_compat"]
 # www.ratesapi.nz is the canonical host. The apex routes stay so existing API
 # and MCP clients keep working: these routes run before the landing page Worker,
 # which redirects every other apex request to www.
+#
+# The API Worker claims all of /api, not only /api/v1, so that a request to an
+# API path that does not exist gets a JSON error instead of the landing page's
+# HTML 404. /openapi.json is the conventional path of the OpenAPI document. Its
+# pattern ends in * because a pattern without * does not match a query string.
 [[routes]]
-pattern = "www.ratesapi.nz/api/v1/*"
+pattern = "www.ratesapi.nz/api"
+zone_name = "ratesapi.nz"
+
+[[routes]]
+pattern = "www.ratesapi.nz/api/*"
 zone_name = "ratesapi.nz"
 
 [[routes]]
@@ -19,7 +28,15 @@ pattern = "www.ratesapi.nz/openapi/*"
 zone_name = "ratesapi.nz"
 
 [[routes]]
-pattern = "ratesapi.nz/api/v1/*"
+pattern = "www.ratesapi.nz/openapi.json*"
+zone_name = "ratesapi.nz"
+
+[[routes]]
+pattern = "ratesapi.nz/api"
+zone_name = "ratesapi.nz"
+
+[[routes]]
+pattern = "ratesapi.nz/api/*"
 zone_name = "ratesapi.nz"
 
 [[routes]]
@@ -28,6 +45,10 @@ zone_name = "ratesapi.nz"
 
 [[routes]]
 pattern = "ratesapi.nz/openapi/*"
+zone_name = "ratesapi.nz"
+
+[[routes]]
+pattern = "ratesapi.nz/openapi.json*"
 zone_name = "ratesapi.nz"
 
 [observability.logs]

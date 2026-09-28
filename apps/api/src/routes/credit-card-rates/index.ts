@@ -1,7 +1,9 @@
 import { Elysia, t } from "elysia";
 
 import {
+  apiErrorResult,
   apiResult,
+  errorResult,
   invalidRequestResult,
   jsonResult,
 } from "../../lib/api-result";
@@ -22,9 +24,10 @@ import {
   IssuerIdPathParameter,
   IssuerIdQueryParameter,
   IssuerNotFoundError,
+  IssuerTimeSeriesNotFoundError,
   ServerError,
   TimeSeriesDateParameter,
-  TimeSeriesNotFoundError,
+  entityNotFoundError,
   validateTimeSeriesDateQuery,
 } from "../../models/api";
 import { CreditCardRates } from "../../models/credit-card-rates";
@@ -91,7 +94,7 @@ export function creditCardRatesRoutes(getEnv: GetEnv) {
         response: {
           200: CreditCardRatesTimeSeriesResponse,
           400: InvalidTimeSeriesRequestError,
-          404: TimeSeriesNotFoundError,
+          404: IssuerTimeSeriesNotFoundError,
           500: ServerError,
         },
         detail: {
@@ -152,10 +155,10 @@ export async function listCreditCardRates(
     });
   } catch (error) {
     routesLog.error({ error }, "Error loading credit card rates");
-    return apiResult(500, {
-      code: 500,
-      message: "An error occurred while retrieving credit card rates data",
-    });
+    return apiErrorResult(
+      "server_error",
+      "An error occurred while retrieving credit card rates data"
+    );
   }
 }
 
@@ -185,10 +188,10 @@ export async function getCreditCardRatesTimeSeries(
       : apiResult(result.status, result.body);
   } catch (error) {
     routesLog.error({ error }, "Error retrieving time series data");
-    return apiResult(500, {
-      code: 500,
-      message: "An error occurred while retrieving time series data",
-    });
+    return apiErrorResult(
+      "server_error",
+      "An error occurred while retrieving time series data"
+    );
   }
 }
 
@@ -214,10 +217,13 @@ export async function getCreditCardRatesByIssuer(
     );
 
     if (!singleIssuer) {
-      return apiResult(404, {
-        code: 404,
-        message: "Issuer not found",
-      });
+      return errorResult(
+        entityNotFoundError(
+          "issuer",
+          "/api/v1/credit-card-rates",
+          "Issuer not found"
+        )
+      );
     }
 
     return apiResult(200, {
@@ -228,10 +234,9 @@ export async function getCreditCardRatesByIssuer(
     });
   } catch (error) {
     routesLog.error({ error }, "Error loading credit card rates for issuer");
-    return apiResult(500, {
-      code: 500,
-      message:
-        "An error occurred while retrieving issuer credit card rates data",
-    });
+    return apiErrorResult(
+      "server_error",
+      "An error occurred while retrieving issuer credit card rates data"
+    );
   }
 }

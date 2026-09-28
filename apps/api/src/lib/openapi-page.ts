@@ -69,7 +69,7 @@ const noscriptSummary = `<noscript>
         <ul>
           <li><a href="https://www.ratesapi.nz/docs/api-reference/quickstart">Quickstart: your first API call</a></li>
           <li><a href="https://www.ratesapi.nz/docs/api-reference">API reference guides</a></li>
-          <li><a href="/openapi/json">OpenAPI document (JSON)</a></li>
+          <li><a href="/openapi.json">OpenAPI document (JSON)</a></li>
         </ul>
       </main>
     </noscript>`;

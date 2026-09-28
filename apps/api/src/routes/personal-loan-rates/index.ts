@@ -1,7 +1,9 @@
 import { Elysia, t } from "elysia";
 
 import {
+  apiErrorResult,
   apiResult,
+  errorResult,
   invalidRequestResult,
   jsonResult,
 } from "../../lib/api-result";
@@ -25,6 +27,7 @@ import {
   ServerError,
   TimeSeriesDateParameter,
   TimeSeriesNotFoundError,
+  entityNotFoundError,
   validateTimeSeriesDateQuery,
 } from "../../models/api";
 import { PersonalLoanRates } from "../../models/personal-loan-rates";
@@ -158,10 +161,10 @@ export async function listPersonalLoanRates(
     });
   } catch (error) {
     routesLog.error({ error }, "Error loading personal loan rates");
-    return apiResult(500, {
-      code: 500,
-      message: "An error occurred while retrieving personal loan rates data",
-    });
+    return apiErrorResult(
+      "server_error",
+      "An error occurred while retrieving personal loan rates data"
+    );
   }
 }
 
@@ -191,10 +194,10 @@ export async function getPersonalLoanRatesTimeSeries(
       : apiResult(result.status, result.body);
   } catch (error) {
     routesLog.error({ error }, "Error retrieving time series data");
-    return apiResult(500, {
-      code: 500,
-      message: "An error occurred while retrieving time series data",
-    });
+    return apiErrorResult(
+      "server_error",
+      "An error occurred while retrieving time series data"
+    );
   }
 }
 
@@ -221,10 +224,13 @@ export async function getPersonalLoanRatesByInstitution(
     );
 
     if (!singleInstitution) {
-      return apiResult(404, {
-        code: 404,
-        message: "Institution not found",
-      });
+      return errorResult(
+        entityNotFoundError(
+          "institution",
+          "/api/v1/personal-loan-rates",
+          "Institution not found"
+        )
+      );
     }
 
     return apiResult(200, {
@@ -238,10 +244,9 @@ export async function getPersonalLoanRatesByInstitution(
       { error },
       "Error loading personal loan rates for institution"
     );
-    return apiResult(500, {
-      code: 500,
-      message:
-        "An error occurred while retrieving institution personal loan rates data",
-    });
+    return apiErrorResult(
+      "server_error",
+      "An error occurred while retrieving institution personal loan rates data"
+    );
   }
 }

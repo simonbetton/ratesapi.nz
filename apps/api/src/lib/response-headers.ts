@@ -5,13 +5,13 @@ import { Elysia, ElysiaCustomStatusResponse } from "elysia";
 // - Every response gets `nosniff` and a referrer policy. JSON clients ignore
 //   them. Error responses (404, validation errors) get them too, because
 //   onRequest runs before routing.
-// - GET /api/v1/* and GET /openapi/json get `X-Robots-Tag: noindex`, so
-//   search engines do not index raw JSON.
+// - GET /api/* and the OpenAPI document (/openapi.json and /openapi/json)
+//   get `X-Robots-Tag: noindex`, so search engines do not index raw JSON.
 // - Successful GET responses of the dataset endpoints (list, by-id and
-//   time-series) and /openapi/json get a short `Cache-Control`, because the
-//   data changes at most once each hour. Errors are not cached. The health
-//   endpoint is not cached, because monitors need a fresh answer. MCP is not
-//   cached.
+//   time-series) and of the OpenAPI document get a short `Cache-Control`,
+//   because the data changes at most once each hour. Errors are not cached.
+//   The health endpoint is not cached, because monitors need a fresh answer.
+//   MCP is not cached.
 
 const securityHeaders = {
   "x-content-type-options": "nosniff",
@@ -22,9 +22,9 @@ const noindexHeaders = { "x-robots-tag": "noindex" };
 
 const cacheHeaders = { "cache-control": "public, max-age=300" };
 
-const jsonPath = /^\/(?:api\/v1\/|openapi\/json\/?$)/u;
+const jsonPath = /^\/(?:api(?:\/|$)|openapi(?:\/json\/?|\.json)$)/u;
 const cacheablePath =
-  /^\/(?:api\/v1\/(?:mortgage|personal-loan|car-loan|credit-card)-rates(?:\/|$)|openapi\/json\/?$)/u;
+  /^\/(?:api\/v1\/(?:mortgage|personal-loan|car-loan|credit-card)-rates(?:\/|$)|openapi(?:\/json\/?|\.json)$)/u;
 
 export const responseHeaders = new Elysia({ name: "response-headers" })
   .onRequest(({ request, set }) => {

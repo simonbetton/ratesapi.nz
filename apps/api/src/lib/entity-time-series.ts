@@ -1,5 +1,7 @@
 import type { TSchema } from "elysia";
 
+import { entityNotFoundError, timeSeriesErrors } from "../models/api";
+import type { ApiErrorBody } from "../models/api";
 import {
   getAvailableDates,
   loadHistoricalData,
@@ -28,13 +30,6 @@ export interface TimeSeriesBody<
   message?: string;
 }
 
-export type EntityTimeSeriesErrorStatus = 400 | 404;
-
-export interface EntityTimeSeriesErrorBody {
-  code: EntityTimeSeriesErrorStatus;
-  message: string;
-}
-
 export type EntityTimeSeriesResult<
   T extends EntityRates,
   ResponseType extends string,
@@ -42,8 +37,8 @@ export type EntityTimeSeriesResult<
   | { ok: true; body: TimeSeriesBody<T, ResponseType> }
   | {
       ok: false;
-      status: EntityTimeSeriesErrorStatus;
-      body: EntityTimeSeriesErrorBody;
+      status: ApiErrorBody["code"];
+      body: ApiErrorBody;
     };
 
 export type EntitySchema<T extends EntityRates> = TSchema & {
@@ -74,7 +69,9 @@ export async function getEntityTimeSeries<
   const availableDates = await getAvailableDates(options.dataType, options.db);
 
   if (availableDates.length === 0) {
-    return errorResult<T, ResponseType>(404, "No historical data available");
+    return errorResult<T, ResponseType>(
+      timeSeriesErrors.noSnapshots(listPath(options.dataType))
+    );
   }
 
   if (options.date) {
@@ -122,8 +119,7 @@ async function getSingleDateTimeSeries<
 
   if (!historicalData) {
     return errorResult<T, ResponseType>(
-      404,
-      `No data available for date: ${date}`
+      timeSeriesErrors.noSnapshotForDate(date)
     );
   }
 
@@ -131,8 +127,11 @@ async function getSingleDateTimeSeries<
 
   if (options.entityId && filteredData.data.length === 0) {
     return errorResult<T, ResponseType>(
-      404,
-      `${toTitleCase(options.entityName)} not found for date: ${date}`
+      entityNotFoundError(
+        options.entityName,
+        `${listPath(options.dataType)}/time-series?date=${date}`,
+        `${toTitleCase(options.entityName)} not found for date: ${date}`
+      )
     );
   }
 
@@ -153,10 +152,7 @@ async function getDateRangeTimeSeries<
   endDate: string
 ): Promise<EntityTimeSeriesResult<T, ResponseType>> {
   if (startDate > endDate) {
-    return errorResult<T, ResponseType>(
-      400,
-      "Start date cannot be after end date"
-    );
+    return errorResult<T, ResponseType>(timeSeriesErrors.startAfterEnd());
   }
 
   const timeSeriesData = await loadTimeSeriesData(
@@ -169,8 +165,7 @@ async function getDateRangeTimeSeries<
 
   if (Object.keys(timeSeriesData).length === 0) {
     return errorResult<T, ResponseType>(
-      404,
-      `No data available between ${startDate} and ${endDate}`
+      timeSeriesErrors.noSnapshotInRange(startDate, endDate)
     );
   }
 
@@ -181,8 +176,11 @@ async function getDateRangeTimeSeries<
 
   if (options.entityId && Object.keys(filteredTimeSeries).length === 0) {
     return errorResult<T, ResponseType>(
-      404,
-      `No data found matching the specified ${options.entityName}`
+      entityNotFoundError(
+        options.entityName,
+        listPath(options.dataType),
+        `No data found matching the specified ${options.entityName}`
+      )
     );
   }
 
@@ -254,17 +252,14 @@ function successResult<T extends EntityRates, ResponseType extends string>(
 }
 
 function errorResult<T extends EntityRates, ResponseType extends string>(
-  status: EntityTimeSeriesErrorStatus,
-  message: string
+  body: ApiErrorBody
 ): EntityTimeSeriesResult<T, ResponseType> {
-  return {
-    ok: false,
-    status,
-    body: {
-      code: status,
-      message,
-    },
-  };
+  return { ok: false, status: body.code, body };
+}
+
+// The list endpoint of a dataset, for example /api/v1/personal-loan-rates.
+function listPath(dataType: DataType): string {
+  return `/api/v1/${dataType}`;
 }
 
 function toTitleCase(value: string): string {
