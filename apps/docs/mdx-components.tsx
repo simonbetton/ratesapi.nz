@@ -1,8 +1,8 @@
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
-import Link from "next/link";
 import type { AnchorHTMLAttributes } from "react";
 
+import { DocsLink } from "@/components/docs-link";
 import { isApiPath, toApiUrl } from "@/lib/api-url";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
@@ -20,9 +20,9 @@ export function ApiLink({
   // Docs pages go through next/link so they get the /docs base path.
   if (href?.startsWith("/") && !isApiPath(href)) {
     return (
-      <Link href={href} {...props}>
+      <DocsLink href={href} {...props}>
         {children}
-      </Link>
+      </DocsLink>
     );
   }
 

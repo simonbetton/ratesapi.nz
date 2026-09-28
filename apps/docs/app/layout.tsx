@@ -1,8 +1,7 @@
-import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
-import { docsBasePath } from "@/lib/base-path";
+import { DocsProvider } from "@/components/docs-provider";
 import { openGraphDefaults, twitterDefaults } from "@/lib/metadata";
 import { siteName, siteOrigin, toSiteUrl } from "@/lib/site";
 
@@ -50,11 +49,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="flex min-h-screen flex-col">
-        <RootProvider
-          search={{ options: { api: `${docsBasePath}/api/search` } }}
-        >
-          {children}
-        </RootProvider>
+        <DocsProvider>{children}</DocsProvider>
       </body>
     </html>
   );
