@@ -29,14 +29,14 @@ The OpenAPI reference shows all parameters, response fields, and errors of each 
 | Resource                   | URL                              |
 | -------------------------- | -------------------------------- |
 | OpenAPI reference (Scalar) | [`/openapi`](/openapi)           |
-| OpenAPI JSON               | [`/openapi/json`](/openapi/json) |
+| OpenAPI JSON               | [`/openapi.json`](/openapi.json) |
 
 ## AI Integration
 
 | Resource | URL | Use |
 | --- | --- | --- |
 | MCP endpoint | `POST /api/v1/mcp` | Find and use tools from an MCP client |
-| OpenAPI JSON | [`/openapi/json`](/openapi/json) | Make tools and SDKs, and examine the contract |
+| OpenAPI JSON | [`/openapi.json`](/openapi.json) | Make tools and SDKs, and examine the contract |
 | Documentation list for LLMs | [`/llms.txt`](/llms.txt) | Give an assistant a plain-text list of the documentation pages |
 
 For more information about MCP, `llms.txt`, and agent patterns, read [AI Integration](/api-reference/ai-integration).
@@ -74,20 +74,35 @@ An endpoint does not use a filter that it does not accept. For example, the cred
 
 All successful responses are JSON. Each rate response has a `lastUpdated` field. This field gives the date and time (UTC, ISO 8601) at which the API collected the data.
 
-An error response has this shape:
+All error responses are JSON, also for a path that does not exist. An error response has this shape:
 
 ```json
 {
   "code": 400,
-  "message": "Invalid request parameters"
+  "error": "invalid_request",
+  "message": "Invalid request parameters",
+  "hint": "Make sure that each parameter has the correct name and format. Dates use the YYYY-MM-DD format. For the parameters of each endpoint, refer to https://www.ratesapi.nz/openapi.json.",
+  "documentationUrl": "https://www.ratesapi.nz/docs/api-reference#filters"
 }
 ```
 
-| HTTP status | Cause | Example message |
-| --- | --- | --- |
-| 400 | A parameter is not correct. For example, a date is not in `YYYY-MM-DD` format. | `Invalid request parameters` |
-| 404 | The institution, the issuer, or the snapshot does not exist. | `Institution not found` |
-| 500 | An error occurred on the server. Send the request again. If the error continues, examine `/api/v1/health`. | `An error occurred while retrieving mortgage rates data` |
+| Field | Value |
+| --- | --- |
+| `code` | The HTTP status code |
+| `error` | A code for the type of error. This code does not change, so you can use it in your code. |
+| `message` | A message about the error. The text can change. |
+| `hint` | Information that tells you how to correct the error |
+| `documentationUrl` | The documentation page for this type of error |
+
+| HTTP status | `error` | Cause | Example message |
+| --- | --- | --- | --- |
+| 400 | `invalid_request` | A parameter is not correct. For example, a date is not in `YYYY-MM-DD` format. | `Invalid request parameters` |
+| 404 | `institution_not_found` or `issuer_not_found` | The institution or the issuer does not exist. | `Institution not found` |
+| 404 | `no_data` | The API has no snapshot for the dates in the request. | `No data available for date: 2020-01-01` |
+| 404 | `not_found` | No endpoint has this method and path. | `No endpoint matches this method and path` |
+| 500 | `server_error` | An error occurred on the server. Send the request again. If the error continues, examine `/api/v1/health`. | `An error occurred while retrieving mortgage rates data` |
+
+The health endpoint gives a different error response for monitors: `status` is `error`, with `message` and `timestamp`.
 
 ## Request IDs
 

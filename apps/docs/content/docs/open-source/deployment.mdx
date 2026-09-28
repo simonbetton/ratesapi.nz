@@ -8,7 +8,7 @@ Rates API deploys three Cloudflare Workers on `www.ratesapi.nz`:
 
 | Worker | App | Serves |
 | --- | --- | --- |
-| `ratesapi-nz` | `apps/api` | The API routes: `/api/v1/*`, `/openapi`, and `/openapi/*` |
+| `ratesapi-nz` | `apps/api` | The API routes: `/api`, `/api/*`, `/openapi`, `/openapi/*`, and `/openapi.json` |
 | `ratesapi-nz-docs` | `apps/docs` | The Fumadocs site at `/docs` and `/docs/*` |
 | `ratesapi-nz-web` | `apps/web` | The landing page, and all other paths |
 
@@ -85,11 +85,19 @@ The configuration of the API Worker is in `apps/api/wrangler.toml`. The API Work
 
 ```toml
 [[routes]]
-pattern = "www.ratesapi.nz/api/v1/*"
+pattern = "www.ratesapi.nz/api"
 zone_name = "ratesapi.nz"
 
 [[routes]]
-pattern = "ratesapi.nz/api/v1/*"
+pattern = "www.ratesapi.nz/api/*"
+zone_name = "ratesapi.nz"
+
+[[routes]]
+pattern = "ratesapi.nz/api"
+zone_name = "ratesapi.nz"
+
+[[routes]]
+pattern = "ratesapi.nz/api/*"
 zone_name = "ratesapi.nz"
 
 [[routes]]
@@ -99,9 +107,15 @@ zone_name = "ratesapi.nz"
 [[routes]]
 pattern = "ratesapi.nz/openapi/*"
 zone_name = "ratesapi.nz"
+
+[[routes]]
+pattern = "ratesapi.nz/openapi.json*"
+zone_name = "ratesapi.nz"
 ```
 
 The file has the same `/openapi` routes for `www.ratesapi.nz`.
+
+The API Worker controls all of `/api`, not only `/api/v1`. Thus a request to an API path that does not exist gets a JSON error from the API Worker, not the HTML page of the landing page Worker.
 
 ### Apex Redirect
 
@@ -151,7 +165,8 @@ Each workflow runs `bun run check` before it deploys or collects data.
 - Make sure that `https://ratesapi.nz/` gives a `301` redirect to `https://www.ratesapi.nz/`.
 - Make sure that `https://www.ratesapi.nz/api/v1/health` and `https://ratesapi.nz/api/v1/health` give a response from the API Worker.
 - Make sure that `https://www.ratesapi.nz/openapi` shows the Scalar API client.
-- Make sure that `https://www.ratesapi.nz/openapi/json` gives the OpenAPI document.
+- Make sure that `https://www.ratesapi.nz/openapi.json` gives the OpenAPI document.
+- Make sure that a request to `https://www.ratesapi.nz/` with the header `Accept: text/markdown` gives the Markdown version of the page, with the header `Vary: Accept`.
 - Make sure that the repository has the secrets that the workflows use.
 
 ## Production Rules

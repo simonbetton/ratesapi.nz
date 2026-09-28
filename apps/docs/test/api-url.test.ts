@@ -33,6 +33,8 @@ describe("isApiPath", () => {
   test("matches the paths that the API Worker serves", () => {
     expect(isApiPath("/openapi")).toBe(true);
     expect(isApiPath("/openapi/json")).toBe(true);
+    expect(isApiPath("/openapi.json")).toBe(true);
+    expect(isApiPath("/openapi.json?v=1")).toBe(true);
     expect(isApiPath("/api/v1/mcp")).toBe(true);
   });
 
@@ -41,6 +43,7 @@ describe("isApiPath", () => {
     expect(isApiPath("/api-reference")).toBe(false);
     expect(isApiPath("/api/search")).toBe(false);
     expect(isApiPath("/openapi-guide")).toBe(false);
+    expect(isApiPath("/openapi.yaml")).toBe(false);
     expect(isApiPath("/llms.txt")).toBe(false);
   });
 });

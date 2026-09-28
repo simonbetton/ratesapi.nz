@@ -39,7 +39,7 @@ AI agents can find the data, get it, and check it without special work.
 | Item | How it helps an AI agent |
 | --- | --- |
 | Model Context Protocol (MCP) | `POST /api/v1/mcp` gives tools that an MCP client can find and use. |
-| OpenAPI | `/openapi/json` gives a contract that tools can read. SDK generators can make clients from it. |
+| OpenAPI | `/openapi.json` gives a contract that tools can read. SDK generators can make clients from it. |
 | `llms.txt` | `/llms.txt` gives a short plain-text list of the documentation pages. |
 | JSON | Responses and errors always have the same shape. An agent can easily check a result. |
 | IDs | The ID of an institution or an issuer does not change. An agent can use it in the next request. |
@@ -75,7 +75,7 @@ The mortgage data has fixed terms of 6 months to 5 years, and floating rates.
 | Authentication | None. An API key is not necessary. |
 | Format | JSON |
 | OpenAPI reference (Scalar) | `/openapi` |
-| OpenAPI JSON | `/openapi/json` |
+| OpenAPI JSON | `/openapi.json` |
 | MCP endpoint | `POST /api/v1/mcp` |
 | Documentation list for LLMs | `/llms.txt` |
 | Full documentation text for LLMs | `/llms-full.txt` |

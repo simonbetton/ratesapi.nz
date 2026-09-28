@@ -16,6 +16,10 @@ export function siteOrigins(isDevelopment: boolean) {
   };
 }
 
+// Agents read the Markdown pages without a base URL, and search engines read
+// the sitemap, so their links always use the production origin.
+export const siteOrigin = productionOrigin;
+
 const origins = siteOrigins(import.meta.env.DEV === true);
 
 export const apiOrigin = origins.api;

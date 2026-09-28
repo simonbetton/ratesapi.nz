@@ -1,22 +1,20 @@
 import { ArrowRight, Check } from "lucide-react";
 
 import { DemoPlayer } from "./demo-player";
-import { apiLinks } from "./rates-api-content";
+import { apiLinks, heroContent } from "./rates-api-content";
 
 export function HeroSection() {
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="page-container">
         <div className="hero-copy">
-          <p className="eyebrow">New Zealand lending data</p>
+          <p className="eyebrow">{heroContent.eyebrow}</p>
           <h1 id="hero-title">
-            Build the product.
-            <span className="text-pretty">We’ll bring the rates.</span>
+            {heroContent.title}
+            <span className="text-pretty">{heroContent.titleEnd}</span>
           </h1>
           <p className="hero-description text-pretty">
-            Add New Zealand mortgage, loan, and credit card rates to your app
-            with one free JSON API. Build comparisons, calculators, and agents
-            without maintaining your own scrapers.
+            {heroContent.description}
           </p>
           <div className="hero-actions">
             <a className="primary-link" href="#quickstart">
@@ -28,14 +26,12 @@ export function HeroSection() {
             </a>
           </div>
           <ul className="hero-proof" aria-label="API features">
-            {["Free to use", "No API key", "Open source · MIT"].map(
-              (feature) => (
-                <li key={feature}>
-                  <Check size={14} aria-hidden="true" />
-                  {feature}
-                </li>
-              )
-            )}
+            {heroContent.proof.map((feature) => (
+              <li key={feature}>
+                <Check size={14} aria-hidden="true" />
+                {feature}
+              </li>
+            ))}
           </ul>
         </div>
         <DemoPlayer />

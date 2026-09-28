@@ -1,7 +1,9 @@
 import { Elysia, t } from "elysia";
 
 import {
+  apiErrorResult,
   apiResult,
+  errorResult,
   invalidRequestResult,
   jsonResult,
 } from "../../lib/api-result";
@@ -27,6 +29,7 @@ import {
   TermInMonthsParameter,
   TimeSeriesDateParameter,
   TimeSeriesNotFoundError,
+  entityNotFoundError,
   validateTimeSeriesDateQuery,
 } from "../../models/api";
 import { MortgageRates } from "../../models/mortgage-rates";
@@ -203,10 +206,10 @@ export async function listMortgageRates(
     });
   } catch (error) {
     routesLog.error({ error }, "Error loading mortgage rates");
-    return apiResult(500, {
-      code: 500,
-      message: "An error occurred while retrieving mortgage rates data",
-    });
+    return apiErrorResult(
+      "server_error",
+      "An error occurred while retrieving mortgage rates data"
+    );
   }
 }
 
@@ -232,10 +235,10 @@ export async function getMortgageRatesTimeSeries(
       : apiResult(result.status, result.body);
   } catch (error) {
     routesLog.error({ error }, "Error retrieving time series data");
-    return apiResult(500, {
-      code: 500,
-      message: "An error occurred while retrieving time series data",
-    });
+    return apiErrorResult(
+      "server_error",
+      "An error occurred while retrieving time series data"
+    );
   }
 }
 
@@ -267,10 +270,13 @@ export async function getMortgageRatesByInstitution(
     );
 
     if (!singleInstitution) {
-      return apiResult(404, {
-        code: 404,
-        message: "Institution not found",
-      });
+      return errorResult(
+        entityNotFoundError(
+          "institution",
+          "/api/v1/mortgage-rates",
+          "Institution not found"
+        )
+      );
     }
 
     if (query.termInMonths) {
@@ -305,11 +311,10 @@ export async function getMortgageRatesByInstitution(
     });
   } catch (error) {
     routesLog.error({ error }, "Error loading mortgage rates for institution");
-    return apiResult(500, {
-      code: 500,
-      message:
-        "An error occurred while retrieving institution mortgage rates data",
-    });
+    return apiErrorResult(
+      "server_error",
+      "An error occurred while retrieving institution mortgage rates data"
+    );
   }
 }
 

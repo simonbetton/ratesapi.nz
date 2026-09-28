@@ -2,7 +2,8 @@ import { ArrowUpRight } from "lucide-react";
 
 import { mcpRequest } from "../lib/api-examples";
 import { CopyButton } from "./copy-button";
-import { apiLinks } from "./rates-api-content";
+import { InlineContent } from "./inline-content";
+import { apiLinks, integrationNotes } from "./rates-api-content";
 
 export function DeveloperSection() {
   return (
@@ -77,48 +78,14 @@ export function QuestionsSection() {
         </a>
       </div>
       <dl className="questions">
-        <div>
-          <dt>Is the hosted API free?</dt>
-          <dd>
-            Yes. Public endpoints need no account, API key, or payment details.
-            The source code is MIT licensed, so you can also run your own
-            instance.
-          </dd>
-        </div>
-        <div>
-          <dt>Where do the rates come from?</dt>
-          <dd>
-            Data is collected from{" "}
-            <a href="https://www.interest.co.nz/">interest.co.nz</a>. Collection
-            is scheduled hourly, but freshness varies by dataset. Check{" "}
-            <code>lastUpdated</code> and confirm rates and eligibility with the
-            provider before relying on an offer.{" "}
-            <a href={apiLinks.aboutData}>
-              Read about the data source and its limits.
-            </a>
-          </dd>
-        </div>
-        <div>
-          <dt>Can I call it from a browser?</dt>
-          <dd>
-            Yes. Public API routes allow cross-origin requests without
-            credentials. Use native <code>fetch</code> or any HTTP client. Check
-            HTTP status codes, handle unavailable data, and cache responses
-            where appropriate.
-          </dd>
-        </div>
-        <div>
-          <dt>How do I query historical rates?</dt>
-          <dd>
-            Add <code>/time-series</code> to a category route. Use{" "}
-            <code>date</code> for one day, or <code>startDate</code> and{" "}
-            <code>endDate</code> together for a range. Responses include{" "}
-            <code>availableDates</code>; coverage depends on stored snapshots.{" "}
-            <a href={apiLinks.mortgageTimeSeriesOpenApi}>
-              See a mortgage history example.
-            </a>
-          </dd>
-        </div>
+        {integrationNotes.map((note) => (
+          <div key={note.question}>
+            <dt>{note.question}</dt>
+            <dd>
+              <InlineContent content={note.answer} />
+            </dd>
+          </div>
+        ))}
       </dl>
     </section>
   );

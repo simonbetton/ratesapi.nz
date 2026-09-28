@@ -1,3 +1,5 @@
+import { apiError, entityNotFoundError, timeSeriesErrors } from "../models/api";
+import type { ApiErrorBody } from "../models/api";
 import { MortgageRates } from "../models/mortgage-rates";
 import {
   getAvailableDates,
@@ -7,6 +9,9 @@ import {
 import type { Database } from "./environment";
 import { termsOfUse } from "./terms-of-use";
 import { getCurrentTimestamp } from "./transforms";
+
+// The list endpoint, which gives the IDs of the institutions.
+const listPath = "/api/v1/mortgage-rates";
 
 export interface MortgageTimeSeriesOptions {
   date?: string;
@@ -31,19 +36,12 @@ export interface MortgageTimeSeriesBody {
   message?: string;
 }
 
-export type MortgageTimeSeriesErrorStatus = 400 | 404;
-
-export interface MortgageTimeSeriesErrorBody {
-  code: MortgageTimeSeriesErrorStatus;
-  message: string;
-}
-
 export type MortgageTimeSeriesResult =
   | { ok: true; body: MortgageTimeSeriesBody }
   | {
       ok: false;
-      status: MortgageTimeSeriesErrorStatus;
-      body: MortgageTimeSeriesErrorBody;
+      status: ApiErrorBody["code"];
+      body: ApiErrorBody;
     };
 
 export async function getMortgageTimeSeries(
@@ -52,7 +50,7 @@ export async function getMortgageTimeSeries(
   const availableDates = await getAvailableDates("mortgage-rates", options.db);
 
   if (availableDates.length === 0) {
-    return errorResult(404, "No historical data available");
+    return errorResult(timeSeriesErrors.noSnapshots(listPath));
   }
 
   if (options.date) {
@@ -86,7 +84,7 @@ async function getSingleDateTimeSeries(
   );
 
   if (!historicalData) {
-    return errorResult(404, `No data available for date: ${date}`);
+    return errorResult(timeSeriesErrors.noSnapshotForDate(date));
   }
 
   const filteredData = filterMortgageRates(historicalData, options);
@@ -106,7 +104,7 @@ async function getDateRangeTimeSeries(
   endDate: string
 ): Promise<MortgageTimeSeriesResult> {
   if (startDate > endDate) {
-    return errorResult(400, "Start date cannot be after end date");
+    return errorResult(timeSeriesErrors.startAfterEnd());
   }
 
   const timeSeriesData = await loadTimeSeriesData(
@@ -118,10 +116,7 @@ async function getDateRangeTimeSeries(
   );
 
   if (Object.keys(timeSeriesData).length === 0) {
-    return errorResult(
-      404,
-      `No data available between ${startDate} and ${endDate}`
-    );
+    return errorResult(timeSeriesErrors.noSnapshotInRange(startDate, endDate));
   }
 
   const timeSeries = hasFilters(options)
@@ -129,7 +124,13 @@ async function getDateRangeTimeSeries(
     : timeSeriesData;
 
   if (hasFilters(options) && Object.keys(timeSeries).length === 0) {
-    return errorResult(404, "No data found matching the specified filters");
+    return errorResult(
+      apiError(
+        "no_data",
+        "No data found matching the specified filters",
+        `Remove a filter, or change it. For the institution ids, send GET ${listPath}. The data contains terms of 6, 12, 18, 24, 36, 48, and 60 months.`
+      )
+    );
   }
 
   return successResult(timeSeries, availableDates);
@@ -223,13 +224,22 @@ function getSingleDateFilterError(
   date: string
 ): MortgageTimeSeriesResult | null {
   if (filters.institutionId && data.data.length === 0) {
-    return errorResult(404, `Institution not found for date: ${date}`);
+    return errorResult(
+      entityNotFoundError(
+        "institution",
+        `${listPath}/time-series?date=${date}`,
+        `Institution not found for date: ${date}`
+      )
+    );
   }
 
   if (filters.termInMonths && !hasMortgageRates(data)) {
     return errorResult(
-      404,
-      `No rates found with term ${filters.termInMonths} months for date: ${date}`
+      apiError(
+        "no_data",
+        `No rates found with term ${filters.termInMonths} months for date: ${date}`,
+        "Send a different termInMonths. The data contains terms of 6, 12, 18, 24, 36, 48, and 60 months."
+      )
     );
   }
 
@@ -274,16 +284,6 @@ function successResult(
   };
 }
 
-function errorResult(
-  status: MortgageTimeSeriesErrorStatus,
-  message: string
-): MortgageTimeSeriesResult {
-  return {
-    ok: false,
-    status,
-    body: {
-      code: status,
-      message,
-    },
-  };
+function errorResult(body: ApiErrorBody): MortgageTimeSeriesResult {
+  return { ok: false, status: body.code, body };
 }

@@ -23,6 +23,7 @@ export const openApiDocumentation = {
       "- The API keeps one snapshot of each dataset for each day on which the data changes. Use the time-series endpoints to get these snapshots.",
       "- You do not need an API key.",
       "- All responses are JSON.",
+      "- An error response contains `code` (the HTTP status), `error` (a code that does not change), `message`, `hint` (how to correct the error), and `documentationUrl`.",
       "- AI agents can get the same data through the MCP endpoint.",
       "",
       "The data can be incorrect. For correct rates, refer to the financial institution.",

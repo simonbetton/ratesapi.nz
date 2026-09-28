@@ -28,6 +28,9 @@ describe("docs MDX content", () => {
       "wrangler d1 execute ratesapi-data --remote --file=schema.sql"
     );
     expect(deployment).toContain('pattern = "ratesapi.nz/openapi/*"');
+    // The API Worker answers every /api path, so unknown paths get JSON.
+    expect(deployment).toContain('pattern = "ratesapi.nz/api/*"');
+    expect(deployment).toContain('pattern = "ratesapi.nz/openapi.json*"');
     // Without the trailing *, the route does not match /docs?query.
     expect(deployment).toContain('pattern = "www.ratesapi.nz/docs*"');
     // The development environment reuses the production D1 database ID.
@@ -66,7 +69,8 @@ describe("docs MDX content", () => {
     );
     expect(aiIntegration).toContain('title: "AI Integration"');
     expect(aiIntegration).toContain("POST /api/v1/mcp");
-    expect(aiIntegration).toContain("/openapi/json");
+    expect(aiIntegration).toContain("[`/openapi.json`](/openapi.json)");
+    expect(aiIntegration).toContain("`Accept: text/markdown`");
     expect(aiIntegration).toContain("/llms.txt");
     expect(concepts).toContain('title: "Core Concepts"');
     expect(concepts).toContain(
