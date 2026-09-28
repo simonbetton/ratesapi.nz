@@ -5,9 +5,13 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
+import { sitemap } from "./sitemap.ts";
+
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
+    // First, so that the dev server answers /sitemap.xml before the Worker.
+    sitemap(),
     devtools(),
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     tailwindcss(),

@@ -4,7 +4,7 @@
       "anchor": "https://www.ratesapi.nz/api/v1",
       "service-desc": [
         {
-          "href": "https://www.ratesapi.nz/openapi/json",
+          "href": "https://www.ratesapi.nz/openapi.json",
           "type": "application/vnd.oai.openapi+json"
         }
       ],

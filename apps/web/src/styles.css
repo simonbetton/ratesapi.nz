@@ -869,6 +869,58 @@ pre:focus-visible {
   color: var(--accent-ink);
   text-underline-offset: 3px;
 }
+/* Text pages: about, contact, privacy */
+.content-page {
+  max-width: 44rem;
+}
+#rates-home .content-page h1 {
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+#rates-home .content-page h2 {
+  margin: 3rem 0 0;
+  font-size: clamp(1.75rem, 2.8vw, 2.25rem);
+  line-height: 1.15;
+}
+#rates-home .content-page p,
+.content-page li {
+  font-size: 1rem;
+  line-height: 1.75;
+}
+#rates-home .content-page p {
+  margin-top: 1rem;
+}
+#rates-home .content-page .content-page-lede {
+  margin-top: 1.25rem;
+  color: var(--ink);
+  font-size: 1.125rem;
+}
+.content-page ul {
+  margin-top: 1rem;
+  padding-left: 1.25rem;
+  list-style: disc;
+  color: var(--muted-ink);
+}
+.content-page li + li {
+  margin-top: 0.5rem;
+}
+.content-page a {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.content-page code {
+  font-size: 0.85em;
+  background: #f0f4f1;
+  padding: 0.1rem 0.25rem;
+  border-radius: 0.2rem;
+  overflow-wrap: anywhere;
+}
+#rates-home .content-page .content-page-updated {
+  margin-top: 3rem;
+  font-size: 0.8125rem;
+}
 /* Live data explorer */
 .explorer {
   position: relative;

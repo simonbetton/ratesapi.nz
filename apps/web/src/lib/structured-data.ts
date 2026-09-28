@@ -1,4 +1,5 @@
 import type { KeyFacts } from "./key-facts";
+import type { ContentPage } from "./page-content";
 
 // Search engines read these as they are, so they always use the production
 // URLs, even in local development.
@@ -7,6 +8,7 @@ const home = `${origin}/`;
 const repository = "https://github.com/simonbetton/ratesapi.nz";
 const ids = {
   publisher: `${origin}/#publisher`,
+  organization: `${origin}/#organization`,
   website: `${origin}/#website`,
   api: `${origin}/#api`,
   source: `${origin}/#source`,
@@ -70,18 +72,50 @@ function dataset(facts: KeyFacts | null) {
   };
 }
 
+// The project as an organization, with the page to contact it. Every page
+// with JSON-LD repeats this node with the same @id.
+function organization() {
+  return {
+    "@type": "Organization",
+    "@id": ids.organization,
+    name: "Rates API",
+    alternateName: "ratesapi.nz",
+    url: home,
+    description:
+      "Rates API runs a free, open-source JSON API for New Zealand mortgage, personal loan, car loan and credit card interest rates.",
+    logo: {
+      "@type": "ImageObject",
+      url: `${origin}/icon-512.png`,
+      width: 512,
+      height: 512,
+    },
+    founder: { "@id": ids.publisher },
+    sameAs: [repository],
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      url: `${origin}/contact`,
+      availableLanguage: "en",
+      areaServed: "NZ",
+    },
+  };
+}
+
+const person = {
+  "@type": "Person",
+  "@id": ids.publisher,
+  name: "Simon Betton",
+  url: "https://www.simonbetton.com",
+  sameAs: ["https://github.com/simonbetton"],
+};
+
 /** The homepage's JSON-LD: publisher, site, API, source code and dataset. */
 export function homepageStructuredData(facts: KeyFacts | null) {
   return {
     "@context": "https://schema.org",
     "@graph": [
-      {
-        "@type": "Person",
-        "@id": ids.publisher,
-        name: "Simon Betton",
-        url: "https://www.simonbetton.com",
-        sameAs: ["https://github.com/simonbetton"],
-      },
+      person,
+      organization(),
       {
         "@type": "WebSite",
         "@id": ids.website,
@@ -122,6 +156,36 @@ export function homepageStructuredData(facts: KeyFacts | null) {
         targetProduct: { "@id": ids.api },
       },
       dataset(facts),
+    ],
+  };
+}
+
+/** The JSON-LD of a text page (about, contact, privacy). */
+export function contentPageStructuredData(page: ContentPage) {
+  const url = `${origin}${page.path}`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": page.schemaType,
+        "@id": `${url}#webpage`,
+        url,
+        name: page.title,
+        description: page.description,
+        inLanguage: "en-NZ",
+        isPartOf: { "@id": ids.website },
+        about: { "@id": ids.organization },
+        ...(page.updated && { dateModified: page.updated }),
+      },
+      organization(),
+      {
+        "@type": "WebSite",
+        "@id": ids.website,
+        url: home,
+        name: "Rates API",
+        publisher: { "@id": ids.publisher },
+      },
+      person,
     ],
   };
 }

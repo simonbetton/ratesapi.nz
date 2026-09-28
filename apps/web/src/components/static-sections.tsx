@@ -447,7 +447,7 @@ const footerLinkGroups = [
       ["Documentation", apiLinks.docs],
       ["Quickstart", apiLinks.quickstart],
       ["API reference", apiLinks.openapi],
-      ["About", apiLinks.about],
+      ["Data source and terms", apiLinks.about],
     ],
   },
   {
@@ -471,6 +471,13 @@ const footerLinkGroups = [
       ["Monitoring", apiLinks.monitoring],
     ],
   },
+] as const;
+
+// The pages that tell people and agents who runs the site.
+const trustLinks = [
+  ["About", "/about"],
+  ["Contact", "/contact"],
+  ["Privacy", "/privacy"],
 ] as const;
 
 export function SiteFooter() {
@@ -524,7 +531,20 @@ export function SiteFooter() {
             "flex items-center justify-between gap-1.5 border-t border-[#eaecf0] py-6 text-[13px] text-[#596275] max-[640px]:flex-col max-[640px]:items-start"
           )}
         >
-          <span>© 2026 Rates API</span>
+          <div className={cn("flex flex-wrap items-center gap-x-5 gap-y-1.5")}>
+            <span>© 2026 Rates API</span>
+            <nav aria-label="Site information" className={cn("flex gap-4")}>
+              {trustLinks.map(([label, href]) => (
+                <a
+                  className={cn("hover:text-[#1a2035]")}
+                  href={href}
+                  key={href}
+                >
+                  {label}
+                </a>
+              ))}
+            </nav>
+          </div>
           <a href={apiLinks.author} rel="noopener" target="_blank">
             Made by Simon Betton
             <span className="sr-only"> (opens in a new tab)</span>
