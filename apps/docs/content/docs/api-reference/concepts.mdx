@@ -74,13 +74,16 @@ An invalid request returns HTTP 400:
 ```json
 {
   "code": 400,
-  "message": "Invalid request parameters"
+  "error": "invalid_request",
+  "message": "Invalid request parameters",
+  "hint": "Make sure that each parameter has the correct name and format. Dates use the YYYY-MM-DD format. For the parameters of each endpoint, refer to https://www.ratesapi.nz/openapi.json.",
+  "documentationUrl": "https://www.ratesapi.nz/docs/api-reference#filters"
 }
 ```
 
 If `startDate` is after `endDate`, the message is `Start date cannot be after end date`.
 
-If the API has no snapshot for the request, it returns HTTP 404. For example, the message can be `No data available for date: 2020-01-01`.
+If the API has no snapshot for the request, it returns HTTP 404, and `error` is `no_data`. For example, the message can be `No data available for date: 2020-01-01`. The `hint` field tells you how to find the dates that have a snapshot.
 
 ## Request IDs
 
@@ -97,7 +100,7 @@ The `/api/v1/*` endpoints accept requests from all origins. A preflight response
 | Item | Use |
 | --- | --- |
 | `POST /api/v1/mcp` | The MCP endpoint. Clients use it to find tools and to use tools. |
-| `/openapi/json` | A REST contract that SDK generators and tool generators can read |
+| `/openapi.json` | A REST contract that SDK generators and tool generators can read |
 | `/llms.txt` | A plain-text list of the documentation pages for assistants and search systems |
 | `/api/v1/*` | JSON data endpoints for direct requests |
 
@@ -105,4 +108,4 @@ The MCP server sends `listChanged: false`. This value means that the list of too
 
 ## OpenAPI
 
-The Scalar reference is at `/openapi`, and the OpenAPI document is at `/openapi/json`. The OpenAPI document also contains the MCP endpoint, `POST /api/v1/mcp`, with the `MCP` tag.
+The Scalar reference is at `/openapi`, and the OpenAPI document is at `/openapi.json`. The earlier path, `/openapi/json`, gives the same document. The OpenAPI document also contains the MCP endpoint, `POST /api/v1/mcp`, with the `MCP` tag.

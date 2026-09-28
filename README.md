@@ -50,9 +50,12 @@ The API stores at most one snapshot per dataset per UTC day, and only on days wh
 | --- | --- |
 | `/api/v1/health` | Health check, with the last change and last successful collection of each dataset |
 | `/openapi` | Interactive API reference (Scalar) |
-| `/openapi/json` | OpenAPI document for SDK and tool generators |
+| `/openapi.json` | OpenAPI document for SDK and tool generators (also at `/openapi/json`) |
 | `POST /api/v1/mcp` | [Model Context Protocol](https://modelcontextprotocol.io) endpoint with read-only tools for each category |
-| `/llms.txt` | Plain-text index of the documentation pages |
+| `/llms.txt` | Plain-text index of the documentation pages, with when-to-use guidance for agents |
+| `/about`, `/contact`, `/privacy` | Who runs Rates API, how to reach the project, and the privacy notice |
+
+Every error is JSON with `code`, `error` (a stable code), `message`, `hint`, and `documentationUrl`, including for API paths that don't exist. The landing page answers `Accept: text/markdown` with Markdown (and `Vary: Accept`) on every page, including its 404s.
 
 Read the [documentation](https://www.ratesapi.nz/docs) for IDs, date filters, errors, and the MCP protocol details.
 
@@ -60,7 +63,7 @@ Read the [documentation](https://www.ratesapi.nz/docs) for IDs, date filters, er
 
 | Component | Path | Runs on |
 | --- | --- | --- |
-| API | `apps/api` | Cloudflare Workers ([Elysia](https://elysiajs.com)) serving `/api/v1/*` and `/openapi*` |
+| API | `apps/api` | Cloudflare Workers ([Elysia](https://elysiajs.com)) serving `/api/*` and `/openapi*` |
 | Docs | `apps/docs` | Cloudflare Workers ([Next.js](https://nextjs.org) + [Fumadocs](https://fumadocs.dev) via OpenNext), serving `/docs*` |
 | Landing page | `apps/web` | Cloudflare Workers ([TanStack Start](https://tanstack.com/start)), serving everything else on `www.ratesapi.nz` and redirecting the apex to `www` |
 | Database | `apps/api/schema.sql` | [Cloudflare D1](https://developers.cloudflare.com/d1/), holding the newest datasets and snapshots |

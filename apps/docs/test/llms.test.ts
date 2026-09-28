@@ -32,6 +32,42 @@ describe("renderLlmsIndex", () => {
     expect(index).toContain("\n\n## Docs\n\n");
     expect(index).toContain("\n\n## API\n\n");
     expect(index).toContain("\n\n## Optional\n\n");
+    // Only the H1 comes before the sections, and each H2 section is a list
+    // of links: "- [name](url)", then an optional ": notes".
+    const [details = "", ...sections] = index.split("\n## ");
+    expect(details.match(/^#/gmu)?.length).toBe(1);
+    for (const block of sections) {
+      const [, ...lines] = block.trim().split("\n\n");
+      for (const line of lines.join("\n").split("\n")) {
+        expect(line).toMatch(/^- \[[^\]]+\]\(https:\/\/[^)\s]+\)(?:: .+)?$/u);
+      }
+    }
+  });
+
+  test("tells agents when to use Rates API, and how to call it", () => {
+    const whenToUse = section(index, "When to use Rates API");
+
+    expect(index.indexOf("## When to use Rates API")).toBeLessThan(
+      index.indexOf("## Docs")
+    );
+    expect(whenToUse).toContain(
+      "(https://www.ratesapi.nz/docs/api-reference/quickstart#2-get-the-rates-for-one-term): Use when"
+    );
+    expect(whenToUse).toContain(
+      "Send GET https://www.ratesapi.nz/api/v1/mortgage-rates."
+    );
+    expect(whenToUse).toContain(
+      "POST requests to https://www.ratesapi.nz/api/v1/mcp"
+    );
+    expect(whenToUse.split("\n").length).toBeGreaterThanOrEqual(5);
+    // Tools that expand the links must get documentation, not API responses.
+    for (const match of whenToUse.matchAll(/\]\((?<url>[^)]+)\)/gu)) {
+      expect(match.groups?.url).toStartWith("https://www.ratesapi.nz/docs/");
+    }
+    // What the API is not for goes in the details, before the sections.
+    expect(index.split("\n## ")[0]).toContain(
+      "Do not use Rates API for interest rates outside New Zealand"
+    );
   });
 
   test("lists the API pages under Docs with absolute URLs", () => {
@@ -49,7 +85,7 @@ describe("renderLlmsIndex", () => {
   test("lists the machine-readable API items", () => {
     const api = section(index, "API");
 
-    expect(api).toContain("(https://www.ratesapi.nz/openapi/json)");
+    expect(api).toContain("(https://www.ratesapi.nz/openapi.json)");
     expect(api).toContain("(https://www.ratesapi.nz/openapi)");
     expect(api).toContain("(https://www.ratesapi.nz/api/v1/mcp)");
     expect(api).toContain("(https://www.ratesapi.nz/api/v1/mortgage-rates)");
@@ -82,6 +118,7 @@ describe("renderLlmsFull", () => {
     expect(full).toContain(
       "[Core Concepts](https://www.ratesapi.nz/docs/api-reference/concepts)"
     );
+    expect(full).toContain("\n\n## When to use Rates API\n\n- [");
   });
 });
 
@@ -89,10 +126,10 @@ describe("toAbsoluteLinks", () => {
   test("adds /docs to docs links but not to API Worker links", () => {
     expect(
       toAbsoluteLinks(
-        "[Quickstart](/api-reference/quickstart) [OpenAPI](/openapi/json) [MCP](/api/v1/mcp) [llms.txt](/llms.txt)"
+        "[Quickstart](/api-reference/quickstart) [OpenAPI](/openapi.json) [Old OpenAPI](/openapi/json) [MCP](/api/v1/mcp) [llms.txt](/llms.txt)"
       )
     ).toBe(
-      "[Quickstart](https://www.ratesapi.nz/docs/api-reference/quickstart) [OpenAPI](https://www.ratesapi.nz/openapi/json) [MCP](https://www.ratesapi.nz/api/v1/mcp) [llms.txt](https://www.ratesapi.nz/docs/llms.txt)"
+      "[Quickstart](https://www.ratesapi.nz/docs/api-reference/quickstart) [OpenAPI](https://www.ratesapi.nz/openapi.json) [Old OpenAPI](https://www.ratesapi.nz/openapi/json) [MCP](https://www.ratesapi.nz/api/v1/mcp) [llms.txt](https://www.ratesapi.nz/docs/llms.txt)"
     );
   });
 
