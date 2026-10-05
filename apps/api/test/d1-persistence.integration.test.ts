@@ -6,7 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import type { D1RunOptions, D1Target } from "../bin/utils";
-import { saveToD1 } from "../bin/utils";
+import { runWranglerD1, saveToD1 } from "../bin/utils";
 import { fromSavableJson, toSavableJson } from "../src/lib/data-loader";
 import type { MortgageRates } from "../src/models/mortgage-rates";
 
@@ -102,11 +102,15 @@ describe.skipIf(!RUN_INTEGRATION)("saveToD1 local D1 integration", () => {
     command: string,
     options: D1RunOptions = {}
   ): string {
-    return execLocal([
-      "--command",
+    return runWranglerD1(
+      {
+        databaseName,
+        configPath,
+        flags: ["--local", "--persist-to", persistDir],
+      },
       command,
-      ...(options.json ? ["--json"] : []),
-    ]);
+      options
+    );
   }
 
   function queryRows(sql: string): Record<string, unknown>[] {
@@ -189,7 +193,7 @@ describe.skipIf(!RUN_INTEGRATION)("saveToD1 local D1 integration", () => {
   );
 
   test(
-    "rolls back both mutations, leaving prior rows byte-for-byte unchanged, when the second statement is forced to fail",
+    "rolls back a large batch, leaving prior rows byte-for-byte unchanged, when the latest write fails",
     async () => {
       const dataType = "car-loan-rates";
       const oldData = sampleData({
@@ -226,7 +230,7 @@ describe.skipIf(!RUN_INTEGRATION)("saveToD1 local D1 integration", () => {
           data: [
             {
               id: "institution:anz",
-              name: "ANZ (new)",
+              name: "ANZ (new)".repeat(20_000),
               products: [
                 { id: "product:anz:standard", name: "Standard", rates: [] },
               ],
@@ -235,13 +239,22 @@ describe.skipIf(!RUN_INTEGRATION)("saveToD1 local D1 integration", () => {
           lastUpdated: "2020-01-01T00:00:00.000Z",
         });
 
+        let mutationError = "";
         const result = await saveToD1(newData, dataType, {
           target,
-          run,
+          run: (...args) => {
+            try {
+              return run(...args);
+            } catch (error) {
+              mutationError = String(error);
+              throw error;
+            }
+          },
           now: () => new Date("2020-01-01T00:00:00.000Z"),
         });
 
         expect(result).toBe(false);
+        expect(mutationError).toContain("forced failure");
 
         const historyRow = expectSingleRow(
           queryRows(
@@ -315,6 +328,35 @@ describe.skipIf(!RUN_INTEGRATION)("saveToD1 local D1 integration", () => {
       );
 
       expect(historyRow.data).toBe(toSavableJson(second));
+    },
+    TEST_TIMEOUT_MS
+  );
+
+  test(
+    "large snapshots round-trip through the production runner without argv limits",
+    async () => {
+      const data = sampleData();
+      const [institution] = data.data;
+      if (!institution) {
+        throw new Error("Missing fixture");
+      }
+      institution.name = "Kāinga 🏠".repeat(20_000);
+      expect(toSavableJson(data).length).toBeGreaterThan(160_160);
+      expect(await saveToD1(data, "mortgage-rates", { target, run })).toBe(
+        true
+      );
+      const latest = expectSingleRow(
+        queryRows(
+          "SELECT data FROM latest_data WHERE data_type='mortgage-rates'"
+        )
+      );
+      expect(fromSavableJson(latest.data as string)).toEqual(data);
+      const history = expectSingleRow(
+        queryRows(
+          "SELECT data FROM historical_data WHERE data_type='mortgage-rates' ORDER BY date DESC LIMIT 1"
+        )
+      );
+      expect(history.data).toBe(latest.data);
     },
     TEST_TIMEOUT_MS
   );

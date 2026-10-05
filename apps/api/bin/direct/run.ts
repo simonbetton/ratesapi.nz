@@ -12,7 +12,7 @@ import { createCollectionTransport } from "./browser";
 import { collectDirectDataset, schemas, unreconciledProducts } from "./collect";
 import type { CollectionResult } from "./collect";
 import { directSources, institutions } from "./sources";
-import type { Institution } from "./types";
+import type { CoverageEntry, Institution } from "./types";
 
 export interface PublishDependencies {
   collect: () => Promise<CollectionResult>;
@@ -37,23 +37,27 @@ export async function publishDirectDataset(
     );
   }
   const current = await deps.load();
-  assertUniqueInstitutions(current, `stored ${result.dataset}`);
-  assertUniqueInstitutions(candidate, `collected ${result.dataset}`);
+  assertUniqueInstitutions(candidate.data, `collected ${result.dataset}`);
   const blockers = [...result.blockers];
   const replacements = new Map(
     candidate.data.map((entry) => [entry.id, entry])
   );
+  const exclusions = new Set<string>();
   for (const item of current?.data ?? []) {
+    const [, id] = item.id.split(":");
+    const coverage = deps.registry.find((institution) => institution.id === id)
+      ?.datasets[result.dataset];
     const replacement = replacements.get(item.id);
     if (!replacement) {
+      if (isReviewedExclusion(coverage)) {
+        exclusions.add(item.id);
+        continue;
+      }
       blockers.push(
         `${item.id}: retained previous data because no verified replacement is available`
       );
       continue;
     }
-    const [, id] = item.id.split(":");
-    const coverage = deps.registry.find((institution) => institution.id === id)
-      ?.datasets[result.dataset];
     const previous = "plans" in item ? item.plans : item.products;
     const next =
       "plans" in replacement ? replacement.plans : replacement.products;
@@ -69,20 +73,21 @@ export async function publishDirectDataset(
       );
     }
   }
-  // Retain failed, pending, excluded and unknown stored institutions. Never purge.
-  const merged = new Map<string, SupportedModels["data"][number]>(
-    (current?.data ?? []).map((entry) => [entry.id, entry])
+  // Check every legacy row before collapsing an ID to its verified replacement.
+  // In particular, old card snapshots split credit/debit/prepaid plans by issuer.
+  // Unresolved duplicates still fail closed instead of losing a row in a Map.
+  const retained = (current?.data ?? []).filter(
+    (entry) => !replacements.has(entry.id) && !exclusions.has(entry.id)
   );
-  for (const [id, entry] of replacements) {
-    merged.set(id, entry);
-  }
+  assertUniqueInstitutions(retained, `stored ${result.dataset}`);
+  const merged = [...retained, ...replacements.values()];
   const complete = blockers.length === 0 && result.model !== null;
   if (!complete && blockers.length === 0) {
     blockers.push("The complete dataset was not verified");
   }
   const model = parseSchema(schemas[result.dataset], {
     ...candidate,
-    data: [...merged.values()].toSorted((a, b) => a.id.localeCompare(b.id)),
+    data: merged.toSorted((a, b) => a.id.localeCompare(b.id)),
     // A mixed-age snapshot must not claim retained records were collected now.
     lastUpdated:
       !complete && current ? current.lastUpdated : candidate.lastUpdated,
@@ -96,14 +101,17 @@ export async function publishDirectDataset(
   return status;
 }
 
-function assertUniqueInstitutions(
-  model: SupportedModels | null,
-  label: string
-): void {
-  if (
-    model &&
-    new Set(model.data.map((item) => item.id)).size !== model.data.length
-  ) {
+function isReviewedExclusion(coverage: CoverageEntry | undefined): boolean {
+  return Boolean(
+    coverage?.status === "excluded" &&
+    coverage.sourceUrl &&
+    coverage.reviewedAt &&
+    coverage.reason
+  );
+}
+
+function assertUniqueInstitutions(data: { id: string }[], label: string): void {
+  if (new Set(data.map((item) => item.id)).size !== data.length) {
     throw new Error(`Invalid ${label}: duplicate institution identifiers`);
   }
 }
