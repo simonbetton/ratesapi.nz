@@ -62,7 +62,7 @@ The sample data is small. To get the newest rates into your local D1 database, r
 bun run --filter api scrape:local
 ```
 
-The scripts collect rates directly from institution websites. They save a dataset only when its coverage is complete and every source passes validation. Run `bun run --filter api sources:audit` to see the remaining coverage blockers before saving. The data stays when you start the API again.
+The scripts collect rates directly from institution websites. They merge institutions that pass all source and product checks into the stored dataset. Failed or unreconciled institutions keep their previous records. Stored institutions without a verified replacement are not removed. The data stays when you start the API again.
 
 The scraper scripts are in `apps/api/bin/`:
 
@@ -71,9 +71,9 @@ The scraper scripts are in `apps/api/bin/`:
 - `scrape-car-loan-rates.ts`: Collects car loan rates
 - `scrape-credit-card-rates.ts`: Collects credit card rates
 
-Direct collection is still undergoing a coverage migration. Run `bun run --filter api sources:audit` to inspect the unresolved sources. The scraper refuses to replace any dataset until every category passes its coverage checks.
+Run `bun run --filter api sources:audit` for a read-only report of unresolved sources and coverage checks. A scraper run can save verified updates and still exit with an error. It reports failures after it finishes the independent categories. An unreadable stored snapshot prevents writes to that category.
 
-Each successful scrape adds a maximum of one snapshot for each day. The sample snapshot of 2026-04-30 also stays in the history.
+Changed data adds or replaces that UTC day's snapshot, including for partial updates. Earlier dates stay in the history. Partial updates preserve the last complete-check time and the stored payload's `lastUpdated`. For the timestamp rules, read [Data Freshness](/api-reference/concepts#data-freshness).
 
 ### Remote D1 Data
 

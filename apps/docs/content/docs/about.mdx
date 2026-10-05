@@ -16,17 +16,17 @@ Rates API is independent. It is not affiliated with, or endorsed by, any lender.
 
 1. Each hour, a GitHub Actions workflow runs the scraper scripts.
 2. The scripts read institution websites and their first-party rate feeds for mortgages, personal loans, car loans, and credit cards. They do not fall back to a comparison site.
-3. The scripts validate rates and coverage before saving. A failed source or an unresolved institution prevents publication. If the validated data changed, the API saves it.
+3. The scripts validate all sources and products for each institution. They save verified changes and keep the previous records for institutions that cannot be verified. One failed institution does not stop updates to others.
 4. The API keeps a maximum of one snapshot for each dataset on each UTC date.
 
-The history starts on 8 March 2025. Direct records have a `sourceUrl` field. The migration keeps the stored datasets until direct coverage is complete; use the source fields and health endpoint to distinguish direct data from older records.
+The history starts on 8 March 2025. Direct records have a `sourceUrl` field. Retained records keep their original source information. A partial update does not count as a new complete check of the dataset.
 
 To see the time of the last change to each dataset, send a request to [`/api/v1/health`](/api/v1/health). For more information, read [Core Concepts](/api-reference/concepts).
 
 ## Limitations
 
 - The data can be incorrect, incomplete, or late. A lender can change a rate before the next check.
-- If an institution changes its pages, the data collection can fail. Then the data stays the same until the scripts are repaired.
+- If an institution changes its pages, its data collection can fail. Its stored data stays the same until a later collection passes all checks. Other institutions can still update.
 - Before you make a decision, check the rate with the lender.
 - Rates API does not give financial advice.
 - Rates API is free and has no service level agreement. The service can be unavailable.

@@ -47,9 +47,11 @@ export interface CollectionResult {
   checkedAt: string;
   sources: SourceResult[];
   blockers: string[];
-  /** Null means publication is forbidden. Partial data is for inspection only. */
+  /** Null means the full dataset was not collected successfully. */
   model: SupportedModels | null;
   preview: SupportedModels | null;
+  /** Validated institutions only. Must be merged with stored data before publication. */
+  publishable: SupportedModels | null;
 }
 
 export type FetchPage = (
@@ -165,6 +167,7 @@ export async function collectDirectDataset(
 ): Promise<CollectionResult> {
   const sources = allSources.filter((source) => source.dataset === dataset);
   const blockers: string[] = [];
+  const failedInstitutions = new Set<string>();
   const configured = new Set(sources.map((source) => source.institution));
   for (const institution of institutions) {
     const coverage = institution.datasets[dataset];
@@ -173,6 +176,7 @@ export async function collectDirectDataset(
     }
     if (coverage.status === "excluded") {
       if (!coverage.sourceUrl || !coverage.reviewedAt || !coverage.reason) {
+        failedInstitutions.add(institution.id);
         blockers.push(
           `${institution.id}: exclusion has no reviewed primary evidence`
         );
@@ -181,6 +185,7 @@ export async function collectDirectDataset(
       coverage.status !== "active" ||
       !configured.has(institution.id)
     ) {
+      failedInstitutions.add(institution.id);
       blockers.push(`${institution.id}: ${coverage.reason}`);
     }
   }
@@ -247,6 +252,7 @@ export async function collectDirectDataset(
         } catch (error) {
           const message =
             error instanceof Error ? error.message : String(error);
+          failedInstitutions.add(source.institution);
           blockers.push(`${source.id}: ${message}`);
           results.push({
             id: source.id,
@@ -261,7 +267,14 @@ export async function collectDirectDataset(
     })
   );
   let preview: SupportedModels | null = null;
-  blockers.push(...checkLegacyProducts(dataset, institutions, observations));
+  const { publishable, blockers: validationBlockers } = buildPublishableModel(
+    dataset,
+    institutions,
+    observations,
+    failedInstitutions,
+    now
+  );
+  blockers.push(...validationBlockers);
   try {
     preview = buildModel(dataset, institutions, observations, now);
   } catch (error) {
@@ -274,7 +287,42 @@ export async function collectDirectDataset(
     blockers: blockers.toSorted(),
     model: blockers.length === 0 ? preview : null,
     preview,
+    publishable,
   };
+}
+
+function buildPublishableModel(
+  dataset: DataType,
+  institutions: readonly Institution[],
+  observations: ReadonlyMap<string, Observation[]>,
+  failedInstitutions: ReadonlySet<string>,
+  now: Date
+): { publishable: SupportedModels | null; blockers: string[] } {
+  const blockers: string[] = [];
+  const verified = new Map<string, Observation[]>();
+  for (const institution of institutions) {
+    const rates = observations.get(institution.id);
+    if (!rates || failedInstitutions.has(institution.id)) {
+      continue;
+    }
+    const missing = checkLegacyProducts(dataset, [institution], observations);
+    if (missing.length > 0) {
+      blockers.push(...missing);
+      continue;
+    }
+    try {
+      // An invalid institution must not discard verified peers in the category.
+      buildModel(dataset, [institution], observations, now);
+      verified.set(institution.id, rates);
+    } catch (error) {
+      blockers.push(
+        `${institution.id}: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  }
+  const publishable =
+    verified.size > 0 ? buildModel(dataset, institutions, verified, now) : null;
+  return { publishable, blockers };
 }
 
 function checkLegacyProducts(

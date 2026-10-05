@@ -28,6 +28,8 @@ export interface D1SaveDeps {
   target?: D1Target | null;
   run?: (target: D1Target, command: string, options?: D1RunOptions) => string;
   now?: () => Date;
+  /** Only a complete collection may advance the dataset freshness timestamp. */
+  complete?: boolean;
 }
 
 const wranglerConfigPath = fileURLToPath(
@@ -98,16 +100,14 @@ export async function saveToD1(
     const saveSpinner = ora(`Saving ${dataType} snapshot`).start();
     const historyStatement = `INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES ('${dataType}', '${timestamp}', '${dataJson}')`;
 
+    const latestStatement =
+      deps.complete === false
+        ? `INSERT INTO latest_data (data_type, data, last_updated) VALUES ('${dataType}', '${dataJson}', CURRENT_TIMESTAMP) ON CONFLICT(data_type) DO UPDATE SET data=excluded.data, last_updated=excluded.last_updated`
+        : `INSERT OR REPLACE INTO latest_data (data_type, data, last_updated, last_checked) VALUES ('${dataType}', '${dataJson}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`;
     try {
-      // A save is also a successful check, so last_checked is written in
-      // the same batch as last_updated.
-      run(
-        target,
-        [
-          historyStatement,
-          `INSERT OR REPLACE INTO latest_data (data_type, data, last_updated, last_checked) VALUES ('${dataType}', '${dataJson}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
-        ].join("; ")
-      );
+      // Partial updates use an upsert so the previous last_checked survives.
+      // New partial datasets have no last_checked until a complete collection.
+      run(target, [historyStatement, latestStatement].join("; "));
     } catch (error) {
       if (!isMissingLastCheckedError(error)) {
         throw error;

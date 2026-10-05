@@ -118,7 +118,7 @@ export const MortgageRates = t.Object(
     }),
     lastUpdated: t.String({
       description:
-        "The date and time (UTC, ISO 8601) when the API collected this data from the source.",
+        "The collection timestamp (UTC, ISO 8601) for this snapshot. A partial update keeps the previous timestamp because some institutions could not be collected again.",
       examples: ["2021-08-01T00:00:00.000Z"],
     }),
   },

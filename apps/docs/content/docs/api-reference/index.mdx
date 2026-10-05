@@ -56,7 +56,7 @@ Each category has three endpoints:
 | Car Loan Rates | `GET /api/v1/car-loan-rates` | `GET /api/v1/car-loan-rates/{institutionId}` | `GET /api/v1/car-loan-rates/time-series` |
 | Credit Card Rates | `GET /api/v1/credit-card-rates` | `GET /api/v1/credit-card-rates/{issuerId}` | `GET /api/v1/credit-card-rates/time-series` |
 
-The health endpoint, `GET /api/v1/health`, shows if the API can read its database. For each dataset, it also shows the time of the last change, the time of the last successful data collection, and if the data collection stopped.
+The health endpoint, `GET /api/v1/health`, shows if the API can read its database. For each dataset, it also shows the time of the last change, the time of the last complete successful collection, and if that complete check is stale. Partial updates do not change the complete-check time.
 
 ## Filters
 
@@ -72,7 +72,7 @@ An endpoint does not use a filter that it does not accept. For example, the cred
 
 ## Responses
 
-All successful responses are JSON. Each rate response has a `lastUpdated` field. This field gives the date and time (UTC, ISO 8601) at which the API collected the data.
+All successful responses are JSON. Each rate response has a `lastUpdated` field in UTC, ISO 8601 format. A partial update keeps the previous timestamp when stored data exists, because some institutions were not checked successfully. For timestamp differences and retained records, read [Data Freshness](/api-reference/concepts#data-freshness).
 
 All error responses are JSON, also for a path that does not exist. An error response has this shape:
 

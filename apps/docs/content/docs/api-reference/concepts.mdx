@@ -6,7 +6,9 @@ description: "How Rates API collects New Zealand rates from institution websites
 
 ## Data Freshness
 
-The collectors read institution websites each hour. Publication requires complete, validated coverage. It saves a dataset only when the data changes. Cloudflare D1 keeps the newest version of each dataset and snapshots of earlier versions.
+The collectors read institution websites each hour. Each institution must pass its source and product checks before its data can replace stored records. Verified institutions can update even when another institution fails in the same category. Failed or unreconciled institutions keep their previous records. Stored institutions without a verified replacement also stay in the dataset.
+
+The API saves the merged dataset only when its data changes. Cloudflare D1 keeps the newest version of each dataset and snapshots of earlier versions.
 
 To see the freshness of each dataset, send a request to the health endpoint:
 
@@ -19,12 +21,14 @@ For each dataset, the health response has these fields:
 | Field | Value |
 | --- | --- |
 | `lastUpdated` | The time of the last change to the data. |
-| `lastChecked` | The time of the last successful data collection, also when the data did not change. The value is `null` if the time is not known. |
-| `stale` | `true` if no data collection was successful in the last 3 hours. `false` if a data collection was successful in the last 3 hours. `null` if `lastChecked` is `null`. |
+| `lastChecked` | The time of the last complete successful collection, also when the data did not change. Partial updates do not change this time. The value is `null` if the time is not known. |
+| `stale` | `true` if no complete collection was successful in the last 3 hours. `false` if a complete collection was successful in the last 3 hours. `null` if `lastChecked` is `null`. |
 
 In the health response, `lastUpdated` and `lastChecked` have the format `YYYY-MM-DD HH:MM:SS` (UTC). In the rate responses, `lastUpdated` has the ISO 8601 format.
 
-An old `lastUpdated` value has two possible causes: the rates did not change, or the data collection failed. To find the cause, examine `stale`. If `stale` is `false`, the data collection operates correctly and the rates did not change.
+In a rate response, a partial update keeps the previous `lastUpdated` when a stored snapshot exists. This conservative time does not claim that retained records were checked again. It can differ from `lastUpdated` in the health response, which records changes to any institution in the dataset.
+
+An old timestamp can mean that rates did not change or that some collection checks failed. A dataset can be `stale` while successful institutions continue to update. These fields do not give a separate check time for each institution.
 
 ## Identifiers
 
@@ -51,7 +55,7 @@ Product names and products can change when an institution changes its rates page
 
 The API keeps a maximum of one snapshot for each dataset on each UTC date. If the data changes again on the same date, the new snapshot replaces the earlier snapshot.
 
-A date on which the data did not change has no snapshot. On that date, the rates were the same as in the snapshot before it. Use the `availableDates` array in each time-series response to find the dates that have data. Some days do not have a snapshot.
+A date with no saved change has no snapshot. This does not prove that lenders' rates stayed the same: collection can fail. Partial snapshots include retained records for institutions that could not be verified. Earlier dates are not rewritten. Use the `availableDates` array in each time-series response to find the dates that have data.
 
 ## Date Filters
 
@@ -112,7 +116,7 @@ The Scalar reference is at `/openapi`, and the OpenAPI document is at `/openapi.
 
 ## Direct Rate Sources
 
-Direct records include `sourceUrl`, which points to the institution website or its first-party rate feed. Historical records can omit this field. During migration, stored datasets can still contain earlier records until all direct sources pass the coverage checks.
+Direct records include `sourceUrl`, which points to the institution website or its first-party rate feed. Historical records can omit this field. A dataset can contain earlier records for an institution until its direct sources and product checks pass. Retained records keep their original source information.
 
 For loan rates, `rateType` is `advertised`, `from`, or `range`. For a range, `rate` is the lower value and `rateMaximum` is the upper value. These are published annual percentages, not a personalised quote. A zero rate is valid when the institution explicitly publishes it. Mortgage `condition` can describe equity requirements or a rate available only to existing customers.
 
