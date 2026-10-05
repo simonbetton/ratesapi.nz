@@ -12,6 +12,7 @@ import { MortgageRates } from "../../src/models/mortgage-rates";
 import { PersonalLoanRates } from "../../src/models/personal-loan-rates";
 import { assertScrapeHasRates } from "../scrape-guards";
 import type {
+  BrowserReadiness,
   CoverageEntry,
   DirectSource,
   Institution,
@@ -51,7 +52,10 @@ export interface CollectionResult {
   preview: SupportedModels | null;
 }
 
-export type FetchPage = (url: string) => Promise<string>;
+export type FetchPage = (
+  url: string,
+  browserReadiness?: BrowserReadiness
+) => Promise<string>;
 type HttpFetch = (url: string, init?: RequestInit) => Promise<Response>;
 
 /** Share this fetcher for one collection run only, never between hourly runs. */
@@ -228,7 +232,7 @@ export async function collectDirectDataset(
           const permittedUrls = [...new Set([...source.urls, ...discovered])];
           for (const url of discovered) {
             if (!pages.has(url)) {
-              pages.set(url, await fetchPage(url));
+              pages.set(url, await fetchPage(url, source.discoveredBrowser));
             }
           }
           const rates = source.parse(pages);

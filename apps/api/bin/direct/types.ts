@@ -28,6 +28,8 @@ export interface DirectSource {
   browser?: Record<string, BrowserReadiness>;
   /** Current documents linked from the declared institution pages. */
   discover?: (pages: ReadonlyMap<string, string>) => string[];
+  /** Browser readiness for current linked HTML disclosures, after origin validation. */
+  discoveredBrowser?: BrowserReadiness;
   /** Reviewed institution-controlled document/CDN origins, in addition to urls' origins. */
   documentOrigins?: string[];
   parse: (pages: ReadonlyMap<string, string>) => Observation[];
@@ -41,10 +43,17 @@ export type BrowserReadiness = {
 } & (
   | { responseType: "json" }
   | {
+      responseType: "links";
+      /** Require a named disclosure link on an index that does not contain rate cells. */
+      linkTextPattern: string;
+    }
+  | {
       responseType?: "html";
       /** Count percentage elements in the published rate area; the parser validates their meaning. */
       selector: string;
       minimumRates: number;
+      /** For tables that put the percent unit in a heading instead of each cell. */
+      rateTextPattern?: string;
     }
 );
 

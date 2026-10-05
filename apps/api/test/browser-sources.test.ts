@@ -223,6 +223,70 @@ async function fixtureBrowser(
 
 describe("real Chromium transport", () => {
   browserTest(
+    "reads tables with percentage units in their heading",
+    async () => {
+      const fixture = await fixtureBrowser(
+        "<p>Unrelated rate: 99%</p><table><tr><th>% p.a.</th></tr><tr><td> 4.95 </td><td>5.25*</td></tr></table>"
+      );
+      try {
+        const body = await renderPage(
+          fixture.browser,
+          url,
+          {
+            selector: "table td",
+            minimumRates: 2,
+            rateTextPattern: "^\\d+(?:\\.\\d+)?\\*?$",
+          },
+          5000
+        );
+        expect(body).toContain("5.25");
+        expect(fixture.browser.contexts()).toHaveLength(0);
+      } finally {
+        await fixture.close();
+      }
+    }
+  );
+
+  browserTest(
+    "requires a named disclosure link and renders approved discovered pages",
+    async () => {
+      const fixture = await fixtureBrowser(`<p>Unrelated rate: 99%</p><script>
+setTimeout(() => {
+  const link = document.createElement('a');
+  link.href = '/current-rates';
+  link.textContent = 'Residential Mortgage Interest Rates (20260820)';
+  document.body.append(link);
+}, 50);
+</script>`);
+      const invalid = await fixtureBrowser("<p>Unavailable. Example: 99%</p>");
+      const links = {
+        responseType: "links" as const,
+        linkTextPattern: "^Residential Mortgage Interest Rates \\(\\d{8}\\)",
+      };
+      const transport = createCollectionTransport([], {
+        mode: "local",
+        http: () => {
+          throw new Error("Discovered browser pages must not use plain HTTP");
+        },
+        open: async () => fixture,
+      });
+      try {
+        const body = await transport.fetchPage(url, links);
+        expect(body).toContain('<a href="/current-rates">');
+        expect(transport.attempts[0]?.status).toBe("ok");
+        await expect(
+          renderPage(invalid.browser, url, links, 5000)
+        ).rejects.toThrow("rate hydration failed");
+        expect(fixture.browser.contexts()).toHaveLength(0);
+        expect(invalid.browser.contexts()).toHaveLength(0);
+      } finally {
+        await transport.close();
+        await invalid.close();
+      }
+    }
+  );
+
+  browserTest(
     "reads exact JSON feed responses through a browser and rejects HTML masquerading as a feed",
     async () => {
       const fixture = await fixtureBrowser(

@@ -307,8 +307,8 @@ export function createCollectionTransport(
 
   return {
     attempts,
-    fetchPage(url) {
-      const spec = specs.get(url);
+    fetchPage(url, discoveredReadiness) {
+      const spec = discoveredReadiness ?? specs.get(url);
       if (!spec) {
         return http(url);
       }
@@ -353,6 +353,7 @@ export async function renderPage(
   }
   if (
     spec.responseType !== "json" &&
+    spec.responseType !== "links" &&
     (!Number.isInteger(spec.minimumRates) || spec.minimumRates < 1)
   ) {
     throw new Error("Browser readiness must require at least one rate");
@@ -412,12 +413,23 @@ export async function renderPage(
       return body;
     }
     await page.waitForFunction(
-      ({ selector, minimumRates }) => {
-        const cells = [...document.querySelectorAll(selector)];
+      (readiness) => {
+        if (readiness.responseType === "links") {
+          return [...document.querySelectorAll("a[href]")].some((link) =>
+            new RegExp(readiness.linkTextPattern, "u").test(
+              link.textContent?.trim() ?? ""
+            )
+          );
+        }
+        const cells = [...document.querySelectorAll(readiness.selector)];
+        const ratePattern = new RegExp(
+          readiness.rateTextPattern ?? "\\d+(?:\\.\\d+)?\\s*%",
+          "u"
+        );
         return (
           cells.filter((cell) =>
-            /\d+(?:\.\d+)?\s*%/u.test(cell.textContent ?? "")
-          ).length >= minimumRates
+            ratePattern.test(cell.textContent?.trim() ?? "")
+          ).length >= readiness.minimumRates
         );
       },
       spec,

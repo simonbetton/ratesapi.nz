@@ -10,7 +10,11 @@ import {
 import { advertisedRate, percentage } from "../bin/direct/parsing";
 import { publishDirectBatch, publishDirectDataset } from "../bin/direct/run";
 import { directSources, institutions } from "../bin/direct/sources";
-import type { DirectSource, Institution } from "../bin/direct/types";
+import type {
+  BrowserReadiness,
+  DirectSource,
+  Institution,
+} from "../bin/direct/types";
 import { loadFromD1 } from "../bin/utils";
 import { MortgageRates } from "../src/models/mortgage-rates";
 import responses from "./fixtures/direct/responses.json";
@@ -780,6 +784,7 @@ describe("document and expanded-source safeguards", () => {
       dataset: "mortgage-rates",
       urls: ["https://bank.example/rates"],
       discover: () => ["https://unapproved.example/rates.pdf"],
+      discoveredBrowser: { selector: "td", minimumRates: 1 },
       parse: () => [
         {
           product: "Standard",
@@ -827,6 +832,46 @@ describe("document and expanded-source safeguards", () => {
     expect(
       adapter.parse(modified).every((rate) => rate.sourceUrl === next)
     ).toBe(true);
+  });
+
+  test("Bank of China renders the latest linked disclosure with the reviewed browser readiness", async () => {
+    const adapter = source("bank-of-china-mortgage");
+    const original = adapter.discover?.(pages)[0] ?? "";
+    const index = adapter.urls[0] ?? "";
+    const readiness = adapter.discoveredBrowser;
+    if (!readiness || !("selector" in readiness)) {
+      throw new Error("Bank of China must render its disclosure table");
+    }
+    const $ = load(pages.get(original) ?? "");
+    const ratePattern = new RegExp(readiness.rateTextPattern ?? "", "u");
+    expect(
+      $(readiness.selector)
+        .toArray()
+        .filter((cell) => ratePattern.test($(cell).text().trim())).length
+    ).toBe(readiness.minimumRates);
+    const next = original.replaceAll("20260820", "20260821");
+    const modified = new Map([
+      ...pages,
+      [index, (pages.get(index) ?? "").replaceAll("20260820", "20260821")],
+      [next, pages.get(original) ?? ""],
+    ]);
+    const requests: { url: string; readiness?: BrowserReadiness }[] = [];
+    const result = await collectDirectDataset(
+      "mortgage-rates",
+      institutions.filter((institution) => institution.id === "bank-of-china"),
+      [adapter],
+      async (url, browserReadiness) => {
+        requests.push({ url, readiness: browserReadiness });
+        return modified.get(url) ?? "";
+      }
+    );
+    expect(result.blockers).toEqual([]);
+    expect(requests[1]).toEqual({
+      url: next,
+      readiness: adapter.discoveredBrowser,
+    });
+    expect(result.sources[0]?.urls).toContain(next);
+    expect(result.sources[0]?.urls).not.toContain(original);
   });
 
   test("PDF loan ranges retain both endpoints and do not turn fixed term ranges into floating loans", () => {

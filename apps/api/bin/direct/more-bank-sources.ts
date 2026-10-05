@@ -250,6 +250,17 @@ export const moreBankSources: DirectSource[] = [
     institution: "bank-of-china",
     dataset: "mortgage-rates",
     urls: [boc],
+    browser: {
+      [boc]: {
+        responseType: "links",
+        linkTextPattern: "^Residential Mortgage Interest Rates \\(\\d{8}\\)",
+      },
+    },
+    discoveredBrowser: {
+      selector: "table td",
+      minimumRates: 18,
+      rateTextPattern: "^\\d+(?:\\.\\d+)?\\*?$",
+    },
     discover: (pages) => [bankOfChinaPage(pages)],
     parse(pages) {
       const sourceUrl = bankOfChinaPage(pages);
