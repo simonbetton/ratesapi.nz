@@ -53,6 +53,12 @@ A scraper saves a dataset only when the merged data changed. A failed source or 
 
 Partial updates do not advance the dataset's `lastChecked` in the health response. That field records the last complete successful collection. The health response's `lastUpdated` records the last data change, which can be a partial update. Read [Data Freshness](/api-reference/concepts#data-freshness) before using these fields in alerts.
 
+## Direct Source Checks
+
+The `Direct institution source checks` workflow runs browser, parser and partial-publication tests for relevant pull requests. These tests use local fixtures and test services. They do not use the Browser Use cloud key or contact live institution sites. A failed test fails the check.
+
+Use **Run workflow** to start a live source-health audit when needed. This manual audit runs after the tests pass and can incur Browser Use charges. The full audit fails if a source or coverage check fails. Selected-institution diagnostics report coverage separately. Both keep diagnostic reports as artifacts. It never writes to D1. A failed live source audit does not mean that the code checks failed.
+
 ## Code Quality
 
 These workflows start for pull requests and for pushes to `main`:
