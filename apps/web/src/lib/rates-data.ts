@@ -58,6 +58,9 @@ export interface RateRow {
   /** Headline rate for stats, charts, and the default sort: the mortgage or
    * loan rate, or a card's purchase rate. */
   rate: number | null;
+  sourceUrl?: string;
+  rateType?: "advertised" | "from" | "range";
+  rateMaximum?: number;
   /** Rows compete for the "lowest" badge within their group. */
   group: string;
   term?: string;
@@ -89,6 +92,9 @@ export type Loaded<T> =
 interface ApiRate {
   id: string;
   rate: number;
+  sourceUrl?: string;
+  rateType?: "advertised" | "from" | "range";
+  rateMaximum?: number;
   term?: string;
   termInMonths?: number | null;
   plan?: string | null;
@@ -102,6 +108,8 @@ interface ApiProduct {
 }
 
 interface ApiPlan {
+  sourceUrl?: string;
+  condition?: string;
   id: string;
   name: string;
   interestFreePeriodInMonths: number | null;
@@ -176,13 +184,15 @@ export function toRows(category: Category, payload: ApiRates): RateRow[] {
       (issuer.plans ?? [])
         // Debit, prepaid, and charge cards are listed with a 0% purchase rate.
         // They are not credit, and would always show as the cheapest card.
-        .filter((plan) => plan.purchaseRate !== 0)
+        .filter((plan) => plan.purchaseRate !== 0 || Boolean(plan.sourceUrl))
         .map((plan) => ({
           key: nextKey(plan.id),
           providerId: issuer.id,
           provider: issuer.name,
           product: plan.name,
           rate: plan.purchaseRate,
+          sourceUrl: plan.sourceUrl,
+          condition: plan.condition,
           group: "Purchase rate",
           cashAdvanceRate: plan.cashAdvanceRate,
           balanceTransferRate: plan.balanceTransferRate,
@@ -202,8 +212,12 @@ export function toRows(category: Category, payload: ApiRates): RateRow[] {
           providerId: institution.id,
           provider: institution.name,
           product: product.name,
-          // No lender offers a 0% mortgage or loan; treat it as a source glitch.
-          rate: rate.rate > 0 ? rate.rate : null,
+          // Direct collectors validate zero-rate offers; legacy zeros can be placeholders.
+          rate: rate.rate > 0 || rate.sourceUrl ? rate.rate : null,
+          sourceUrl: rate.sourceUrl,
+          rateType: rate.rateType,
+          rateMaximum: rate.rateMaximum,
+          condition: rate.condition,
           group: "",
         };
         if (category === "mortgage") {

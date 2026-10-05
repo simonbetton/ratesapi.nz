@@ -19,7 +19,7 @@ export const openApiDocumentation = {
     description: [
       "Rates API gives the interest rates of New Zealand financial institutions for mortgages, personal loans, car loans, and credit cards.",
       "",
-      "- The API collects data from [interest.co.nz](https://www.interest.co.nz) each hour.",
+      "- The collectors read institution websites each hour. Direct records include `sourceUrl`; older snapshots may predate the migration.",
       "- The API keeps one snapshot of each dataset for each day on which the data changes. Use the time-series endpoints to get these snapshots.",
       "- You do not need an API key.",
       "- All responses are JSON.",

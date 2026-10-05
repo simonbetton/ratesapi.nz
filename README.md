@@ -15,7 +15,7 @@
 </p>
 <br />
 
-Rates API collects the interest rates of New Zealand financial institutions from [interest.co.nz](https://www.interest.co.nz) every hour. It serves the newest rates and a daily snapshot history. You don't need an API key, and every response is JSON. AI agents can use the data through an MCP endpoint, the OpenAPI document, or `llms.txt`.
+Rates API collects the interest rates of New Zealand financial institutions directly from institution websites on an hourly schedule. It serves the newest rates and a daily snapshot history. You don't need an API key, and every response is JSON. AI agents can use the data through an MCP endpoint, the OpenAPI document, or `llms.txt`.
 
 > [!NOTE] The data can be wrong. Check rates with the financial institution before you make a decision.
 
@@ -59,6 +59,12 @@ Every error is JSON with `code`, `error` (a stable code), `message`, `hint`, and
 
 Read the [documentation](https://www.ratesapi.nz/docs) for IDs, date filters, errors, and the MCP protocol details.
 
+## Direct-source migration
+
+The collectors request only institution websites, their public feeds and current linked disclosures. There is no interest.co.nz fallback. The reviewed public-rate catalogue has 112 adapters and no unresolved coverage entries. Collection refuses publication if any source or product reconciliation fails. See the [coverage register and live audit](docs/direct-sources.md) for scope, exclusions and verification. Production snapshots are replaced only when the verified collector runs against D1.
+
+Run `bun run --filter api sources:audit` for a read-only live report. Browser sources require `cd apps/api && bunx playwright install chromium`; `bun run sources:browser` runs the bank access audit. Optional Browser Use Cloud configuration and the GitHub Actions workflow are documented in the register below. See [the institution register and migration status](docs/direct-sources.md) for verified adapters, blocked sources, aliases, and the remaining work. Existing historical snapshots keep their original provenance.
+
 ## How it works
 
 | Component | Path | Runs on |
@@ -73,7 +79,7 @@ GitHub Actions also run CI, deploy on every push to `main`, and check the produc
 
 ## Development
 
-You need [Bun](https://bun.sh). A Cloudflare account is only needed for remote D1 access or deployment.
+You need [Bun](https://bun.sh) and [Node.js 24](https://nodejs.org/) for the rate collectors. A Cloudflare account is only needed for remote D1 access or deployment.
 
 ```bash
 git clone https://github.com/simonbetton/ratesapi.nz.git
@@ -92,7 +98,7 @@ bun run dev
 
 To run one app, use `bun run --filter <app> dev`.
 
-To load real rates into your local database, run the scrapers:
+The source audit is read-only. To collect into your local database after coverage is complete, run the scrapers:
 
 ```bash
 bun run --filter api scrape:local

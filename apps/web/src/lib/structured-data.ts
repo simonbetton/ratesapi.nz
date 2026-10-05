@@ -28,19 +28,15 @@ function dataset(facts: KeyFacts | null) {
     "@id": ids.dataset,
     name: "New Zealand lending interest rates",
     description:
-      "New Zealand mortgage, personal loan, car loan and credit card interest rates from 30+ lenders and card issuers, collected hourly from interest.co.nz and served as free JSON by Rates API, with a daily history.",
+      "New Zealand mortgage, personal loan, car loan and credit card interest rates from New Zealand lenders and card issuers, collected directly from institution websites on an hourly schedule and served as free JSON by Rates API, with a daily history.",
     url: home,
     creator: { "@id": ids.publisher },
     publisher: { "@id": ids.publisher },
     // No `license`: the MIT licence covers the code, not the rates. The rates
-    // come from interest.co.nz, and the about page explains how to use them.
-    isBasedOn: {
-      "@type": "WebSite",
-      name: "interest.co.nz",
-      url: "https://www.interest.co.nz/",
-    },
+    // come from institution websites; earlier snapshots used interest.co.nz.
     usageInfo: `${origin}/docs/about#data-source-and-licence`,
-    creditText: "Rates data from interest.co.nz, collected by Rates API.",
+    creditText:
+      "Direct rates from institution websites, collected by Rates API. Earlier snapshots used interest.co.nz.",
     isAccessibleForFree: true,
     // Without live facts, leave the dates out rather than guess them.
     ...(facts && {
@@ -122,7 +118,7 @@ export function homepageStructuredData(facts: KeyFacts | null) {
         url: home,
         name: "Rates API",
         description:
-          "Free, open-source JSON API for New Zealand mortgage, personal loan, car loan and credit card interest rates, updated hourly from interest.co.nz.",
+          "Free, open-source JSON API for New Zealand mortgage, personal loan, car loan and credit card interest rates, collected directly from institution websites on an hourly schedule.",
         publisher: { "@id": ids.publisher },
         inLanguage: "en-NZ",
       },

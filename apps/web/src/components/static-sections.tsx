@@ -258,9 +258,9 @@ export function AutomationsSection() {
               <SectionBadge className="mb-5">Freshness</SectionBadge>
               <h2>Know how fresh your data is.</h2>
               <p className={cn("mb-4 text-base leading-[1.65] text-[#717583]")}>
-                Collection from interest.co.nz is scheduled hourly. Check each
-                dataset’s lastUpdated value before displaying rates; a healthy
-                service does not guarantee fresh data.
+                Collection from institution websites is scheduled hourly. Check
+                each dataset’s lastUpdated value before displaying rates; a
+                healthy service does not guarantee fresh data.
               </p>
               <a
                 className={cn(

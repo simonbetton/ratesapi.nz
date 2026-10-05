@@ -1,0 +1,1914 @@
+[
+  {
+    "id": "anz",
+    "name": "ANZ",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": [
+          "Standard",
+          "Special",
+          "Reno loan - Up to $50K",
+          "Good Energy - Up to $80K"
+        ],
+        "sourceUrl": "https://www.anz.co.nz/rates-fees-agreements/home-loans/",
+        "reviewedAt": "2026-10-04"
+      },
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.anz.co.nz/rates-fees-agreements/personal-loans/",
+        "reviewedAt": "2026-10-04"
+      },
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": [
+          "CashBack Platinum",
+          "CashBack",
+          "Low Rate",
+          "Airpoints Visa",
+          "Airpoints Visa Platinum"
+        ],
+        "sourceUrl": "https://www.anz.co.nz/rates-fees-agreements/credit-cards/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "asb",
+    "name": "ASB",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Live Chromium rendering verified; deterministic parser and hydration checks use only institution pages.",
+        "legacyProducts": ["Standard", "Better Homes Top Up"],
+        "sourceUrl": "https://www.asb.co.nz/home-loans-mortgages/interest-rates-fees.html",
+        "reviewedAt": "2026-10-05"
+      },
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Live Chromium rendering verified; deterministic parser and hydration checks use only institution pages.",
+        "legacyProducts": ["Personal Loan", "Debt Consolidation"],
+        "sourceUrl": "https://www.asb.co.nz/personal-loans",
+        "reviewedAt": "2026-10-05"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Live Chromium rendering verified; deterministic parser and hydration checks use only institution pages.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.asb.co.nz/personal-loans",
+        "reviewedAt": "2026-10-05"
+      },
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": [
+          "Visa Light",
+          "Rewards",
+          "Gold",
+          "Platinum",
+          "Debit Card"
+        ],
+        "sourceUrl": "https://www.asb.co.nz/credit-cards/interest-rates-fees.html",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Rewards": {
+            "replacements": ["Visa Rewards"],
+            "reason": "Use the current official Visa Rewards product name.",
+            "sourceUrl": "https://www.asb.co.nz/credit-cards/interest-rates-fees.html"
+          },
+          "Platinum": {
+            "replacements": ["Visa Platinum Rewards"],
+            "reason": "Use the current official Visa Platinum Rewards product name.",
+            "sourceUrl": "https://www.asb.co.nz/credit-cards/interest-rates-fees.html"
+          },
+          "Debit Card": {
+            "replacements": [],
+            "reason": "Visa Debit spends account funds; it is not a credit-card borrowing rate.",
+            "sourceUrl": "https://www.asb.co.nz/bank-accounts/visa-debit.html"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "bnz",
+    "name": "BNZ",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Live Chromium rendering verified; deterministic parser and hydration checks use only institution pages.",
+        "legacyProducts": ["TotalMoney", "Standard", "Better Future Home Loan"],
+        "sourceUrl": "https://www.bnz.co.nz/personal-banking/home-loans/compare-bnz-home-loan-rates",
+        "reviewedAt": "2026-10-05"
+      },
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": [
+          "Advanced",
+          "Campus Pack Advanced",
+          "Graduate Pack Advanced"
+        ],
+        "sourceUrl": "https://www.bnz.co.nz/personal-banking/personal-loan",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Campus Pack Advanced": {
+            "replacements": ["Advanced"],
+            "reason": "Current BNZ personal lending disclosure publishes one Advanced Personal Loan offer. The former account-package labels do not have separate advertised rates; do not fabricate continuing package discounts.",
+            "sourceUrl": "https://www.bnz.co.nz/personal-banking/personal-loan"
+          },
+          "Graduate Pack Advanced": {
+            "replacements": ["Advanced"],
+            "reason": "Current BNZ personal lending disclosure publishes one Advanced Personal Loan offer. The former account-package labels do not have separate advertised rates; do not fabricate continuing package discounts.",
+            "sourceUrl": "https://www.bnz.co.nz/personal-banking/personal-loan"
+          }
+        }
+      },
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": [
+          "Lite Card",
+          "Advantage Visa Platinum",
+          "Advantage Classic",
+          "Flexi Debit"
+        ],
+        "sourceUrl": "https://www.bnz.co.nz/personal-banking/credit-cards/compare-credit-cards",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Flexi Debit": {
+            "replacements": [],
+            "reason": "Flexi Debit Visa accesses the holder\u2019s bank account rather than a revolving credit-card loan.",
+            "sourceUrl": "https://www.bnz.co.nz/personal-banking/credit-cards/bnz-flexi-debit-visa"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "bank-of-baroda",
+    "name": "Bank of Baroda",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Standard"],
+        "sourceUrl": "https://www.barodanzltd.co.nz/rates-and-charges/rate-of-interest-on-loans",
+        "reviewedAt": "2026-10-05"
+      },
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public consumer lending margin plus the bank-published base rate; both extracted on every run.",
+        "legacyProducts": [],
+        "sourceUrl": "https://www.barodanzltd.co.nz/rates-and-charges/rate-of-interest-on-loans",
+        "reviewedAt": "2026-10-05"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public consumer lending margin plus the bank-published base rate; both extracted on every run.",
+        "legacyProducts": [],
+        "sourceUrl": "https://www.barodanzltd.co.nz/rates-and-charges/rate-of-interest-on-loans",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "bank-of-china",
+    "name": "Bank of China",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Standard", "Special"],
+        "sourceUrl": "https://www.bankofchina.com/nz/en/bocinfo/bi3/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "china-construction-bank",
+    "name": "China Construction Bank",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Special", "Standard"],
+        "sourceUrl": "https://nz.ccb.com/lng/newzealand/en/service/262586.shtml",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "co-operative-bank",
+    "name": "Co-operative Bank",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": [
+          "Standard",
+          "Owner Occupied",
+          "First Home Buyer Special"
+        ],
+        "sourceUrl": "https://www.co-operativebank.co.nz/api/content/content/website/rates",
+        "reviewedAt": "2026-10-04"
+      },
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.co-operativebank.co.nz/api/content/content/website/borrowing/personal-loans",
+        "reviewedAt": "2026-10-04"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Vehicle Loan"],
+        "sourceUrl": "https://www.co-operativebank.co.nz/api/content/content/website/borrowing/personal-loans",
+        "reviewedAt": "2026-10-04"
+      },
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Fair Rate", "Debit Card"],
+        "sourceUrl": "https://www.co-operativebank.co.nz/api/content/content/website/rates",
+        "reviewedAt": "2026-10-04",
+        "productDecisions": {
+          "Debit Card": {
+            "replacements": [],
+            "sourceUrl": "https://www.co-operativebank.co.nz/api/content/Document/16413",
+            "reason": "The bank describes Debit Mastercard as using your own money. Exclude debit cards from credit-card interest rates."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "heartland-bank",
+    "name": "Heartland Bank",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": [
+          "Residential",
+          "Reverse Mortgage",
+          "Village Access loan"
+        ],
+        "sourceUrl": "https://www.heartland.co.nz/home-loans",
+        "reviewedAt": "2026-10-04"
+      },
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["YouChoose Overdraft", "Personal Loan"],
+        "sourceUrl": "https://www.heartland.co.nz/personal-loans/rates-fees-terms",
+        "reviewedAt": "2026-10-04"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Car Loan"],
+        "sourceUrl": "https://www.heartland.co.nz/car-loans/rates-fees-terms",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "icbc",
+    "name": "ICBC",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Special"],
+        "sourceUrl": "https://nz.icbc.com.cn/ICBC/%E6%B5%B7%E5%A4%96%E5%88%86%E8%A1%8C/%E5%B7%A5%E9%93%B6%E6%96%B0%E8%A5%BF%E5%85%B0%E7%BD%91%E7%AB%99/EN/RatesFees/HomeLoans/HomeLoan.htm",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Special": {
+            "replacements": ["Standard"],
+            "reason": "The current official schedule labels these rates Standard; do not retain the legacy Special label.",
+            "sourceUrl": "https://nz.icbc.com.cn/ICBC/%E6%B5%B7%E5%A4%96%E5%88%86%E8%A1%8C/%E5%B7%A5%E9%93%B6%E6%96%B0%E8%A5%BF%E5%85%B0%E7%BD%91%E7%AB%99/EN/RatesFees/HomeLoans/HomeLoan.htm"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "kiwibank",
+    "name": "Kiwibank",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Standard", "Special", "Offset Mortgage"],
+        "sourceUrl": "https://www.kiwibank.co.nz/personal-banking/home-loans/rates-and-fees/",
+        "reviewedAt": "2026-10-04"
+      },
+      "personal-loan-rates": {
+        "status": "excluded",
+        "reason": "Kiwibank states these loans were provided by Latitude and are no longer available through Kiwibank. Current Latitude lending is collected under Gem; existing customers are directed to Latitude.",
+        "legacyProducts": [
+          "Personal Loan",
+          "Personal Loan - Graduate pack",
+          "Home Loan Customers"
+        ],
+        "sourceUrl": "https://www.kiwibank.co.nz/about-us/governance/products-no-longer-offered/",
+        "reviewedAt": "2026-10-05"
+      },
+      "car-loan-rates": {
+        "status": "excluded",
+        "reason": "Kiwibank states these loans were provided by Latitude and are no longer available through Kiwibank. Current Latitude lending is collected under Gem; existing customers are directed to Latitude.",
+        "legacyProducts": ["Vehicle Loan"],
+        "sourceUrl": "https://www.kiwibank.co.nz/about-us/governance/products-no-longer-offered/",
+        "reviewedAt": "2026-10-05"
+      },
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Platinum", "Zero", "Visa Debit"],
+        "sourceUrl": "https://www.kiwibank.co.nz/personal-banking/credit-cards/rates-and-fees/",
+        "reviewedAt": "2026-10-04",
+        "productDecisions": {
+          "Visa Debit": {
+            "replacements": [],
+            "sourceUrl": "https://www.kiwibank.co.nz/personal-banking/accounts/everyday-accounts/visa-debit-card/",
+            "reason": "Visa Debit spends account funds. It is not a credit-card interest rate product."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "kookmin",
+    "name": "Kookmin",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "excluded",
+        "reason": "KB Kookmin\u2019s official notice closes the Auckland branch to new lending and requires borrowers to refinance or repay at maturity during wind-down. No current advertised NZ lending offer; historical data is retained.",
+        "legacyProducts": ["Standard"],
+        "sourceUrl": "https://kbglobal.kbstar.com/commonbiz/file/comFilefiledown?name=172889241768722116998594070&path=board%2F1728892417687221169&realname=02.Specific+notice+for+Borrower.pdf",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "sbs-bank",
+    "name": "SBS Bank",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": [
+          "Residential",
+          "Special",
+          "First Home Combo",
+          "Construction lending for FHB",
+          "Unwind reverse equity"
+        ],
+        "sourceUrl": "https://www.sbsbank.co.nz/rates",
+        "reviewedAt": "2026-10-04"
+      },
+      "personal-loan-rates": {
+        "status": "excluded",
+        "reason": "SBS refers personal loan applicants to its subsidiary Finance Now, which is collected directly as the lender.",
+        "legacyProducts": ["Personal loan"],
+        "sourceUrl": "https://www.sbsbank.co.nz/everyday/personal-loans",
+        "reviewedAt": "2026-10-05"
+      },
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["SBS Visa"],
+        "sourceUrl": "https://www.sbsbank.co.nz/everyday/sbs-visa-credit-card",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "tsb-bank",
+    "name": "TSB Bank",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Local access returns HTTP 403. Live Browser Use Cloud collected all 17 mortgage observations; an NZ proxy tunnel failure recovered through Australia. Verified special, standard and revolving rows with deterministic parsing.",
+        "legacyProducts": ["Standard", "Special"],
+        "sourceUrl": "https://www.tsb.co.nz/rates-fees-agreements/home-loan",
+        "reviewedAt": "2026-10-05"
+      },
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Verified current first-party personal-loan and overdraft tables in Browser Use Cloud. Personal loans are labelled as closed to new applications; default interest is excluded.",
+        "legacyProducts": ["Personal loan", "Overdraft facilities"],
+        "sourceUrl": "https://www.tsb.co.nz/rates-fees-agreements/personal-loans",
+        "reviewedAt": "2026-10-05"
+      },
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Formal first-party Credit Mastercard disclosure verified in Cloud. Purchase/cash advance rates and annual fees are parsed separately. The Platinum product landing page has a conflicting cash advance figure; the formal disclosure and comparison page both give 22.95% at review.",
+        "legacyProducts": ["Low Rate", "Platinum", "Debit"],
+        "sourceUrl": "https://www.tsb.co.nz/rates-fees-agreements/credit-mastercard",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Debit": {
+            "replacements": [],
+            "reason": "TSB states that its Debit Mastercard spends money from an everyday account; it is not a credit card lending product.",
+            "sourceUrl": "https://www.tsb.co.nz/accounts/debit-mastercard"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "westpac",
+    "name": "Westpac",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Live Chromium rendering verified; deterministic parser and hydration checks use only institution pages.",
+        "legacyProducts": [
+          "Standard",
+          "Special",
+          "Greater Choices",
+          "Choices Offset",
+          "Choices Everyday"
+        ],
+        "sourceUrl": "https://www.westpac.co.nz/home-loans-mortgages/interest-rates/",
+        "reviewedAt": "2026-10-05"
+      },
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.westpac.co.nz/personal-loans/",
+        "reviewedAt": "2026-10-05"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["EVs and e-Bikes", "Personal Loan"],
+        "sourceUrl": "https://www.westpac.co.nz/personal-loans/",
+        "reviewedAt": "2026-10-05"
+      },
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": [
+          "Hotpoints",
+          "Platinum Hotpoints",
+          "Hotpoints World",
+          "Airpoints",
+          "Airpoints Platinum",
+          "Airpoints World",
+          "Fee Free",
+          "Express",
+          "Travel",
+          "Prepaid",
+          "Debit"
+        ],
+        "sourceUrl": "https://www.westpac.co.nz/about-us/legal-information-privacy/cards-terms-fees-rates/",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Debit": {
+            "replacements": [],
+            "reason": "Debit Mastercard spends money in the linked transaction account; it is not a borrowing product.",
+            "sourceUrl": "https://www.westpac.co.nz/personal/life-money/travel/managing-your-money-while-overseas/"
+          },
+          "Travel": {
+            "replacements": [],
+            "reason": "The Global Currency travel card is explicitly prepaid and is outside lending rates.",
+            "sourceUrl": "https://www.westpac.co.nz/personal/life-money/travel/managing-your-money-while-overseas/"
+          },
+          "Express": {
+            "replacements": [],
+            "reason": "Westpac identifies the Express product as a pre-paid card with load fees. Prepaid card balances are not revolving credit.",
+            "sourceUrl": "https://www.westpac.co.nz/assets/About-us/legal-information-privacy/documents/Changes_to_Fees_1_February_2017.pdf"
+          },
+          "Prepaid": {
+            "replacements": [],
+            "reason": "Westpac identifies the Express product as a pre-paid card with load fees. Prepaid card balances are not revolving credit.",
+            "sourceUrl": "https://www.westpac.co.nz/assets/About-us/legal-information-privacy/documents/Changes_to_Fees_1_February_2017.pdf"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "heretaunga-bldg-socy",
+    "name": "Heretaunga Bldg Socy",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Residential"],
+        "sourceUrl": "https://www.heretaungabuildingsociety.co.nz/borrow/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "nelson-bldg-society",
+    "name": "Nelson Bldg Society",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Residential"],
+        "sourceUrl": "https://www.nbs.co.nz/interest-rates-and-fees",
+        "reviewedAt": "2026-10-04"
+      },
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.nbs.co.nz/interest-rates-and-fees",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "wairarapa-bldg-society",
+    "name": "Wairarapa Bldg Society",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Residential Standard"],
+        "sourceUrl": "https://wbs.net.nz/home-loans/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "first-cu",
+    "name": "First CU",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Special", "Standard"],
+        "sourceUrl": "https://www.firstcreditunion.co.nz/about/rates-and-fees/",
+        "reviewedAt": "2026-10-04"
+      },
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.firstcreditunion.co.nz/about/rates-and-fees/",
+        "reviewedAt": "2026-10-04"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Car Loan"],
+        "sourceUrl": "https://www.firstcreditunion.co.nz/about/rates-and-fees/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "police-cu",
+    "name": "Police CU",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Standard", "Shared Ownership", "Reverse Mortgage"],
+        "sourceUrl": "https://www.policecu.org.nz/about-us/rates/",
+        "reviewedAt": "2026-10-04"
+      },
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Standard"],
+        "sourceUrl": "https://www.policecu.org.nz/about-us/rates/",
+        "reviewedAt": "2026-10-04",
+        "productDecisions": {
+          "Standard": {
+            "replacements": ["Personal Loan"],
+            "sourceUrl": "https://www.policecu.org.nz/about-us/rates/",
+            "reason": "The current disclosure names this product Personal Loan. Retain its membership, amount, and security conditions in individual observations."
+          }
+        }
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan (Membership criteria apply)"],
+        "sourceUrl": "https://www.policecu.org.nz/about-us/rates/",
+        "reviewedAt": "2026-10-04",
+        "productDecisions": {
+          "Personal Loan (Membership criteria apply)": {
+            "replacements": ["Personal Loan"],
+            "sourceUrl": "https://www.policecu.org.nz/about-us/rates/",
+            "reason": "The vehicle-secured Personal Loan table is the current equivalent; membership eligibility remains a condition."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "unitymoney",
+    "name": "UnityMoney",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Special", "Standard", "First Home Buyer Special"],
+        "sourceUrl": "https://unitymoney.co.nz/about-us/interest-rates/",
+        "reviewedAt": "2026-10-04"
+      },
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://unitymoney.co.nz/about-us/interest-rates/",
+        "reviewedAt": "2026-10-04"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://unitymoney.co.nz/about-us/interest-rates/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "kainga-ora-hnz",
+    "name": "Kainga Ora - HNZ",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "excluded",
+        "reason": "K\u0101inga Ora underwrites First Home Loans issued and priced by participating lenders. Its remaining historical direct mortgages are a servicing portfolio, with no current public carded rate. Do not use historical portfolio averages as current borrower offers; participating lenders are collected directly.",
+        "legacyProducts": ["Residential"],
+        "sourceUrl": "https://kaingaora.govt.nz/home-ownership/first-home-loan/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "avanti-finance",
+    "name": "Avanti Finance",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Near Prime", "Specialist"],
+        "sourceUrl": "https://www.avantifinance.co.nz/rates-fees/",
+        "reviewedAt": "2026-10-04"
+      },
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.avantifinance.co.nz/rates-fees/",
+        "reviewedAt": "2026-10-04"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Car Loans"],
+        "sourceUrl": "https://www.avantifinance.co.nz/rates-fees/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "basecorp-finance",
+    "name": "Basecorp Finance",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Standard, from"],
+        "sourceUrl": "https://www.basecorp.co.nz/home-loans/",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Standard, from": {
+            "replacements": [
+              "Short Term Mortgage Finance",
+              "Long Term Mortgage Finance \u2014 Housing",
+              "Long Term Mortgage Finance \u2014 Land"
+            ],
+            "reason": "Replace the undifferentiated legacy starting rate with the three ranges in the current consumer disclosure.",
+            "sourceUrl": "https://www.basecorp.co.nz/home-loans/"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "cfml-loans",
+    "name": "CFML Loans",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": [
+          "Prime 80 Loans",
+          "321 Loans",
+          "Prime Loans",
+          "Standard Loans"
+        ],
+        "sourceUrl": "https://www.conradfundsmanagement.co.nz/borrowers/",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Prime 80 Loans": {
+            "replacements": ["Prime 80"],
+            "reason": "Product labels follow the current lender rate cards. The 321 product uses its headline contractual rate, with mortgage-point conditions retained.",
+            "sourceUrl": "https://www.conradfundsmanagement.co.nz/borrowers/"
+          },
+          "321 Loans": {
+            "replacements": ["321 Loan"],
+            "reason": "Product labels follow the current lender rate cards. The 321 product uses its headline contractual rate, with mortgage-point conditions retained.",
+            "sourceUrl": "https://www.conradfundsmanagement.co.nz/borrowers/"
+          },
+          "Prime Loans": {
+            "replacements": ["Prime"],
+            "reason": "Product labels follow the current lender rate cards. The 321 product uses its headline contractual rate, with mortgage-point conditions retained.",
+            "sourceUrl": "https://www.conradfundsmanagement.co.nz/borrowers/"
+          },
+          "Standard Loans": {
+            "replacements": ["Standard"],
+            "reason": "Product labels follow the current lender rate cards. The 321 product uses its headline contractual rate, with mortgage-point conditions retained.",
+            "sourceUrl": "https://www.conradfundsmanagement.co.nz/borrowers/"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "first-mortgage-trust",
+    "name": "First Mortgage Trust",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Standard - from", "Development - from"],
+        "sourceUrl": "https://fmt.co.nz/lending-criteria-and-rates/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "general-finance",
+    "name": "General Finance",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Short term bridging 1st mortgages ....from"],
+        "sourceUrl": "https://generalfinance.co.nz/loans/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "indi",
+    "name": "Indi",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Standard"],
+        "sourceUrl": "https://indi.nz/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "liberty-financial",
+    "name": "Liberty Financial",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Residential <70% LVR"],
+        "sourceUrl": "https://www.libfin.co.nz/home-loans",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Residential <70% LVR": {
+            "replacements": ["Prime Residential \u226470% LVR"],
+            "reason": "Current Prime disclosure includes the 70% boundary and separates fixed and variable terms.",
+            "sourceUrl": "https://www.libfin.co.nz/home-loans"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "midlands-mortgage-trust",
+    "name": "Midlands Mortgage Trust",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Residential", "Commercial", "Rural"],
+        "sourceUrl": "https://investmidlands.co.nz/faqs/",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Residential": {
+            "replacements": ["First Mortgage"],
+            "reason": "Current borrower FAQ advertises a floating first-mortgage starting rate, distinct from investor returns.",
+            "sourceUrl": "https://investmidlands.co.nz/faqs/"
+          },
+          "Commercial": {
+            "replacements": ["First Mortgage"],
+            "reason": "The lender publishes one first-mortgage starting rate for individually assessed property loans; no separate current sector rate is advertised. Preserve the starting-rate qualification.",
+            "sourceUrl": "https://investmidlands.co.nz/faqs/"
+          },
+          "Rural": {
+            "replacements": ["First Mortgage"],
+            "reason": "The lender publishes one first-mortgage starting rate for individually assessed property loans; no separate current sector rate is advertised. Preserve the starting-rate qualification.",
+            "sourceUrl": "https://investmidlands.co.nz/faqs/"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "paraloan",
+    "name": "Paraloan",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["For people with physical disabilities....from"],
+        "sourceUrl": "https://www.paraloan.org.nz/26/costs-of-borrowing",
+        "reviewedAt": "2026-10-05"
+      },
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["For people with physical disabilities"],
+        "sourceUrl": "https://www.paraloan.org.nz/26/costs-of-borrowing",
+        "reviewedAt": "2026-10-05"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["For people with physical disabilities"],
+        "sourceUrl": "https://www.paraloan.org.nz/26/costs-of-borrowing",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "pepper-money",
+    "name": "Pepper Money",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Prime", "Near Prime", "Specialist"],
+        "sourceUrl": "https://adviser.peppermoney.co.nz/home-loans",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "resimac",
+    "name": "Resimac",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": [
+          "Prime Full Doc < 80%",
+          "Specialist Investment < 70%"
+        ],
+        "sourceUrl": "https://www.resimac.co.nz/home-loans/rates-all",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Prime Full Doc < 80%": {
+            "replacements": ["Prime Full Doc \u226480% LVR"],
+            "reason": "Current standard Prime full-documentation tier includes 80% LVR.",
+            "sourceUrl": "https://www.resimac.co.nz/home-loans/rates-all"
+          },
+          "Specialist Investment < 70%": {
+            "replacements": ["Specialist Investment \u226465% LVR"],
+            "reason": "Current investment schedule advertises \u226465% LVR, with eligible properties up to 70% noted as a condition.",
+            "sourceUrl": "https://www.resimac.co.nz/home-loans/rates-all"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "simplicity",
+    "name": "Simplicity",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Member home loan"],
+        "sourceUrl": "https://simplicity.kiwi/simplicity-first-home-loans",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "welcome",
+    "name": "Welcome",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Short-term first mortgages from:"],
+        "sourceUrl": "https://www.welcome.co.nz/borrow/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "xceda-finance",
+    "name": "Xceda Finance",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Short-term Bridge Mortgage loans from"],
+        "sourceUrl": "https://www.xceda.co.nz/important-information/lending-interest-rates-fees-and-standard-terms",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Short-term Bridge Mortgage loans from": {
+            "replacements": ["Short term bridging"],
+            "reason": "Current consumer bridging rate is a fixed-term range; preserve both endpoints and the 3\u201318 month term.",
+            "sourceUrl": "https://www.xceda.co.nz/important-information/lending-interest-rates-fees-and-standard-terms"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "aia",
+    "name": "AIA",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Standard Go"],
+        "sourceUrl": "https://www.asb.co.nz/lending/aia-interest-rates-fees.html",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "lending-crowd",
+    "name": "Lending Crowd",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": [
+          "Credit grade - A1",
+          "Credit grade - A2",
+          "Credit grade - B1",
+          "Credit grade - B2"
+        ],
+        "sourceUrl": "https://lendingcrowd.co.nz/howitworks/ratesandfees",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Credit grade - A1": {
+            "replacements": [
+              "Credit grade - A1-U (2 Years)",
+              "Credit grade - A1-U (3 Years)",
+              "Credit grade - A1-U (5 Years)",
+              "Credit grade - A1-S (3 Years)",
+              "Credit grade - A1-S (5 Years)"
+            ],
+            "reason": "Current lender tables distinguish secured/unsecured grades and loan terms; preserve each advertised combination.",
+            "sourceUrl": "https://lendingcrowd.co.nz/howitworks/ratesandfees"
+          },
+          "Credit grade - A2": {
+            "replacements": [
+              "Credit grade - A2-U (2 Years)",
+              "Credit grade - A2-U (3 Years)",
+              "Credit grade - A2-U (5 Years)",
+              "Credit grade - A2-S (3 Years)",
+              "Credit grade - A2-S (5 Years)"
+            ],
+            "reason": "Current lender tables distinguish secured/unsecured grades and loan terms; preserve each advertised combination.",
+            "sourceUrl": "https://lendingcrowd.co.nz/howitworks/ratesandfees"
+          },
+          "Credit grade - B1": {
+            "replacements": [
+              "Credit grade - B1-U (2 Years)",
+              "Credit grade - B1-U (3 Years)",
+              "Credit grade - B1-U (5 Years)",
+              "Credit grade - B1-S (3 Years)",
+              "Credit grade - B1-S (5 Years)"
+            ],
+            "reason": "Current lender tables distinguish secured/unsecured grades and loan terms; preserve each advertised combination.",
+            "sourceUrl": "https://lendingcrowd.co.nz/howitworks/ratesandfees"
+          },
+          "Credit grade - B2": {
+            "replacements": [
+              "Credit grade - B2-U (2 Years)",
+              "Credit grade - B2-U (3 Years)",
+              "Credit grade - B2-U (5 Years)",
+              "Credit grade - B2-S (3 Years)",
+              "Credit grade - B2-S (5 Years)"
+            ],
+            "reason": "Current lender tables distinguish secured/unsecured grades and loan terms; preserve each advertised combination.",
+            "sourceUrl": "https://lendingcrowd.co.nz/howitworks/ratesandfees"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "aa-money",
+    "name": "AA Money",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.aamoney.co.nz/our-pricing/",
+        "reviewedAt": "2026-10-04"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Car or Boat Loan"],
+        "sourceUrl": "https://www.aamoney.co.nz/our-pricing/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "admiral-finance",
+    "name": "Admiral Finance",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loans"],
+        "sourceUrl": "https://www.admiralfinance.co.nz/interest-rates-fees/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "advaro-finance",
+    "name": "Advaro Finance",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "excluded",
+        "reason": "Advaro\u2019s assets and liabilities transferred to ELF in 2016 according to its shareholder. ELF\u2019s current Speirs Finance offering is business asset/equipment finance; there is no current Advaro consumer personal-loan offer to quote.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.speirs.co.nz/download/145525/161003%20Advaro.pdf",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "aotea-finance",
+    "name": "Aotea Finance",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://aoteafinance.co.nz/costs-of-borrowing/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "diners-club",
+    "name": "Diners Club",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "excluded",
+        "reason": "The former owner records that Diners Club NZ membership ended in December 2018 and its finance receivables were sold in April 2019. There is no current Diners NZ loan/card offer.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.thewarehousegroup.co.nz/application/files/8815/6935/9728/AR_2019_Full_Report-spreads.pdf",
+        "reviewedAt": "2026-10-05"
+      },
+      "credit-card-rates": {
+        "status": "excluded",
+        "reason": "The former owner records that Diners Club NZ membership ended in December 2018 and its finance receivables were sold in April 2019. There is no current Diners NZ loan/card offer.",
+        "legacyProducts": ["Personal", "New Zealand Golf"],
+        "sourceUrl": "https://www.thewarehousegroup.co.nz/application/files/8815/6935/9728/AR_2019_Full_Report-spreads.pdf",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "finance-direct",
+    "name": "Finance Direct",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.financedirect.co.nz/",
+        "reviewedAt": "2026-10-05"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Car Loans"],
+        "sourceUrl": "https://www.financedirect.co.nz/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "finance-now",
+    "name": "Finance Now",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.financenow.co.nz/personal-loans/",
+        "reviewedAt": "2026-10-05"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.financenow.co.nz/personal-loans/",
+        "reviewedAt": "2026-10-05"
+      },
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["NOW Rewards Visa"],
+        "sourceUrl": "https://www.financenow.co.nz/credit-cards/now-rewards/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "financial-holdings",
+    "name": "Financial Holdings",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.fhlnz.co.nz/interestRates/",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Personal Loan": {
+            "replacements": [
+              "Personal Loan \u2014 Tier 1",
+              "Personal Loan \u2014 Tier 2",
+              "Personal Loan \u2014 Tier 3"
+            ],
+            "reason": "Replace the old generic entry with the current published products, retaining security and risk/interest-type distinctions.",
+            "sourceUrl": "https://www.fhlnz.co.nz/interestRates/"
+          }
+        }
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Vehicle Loan"],
+        "sourceUrl": "https://www.fhlnz.co.nz/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "future-finance",
+    "name": "Future Finance",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.futurefinance.co.nz/interest-rates",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "gem",
+    "name": "Gem",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.gemfinance.co.nz/loans/personal-loans/",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Personal Loan": {
+            "replacements": ["Fixed Personal Loan", "Variable Personal Loan"],
+            "reason": "Replace the old generic entry with the current published products, retaining security and risk/interest-type distinctions.",
+            "sourceUrl": "https://www.gemfinance.co.nz/loans/personal-loans/"
+          }
+        }
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Car Loan (>$6,000)"],
+        "sourceUrl": "https://www.gemfinance.co.nz/loans/car-loans/",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Car Loan (>$6,000)": {
+            "replacements": ["Fixed Car Loan", "Variable Car Loan"],
+            "reason": "Replace the old generic entry with the current published products, retaining security and risk/interest-type distinctions.",
+            "sourceUrl": "https://www.gemfinance.co.nz/loans/car-loans/"
+          }
+        }
+      },
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": [
+          "Credit Line",
+          "Gem Visa (<$250.00)",
+          "Gem Visa (>$250.00)"
+        ],
+        "sourceUrl": "https://www.gemfinance.co.nz/credit-cards/gem-visa-card/",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Gem Visa (<$250.00)": {
+            "replacements": ["Gem Visa"],
+            "reason": "One card has one prevailing purchase rate; qualifying purchases have interest-free plan conditions, not a separate card.",
+            "sourceUrl": "https://www.gemfinance.co.nz/credit-cards/gem-visa-card/"
+          },
+          "Gem Visa (>$250.00)": {
+            "replacements": ["Gem Visa"],
+            "reason": "One card has one prevailing purchase rate; qualifying purchases have interest-free plan conditions, not a separate card.",
+            "sourceUrl": "https://www.gemfinance.co.nz/credit-cards/gem-visa-card/"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "geneva-finance",
+    "name": "Geneva Finance",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.genevafinance.co.nz/important-information",
+        "reviewedAt": "2026-10-04"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Vehicle Loan"],
+        "sourceUrl": "https://www.genevafinance.co.nz/important-information",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "gilrose-finance",
+    "name": "Gilrose Finance",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.gilrose.co.nz/personal-loans/rates-and-fees",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "harmoney",
+    "name": "Harmoney",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.harmoney.co.nz/",
+        "reviewedAt": "2026-10-04"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Vehicle Loan"],
+        "sourceUrl": "https://www.harmoney.co.nz/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "instant-finance",
+    "name": "Instant Finance",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loans"],
+        "sourceUrl": "https://instantfinance.co.nz/key-information/rates-fees/",
+        "reviewedAt": "2026-10-04"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Car Loan"],
+        "sourceUrl": "https://instantfinance.co.nz/key-information/rates-fees/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "mtf-finance",
+    "name": "MTF Finance",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.mtf.co.nz/important-information/interest-rates-and-fees",
+        "reviewedAt": "2026-10-04"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Vehicles loan"],
+        "sourceUrl": "https://www.mtf.co.nz/important-information/interest-rates-and-fees",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "mutual-credit-finance",
+    "name": "Mutual Credit Finance",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "excluded",
+        "reason": "The current lender describes its lending as property/development and business working-capital finance. It publishes no consumer personal/car loan offer; deposit returns are not borrowing rates.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://mcf.co.nz/lending",
+        "reviewedAt": "2026-10-05"
+      },
+      "car-loan-rates": {
+        "status": "excluded",
+        "reason": "The current lender describes its lending as property/development and business working-capital finance. It publishes no consumer personal/car loan offer; deposit returns are not borrowing rates.",
+        "legacyProducts": ["Cars, Boats"],
+        "sourceUrl": "https://mcf.co.nz/lending",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "nz-loan",
+    "name": "NZ Loan",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "excluded",
+        "reason": "NZLOAN LIMITED (2061561, NZBN 9429033020280) is Removed on the official Companies Register, last updated 25 February 2014. Historical NZ Loan advertising identifies nzloan.co.nz, now unavailable. No current independent public offer verified; do not substitute unrelated NZ Loans or Loan Director businesses. Gazette notice 2014-ds407 corroborates cessation.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://app.companiesoffice.govt.nz/co/2061561",
+        "reviewedAt": "2026-10-05"
+      },
+      "car-loan-rates": {
+        "status": "excluded",
+        "reason": "NZLOAN LIMITED (2061561, NZBN 9429033020280) is Removed on the official Companies Register, last updated 25 February 2014. Historical NZ Loan advertising identifies nzloan.co.nz, now unavailable. No current independent public offer verified; do not substitute unrelated NZ Loans or Loan Director businesses. Gazette notice 2014-ds407 corroborates cessation.",
+        "legacyProducts": ["Car and Boat Loan"],
+        "sourceUrl": "https://app.companiesoffice.govt.nz/co/2061561",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "nectar",
+    "name": "Nectar",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://nectar.co.nz/rate-and-terms/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "nova-medical-finance",
+    "name": "Nova Medical Finance",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal loan"],
+        "sourceUrl": "https://www.novamedical.co.nz/interest-rates-disclosure",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "pronto-finance",
+    "name": "Pronto Finance",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.prontofinance.co.nz/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "quick-cash-finance",
+    "name": "Quick Cash Finance",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://quickcash.co.nz/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "thorn-finance",
+    "name": "Thorn Finance",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "excluded",
+        "reason": "Official website states it is no longer offering new loans. No current public lending rate is published on the checked site. Preserve historical snapshots.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.thornfinance.co.nz/",
+        "reviewedAt": "2026-10-04"
+      },
+      "car-loan-rates": {
+        "status": "excluded",
+        "reason": "Official website states it is no longer offering new loans. No current public lending rate is published on the checked site. Preserve historical snapshots.",
+        "legacyProducts": ["Car Loan"],
+        "sourceUrl": "https://www.thornfinance.co.nz/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "toyota-financial-services",
+    "name": "Toyota Financial Services",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Personal Loan"],
+        "sourceUrl": "https://www.toyota.co.nz/toyota-finance-leasing/consumer-interest-rates-and-fees/",
+        "reviewedAt": "2026-10-04"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": [
+          "Marine Loan",
+          "Classic / Choices",
+          "Special - Signature Class"
+        ],
+        "sourceUrl": "https://www.toyota.co.nz/toyota-finance-leasing/consumer-interest-rates-and-fees/",
+        "reviewedAt": "2026-10-04",
+        "productDecisions": {
+          "Marine Loan": {
+            "replacements": ["Credit Contract Marine"],
+            "sourceUrl": "https://www.toyota.co.nz/toyota-finance-leasing/consumer-interest-rates-and-fees/",
+            "reason": "The current disclosure names the marine product Credit Contract Marine."
+          },
+          "Classic / Choices": {
+            "replacements": ["Credit Contract"],
+            "sourceUrl": "https://www.toyota.co.nz/toyota-finance-leasing/finance-and-lease-options/",
+            "reason": "The current range uses Credit Contract, with Guaranteed Future Value as an option; publish the current product name and rate range."
+          },
+          "Special - Signature Class": {
+            "replacements": [],
+            "reason": "Toyota announced retirement of the Signature Class brand in November 2025. The legacy promotion is not a current rate; current lending comes from Toyota Finance\u2019s consumer disclosure.",
+            "sourceUrl": "https://www.toyota.co.nz/about-toyota/toyota-news/2025/november/toyota-is-the-most-trusted-place-to-buy-a-used-toyota/"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "cfs-finance",
+    "name": "CFS Finance",
+    "datasets": {
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Car Loan"],
+        "sourceUrl": "https://www.cfsfinance.co.nz/disclosure-info/interests/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "go-car-finance",
+    "name": "Go Car Finance",
+    "datasets": {
+      "car-loan-rates": {
+        "status": "excluded",
+        "reason": "Go Car Finance states it is not accepting new loan applications. Existing customers are directed to customer care; no current advertised new-loan rate is published.",
+        "legacyProducts": ["Vehicle Loan"],
+        "sourceUrl": "https://www.gocar.co.nz/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "john-deere-credit",
+    "name": "John Deere Credit",
+    "datasets": {
+      "car-loan-rates": {
+        "status": "excluded",
+        "reason": "John Deere explicitly provides commercial equipment finance and does not offer consumer finance. Tractor lending is outside consumer car-loan rates.",
+        "legacyProducts": ["Tractors"],
+        "sourceUrl": "https://www.deere.co.nz/en/finance/financing/faq/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "kiwi-car-loans",
+    "name": "Kiwi Car Loans",
+    "datasets": {
+      "car-loan-rates": {
+        "status": "excluded",
+        "reason": "Kiwi Car Loans passes applications to third-party finance companies. Its broker quotes are not rates issued by a separate financial institution; collect from the underlying lenders.",
+        "legacyProducts": ["Vehicle Loan"],
+        "sourceUrl": "https://www.kiwicarloans.co.nz/disclaimer",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "marac",
+    "name": "MARAC",
+    "datasets": {
+      "car-loan-rates": {
+        "status": "excluded",
+        "reason": "MARAC is Heartland\u2019s predecessor/vehicle finance division. Current car lending is collected directly under Heartland, avoiding a duplicate institution.",
+        "legacyProducts": ["Car loan"],
+        "sourceUrl": "https://www.heartland.co.nz/about-us/news/heartland-launches-self-serve-online-car-loan-application-2",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "nz-vehicle-finance",
+    "name": "NZ Vehicle Finance",
+    "datasets": {
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Car Loan"],
+        "sourceUrl": "https://www.nzvehiclefinance.co.nz/page/disclosure-information/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "oxford-finance",
+    "name": "Oxford Finance",
+    "datasets": {
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Vehicle finance"],
+        "sourceUrl": "https://www.oxfordfinance.co.nz/fees-and-charges-for-vehicle-and-personal-finance/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "stadium-finance",
+    "name": "Stadium Finance",
+    "datasets": {
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Car Loan"],
+        "sourceUrl": "https://stadium-finance.co.nz/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "udc",
+    "name": "UDC",
+    "datasets": {
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Standard"],
+        "sourceUrl": "https://www.udc.co.nz/for-individuals/cars",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Standard": {
+            "replacements": ["Car Loan"],
+            "reason": "Current UDC car finance disclosure names the offer Car Loan and publishes its full rate range.",
+            "sourceUrl": "https://www.udc.co.nz/for-individuals/cars"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "amex",
+    "name": "Amex",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": [
+          "Airpoints Card",
+          "Air NZ zero fees",
+          "Airpoints Platinum",
+          "Low Rate",
+          "Platinum Charge Card"
+        ],
+        "sourceUrl": "https://www.americanexpress.com/nz/credit-cards/airnz-base-credit-card/",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Platinum Charge Card": {
+            "replacements": [],
+            "reason": "Platinum is explicitly a charge card with a cash-flow period, not a revolving purchase interest rate.",
+            "sourceUrl": "https://www.americanexpress.com/nz/credit-cards/platinum-card/"
+          },
+          "Air NZ zero fees": {
+            "replacements": ["Airpoint Card"],
+            "reason": "Both legacy names refer to the no-annual-fee American Express Airpoints card; collect the current card once.",
+            "sourceUrl": "https://www.americanexpress.com/nz/credit-cards/airnz-base-credit-card/"
+          },
+          "Airpoints Card": {
+            "replacements": ["Airpoint Card"],
+            "reason": "Both legacy names refer to the no-annual-fee American Express Airpoints card; collect the current card once.",
+            "sourceUrl": "https://www.americanexpress.com/nz/credit-cards/airnz-base-credit-card/"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "auck-dist-law-society",
+    "name": "Auck. Dist. Law Society",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "excluded",
+        "reason": "The association\u2019s current public partnerships catalogue contains no Gold or Platinum card offer. It is a professional membership organisation, not a separate card lender. Do not carry over unverified historical affinity-card prices or invent a discount from public Amex rates.",
+        "legacyProducts": ["Gold", "Platinum"],
+        "sourceUrl": "https://www.thelawassociation.nz/about-us/partnerships/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "hsbc",
+    "name": "HSBC",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "excluded",
+        "reason": "HSBC confirms all New Zealand personal banking accounts and services closed in June 2024. Preserve past snapshots; exclude from current retail rates.",
+        "legacyProducts": ["Gold", "Platinum"],
+        "sourceUrl": "https://www.about.hsbc.co.nz/personal-banking-faqs",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "nz-medical-association",
+    "name": "NZ Medical Association",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "excluded",
+        "reason": "The former association\u2019s journal confirms NZMA\u2019s demise and transfer of the journal in 2022. Historical affinity cards were issued by American Express; no current NZMA membership card offer exists. Current public Amex cards are collected separately.",
+        "legacyProducts": ["Gold", "Platinum"],
+        "sourceUrl": "https://nzmj.org.nz/journal/vol-135-no-1559/nzmj-under-new-ownership",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "nzica",
+    "name": "NZICA",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "excluded",
+        "reason": "Professional association affinity offer, not an independent card issuer. Current NZ business member-benefit details require member login; no public NZICA card rate/fee schedule is available. Excluded from the public advertised-rate catalogue, not asserted discontinued. Current public Amex cards are collected separately; historical member discounts are not substituted or carried forward.",
+        "legacyProducts": ["Gold", "Platinum"],
+        "sourceUrl": "https://www.charteredaccountantsanz.com/member-services/member-benefits/business-offers-nz",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "arthur-barnett",
+    "name": "Arthur Barnett",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "excluded",
+        "reason": "Arthur Barnett ceased trading under that brand in 2015; its successor Dunedin department store closed in January 2021. Original reporting includes staff testimony at closure. No current store-card purchase offer is available; historical balances are not current advertised rates.",
+        "legacyProducts": ["Standard"],
+        "sourceUrl": "https://www.odt.co.nz/news/dunedin/end-of-an-era-in-dunedins-retail-history-cxehgjvn",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "flight-centre",
+    "name": "Flight Centre",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Rewards"],
+        "sourceUrl": "https://www.flightcentremastercard.co.nz/fees-and-charges/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "ballantynes",
+    "name": "Ballantynes",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Ballantynes Card"],
+        "sourceUrl": "https://www.ballantynes.co.nz/ballantynes-account-card.html",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "farmers-finance",
+    "name": "Farmers Finance",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
+        "legacyProducts": ["Farmers Card"],
+        "sourceUrl": "https://www.farmersfinancecard.co.nz/",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "humm-group",
+    "name": "Humm Group",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "active",
+        "reason": "Current first-party disclosure mapped to a deterministic adapter; rate conditions and product coverage are validated before publication.",
+        "legacyProducts": ["Q Card"],
+        "sourceUrl": "https://www.qcard.co.nz/fees-and-charges/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "retail-financial-services",
+    "name": "Retail Financial Services",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "excluded",
+        "reason": "Farmers Finance Card is provided by Retail Financial Services Limited. This is the same product as farmers-finance, not a second offer. Current collection uses farmers-finance; retain the old issuer in history.",
+        "legacyProducts": ["Farmers Finance Card"],
+        "sourceUrl": "https://www.farmersfinancecard.co.nz/wp-content/uploads/key-facts-sheet.pdf",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "smith-caughey",
+    "name": "Smith & Caughey",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "excluded",
+        "reason": "The retailer\u2019s CEO announced its final closure in June 2025. No current store-account offer is available; existing balances are not represented by a fabricated current purchase rate.",
+        "legacyProducts": ["The Card"],
+        "sourceUrl": "https://www.linkedin.com/posts/matt-harray_smithandcaugheys-activity-7339868008334467073-DDKV",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "gem-visa",
+    "name": "GEM Visa",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "excluded",
+        "reason": "Duplicate Gem Visa brand entry; the same issuer and current card are collected under Gem.",
+        "legacyProducts": ["Gem Visa (<$250.00)", "Gem Visa (>$250.00)"],
+        "sourceUrl": "https://www.gemfinance.co.nz/credit-cards/gem-visa-card/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "nz-post",
+    "name": "NZ Post",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "excluded",
+        "reason": "Legacy Loaded and Prezzy entries are prepaid cards, not loans. Prezzy\u2019s issuer describes loading and spending an existing balance; Kiwibank\u2019s Loaded for Travel terms explicitly define prepaid cards.",
+        "legacyProducts": [
+          "Loaded",
+          "Prezzy Card - Online",
+          "Prezzy Card - Postshop"
+        ],
+        "sourceUrl": "https://www.prezzycard.co.nz/faq",
+        "reviewedAt": "2026-10-05",
+        "productDecisions": {
+          "Loaded": {
+            "replacements": [],
+            "reason": "Prepaid stored-value product; no purchase borrowing rate.",
+            "sourceUrl": "https://media.kiwibank.co.nz/media/documents/Loaded_for_Travel_terms_and_conditions_Jul16.pdf"
+          },
+          "Prezzy Card - Online": {
+            "replacements": [],
+            "reason": "Prepaid stored-value product; no purchase borrowing rate.",
+            "sourceUrl": "https://www.prezzycard.co.nz/faq"
+          },
+          "Prezzy Card - Postshop": {
+            "replacements": [],
+            "reason": "Prepaid stored-value product; no purchase borrowing rate.",
+            "sourceUrl": "https://www.prezzycard.co.nz/faq"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "air-new-zealand",
+    "name": "Air New Zealand",
+    "datasets": {
+      "credit-card-rates": {
+        "status": "excluded",
+        "reason": "OneSmart is a prepaid travel money card, not an interest-bearing credit product. Preserve past snapshots; exclude from current credit-card rates.",
+        "legacyProducts": ["OneSmart"],
+        "sourceUrl": "https://www.airnewzealand.co.nz/onesmart",
+        "reviewedAt": "2026-10-04"
+      }
+    }
+  },
+  {
+    "id": "christian-savings",
+    "name": "Christian Savings",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Discovered beyond the legacy inventory; current first-party public lending disclosure.",
+        "legacyProducts": [],
+        "sourceUrl": "https://www.christiansavings.co.nz/churches-and-charities/ministry-loans",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "gold-band-finance",
+    "name": "Gold Band Finance",
+    "datasets": {
+      "personal-loan-rates": {
+        "status": "active",
+        "reason": "Discovered beyond the legacy inventory; current first-party public lending disclosure.",
+        "legacyProducts": [],
+        "sourceUrl": "https://goldbandfinance.nz/personal-lending/",
+        "reviewedAt": "2026-10-05"
+      },
+      "car-loan-rates": {
+        "status": "active",
+        "reason": "Discovered beyond the legacy inventory; current first-party public lending disclosure.",
+        "legacyProducts": [],
+        "sourceUrl": "https://goldbandfinance.nz/personal-lending/",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  },
+  {
+    "id": "bank-of-india",
+    "name": "Bank of India",
+    "datasets": {
+      "mortgage-rates": {
+        "status": "active",
+        "reason": "Current website home-loan schedule, explicitly labelled with its published effective date. Cloud default context waits for security challenge completion.",
+        "legacyProducts": [],
+        "sourceUrl": "https://bankofindia.co.nz/advances",
+        "reviewedAt": "2026-10-05"
+      },
+      "personal-loan-rates": {
+        "status": "excluded",
+        "reason": "Personal lending is listed, but the public Advances page gives only home-loan rates and business lending base rates. The Personal & Overdraft download links to an application form, not a consumer-rate schedule. No public numerical personal offer verified; requires an individual quote. Never substitute the business base rate.",
+        "legacyProducts": [],
+        "sourceUrl": "https://bankofindia.co.nz/advances",
+        "reviewedAt": "2026-10-05"
+      }
+    }
+  }
+]

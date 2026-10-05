@@ -25,6 +25,7 @@ import {
   bigFiveBankNames,
   defaultFilters,
   filterRows,
+  formatAdvertisedRate,
   formatRate,
   hasValue,
   historySeries,
@@ -274,11 +275,14 @@ function CategoryData({
       )}
       <p className="explorer-footnote">
         Updated {updatedFormat.format(new Date(snapshot.lastUpdated))} (NZ time)
-        from interest.co.nz.{" "}
+        {snapshot.rows.some((row) => row.sourceUrl)
+          ? ". Provider links show the source of each direct collection. "
+          : " from the legacy interest.co.nz collection. "}
         {category === "credit-card"
-          ? "Debit, prepaid, and charge cards (0% purchase rate) are left out. "
-          : "Rates listed as 0% are shown as missing. "}
-        Rates are indicative; confirm with the provider.
+          ? "Legacy cards with a 0% purchase rate are left out. "
+          : "Legacy rates listed as 0% are shown as missing. "}
+        Ranges show published minimum and maximum rates. Charts and statistics
+        use the minimum. Rates are indicative; confirm with the provider.
       </p>
     </div>
   );
@@ -600,30 +604,47 @@ function columnsFor(category: Category): Column[] {
   const provider: Column = {
     key: "provider",
     label: category === "credit-card" ? "Issuer" : "Provider",
-    render: (row) => row.provider,
+    render: (row) =>
+      row.sourceUrl ? (
+        <a href={row.sourceUrl} rel="noreferrer" target="_blank">
+          {row.provider}
+        </a>
+      ) : (
+        row.provider
+      ),
   };
   if (category === "mortgage") {
     return [
       provider,
-      { key: "product", label: "Product", render: (row) => row.product },
+      {
+        key: "product",
+        label: "Product",
+        render: (row) => row.product,
+        detail: (row) => row.condition,
+      },
       { key: "term", label: "Term", render: (row) => row.term },
       {
         key: "rate",
         label: "Rate",
         numeric: true,
-        render: (row) => rateCell(row.rate),
+        render: (row) => formatAdvertisedRate(row),
       },
     ];
   }
   if (category === "credit-card") {
     return [
       provider,
-      { key: "product", label: "Card", render: (row) => row.product },
+      {
+        key: "product",
+        label: "Card",
+        render: (row) => row.product,
+        detail: (row) => row.condition,
+      },
       {
         key: "rate",
         label: "Purchase",
         numeric: true,
-        render: (row) => rateCell(row.rate),
+        render: (row) => formatAdvertisedRate(row),
       },
       {
         key: "cashAdvanceRate",
@@ -665,7 +686,11 @@ function columnsFor(category: Category): Column[] {
   }
   return [
     provider,
-    { key: "product", label: "Product", render: (row) => row.product },
+    {
+      key: "product",
+      label: "Product",
+      render: (row) => row.product,
+    },
     { key: "plan", label: "Plan", render: (row) => row.plan ?? "—" },
     {
       key: "condition",
@@ -676,7 +701,7 @@ function columnsFor(category: Category): Column[] {
       key: "rate",
       label: "Rate",
       numeric: true,
-      render: (row) => rateCell(row.rate),
+      render: (row) => formatAdvertisedRate(row),
     },
   ];
 }

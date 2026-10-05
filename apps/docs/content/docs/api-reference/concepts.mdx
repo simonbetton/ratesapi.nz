@@ -1,12 +1,12 @@
 ---
 title: "Core Concepts"
 seoTitle: "Data Freshness, Lender IDs & Snapshots"
-description: "How Rates API collects New Zealand rates from interest.co.nz each hour, and how snapshots, lender IDs, date filters, and errors operate."
+description: "How Rates API collects New Zealand rates from institution websites each hour, and how snapshots, lender IDs, date filters, and errors operate."
 ---
 
 ## Data Freshness
 
-The API collects data from interest.co.nz each hour. It saves a dataset only when the data changes. Cloudflare D1 keeps the newest version of each dataset and snapshots of earlier versions.
+The collectors read institution websites each hour. Publication requires complete, validated coverage. It saves a dataset only when the data changes. Cloudflare D1 keeps the newest version of each dataset and snapshots of earlier versions.
 
 To see the freshness of each dataset, send a request to the health endpoint:
 
@@ -109,3 +109,11 @@ The MCP server sends `listChanged: false`. This value means that the list of too
 ## OpenAPI
 
 The Scalar reference is at `/openapi`, and the OpenAPI document is at `/openapi.json`. The earlier path, `/openapi/json`, gives the same document. The OpenAPI document also contains the MCP endpoint, `POST /api/v1/mcp`, with the `MCP` tag.
+
+## Direct Rate Sources
+
+Direct records include `sourceUrl`, which points to the institution website or its first-party rate feed. Historical records can omit this field. During migration, stored datasets can still contain earlier records until all direct sources pass the coverage checks.
+
+For loan rates, `rateType` is `advertised`, `from`, or `range`. For a range, `rate` is the lower value and `rateMaximum` is the upper value. These are published annual percentages, not a personalised quote. A zero rate is valid when the institution explicitly publishes it. Mortgage `condition` can describe equity requirements or a rate available only to existing customers.
+
+Direct card records give `primaryFeeNZD` as an annual amount, even when the issuer charges it in two instalments. The legacy field `interestFreePeriodInMonths` still contains days. A `null` optional card value means the collected source did not provide it; do not treat it as zero.

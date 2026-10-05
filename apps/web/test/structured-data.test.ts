@@ -62,14 +62,11 @@ describe("homepage JSON-LD", () => {
     }
   });
 
-  test("credits interest.co.nz for the data instead of licensing it", () => {
+  test("describes direct and historical provenance without licensing the rate data", () => {
     const dataset = nodeOfType(homepageStructuredData(facts), "Dataset");
     expect(dataset.license).toBeUndefined();
-    expect(dataset.isBasedOn).toEqual({
-      "@type": "WebSite",
-      name: "interest.co.nz",
-      url: "https://www.interest.co.nz/",
-    });
+    expect(dataset.isBasedOn).toBeUndefined();
+    expect(dataset.creditText).toContain("institution websites");
     expect(dataset.usageInfo).toBe(
       "https://www.ratesapi.nz/docs/about#data-source-and-licence"
     );

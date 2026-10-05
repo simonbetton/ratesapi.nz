@@ -200,3 +200,15 @@ export function historySeries(
 export function formatRate(value: number) {
   return `${value.toFixed(2)}%`;
 }
+
+export function formatAdvertisedRate(
+  row: Pick<RateRow, "rate" | "rateType" | "rateMaximum">
+): string {
+  if (!hasValue(row.rate)) {
+    return "—";
+  }
+  if (row.rateType === "range" && hasValue(row.rateMaximum)) {
+    return `${formatRate(row.rate)}–${formatRate(row.rateMaximum)}`;
+  }
+  return `${row.rateType === "from" ? "From " : ""}${formatRate(row.rate)}`;
+}

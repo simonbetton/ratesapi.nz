@@ -62,7 +62,7 @@ The sample data is small. To get the newest rates into your local D1 database, r
 bun run --filter api scrape:local
 ```
 
-The scripts collect the rates from interest.co.nz and save them in the local database. The data stays when you start the API again.
+The scripts collect rates directly from institution websites. They save a dataset only when its coverage is complete and every source passes validation. Run `bun run --filter api sources:audit` to see the remaining coverage blockers before saving. The data stays when you start the API again.
 
 The scraper scripts are in `apps/api/bin/`:
 
@@ -71,7 +71,9 @@ The scraper scripts are in `apps/api/bin/`:
 - `scrape-car-loan-rates.ts`: Collects car loan rates
 - `scrape-credit-card-rates.ts`: Collects credit card rates
 
-Each scrape adds a maximum of one snapshot for each day. The sample snapshot of 2026-04-30 also stays in the history.
+Direct collection is still undergoing a coverage migration. Run `bun run --filter api sources:audit` to inspect the unresolved sources. The scraper refuses to replace any dataset until every category passes its coverage checks.
+
+Each successful scrape adds a maximum of one snapshot for each day. The sample snapshot of 2026-04-30 also stays in the history.
 
 ### Remote D1 Data
 

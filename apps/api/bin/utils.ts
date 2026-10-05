@@ -198,14 +198,22 @@ export async function markCheckedInD1(
 // oxlint-disable-next-line require-await
 export async function loadFromD1<Schema extends TSchema>(
   dataType: DataType,
-  schema: Schema
+  schema: Schema,
+  options: Omit<D1SaveDeps, "now"> & { strict?: boolean } = {}
 ): Promise<Schema["static"] | null> {
   const envCheck = ora("Checking D1 environment").start();
   const isCI = process.env.CI === "true" || Boolean(process.env.GITHUB_ACTIONS);
-  const target = getD1Target();
+  const target = options.target === undefined ? getD1Target() : options.target;
+  const run = options.run ?? runWranglerD1;
+  const hasAccess = isCI || process.env.D1_LOCAL === "true" || options.target;
 
-  if (!isCI || !target) {
+  if (!hasAccess || !target) {
     envCheck.warn("Running in local development mode without D1 access").stop();
+    if (options.strict) {
+      throw new Error(
+        "Cannot verify existing data without a configured D1 target"
+      );
+    }
     return null;
   }
 
@@ -215,7 +223,7 @@ export async function loadFromD1<Schema extends TSchema>(
     const loadSpinner = ora(
       `Loading latest data for ${dataType} from D1`
     ).start();
-    const result = runWranglerD1(
+    const result = run(
       target,
       `SELECT data FROM latest_data WHERE data_type = '${dataType}'`,
       { json: true }
@@ -223,17 +231,23 @@ export async function loadFromD1<Schema extends TSchema>(
 
     loadSpinner.succeed(`Data loaded from D1 database for ${dataType}`).stop();
 
-    const rows = extractWranglerRows(result);
+    const rows = extractWranglerRows(result, options.strict);
     const encodedData = rows[0]?.data;
 
-    if (typeof encodedData !== "string") {
+    if (rows.length === 0) {
       return null;
+    }
+    if (typeof encodedData !== "string") {
+      throw new TypeError(`Invalid stored data for ${dataType}`);
     }
 
     return parseSchema(schema, fromSavableJson(encodedData));
   } catch (error) {
     const errorSpinner = ora("D1 database connection").start();
     errorSpinner.fail(`Database connection failed: ${error}`).stop();
+    if (options.strict) {
+      throw error;
+    }
   }
 
   return null;
@@ -319,17 +333,34 @@ export function runWranglerD1(
   });
 }
 
-export function extractWranglerRows(output: string): Record<string, unknown>[] {
+export function extractWranglerRows(
+  output: string,
+  strict = false
+): Record<string, unknown>[] {
   const parsed: unknown = JSON.parse(output);
   const entries = Array.isArray(parsed) ? parsed : [parsed];
   const rows: Record<string, unknown>[] = [];
+  if (strict && entries.length === 0) {
+    throw new Error("D1 did not return a query result");
+  }
 
   for (const entry of entries) {
     if (!isRecord(entry)) {
+      if (strict) {
+        throw new TypeError("Invalid D1 query result");
+      }
       continue;
     }
 
     const resultRows = entry.results ?? entry.result;
+    if (
+      strict &&
+      (entry.success === false ||
+        !Array.isArray(resultRows) ||
+        !resultRows.every(isRecord))
+    ) {
+      throw new Error("Failed or invalid D1 query result");
+    }
 
     if (Array.isArray(resultRows)) {
       rows.push(...resultRows.filter(isRecord));
