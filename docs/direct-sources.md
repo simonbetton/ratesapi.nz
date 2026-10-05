@@ -144,6 +144,8 @@ Collection validates numbers, term mappings, range endpoints, source provenance,
 
 This protects against collection and preflight failures. The existing D1 writer still saves each category separately; a database failure during the write phase is not an atomic rollback across all four categories. The next successful run can repair this. D1 writes retain the existing limit of one snapshot per category per UTC date.
 
+Merging to `main` starts deployment and collection automatically. Before any database access, the collector waits up to 15 minutes for a successful `Deploy to Cloudflare` run for its exact commit on `main`. Failed or missing deployment blocks publication, including hourly and manual runs, so the new mortgage terms cannot reach an older API schema. Production collection runs are serialized to prevent overlapping writers. Once deployed, updates continue hourly. The first production run must still confirm D1 publication and the public API response; read-only audits do not prove a production write.
+
 Run the read-only audit from the repository root:
 
 ```bash

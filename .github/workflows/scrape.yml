@@ -8,12 +8,18 @@ on:
       - main
   workflow_dispatch: # Allows manual triggering
 
+# Never overlap database writers, including manual and scheduled runs.
+concurrency:
+  group: production-rate-publication
+  cancel-in-progress: false
+
 jobs:
   run-scripts:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
       contents: read
+      actions: read
     # Cloudflare secrets are scoped to the steps that talk to D1, so dependency
     # installs and checks never run with them in the environment.
     env:
@@ -42,6 +48,13 @@ jobs:
 
       - name: Check
         run: bun run check
+
+      # New mortgage terms require the matching API schema to be live first.
+      # This also protects hourly/manual runs after a failed deployment.
+      - name: Wait for this commit to deploy successfully
+        run: bash .github/scripts/wait-for-deployment.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Verify D1 database access
         working-directory: apps/api
