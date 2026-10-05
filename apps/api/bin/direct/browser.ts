@@ -1,3 +1,5 @@
+import { setTimeout as sleep } from "node:timers/promises";
+
 import { chromium } from "playwright";
 import type {
   Browser,
@@ -275,19 +277,32 @@ export function createCollectionTransport(
   }
 
   async function renderCloud(url: string, spec: BrowserReadiness) {
-    try {
-      return await render(url, spec, "cloud");
-    } catch (error) {
-      if (!(error instanceof RetryableBrowserError)) {
-        throw error;
+    // Bound recovery per URL. A replacement proxy can fail too, so allow two
+    // fresh sessions while retaining normal parser/readiness failures as errors.
+    for (let attempt = 0; ; attempt += 1) {
+      try {
+        // oxlint-disable-next-line no-await-in-loop -- Retry only after closing the previous session.
+        return await render(url, spec, "cloud");
+      } catch (error) {
+        if (!(error instanceof RetryableBrowserError)) {
+          throw error;
+        }
+        // Discard exhausted sessions too, so the next source cannot reuse one.
+        // oxlint-disable-next-line no-await-in-loop
+        const previous = await sessions.get("cloud")?.catch(() => null);
+        // oxlint-disable-next-line no-await-in-loop
+        await previous?.close();
+        sessions.delete("cloud");
+        cloudProxyCountry = cloudProxyCountry === "nz" ? "au" : "nz";
+        if (attempt >= 2) {
+          throw error;
+        }
+        console.warn(
+          `Retrying browser connection for ${url} through ${cloudProxyCountry} (attempt ${attempt + 2}/3)`
+        );
+        // oxlint-disable-next-line no-await-in-loop
+        await sleep(500 * (attempt + 1));
       }
-      // A dead proxy tunnel needs a new session, not another page on the same proxy.
-      // Stop the old billable session before opening one bounded retry.
-      const previous = await sessions.get("cloud")?.catch(() => null);
-      await previous?.close();
-      sessions.delete("cloud");
-      cloudProxyCountry = "au";
-      return render(url, spec, "cloud");
     }
   }
 
