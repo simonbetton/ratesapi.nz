@@ -442,7 +442,67 @@ setTimeout(() => {
   );
 
   browserTest(
-    "a persistent cloud connection failure stops after two attempts and releases both sessions",
+    "recovers after two dead proxies by alternating regions, then caches the validated page",
+    async () => {
+      const failed = await fixtureBrowser(html, 200, false, true);
+      const working = await fixtureBrowser();
+      const lifecycle: string[] = [];
+      let opened = 0;
+      const source: DirectSource = {
+        id: "bank",
+        institution: "bank",
+        dataset: "mortgage-rates",
+        urls: [url],
+        browser: { [url]: spec },
+        parse: () => [],
+      };
+      const transport = createCollectionTransport([source], {
+        mode: "cloud",
+        apiKey: secret,
+        async open(_host, _key, _deps, country) {
+          opened += 1;
+          lifecycle.push(`open:${country}`);
+          return {
+            browser: opened < 3 ? failed.browser : working.browser,
+            close: async () => {
+              lifecycle.push(`close:${country}`);
+            },
+          };
+        },
+      });
+      try {
+        const result = await transport.fetchPage(url);
+        expect(result).toContain("<td>4.95%</td><td>5.25%</td>");
+        expect(await transport.fetchPage(url)).toBe(result);
+        expect(working.pages()).toBe(1);
+        expect(lifecycle).toEqual([
+          "open:nz",
+          "close:nz",
+          "open:au",
+          "close:au",
+          "open:nz",
+        ]);
+        expect(
+          transport.attempts.map(({ status, proxyCountryCode }) => [
+            status,
+            proxyCountryCode,
+          ])
+        ).toEqual([
+          ["failed", "nz"],
+          ["failed", "au"],
+          ["ok", "nz"],
+        ]);
+      } finally {
+        await transport.close();
+        await failed.close();
+        await working.close();
+      }
+      expect(lifecycle.at(-1)).toBe("close:nz");
+    }
+  );
+
+  browserTest(
+    "a persistent cloud connection failure stops after three attempts and immediately releases every session",
     async () => {
       const fixture = await fixtureBrowser(html, 200, false, true);
       const closed: string[] = [];
@@ -470,13 +530,14 @@ setTimeout(() => {
         await expect(transport.fetchPage(url)).rejects.toThrow(
           "ERR_CONNECTION_RESET"
         );
-        expect(transport.attempts).toHaveLength(2);
-        expect(fixture.pages()).toBe(2);
+        expect(transport.attempts).toHaveLength(3);
+        expect(fixture.pages()).toBe(3);
+        expect(closed).toEqual(["nz", "au", "nz"]);
       } finally {
         await transport.close();
         await fixture.close();
       }
-      expect(closed).toEqual(["nz", "au"]);
+      expect(closed).toEqual(["nz", "au", "nz"]);
     }
   );
 
