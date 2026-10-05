@@ -16,7 +16,7 @@ export const aboutPage: ContentPage = {
     {
       kind: "paragraph",
       content: [
-        "Rates API collects public rates from institution websites, groups them by institution and product, and stores validated data. Each direct record includes its source URL. Earlier snapshots came from interest.co.nz. Stored datasets remain unchanged until direct coverage is complete. On each day that a dataset changes, it also keeps a snapshot, so the history shows what the API returned on that date. The history starts on 8 March 2025.",
+        "Rates API collects public rates from institution websites, groups them by institution and product, and stores validated data. Each direct record includes its source URL. Stored datasets remain unchanged until direct coverage is complete. On each day that a dataset changes, it also keeps a snapshot, so the history shows what the API returned on that date. The history starts on 8 March 2025.",
       ],
     },
     {
@@ -46,7 +46,7 @@ export const aboutPage: ContentPage = {
     {
       kind: "paragraph",
       content: [
-        "Rates API is independent. It is not affiliated with, or endorsed by, interest.co.nz or any bank, lender, or card issuer.",
+        "Rates API is independent. It is not affiliated with, or endorsed by, any bank, lender, or card issuer.",
       ],
     },
     {

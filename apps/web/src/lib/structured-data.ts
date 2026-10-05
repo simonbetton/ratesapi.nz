@@ -32,11 +32,11 @@ function dataset(facts: KeyFacts | null) {
     url: home,
     creator: { "@id": ids.publisher },
     publisher: { "@id": ids.publisher },
-    // No `license`: the MIT licence covers the code, not the rates. The rates
-    // come from institution websites; earlier snapshots used interest.co.nz.
+    // No `license`: the MIT licence covers the code, not the rates.
+    // Direct collections use institution websites.
     usageInfo: `${origin}/docs/about#data-source-and-licence`,
     creditText:
-      "Direct rates from institution websites, collected by Rates API. Earlier snapshots used interest.co.nz.",
+      "Direct rates from institution websites, collected by Rates API.",
     isAccessibleForFree: true,
     // Without live facts, leave the dates out rather than guess them.
     ...(facts && {

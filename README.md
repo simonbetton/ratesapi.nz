@@ -61,7 +61,7 @@ Read the [documentation](https://www.ratesapi.nz/docs) for IDs, date filters, er
 
 ## Direct-source migration
 
-The collectors request only institution websites, their public feeds and current linked disclosures. There is no interest.co.nz fallback. The reviewed public-rate catalogue has 112 adapters and no unresolved coverage entries. Collection refuses publication if any source or product reconciliation fails. See the [coverage register and live audit](docs/direct-sources.md) for scope, exclusions and verification. Production snapshots are replaced only when the verified collector runs against D1.
+The collectors request only institution websites, their public feeds and current linked disclosures. The reviewed public-rate catalogue has 112 adapters and no unresolved coverage entries. Collection refuses publication if any source or product reconciliation fails. See the [coverage register and live audit](docs/direct-sources.md) for scope, exclusions and verification. Production snapshots are replaced only when the verified collector runs against D1.
 
 Run `bun run --filter api sources:audit` for a read-only live report. Browser sources require `cd apps/api && bunx playwright install chromium`; `bun run sources:browser` runs the bank access audit. Optional Browser Use Cloud configuration and the GitHub Actions workflow are documented in the register below. See [the institution register and migration status](docs/direct-sources.md) for verified adapters, blocked sources, aliases, and the remaining work. Existing historical snapshots keep their original provenance.
 

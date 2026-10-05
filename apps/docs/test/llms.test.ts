@@ -134,7 +134,7 @@ describe("toAbsoluteLinks", () => {
   });
 
   test("keeps absolute links and anchors", () => {
-    const markdown = "[Site](https://www.interest.co.nz) [Top](#top)";
+    const markdown = "[Site](https://example.com) [Top](#top)";
 
     expect(toAbsoluteLinks(markdown)).toBe(markdown);
   });

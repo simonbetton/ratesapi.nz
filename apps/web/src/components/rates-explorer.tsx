@@ -277,7 +277,7 @@ function CategoryData({
         Updated {updatedFormat.format(new Date(snapshot.lastUpdated))} (NZ time)
         {snapshot.rows.some((row) => row.sourceUrl)
           ? ". Provider links show the source of each direct collection. "
-          : " from the legacy interest.co.nz collection. "}
+          : " from an earlier collection. "}
         {category === "credit-card"
           ? "Legacy cards with a 0% purchase rate are left out. "
           : "Legacy rates listed as 0% are shown as missing. "}
