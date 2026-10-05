@@ -1,5 +1,10 @@
 import { chromium } from "playwright";
-import type { Browser, BrowserContext, Page } from "playwright";
+import type {
+  Browser,
+  BrowserContext,
+  Page,
+  Response as BrowserResponse,
+} from "playwright";
 
 import { createSourceFetcher } from "./collect";
 import type { FetchPage } from "./collect";
@@ -346,7 +351,10 @@ export async function renderPage(
   ) {
     throw new Error("Browser source must be a first-party HTTPS URL");
   }
-  if (!Number.isInteger(spec.minimumRates) || spec.minimumRates < 1) {
+  if (
+    spec.responseType !== "json" &&
+    (!Number.isInteger(spec.minimumRates) || spec.minimumRates < 1)
+  ) {
     throw new Error("Browser readiness must require at least one rate");
   }
   let context: BrowserContext | undefined;
@@ -386,13 +394,23 @@ export async function renderPage(
         )
     );
     phase = "navigation";
-    await navigateToRates(page, url, spec.cloudChallenge ?? false, timeoutMs);
+    const response = await navigateToRates(
+      page,
+      url,
+      spec.cloudChallenge ?? false,
+      timeoutMs
+    );
     phase = "rate feed";
     const feedResults = await Promise.all(required);
     if (feedResults.some((succeeded) => !succeeded)) {
       throw new Error("Required first-party rate feed did not succeed");
     }
     phase = "rate hydration";
+    if (spec.responseType === "json") {
+      const body = await response.text();
+      JSON.parse(body);
+      return body;
+    }
     await page.waitForFunction(
       ({ selector, minimumRates }) => {
         const cells = [...document.querySelectorAll(selector)];
@@ -421,7 +439,7 @@ async function navigateToRates(
   url: string,
   challenge: boolean,
   timeoutMs: number
-): Promise<void> {
+): Promise<BrowserResponse> {
   // Register before navigation: a challenge can reload immediately after DOMContentLoaded.
   const resolved = challenge
     ? page
@@ -434,8 +452,8 @@ async function navigateToRates(
           { timeout: timeoutMs }
         )
         .then(
-          () => true,
-          () => false
+          (response) => response,
+          () => null
         )
     : undefined;
   const response = await page.goto(url, {
@@ -443,11 +461,12 @@ async function navigateToRates(
     timeout: timeoutMs,
   });
   if (response?.ok()) {
-    return;
+    return response;
   }
   if (challenge && response?.status() === 403) {
-    if (await resolved) {
-      return;
+    const verified = await resolved;
+    if (verified) {
+      return verified;
     }
     throw new RetryableBrowserError(
       "Browser security challenge did not resolve"

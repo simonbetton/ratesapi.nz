@@ -106,6 +106,7 @@ export const additionalSources: DirectSource[] = [
     institution: "finance-now",
     dataset: "credit-card-rates",
     urls: [financeNowCard],
+    browser: { [financeNowCard]: { selector: "body", minimumRates: 1 } },
     parse(pages) {
       const text = plainText(page(pages, financeNowCard));
       return [

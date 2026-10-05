@@ -71,6 +71,10 @@ export const kiwibankSources: DirectSource[] = [
     institution: "kiwibank",
     dataset: "mortgage-rates",
     urls: [home, feed],
+    browser: {
+      [home]: { selector: "table td", minimumRates: 15 },
+      [feed]: { responseType: "json" },
+    },
     parse(pages) {
       const tables = hydrate(pages, home);
       const fixed = tables.filter((rows) =>
@@ -127,6 +131,10 @@ export const kiwibankSources: DirectSource[] = [
     institution: "kiwibank",
     dataset: "credit-card-rates",
     urls: [cards, feed],
+    browser: {
+      [cards]: { selector: "table td", minimumRates: 4 },
+      [feed]: { responseType: "json" },
+    },
     parse(pages) {
       const tables = hydrate(pages, cards).filter(
         (rows) =>

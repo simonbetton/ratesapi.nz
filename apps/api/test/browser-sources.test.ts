@@ -223,6 +223,37 @@ async function fixtureBrowser(
 
 describe("real Chromium transport", () => {
   browserTest(
+    "reads exact JSON feed responses through a browser and rejects HTML masquerading as a feed",
+    async () => {
+      const fixture = await fixtureBrowser(
+        '{"results":[{"rate":"5.25","enabled":true}]}'
+      );
+      const invalid = await fixtureBrowser(
+        "<html>Temporary security page, 5.25%</html>"
+      );
+      try {
+        const body = await renderPage(
+          fixture.browser,
+          url,
+          { responseType: "json" },
+          5000
+        );
+        expect(JSON.parse(body)).toEqual({
+          results: [{ rate: "5.25", enabled: true }],
+        });
+        await expect(
+          renderPage(invalid.browser, url, { responseType: "json" }, 5000)
+        ).rejects.toThrow("rate hydration failed");
+        expect(fixture.browser.contexts()).toHaveLength(0);
+        expect(invalid.browser.contexts()).toHaveLength(0);
+      } finally {
+        await fixture.close();
+        await invalid.close();
+      }
+    }
+  );
+
+  browserTest(
     "waits for a security interstitial to navigate successfully and preserves the cloud default context",
     async () => {
       const browser = await chromium.launch({ headless: true });

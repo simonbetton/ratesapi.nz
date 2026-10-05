@@ -1,6 +1,6 @@
 import type { DataType } from "../../src/lib/data-loader";
 import { page, percentage, plainText, requiredMatch } from "./parsing";
-import type { DirectSource, Observation } from "./types";
+import type { BrowserReadiness, DirectSource, Observation } from "./types";
 
 interface LoanRule {
   product: string;
@@ -13,13 +13,15 @@ function rangeSource(
   institution: string,
   dataset: DataType,
   url: string,
-  rules: LoanRule[]
+  rules: LoanRule[],
+  browser?: BrowserReadiness
 ): DirectSource {
   return {
     id: `${institution}-${dataset}`,
     institution,
     dataset,
     urls: [url],
+    ...(browser ? { browser: { [url]: browser } } : {}),
     parse(pages) {
       const text = plainText(page(pages, url));
       return rules.map((rule): Observation => {
@@ -87,7 +89,8 @@ export const loanSources: DirectSource[] = [
         condition:
           "Lower rates apply for secured loans; standard fixed term rates depend on assessment.",
       },
-    ]
+    ],
+    { selector: "body", minimumRates: 1 }
   ),
   rangeSource(
     "nova-medical-finance",

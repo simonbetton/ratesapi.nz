@@ -76,6 +76,7 @@ export const retailSources: DirectSource[] = [
     institution: "asb",
     dataset: "credit-card-rates",
     urls: [gold],
+    browser: { [gold]: { responseType: "json" } },
     parse(pages) {
       const data: {
         value: { key: string; interestRate?: string; fees?: string }[];

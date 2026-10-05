@@ -33,15 +33,20 @@ export interface DirectSource {
   parse: (pages: ReadonlyMap<string, string>) => Observation[];
 }
 
-export interface BrowserReadiness {
+export type BrowserReadiness = {
   /** Use the cloud host's default context and wait for its security interstitial to finish. */
   cloudChallenge?: boolean;
-  /** Count numeric percentage elements inside the actual rate table, not page-wide prose. */
-  selector: string;
-  minimumRates: number;
   /** Public feeds that must respond successfully before accepting rendered values. */
   requiredResponses?: string[];
-}
+} & (
+  | { responseType: "json" }
+  | {
+      responseType?: "html";
+      /** Count percentage elements in the published rate area; the parser validates their meaning. */
+      selector: string;
+      minimumRates: number;
+    }
+);
 
 export interface CoverageEntry {
   status: "pending" | "active" | "excluded";
