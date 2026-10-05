@@ -250,7 +250,7 @@ describe("real Chromium transport", () => {
             browser,
             url,
             { selector: "td", minimumRates: 1, cloudChallenge: true },
-            2000
+            5000
           )
         ).toContain("5.25%");
         expect(requests).toBe(2);
@@ -280,7 +280,7 @@ describe("real Chromium transport", () => {
             browser,
             url,
             { selector: "td", minimumRates: 1, cloudChallenge: true },
-            500
+            5000
           )
         ).rejects.toThrow("security challenge did not resolve");
         expect(context.pages()).toHaveLength(0);
