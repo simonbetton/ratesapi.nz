@@ -1,4 +1,4 @@
-name: Audit direct institution sources
+name: Direct institution source checks
 
 on:
   workflow_dispatch:
@@ -16,7 +16,13 @@ on:
     paths:
       - "apps/api/bin/direct/**"
       - "apps/api/bin/audit-browser-sources.ts"
+      - "apps/api/bin/audit-direct-sources.ts"
+      - "apps/api/bin/utils.ts"
       - "apps/api/test/browser-sources.test.ts"
+      - "apps/api/test/direct-sources.test.ts"
+      - "apps/api/test/partial-publication.test.ts"
+      - "apps/api/test/browser-source-workflow.test.ts"
+      - "apps/api/test/fixtures/direct/**"
       - ".github/workflows/browser-sources.yml"
       - "apps/api/package.json"
       - "bun.lock"
@@ -29,7 +35,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  browser-audit:
+  source-tests:
+    name: Browser and partial-publication tests
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -44,10 +51,32 @@ jobs:
       - name: Install Chromium and system dependencies
         working-directory: apps/api
         run: bunx playwright install --with-deps chromium
-      - name: Test browser lifecycle and extraction
-        run: RUN_BROWSER_TESTS=1 bun test apps/api/test/browser-sources.test.ts apps/api/test/direct-sources.test.ts
+      - name: Test browser lifecycle, extraction and partial publication
+        id: source-tests
+        run: >-
+          RUN_BROWSER_TESTS=1 bun test apps/api/test/browser-sources.test.ts apps/api/test/direct-sources.test.ts apps/api/test/partial-publication.test.ts apps/api/test/browser-source-workflow.test.ts
+
+  live-source-audit:
+    name: Manual live-source health audit
+    # Live source availability is separate from PR correctness and can incur
+    # Browser Use charges. It requires an explicit manual run, never a PR push.
+    if: github.event_name == 'workflow_dispatch'
+    needs: source-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js for remote browser connections
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile --ignore-scripts
+      - name: Install Chromium and system dependencies
+        working-directory: apps/api
+        run: bunx playwright install --with-deps chromium
       - name: Audit live sources (no database credentials or writes)
-        if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+        id: live-audit
         working-directory: apps/api
         run: |
           if [ "$RATES_INSTITUTIONS" = "all" ]; then

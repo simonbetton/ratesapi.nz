@@ -48,7 +48,7 @@ The API stores at most one snapshot per dataset per UTC day, and only on days wh
 
 | Path | Purpose |
 | --- | --- |
-| `/api/v1/health` | Health check, with the last change and last successful collection of each dataset |
+| `/api/v1/health` | Health check, with the last change and last complete successful collection of each dataset |
 | `/openapi` | Interactive API reference (Scalar) |
 | `/openapi.json` | OpenAPI document for SDK and tool generators (also at `/openapi/json`) |
 | `POST /api/v1/mcp` | [Model Context Protocol](https://modelcontextprotocol.io) endpoint with read-only tools for each category |
@@ -61,7 +61,7 @@ Read the [documentation](https://www.ratesapi.nz/docs) for IDs, date filters, er
 
 ## Direct-source migration
 
-The collectors request only institution websites, their public feeds and current linked disclosures. The reviewed public-rate catalogue has 112 adapters and no unresolved coverage entries. Collection refuses publication if any source or product reconciliation fails. See the [coverage register and live audit](docs/direct-sources.md) for scope, exclusions and verification. Production snapshots are replaced only when the verified collector runs against D1.
+The collectors request only institution websites, their public feeds and current linked disclosures. The reviewed public-rate catalogue has 112 adapters and no unresolved coverage entries. Verified institutions can update even when another source fails, including within the same category. Failed or unreconciled institutions keep their stored records; stored institutions without a verified replacement are not removed. The run reports failures after publishing successful updates. See the [coverage register and live audit](docs/direct-sources.md) for scope, exclusions, freshness rules and verification.
 
 Run `bun run --filter api sources:audit` for a read-only live report. Browser sources require `cd apps/api && bunx playwright install chromium`; `bun run sources:browser` runs the bank access audit. Optional Browser Use Cloud configuration and the GitHub Actions workflow are documented in the register below. See [the institution register and migration status](docs/direct-sources.md) for verified adapters, blocked sources, aliases, and the remaining work. Existing historical snapshots keep their original provenance.
 
@@ -98,7 +98,7 @@ bun run dev
 
 To run one app, use `bun run --filter <app> dev`.
 
-The source audit is read-only. To collect into your local database after coverage is complete, run the scrapers:
+The source audit is read-only. To collect verified institution updates into your local database, run the scrapers:
 
 ```bash
 bun run --filter api scrape:local

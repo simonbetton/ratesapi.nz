@@ -338,7 +338,7 @@ export const HealthResponse = t.Object(
             t.String({ examples: ["2025-03-05 09:00:00"] }),
             {
               description:
-                "The date and time (UTC) of the last correct data collection for this dataset, in YYYY-MM-DD HH:MM:SS format. The API collects each dataset each hour, also when the data does not change. The value is `null` if the API has no record of a collection.",
+                "The date and time (UTC) of the last complete successful data collection for this dataset, in YYYY-MM-DD HH:MM:SS format. Partial collections do not change this time. The API collects each dataset each hour, also when the data does not change. The value is `null` if the API has no record of a collection.",
             }
           ),
           stale: nullable(t.Boolean(), {

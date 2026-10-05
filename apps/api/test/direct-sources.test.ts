@@ -294,7 +294,7 @@ describe("complete dataset publication", () => {
     expect(writes).toBe(0);
   });
 
-  test("batch preflight prevents writes and checks when another category is incomplete or unreadable", async () => {
+  test("batch publishes independent categories when another is incomplete or unreadable", async () => {
     const result = await collectDirectDataset(
       "mortgage-rates",
       registry,
@@ -327,12 +327,13 @@ describe("complete dataset publication", () => {
             ...result,
             blockers: ["Missing source"],
             model: null,
+            publishable: null,
           }),
         },
       ])
     ).rejects.toThrow("incomplete");
-    expect(reads).toBe(0);
-    expect(writes).toBe(0);
+    expect(reads).toBe(1);
+    expect(writes).toBe(1);
     await expect(
       publishDirectBatch([
         deps,
@@ -344,7 +345,7 @@ describe("complete dataset publication", () => {
         },
       ])
     ).rejects.toThrow("D1 unavailable");
-    expect(writes).toBe(0);
+    expect(writes).toBe(2);
   });
 
   test("strict D1 reads distinguish an empty database from errors and malformed results", async () => {
@@ -383,7 +384,7 @@ describe("complete dataset publication", () => {
     ).rejects.toThrow("Offline");
   });
 
-  test("pending institutions block publication even when every implemented parser succeeds", async () => {
+  test("pending institutions keep the run incomplete but do not block verified institutions", async () => {
     const result = await collectDirectDataset(
       "mortgage-rates",
       [
@@ -421,8 +422,8 @@ describe("complete dataset publication", () => {
         },
         registry: institutions,
       })
-    ).rejects.toThrow("incomplete");
-    expect(writes).toBe(0);
+    ).rejects.toThrow("partial publication saved");
+    expect(writes).toBe(1);
   });
 
   test("an HTTP failure keeps the previous data and freshness timestamp untouched", async () => {
@@ -439,7 +440,7 @@ describe("complete dataset publication", () => {
     expect(result.blockers.join(" ")).toContain("HTTP 403");
   });
 
-  test("publishes validated direct data, but rejects loss of an unreviewed institution", async () => {
+  test("publishes validated direct data while retaining an unreviewed institution", async () => {
     const result = await collectDirectDataset(
       "mortgage-rates",
       registry,
@@ -472,12 +473,12 @@ describe("complete dataset publication", () => {
     oldInstitution.id = "institution:unexpected";
     await expect(
       publishDirectDataset({ ...deps, load: async () => old })
-    ).rejects.toThrow("without a reviewed exclusion");
-    expect(saved).toBe(1);
+    ).rejects.toThrow("retained previous data");
+    expect(saved).toBe(2);
     await expect(
       publishDirectDataset({ ...deps, load: async () => result.model })
     ).resolves.toBe("unchanged");
-    expect(saved).toBe(1);
+    expect(saved).toBe(2);
     await expect(
       publishDirectDataset({ ...deps, save: async () => false })
     ).rejects.toThrow("Failed to save");

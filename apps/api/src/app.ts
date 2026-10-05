@@ -87,7 +87,7 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
             "The API collects data each hour, but it saves a dataset only when the data changes. Thus, for each dataset, the response shows two times:",
             "",
             "- `lastUpdated` is the time of the last change to the data. This time can be old when the data is correct.",
-            "- `lastChecked` is the time of the last correct data collection.",
+            "- `lastChecked` is the time of the last complete successful data collection. Partial collections do not change this time.",
             "",
             "`stale` is `true` when the API did not collect the dataset correctly in the last 3 hours. The `status` stays `ok` when a dataset is stale.",
           ].join("\n"),

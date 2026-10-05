@@ -1,6 +1,7 @@
 import { writeFile } from "node:fs/promises";
 
 import type { DataType, SupportedModels } from "../../src/lib/data-loader";
+import { parseSchema } from "../../src/lib/schema";
 import {
   hasDataChanged,
   loadFromD1,
@@ -16,112 +17,137 @@ import type { Institution } from "./types";
 export interface PublishDependencies {
   collect: () => Promise<CollectionResult>;
   load: () => Promise<SupportedModels | null>;
-  save: (model: SupportedModels) => Promise<boolean>;
+  save: (
+    model: SupportedModels,
+    options: { complete: boolean }
+  ) => Promise<boolean>;
   markChecked: () => Promise<unknown>;
   registry: readonly Institution[];
 }
 
-/** This is the only persistence boundary for direct collection. Previews never reach D1. */
+/** Merge verified institutions at the only persistence boundary. Previews never reach D1. */
 export async function publishDirectDataset(
   deps: PublishDependencies
 ): Promise<"saved" | "unchanged"> {
   const result = await deps.collect();
-  assertComplete(result);
-  const current = await deps.load();
-  assertReplacement(result, current, deps.registry);
-  return persist(result, current, deps);
-}
-
-function assertComplete(
-  result: CollectionResult
-): asserts result is CollectionResult & { model: SupportedModels } {
-  if (result.blockers.length > 0 || !result.model) {
+  const candidate = result.publishable;
+  if (!candidate) {
     throw new Error(
       `Direct collection of ${result.dataset} is incomplete:\n${result.blockers.join("\n")}`
     );
   }
+  const current = await deps.load();
+  assertUniqueInstitutions(current, `stored ${result.dataset}`);
+  assertUniqueInstitutions(candidate, `collected ${result.dataset}`);
+  const blockers = [...result.blockers];
+  const replacements = new Map(
+    candidate.data.map((entry) => [entry.id, entry])
+  );
+  for (const item of current?.data ?? []) {
+    const replacement = replacements.get(item.id);
+    if (!replacement) {
+      blockers.push(
+        `${item.id}: retained previous data because no verified replacement is available`
+      );
+      continue;
+    }
+    const [, id] = item.id.split(":");
+    const coverage = deps.registry.find((institution) => institution.id === id)
+      ?.datasets[result.dataset];
+    const previous = "plans" in item ? item.plans : item.products;
+    const next =
+      "plans" in replacement ? replacement.plans : replacement.products;
+    const missing = unreconciledProducts(
+      coverage,
+      previous.map((product) => product.name),
+      next.map((product) => product.name)
+    );
+    if (missing.length > 0) {
+      replacements.delete(item.id);
+      blockers.push(
+        `Replacement would remove products from ${item.id} without review: ${missing.join(", ")}; retained previous data`
+      );
+    }
+  }
+  // Retain failed, pending, excluded and unknown stored institutions. Never purge.
+  const merged = new Map<string, SupportedModels["data"][number]>(
+    (current?.data ?? []).map((entry) => [entry.id, entry])
+  );
+  for (const [id, entry] of replacements) {
+    merged.set(id, entry);
+  }
+  const complete = blockers.length === 0 && result.model !== null;
+  if (!complete && blockers.length === 0) {
+    blockers.push("The complete dataset was not verified");
+  }
+  const model = parseSchema(schemas[result.dataset], {
+    ...candidate,
+    data: [...merged.values()].toSorted((a, b) => a.id.localeCompare(b.id)),
+    // A mixed-age snapshot must not claim retained records were collected now.
+    lastUpdated:
+      !complete && current ? current.lastUpdated : candidate.lastUpdated,
+  });
+  const status = await persist(model, current, deps, result.dataset, complete);
+  if (!complete) {
+    throw new Error(
+      `${result.dataset}: partial publication ${status}; ${replacements.size} institutions verified; complete-check freshness unchanged:\n${blockers.join("\n")}`
+    );
+  }
+  return status;
 }
 
-function assertReplacement(
-  result: CollectionResult & { model: SupportedModels },
-  current: SupportedModels | null,
-  registry: readonly Institution[]
+function assertUniqueInstitutions(
+  model: SupportedModels | null,
+  label: string
 ): void {
-  const { model } = result;
-  if (current) {
-    for (const item of current.data) {
-      const [, id] = item.id.split(":");
-      const coverage = registry.find((institution) => institution.id === id)
-        ?.datasets[result.dataset];
-      const replacement = model.data.find((entry) => entry.id === item.id);
-      if (replacement) {
-        const previous = "plans" in item ? item.plans : item.products;
-        const next =
-          "plans" in replacement ? replacement.plans : replacement.products;
-        const missing = unreconciledProducts(
-          coverage,
-          previous.map((product) => product.name),
-          next.map((product) => product.name)
-        );
-        if (missing.length > 0) {
-          throw new Error(
-            `Replacement would remove products from ${item.id} without review: ${missing.join(", ")}`
-          );
-        }
-        continue;
-      }
-      if (
-        coverage?.status !== "excluded" ||
-        !coverage.sourceUrl ||
-        !coverage.reviewedAt
-      ) {
-        throw new Error(
-          `Replacement would remove ${item.id} without a reviewed exclusion`
-        );
-      }
-    }
+  if (
+    model &&
+    new Set(model.data.map((item) => item.id)).size !== model.data.length
+  ) {
+    throw new Error(`Invalid ${label}: duplicate institution identifiers`);
   }
 }
 
 async function persist(
-  result: CollectionResult & { model: SupportedModels },
+  model: SupportedModels,
   current: SupportedModels | null,
-  deps: PublishDependencies
+  deps: PublishDependencies,
+  dataset: DataType,
+  complete: boolean
 ): Promise<"saved" | "unchanged"> {
-  const { model } = result;
   if (current && !hasDataChanged(model, current)) {
-    await deps.markChecked();
+    if (complete) {
+      await deps.markChecked();
+    }
     return "unchanged";
   }
-  if (!(await deps.save(model))) {
-    throw new Error(`Failed to save ${result.dataset}`);
+  if (!(await deps.save(model, { complete }))) {
+    throw new Error(`Failed to save ${dataset}`);
   }
   return "saved";
 }
 
-/** Preflight every category and stored snapshot before allowing any database mutation. */
+/** Finish independent categories before reporting any collection or persistence errors. */
 export async function publishDirectBatch(
   dependencies: PublishDependencies[]
 ): Promise<void> {
-  const prepared = await Promise.all(
-    dependencies.map(async (deps) => {
-      const result = await deps.collect();
-      assertComplete(result);
-      return { deps, result };
-    })
-  );
-  const verified = await Promise.all(
-    prepared.map(async ({ deps, result }) => {
-      const current = await deps.load();
-      assertReplacement(result, current, deps.registry);
-      return { deps, result, current };
-    })
-  );
-  for (const { deps, result, current } of verified) {
-    // Wrangler is synchronous; do not launch competing database writes.
-    // oxlint-disable-next-line no-await-in-loop
-    const status = await persist(result, current, deps);
-    console.info(`${result.dataset}: ${status}`);
+  const errors: unknown[] = [];
+  for (const deps of dependencies) {
+    try {
+      // Wrangler is synchronous; do not launch competing database writes.
+      // oxlint-disable-next-line no-await-in-loop
+      const status = await publishDirectDataset(deps);
+      console.info(`Direct publication: ${status}`);
+    } catch (error) {
+      errors.push(error);
+      console.error(error);
+    }
+  }
+  if (errors.length > 0) {
+    throw new AggregateError(
+      errors,
+      `Direct publication completed with errors:\n${errors.map((error) => (error instanceof Error ? error.message : String(error))).join("\n")}`
+    );
   }
 }
 
@@ -130,7 +156,7 @@ function persistenceFor(result: CollectionResult): PublishDependencies {
   return {
     collect: () => Promise.resolve(result),
     load: () => loadFromD1(dataset, schemas[dataset], { strict: true }),
-    save: (model) => saveToD1(model, dataset),
+    save: (model, { complete }) => saveToD1(model, dataset, { complete }),
     markChecked: async () => {
       if (!(await markCheckedInD1(dataset))) {
         throw new Error(`Failed to record successful check of ${dataset}`);
@@ -197,7 +223,15 @@ async function collectAll(reportPath: string): Promise<CollectionResult[]> {
         institutions,
         directSources,
         fetchPage
-      );
+      ).catch((error: unknown): CollectionResult => ({
+        dataset,
+        checkedAt: new Date().toISOString(),
+        sources: [],
+        blockers: [error instanceof Error ? error.message : String(error)],
+        model: null,
+        preview: null,
+        publishable: null,
+      }));
       results.push(result);
       console.info(
         `${dataset}: ${result.sources.filter((source) => source.status === "ok").length}/${result.sources.length} sources succeeded; ${result.blockers.length} blockers`
