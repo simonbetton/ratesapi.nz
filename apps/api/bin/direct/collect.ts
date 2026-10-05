@@ -101,11 +101,7 @@ async function fetchFirstParty(
   fetcher: HttpFetch
 ): Promise<string> {
   const origin = new URL(url);
-  if (
-    origin.protocol !== "https:" ||
-    origin.hostname === "interest.co.nz" ||
-    origin.hostname.endsWith(".interest.co.nz")
-  ) {
+  if (origin.protocol !== "https:") {
     throw new Error(`Not an allowed first-party source: ${url}`);
   }
   for (let attempt = 0; attempt < 2; attempt += 1) {

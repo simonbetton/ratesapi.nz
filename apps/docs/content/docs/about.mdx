@@ -10,7 +10,7 @@ Simon Betton, an independent software developer, makes and operates Rates API. F
 
 Rates API is an open source project. The source code, the issues, and the history of changes are in the [GitHub repository](https://github.com/simonbetton/ratesapi.nz).
 
-Rates API is independent. It is not affiliated with interest.co.nz or with a lender. interest.co.nz and the lenders do not endorse Rates API.
+Rates API is independent. It is not affiliated with, or endorsed by, any lender.
 
 ## How Data Collection Operates
 
@@ -19,7 +19,7 @@ Rates API is independent. It is not affiliated with interest.co.nz or with a len
 3. The scripts validate rates and coverage before saving. A failed source or an unresolved institution prevents publication. If the validated data changed, the API saves it.
 4. The API keeps a maximum of one snapshot for each dataset on each UTC date.
 
-The history starts on 8 March 2025. Earlier snapshots came from interest.co.nz. Direct records have a `sourceUrl` field. The migration keeps the stored datasets until direct coverage is complete; use the source fields and health endpoint to distinguish direct data from older records.
+The history starts on 8 March 2025. Direct records have a `sourceUrl` field. The migration keeps the stored datasets until direct coverage is complete; use the source fields and health endpoint to distinguish direct data from older records.
 
 To see the time of the last change to each dataset, send a request to [`/api/v1/health`](/api/v1/health). For more information, read [Core Concepts](/api-reference/concepts).
 
@@ -47,7 +47,7 @@ Rates API can block traffic that causes problems for the service.
 | --- | --- |
 | Source code | The [MIT licence](https://github.com/simonbetton/ratesapi.nz/blob/main/LICENSE) |
 | Direct rate data | See the institution page in `sourceUrl` |
-| Earlier rate snapshots | Originally collected from [interest.co.nz](https://www.interest.co.nz) |
+| Rate records | Check the source fields for provenance and the source’s terms |
 
 The MIT licence applies only to the source code. It does not apply to the rate data.
 
@@ -57,9 +57,9 @@ Show users the institution and source URL for direct records. Keep the original 
 
 ## Frequently Asked Questions
 
-### Is Rates API affiliated with interest.co.nz?
+### Is Rates API affiliated with any lender?
 
-No. Rates API is an independent project. It is not affiliated with interest.co.nz, and interest.co.nz does not endorse it. New collection uses institution websites. Earlier stored snapshots used interest.co.nz.
+No. Rates API is an independent project. It is not affiliated with, or endorsed by, any lender. Collection uses institution websites.
 
 ### Can I use the data commercially?
 

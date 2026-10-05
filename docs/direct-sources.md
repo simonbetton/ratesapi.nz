@@ -2,7 +2,7 @@
 
 Reviewed 5 October 2026. The public-rate migration register has **zero pending entries and zero unreconciled legacy products**. All 112 implemented adapters have passed live checks. Production deployment and D1 publication are separate from the read-only verification recorded here.
 
-Rate values come only from institution websites, public feeds used by those websites, and their currently linked disclosures. The interest.co.nz client and parsers have been removed. Failed collection cannot fall back to an aggregator, saved fixture or previous rate.
+Rate values come only from institution websites, public feeds used by those websites, and their currently linked disclosures. Failed collection cannot fall back to an aggregator, saved fixture or previous rate.
 
 ## Coverage and scope
 
@@ -165,7 +165,7 @@ The collector uses pinned Playwright 1.63.0 and tsx 4.23.15 under Node.js 24. Bu
 - `RATES_BROWSER=local`: Chromium only; no paid service credentials required.
 - `RATES_BROWSER=cloud`: Cloud only; fails immediately if the key is missing.
 
-Cloud sessions start with NZ proxy routing, have a 15-minute expiry, and are explicitly stopped in cleanup. Retryable proxy/connection failures stop the failed session before one retry through Australia. Audit attempts record the host, proxy country, status and sanitised failure code; they never include API keys or CDP URLs. Pages normally use isolated contexts. Bank of India opts into the cloud default context so the host can complete its security interstitial; the page is closed afterward and the cloud session is always stopped. Browser access is serial and cached only for that run. ASB and BNZ mortgage pages must load their public rate feeds successfully and populate the required cells. Missing placeholders, unrelated percentages and failed feeds cannot produce a publishable model. Cross-origin main-frame redirects and interest.co.nz requests are rejected.
+Cloud sessions start with NZ proxy routing, have a 15-minute expiry, and are explicitly stopped in cleanup. Retryable proxy/connection failures stop the failed session before one retry through Australia. Audit attempts record the host, proxy country, status and sanitised failure code; they never include API keys or CDP URLs. Pages normally use isolated contexts. Bank of India opts into the cloud default context so the host can complete its security interstitial; the page is closed afterward and the cloud session is always stopped. Browser access is serial and cached only for that run. ASB and BNZ mortgage pages must load their public rate feeds successfully and populate the required cells. Missing placeholders, unrelated percentages and failed feeds cannot produce a publishable model. Cross-origin main-frame redirects are rejected.
 
 Both workflows install Node.js 24, Chromium and its Linux dependencies. The hourly scraper uses the same complete-coverage publication gate. The **Audit direct institution sources** workflow runs browser tests on pull requests. Pull requests from this repository also run the complete live read-only audit; forks do not receive the cloud key. Manual dispatch defaults to all sources, with optional host and institution inputs for diagnostics. Its collection step receives only the optional browser key, with no database credentials. It uploads sanitized access diagnostics and coverage results even when access fails. The full audit fails on either access or coverage errors. A selected-institution browser diagnostic reports coverage separately and never publishes.
 

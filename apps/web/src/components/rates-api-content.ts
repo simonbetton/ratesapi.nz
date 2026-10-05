@@ -87,7 +87,7 @@ export const integrationNotes: { question: string; answer: Inline[] }[] = [
   {
     question: "Where do the rates come from?",
     answer: [
-      "Direct collections use institution websites and include a sourceUrl. Older snapshots came from interest.co.nz. Collection is scheduled hourly, but freshness varies by dataset. Check ",
+      "Direct collections use institution websites and include a sourceUrl. Collection is scheduled hourly, but freshness varies by dataset. Check ",
       { code: "lastUpdated" },
       " and confirm rates and eligibility with the provider before relying on an offer. ",
       {

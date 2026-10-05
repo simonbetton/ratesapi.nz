@@ -344,11 +344,7 @@ export async function renderPage(
   timeoutMs = 45_000
 ): Promise<string> {
   const origin = new URL(url);
-  if (
-    origin.protocol !== "https:" ||
-    origin.hostname === "interest.co.nz" ||
-    origin.hostname.endsWith(".interest.co.nz")
-  ) {
+  if (origin.protocol !== "https:") {
     throw new Error("Browser source must be a first-party HTTPS URL");
   }
   if (

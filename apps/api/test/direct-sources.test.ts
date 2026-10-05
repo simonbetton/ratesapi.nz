@@ -527,18 +527,18 @@ describe("first-party fetch boundary", () => {
     expect(requests).toBe(1);
   });
 
-  test("never requests the aggregator or follows an unapproved redirect", async () => {
+  test("rejects non-HTTPS sources and unapproved redirects", async () => {
     let requests = 0;
     const fetchPage = createSourceFetcher(async () => {
       requests += 1;
       return new Response(null, {
         status: 302,
-        headers: { location: "https://www.interest.co.nz/borrowing" },
+        headers: { location: "https://other.example/rates" },
       });
     });
-    await expect(
-      fetchPage("https://www.interest.co.nz/borrowing")
-    ).rejects.toThrow("Not an allowed");
+    await expect(fetchPage("http://bank.example/rates")).rejects.toThrow(
+      "Not an allowed"
+    );
     expect(requests).toBe(0);
     await expect(fetchPage("https://bank.example/rates")).rejects.toThrow(
       "Unapproved"

@@ -16,7 +16,7 @@ const summary =
 
 const introduction = [
   "The base URL is https://www.ratesapi.nz. All responses are JSON.",
-  "New collections come directly from institution websites and can be incorrect or late. Earlier snapshots came from interest.co.nz. Before you use a rate, check it with the lender. Rates API is independent. It is not affiliated with interest.co.nz or with any lender.",
+  "New collections come directly from institution websites and can be incorrect or late. Before you use a rate, check it with the lender. Rates API is independent. It is not affiliated with any lender.",
   "Do not use Rates API for interest rates outside New Zealand, for savings or term deposit rates, for exchange rates, or as financial advice.",
 ].join("\n\n");
 

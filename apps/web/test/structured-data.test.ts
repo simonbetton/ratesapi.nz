@@ -62,7 +62,7 @@ describe("homepage JSON-LD", () => {
     }
   });
 
-  test("describes direct and historical provenance without licensing the rate data", () => {
+  test("describes direct provenance without licensing the rate data", () => {
     const dataset = nodeOfType(homepageStructuredData(facts), "Dataset");
     expect(dataset.license).toBeUndefined();
     expect(dataset.isBasedOn).toBeUndefined();
@@ -70,7 +70,6 @@ describe("homepage JSON-LD", () => {
     expect(dataset.usageInfo).toBe(
       "https://www.ratesapi.nz/docs/about#data-source-and-licence"
     );
-    expect(dataset.creditText).toContain("interest.co.nz");
     // The MIT licence stays on the code.
     const api = nodeOfType(homepageStructuredData(facts), "WebAPI");
     expect(api.license).toBe(

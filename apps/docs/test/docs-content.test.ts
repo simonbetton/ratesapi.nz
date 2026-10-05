@@ -154,7 +154,7 @@ describe("docs MDX content", () => {
       "## Data Source and Licence [#data-source-and-licence]"
     );
     expect(about).toContain("It does not apply to the rate data.");
-    expect(about).toContain("### Is Rates API affiliated with interest.co.nz?");
+    expect(about).toContain("### Is Rates API affiliated with any lender?");
     expect(about).toContain("### Can I use the data commercially?");
     expect(about).toContain(
       "https://github.com/simonbetton/ratesapi.nz/issues"
