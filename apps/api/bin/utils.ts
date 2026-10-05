@@ -1,4 +1,7 @@
 import { execFileSync } from "node:child_process";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import type { TSchema } from "elysia";
@@ -11,6 +14,8 @@ import { parseSchema } from "../src/lib/schema";
 export interface D1Target {
   databaseName: string;
   flags: string[];
+  /** Override only for isolated local databases in integration tests. */
+  configPath?: string;
 }
 
 export interface D1RunOptions {
@@ -79,7 +84,7 @@ export async function saveToD1(
   }
 
   try {
-    const [timestamp] = now().toISOString().split("T");
+    const timestamp = now().toISOString().slice(0, 10);
     const dataJson = toSavableJson(data);
 
     const prepareSpinner = ora("Preparing data for D1").start();
@@ -98,16 +103,17 @@ export async function saveToD1(
       .stop();
 
     const saveSpinner = ora(`Saving ${dataType} snapshot`).start();
-    const historyStatement = `INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES ('${dataType}', '${timestamp}', '${dataJson}')`;
+    const historyStatements = snapshotStatements(dataType, timestamp, dataJson);
+    const snapshot = `(SELECT data FROM historical_data WHERE data_type='${dataType}' AND date='${timestamp}')`;
 
     const latestStatement =
       deps.complete === false
-        ? `INSERT INTO latest_data (data_type, data, last_updated) VALUES ('${dataType}', '${dataJson}', CURRENT_TIMESTAMP) ON CONFLICT(data_type) DO UPDATE SET data=excluded.data, last_updated=excluded.last_updated`
-        : `INSERT OR REPLACE INTO latest_data (data_type, data, last_updated, last_checked) VALUES ('${dataType}', '${dataJson}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`;
+        ? `INSERT INTO latest_data (data_type, data, last_updated) VALUES ('${dataType}', ${snapshot}, CURRENT_TIMESTAMP) ON CONFLICT(data_type) DO UPDATE SET data=excluded.data, last_updated=excluded.last_updated`
+        : `INSERT OR REPLACE INTO latest_data (data_type, data, last_updated, last_checked) VALUES ('${dataType}', ${snapshot}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`;
     try {
       // Partial updates use an upsert so the previous last_checked survives.
       // New partial datasets have no last_checked until a complete collection.
-      run(target, [historyStatement, latestStatement].join("; "));
+      run(target, [...historyStatements, latestStatement].join("; "));
     } catch (error) {
       if (!isMissingLastCheckedError(error)) {
         throw error;
@@ -119,8 +125,8 @@ export async function saveToD1(
       run(
         target,
         [
-          historyStatement,
-          `INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES ('${dataType}', '${dataJson}', CURRENT_TIMESTAMP)`,
+          ...historyStatements,
+          `INSERT OR REPLACE INTO latest_data (data_type, data, last_updated) VALUES ('${dataType}', ${snapshot}, CURRENT_TIMESTAMP)`,
         ].join("; ")
       );
     }
@@ -149,6 +155,25 @@ export async function saveToD1(
 
     return false;
   }
+}
+
+/** Keep each statement below D1's 100 KB SQL limit, without splitting the batch. */
+function snapshotStatements(
+  dataType: DataType,
+  date: string,
+  encoded: string
+): string[] {
+  // Base64 is ASCII, so slicing characters also bounds the SQL byte length.
+  const chunkSize = 32_768;
+  const statements = [
+    `INSERT OR REPLACE INTO historical_data (data_type, date, data) VALUES ('${dataType}', '${date}', '${encoded.slice(0, chunkSize)}')`,
+  ];
+  for (let offset = chunkSize; offset < encoded.length; offset += chunkSize) {
+    statements.push(
+      `UPDATE historical_data SET data=data || '${encoded.slice(offset, offset + chunkSize)}' WHERE data_type='${dataType}' AND date='${date}'`
+    );
+  }
+  return statements;
 }
 
 /**
@@ -317,20 +342,38 @@ export function runWranglerD1(
     "execute",
     target.databaseName,
     "--config",
-    wranglerConfigPath,
+    target.configPath ?? wranglerConfigPath,
     ...target.flags,
-    "--command",
-    command,
   ];
 
   if (options.json) {
     args.push("--json");
   }
 
-  return execFileSync("npx", args, {
-    encoding: "utf-8",
-    stdio: ["ignore", "pipe", "pipe"],
-  });
+  // Linux limits each argv entry to 128 KiB. Use a file for large atomic
+  // history/latest batches well before reaching that limit.
+  const directory =
+    Buffer.byteLength(command, "utf-8") >= 64 * 1024
+      ? mkdtempSync(path.join(tmpdir(), "ratesapi-d1-"))
+      : null;
+  try {
+    if (directory) {
+      const filename = path.join(directory, "query.sql");
+      writeFileSync(filename, `${command};\n`, { mode: 0o600 });
+      args.push("--file", filename, "--yes");
+    } else {
+      args.push("--command", command);
+    }
+    return execFileSync("npx", args, {
+      cwd: path.dirname(wranglerConfigPath),
+      encoding: "utf-8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+  } finally {
+    if (directory) {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  }
 }
 
 export function extractWranglerRows(

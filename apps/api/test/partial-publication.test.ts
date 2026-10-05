@@ -60,6 +60,13 @@ async function previousModel(): Promise<MortgageRates> {
   return { ...result.model, lastUpdated: "2026-10-04T08:00:00.000Z" };
 }
 
+function required<T>(value: T | undefined): T {
+  if (value === undefined) {
+    throw new Error("Missing test fixture");
+  }
+  return value;
+}
+
 function persistence(
   result: CollectionResult,
   previous: SupportedModels | null
@@ -279,6 +286,118 @@ describe("publication isolation and recovery", () => {
     );
     expect(state).toMatchObject({ stored: previous, saves: 0, checks: 0 });
   });
+
+  test("replaces duplicate legacy rows only after reconciling every row", async () => {
+    const previous = await previousModel();
+    const extra = structuredClone(required(previous.data[1]));
+    extra.products = [
+      { id: "product:midlands:retired", name: "Retired", rates: [] },
+    ];
+    previous.data.push(extra);
+    const result = await collect([adapter("anz", 5.5), adapter("midlands", 7)]);
+    const { state, deps } = persistence(result, previous);
+    // A healthy source alone does not justify silently discarding the extra row.
+    await expect(publishDirectDataset(deps)).rejects.toThrow(
+      "duplicate institution identifiers"
+    );
+    expect(state.saves).toBe(0);
+    deps.registry = structuredClone(registry);
+    required(
+      required(deps.registry[1]).datasets["mortgage-rates"]
+    ).productDecisions = {
+      Retired: {
+        replacements: [],
+        reason: "Retired product",
+        sourceUrl: "https://midlands.example/retired",
+      },
+    };
+    await expect(publishDirectDataset(deps)).resolves.toBe("saved");
+    expect(state.stored?.data.map((item) => item.id)).toEqual([
+      "institution:anz",
+      "institution:midlands",
+    ]);
+    expect(JSON.stringify(state.stored?.data[1])).toContain('"rate":7');
+    expect(state.complete).toBe(true);
+  });
+
+  test.each([false, true])(
+    "a missing product in either duplicate row blocks replacement (reverse=%s)",
+    async (reverse) => {
+      const previous = await previousModel();
+      const extra = structuredClone(required(previous.data[1]));
+      extra.products = [
+        { id: "product:midlands:extra", name: "Extra", rates: [] },
+      ];
+      previous.data.push(extra);
+      if (reverse) {
+        previous.data.reverse();
+      }
+      const result = await collect([
+        adapter("anz", 5.5),
+        adapter("midlands", 7),
+      ]);
+      const { state, deps } = persistence(result, previous);
+      await expect(publishDirectDataset(deps)).rejects.toThrow(
+        "duplicate institution identifiers"
+      );
+      expect(state).toMatchObject({ stored: previous, saves: 0, checks: 0 });
+    }
+  );
+
+  test.each([
+    "reviewed",
+    "missing source",
+    "missing date",
+    "missing reason",
+    "pending",
+  ])(
+    "%s exclusion controls removal from the latest snapshot",
+    async (review) => {
+      const previous = await previousModel();
+      const result = await collect([
+        adapter("anz", 5.5),
+        adapter("midlands", 7),
+      ]);
+      const excluded = structuredClone(required(previous.data[1]));
+      excluded.id = "institution:retired";
+      previous.data.push(excluded);
+      const { state, deps } = persistence(result, previous);
+      deps.registry = [
+        ...registry,
+        {
+          id: "retired",
+          name: "Retired lender",
+          datasets: {
+            "mortgage-rates": {
+              status: review === "pending" ? "pending" : "excluded",
+              legacyProducts: [],
+              reason: review === "missing reason" ? "" : "No longer lending",
+              sourceUrl:
+                review === "missing source"
+                  ? undefined
+                  : "https://retired.example/closure",
+              reviewedAt: review === "missing date" ? undefined : "2026-10-05",
+            },
+          },
+        },
+      ];
+      if (review === "reviewed") {
+        await expect(publishDirectDataset(deps)).resolves.toBe("saved");
+        expect(state.stored?.data.some((item) => item.id === excluded.id)).toBe(
+          false
+        );
+        expect(state.complete).toBe(true);
+      } else {
+        await expect(publishDirectDataset(deps)).rejects.toThrow(
+          "institution:retired: retained"
+        );
+        expect(
+          state.stored?.data.find((item) => item.id === excluded.id)
+        ).toEqual(excluded);
+        expect(state.complete).toBe(false);
+      }
+    }
+  );
 
   test("a recovered complete collection resumes successful-check freshness", async () => {
     const previous = await previousModel();

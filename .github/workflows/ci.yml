@@ -28,6 +28,13 @@ jobs:
       - name: Run check
         run: bun run check
 
+      # Exercise the production SQL runner on Linux, including oversized batches
+      # and rollback. Uses a throwaway local database with no Cloudflare secrets.
+      - name: Verify D1 persistence
+        run: bun test apps/api/test/d1-persistence.integration.test.ts
+        env:
+          RUN_D1_LOCAL_TESTS: "1"
+
   build:
     name: Build
     runs-on: ubuntu-latest
