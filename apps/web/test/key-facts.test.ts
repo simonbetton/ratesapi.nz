@@ -149,7 +149,7 @@ describe("key facts copy", () => {
 
   test("falls back to wording without live numbers", () => {
     const summary = keyFactsSummary(null);
-    expect(summary).toContain("30+ lenders");
+    expect(summary).toContain("New Zealand lenders");
     expect(summary).not.toMatch(/\b\d{2} mortgage lenders/u);
     expect(wordCount(summary)).toBeGreaterThanOrEqual(40);
     expect(wordCount(summary)).toBeLessThanOrEqual(60);

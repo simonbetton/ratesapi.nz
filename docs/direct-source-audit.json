@@ -1,0 +1,936 @@
+[
+  {
+    "dataset": "mortgage-rates",
+    "checkedAt": "2026-10-05T02:21:52.103Z",
+    "sources": [
+      {
+        "id": "aia-mortgage",
+        "institution": "aia",
+        "urls": ["https://www.asb.co.nz/lending/aia-interest-rates-fees.html"],
+        "status": "ok",
+        "observations": 10
+      },
+      {
+        "id": "anz-mortgage",
+        "institution": "anz",
+        "urls": [
+          "https://www.anz.co.nz/rates-fees-agreements/home-loans/",
+          "https://www.anz.co.nz/personal/home-loans-mortgages/loan-types/reno/",
+          "https://www.anz.co.nz/bin/anzconz/rates/?format=JSON"
+        ],
+        "status": "ok",
+        "observations": 16
+      },
+      {
+        "id": "asb-mortgage",
+        "institution": "asb",
+        "urls": [
+          "https://www.asb.co.nz/home-loans-mortgages/interest-rates-fees.html"
+        ],
+        "status": "ok",
+        "observations": 11
+      },
+      {
+        "id": "avanti-mortgage",
+        "institution": "avanti-finance",
+        "urls": ["https://www.avantifinance.co.nz/rates-fees/"],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "bank-of-china-mortgage",
+        "institution": "bank-of-china",
+        "urls": [
+          "https://www.bankofchina.com/nz/en/bocinfo/bi3/",
+          "https://www.bankofchina.com/nz/en/bocinfo/bi3/202608/t20260820_25686475.html"
+        ],
+        "status": "ok",
+        "observations": 18
+      },
+      {
+        "id": "bank-of-india-mortgage",
+        "institution": "bank-of-india",
+        "urls": ["https://bankofindia.co.nz/advances"],
+        "status": "ok",
+        "observations": 5
+      },
+      {
+        "id": "baroda-mortgage",
+        "institution": "bank-of-baroda",
+        "urls": [
+          "https://www.barodanzltd.co.nz/rates-and-charges/rate-of-interest-on-loans"
+        ],
+        "status": "ok",
+        "observations": 6
+      },
+      {
+        "id": "basecorp-mortgage",
+        "institution": "basecorp-finance",
+        "urls": [
+          "https://www.basecorp.co.nz/home-loans/",
+          "https://www.basecorp.co.nz/site_files/36075/upload_files/Statement%20of%20Costs%20and%20Interest%20-%20November%202025(1).1.2.1.1.pdf?dl=1"
+        ],
+        "status": "ok",
+        "observations": 3
+      },
+      {
+        "id": "bnz-mortgage",
+        "institution": "bnz",
+        "urls": [
+          "https://www.bnz.co.nz/personal-banking/home-loans/compare-bnz-home-loan-rates"
+        ],
+        "status": "ok",
+        "observations": 12
+      },
+      {
+        "id": "ccb-mortgage",
+        "institution": "china-construction-bank",
+        "urls": ["https://nz.ccb.com/lng/newzealand/en/service/262586.shtml"],
+        "status": "ok",
+        "observations": 16
+      },
+      {
+        "id": "cfml-mortgage",
+        "institution": "cfml-loans",
+        "urls": [
+          "https://www.conradfundsmanagement.co.nz/borrowers/",
+          "https://www.conradfundsmanagement.co.nz/wp-content/uploads/2026/07/CFML-Prime-80-July-26-Rates.pdf",
+          "https://www.conradfundsmanagement.co.nz/wp-content/uploads/2026/07/CFML-321-July-26-Rates.pdf",
+          "https://www.conradfundsmanagement.co.nz/wp-content/uploads/2026/07/CFML-Prime-July-26-Rates.pdf",
+          "https://www.conradfundsmanagement.co.nz/wp-content/uploads/2026/07/CFML-Standard-July-26-Rates.pdf",
+          "https://www.conradfundsmanagement.co.nz/wp-content/uploads/2026/07/CFML-Specialist-July-26-Rates.pdf",
+          "https://www.conradfundsmanagement.co.nz/wp-content/uploads/2026/07/CFML-Investor-10-July-26-Rates.pdf"
+        ],
+        "status": "ok",
+        "observations": 6
+      },
+      {
+        "id": "christian-savings-mortgage",
+        "institution": "christian-savings",
+        "urls": [
+          "https://www.christiansavings.co.nz/churches-and-charities/ministry-loans"
+        ],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "cooperative-mortgage",
+        "institution": "co-operative-bank",
+        "urls": [
+          "https://www.co-operativebank.co.nz/api/content/content/website/rates"
+        ],
+        "status": "ok",
+        "observations": 27
+      },
+      {
+        "id": "firstcu-mortgage",
+        "institution": "first-cu",
+        "urls": ["https://www.firstcreditunion.co.nz/about/rates-and-fees/"],
+        "status": "ok",
+        "observations": 5
+      },
+      {
+        "id": "fmt-mortgage",
+        "institution": "first-mortgage-trust",
+        "urls": ["https://fmt.co.nz/lending-criteria-and-rates/"],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "general-finance-mortgage-rates",
+        "institution": "general-finance",
+        "urls": ["https://generalfinance.co.nz/loans/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "hbs-mortgage",
+        "institution": "heretaunga-bldg-socy",
+        "urls": ["https://www.heretaungabuildingsociety.co.nz/borrow/"],
+        "status": "ok",
+        "observations": 3
+      },
+      {
+        "id": "heartland-mortgage",
+        "institution": "heartland-bank",
+        "urls": [
+          "https://www.heartland.co.nz/home-loans",
+          "https://www.heartland.co.nz/reverse-mortgage/interest-rates",
+          "https://www.heartland.co.nz/village-access-loans/rates-fees"
+        ],
+        "status": "ok",
+        "observations": 4
+      },
+      {
+        "id": "icbc-mortgage",
+        "institution": "icbc",
+        "urls": [
+          "https://nz.icbc.com.cn/ICBC/%E6%B5%B7%E5%A4%96%E5%88%86%E8%A1%8C/%E5%B7%A5%E9%93%B6%E6%96%B0%E8%A5%BF%E5%85%B0%E7%BD%91%E7%AB%99/EN/RatesFees/HomeLoans/HomeLoan.htm"
+        ],
+        "status": "ok",
+        "observations": 8
+      },
+      {
+        "id": "indi-mortgage",
+        "institution": "indi",
+        "urls": ["https://indi.nz/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "kiwibank-mortgage",
+        "institution": "kiwibank",
+        "urls": [
+          "https://www.kiwibank.co.nz/personal-banking/home-loans/rates-and-fees/",
+          "https://rates.kiwibank.co.nz/api/v1/rates?id__in=562,676,563,677,565,679,567,681,568,682,569,683,571,572,663,733,582,649"
+        ],
+        "status": "ok",
+        "observations": 15
+      },
+      {
+        "id": "liberty-mortgage",
+        "institution": "liberty-financial",
+        "urls": [
+          "https://www.libfin.co.nz/home-loans",
+          "https://a.storyblok.com/f/84674/x/2f95880af2/nz-liberty-consumer-interest-rates.pdf"
+        ],
+        "status": "ok",
+        "observations": 15
+      },
+      {
+        "id": "midlands-mortgage",
+        "institution": "midlands-mortgage-trust",
+        "urls": ["https://investmidlands.co.nz/faqs/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "nbs-mortgage",
+        "institution": "nelson-bldg-society",
+        "urls": ["https://www.nbs.co.nz/interest-rates-and-fees"],
+        "status": "ok",
+        "observations": 9
+      },
+      {
+        "id": "paraloan-mortgage-rates",
+        "institution": "paraloan",
+        "urls": ["https://www.paraloan.org.nz/26/costs-of-borrowing"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "pepper-mortgage",
+        "institution": "pepper-money",
+        "urls": ["https://adviser.peppermoney.co.nz/home-loans"],
+        "status": "ok",
+        "observations": 3
+      },
+      {
+        "id": "police-mortgage",
+        "institution": "police-cu",
+        "urls": ["https://www.policecu.org.nz/about-us/rates/"],
+        "status": "ok",
+        "observations": 11
+      },
+      {
+        "id": "resimac-mortgage",
+        "institution": "resimac",
+        "urls": ["https://www.resimac.co.nz/home-loans/rates-all"],
+        "status": "ok",
+        "observations": 68
+      },
+      {
+        "id": "sbs-mortgage",
+        "institution": "sbs-bank",
+        "urls": ["https://www.sbsbank.co.nz/rates"],
+        "status": "ok",
+        "observations": 20
+      },
+      {
+        "id": "simplicity-mortgage",
+        "institution": "simplicity",
+        "urls": ["https://simplicity.kiwi/simplicity-first-home-loans"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "tsb-mortgage",
+        "institution": "tsb-bank",
+        "urls": ["https://www.tsb.co.nz/rates-fees-agreements/home-loan"],
+        "status": "ok",
+        "observations": 17
+      },
+      {
+        "id": "unity-mortgage",
+        "institution": "unitymoney",
+        "urls": ["https://unitymoney.co.nz/about-us/interest-rates/"],
+        "status": "ok",
+        "observations": 11
+      },
+      {
+        "id": "wbs-mortgage",
+        "institution": "wairarapa-bldg-society",
+        "urls": ["https://wbs.net.nz/home-loans/"],
+        "status": "ok",
+        "observations": 4
+      },
+      {
+        "id": "welcome-mortgage",
+        "institution": "welcome",
+        "urls": ["https://www.welcome.co.nz/borrow/"],
+        "status": "ok",
+        "observations": 5
+      },
+      {
+        "id": "westpac-mortgage",
+        "institution": "westpac",
+        "urls": [
+          "https://www.westpac.co.nz/home-loans-mortgages/interest-rates/",
+          "https://www.westpac.co.nz/home-loans-mortgages/options/greater-choices-home-loan/"
+        ],
+        "status": "ok",
+        "observations": 18
+      },
+      {
+        "id": "xceda-mortgage",
+        "institution": "xceda-finance",
+        "urls": [
+          "https://www.xceda.co.nz/important-information/lending-interest-rates-fees-and-standard-terms",
+          "https://www.xceda.co.nz/hubfs/Lending%20Rates%20(CCCFA)%2020.04.2026.pdf"
+        ],
+        "status": "ok",
+        "observations": 2
+      }
+    ],
+    "blockers": [],
+    "publishable": true,
+    "institutionCount": 36,
+    "observationCount": 359
+  },
+  {
+    "dataset": "personal-loan-rates",
+    "checkedAt": "2026-10-05T02:24:14.361Z",
+    "sources": [
+      {
+        "id": "aa-money-personal-loan-rates",
+        "institution": "aa-money",
+        "urls": ["https://www.aamoney.co.nz/our-pricing/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "admiral-finance-personal-loan-rates",
+        "institution": "admiral-finance",
+        "urls": ["https://www.admiralfinance.co.nz/interest-rates-fees/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "anz-personal",
+        "institution": "anz",
+        "urls": [
+          "https://www.anz.co.nz/rates-fees-agreements/personal-loans/",
+          "https://www.anz.co.nz/bin/anzconz/rates/?format=JSON"
+        ],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "aotea-finance-personal-loan-rates",
+        "institution": "aotea-finance",
+        "urls": ["https://aoteafinance.co.nz/costs-of-borrowing/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "asb-personal",
+        "institution": "asb",
+        "urls": ["https://www.asb.co.nz/personal-loans"],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "avanti-finance-personal-loan-rates",
+        "institution": "avanti-finance",
+        "urls": ["https://www.avantifinance.co.nz/rates-fees/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "baroda-personal-loan-rates",
+        "institution": "bank-of-baroda",
+        "urls": [
+          "https://www.barodanzltd.co.nz/rates-and-charges/rate-of-interest-on-loans"
+        ],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "bnz-personal",
+        "institution": "bnz",
+        "urls": ["https://www.bnz.co.nz/personal-banking/personal-loan"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "cooperative-personal-loan-rates",
+        "institution": "co-operative-bank",
+        "urls": [
+          "https://www.co-operativebank.co.nz/api/content/content/website/borrowing/personal-loans"
+        ],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "fhl-personal",
+        "institution": "financial-holdings",
+        "urls": ["https://www.fhlnz.co.nz/interestRates/"],
+        "status": "ok",
+        "observations": 6
+      },
+      {
+        "id": "finance-direct-personal-loan-rates",
+        "institution": "finance-direct",
+        "urls": ["https://www.financedirect.co.nz/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "finance-now-personal-loan-rates",
+        "institution": "finance-now",
+        "urls": ["https://www.financenow.co.nz/personal-loans/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "first-cu-personal-loan-rates",
+        "institution": "first-cu",
+        "urls": ["https://www.firstcreditunion.co.nz/about/rates-and-fees/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "future-finance-personal-loan-rates",
+        "institution": "future-finance",
+        "urls": ["https://www.futurefinance.co.nz/interest-rates"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "gem-personal-loan-rates",
+        "institution": "gem",
+        "urls": ["https://www.gemfinance.co.nz/loans/personal-loans/"],
+        "status": "ok",
+        "observations": 4
+      },
+      {
+        "id": "geneva-finance-personal-loan-rates",
+        "institution": "geneva-finance",
+        "urls": ["https://www.genevafinance.co.nz/important-information"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "gilrose-finance-personal-loan-rates",
+        "institution": "gilrose-finance",
+        "urls": ["https://www.gilrose.co.nz/personal-loans/rates-and-fees"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "gold-band-personal-loan-rates",
+        "institution": "gold-band-finance",
+        "urls": [
+          "https://goldbandfinance.nz/personal-lending/",
+          "https://goldbandfinance.nz/assets/files/schedule-of-interest_rates_standard-charges-gold-band-finance.pdf"
+        ],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "harmoney-personal-loan-rates",
+        "institution": "harmoney",
+        "urls": ["https://www.harmoney.co.nz/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "heartland-personal",
+        "institution": "heartland-bank",
+        "urls": [
+          "https://www.heartland.co.nz/personal-loans/rates-fees-terms",
+          "https://www.heartland.co.nz/savings-and-deposits/youchoose/pricing"
+        ],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "instant-finance-personal-loan-rates",
+        "institution": "instant-finance",
+        "urls": ["https://instantfinance.co.nz/key-information/rates-fees/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "lending-crowd-personal",
+        "institution": "lending-crowd",
+        "urls": ["https://lendingcrowd.co.nz/howitworks/ratesandfees"],
+        "status": "ok",
+        "observations": 45
+      },
+      {
+        "id": "mtf-finance-personal-loan-rates",
+        "institution": "mtf-finance",
+        "urls": [
+          "https://www.mtf.co.nz/important-information/interest-rates-and-fees"
+        ],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "nbs-personal",
+        "institution": "nelson-bldg-society",
+        "urls": ["https://www.nbs.co.nz/interest-rates-and-fees"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "nectar-personal-loan-rates",
+        "institution": "nectar",
+        "urls": ["https://nectar.co.nz/rate-and-terms/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "nova-medical-finance-personal-loan-rates",
+        "institution": "nova-medical-finance",
+        "urls": ["https://www.novamedical.co.nz/interest-rates-disclosure"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "paraloan-personal-loan-rates",
+        "institution": "paraloan",
+        "urls": ["https://www.paraloan.org.nz/26/costs-of-borrowing"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "police-personal-loan-rates",
+        "institution": "police-cu",
+        "urls": ["https://www.policecu.org.nz/about-us/rates/"],
+        "status": "ok",
+        "observations": 4
+      },
+      {
+        "id": "pronto-finance-personal-loan-rates",
+        "institution": "pronto-finance",
+        "urls": ["https://www.prontofinance.co.nz/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "quick-cash-finance-personal-loan-rates",
+        "institution": "quick-cash-finance",
+        "urls": ["https://quickcash.co.nz/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "toyota-personal-loan-rates",
+        "institution": "toyota-financial-services",
+        "urls": [
+          "https://www.toyota.co.nz/toyota-finance-leasing/consumer-interest-rates-and-fees/"
+        ],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "tsb-personal",
+        "institution": "tsb-bank",
+        "urls": [
+          "https://www.tsb.co.nz/rates-fees-agreements/personal-loans",
+          "https://www.tsb.co.nz/rates-fees-agreements/overdraft"
+        ],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "unity-personal-loan-rates",
+        "institution": "unitymoney",
+        "urls": ["https://unitymoney.co.nz/about-us/interest-rates/"],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "westpac-personal-loan-rates",
+        "institution": "westpac",
+        "urls": [
+          "https://www.westpac.co.nz/personal-loans/",
+          "https://www.westpac.co.nz/personal-loans/ev-loan/"
+        ],
+        "status": "ok",
+        "observations": 2
+      }
+    ],
+    "blockers": [],
+    "publishable": true,
+    "institutionCount": 34,
+    "observationCount": 96
+  },
+  {
+    "dataset": "car-loan-rates",
+    "checkedAt": "2026-10-05T02:24:51.304Z",
+    "sources": [
+      {
+        "id": "aa-money-car-loan-rates",
+        "institution": "aa-money",
+        "urls": ["https://www.aamoney.co.nz/our-pricing/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "asb-car",
+        "institution": "asb",
+        "urls": ["https://www.asb.co.nz/personal-loans"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "avanti-finance-car-loan-rates",
+        "institution": "avanti-finance",
+        "urls": ["https://www.avantifinance.co.nz/rates-fees/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "baroda-car-loan-rates",
+        "institution": "bank-of-baroda",
+        "urls": [
+          "https://www.barodanzltd.co.nz/rates-and-charges/rate-of-interest-on-loans"
+        ],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "cfs-finance-car-loan-rates",
+        "institution": "cfs-finance",
+        "urls": ["https://www.cfsfinance.co.nz/disclosure-info/interests/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "cooperative-car-loan-rates",
+        "institution": "co-operative-bank",
+        "urls": [
+          "https://www.co-operativebank.co.nz/api/content/content/website/borrowing/personal-loans"
+        ],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "fhl-car",
+        "institution": "financial-holdings",
+        "urls": ["https://www.fhlnz.co.nz/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "finance-direct-car-loan-rates",
+        "institution": "finance-direct",
+        "urls": ["https://www.financedirect.co.nz/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "finance-now-car-loan-rates",
+        "institution": "finance-now",
+        "urls": ["https://www.financenow.co.nz/personal-loans/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "first-cu-car-loan-rates",
+        "institution": "first-cu",
+        "urls": ["https://www.firstcreditunion.co.nz/about/rates-and-fees/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "gem-car-loan-rates",
+        "institution": "gem",
+        "urls": ["https://www.gemfinance.co.nz/loans/car-loans/"],
+        "status": "ok",
+        "observations": 4
+      },
+      {
+        "id": "geneva-finance-car-loan-rates",
+        "institution": "geneva-finance",
+        "urls": ["https://www.genevafinance.co.nz/important-information"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "gold-band-car-loan-rates",
+        "institution": "gold-band-finance",
+        "urls": [
+          "https://goldbandfinance.nz/personal-lending/",
+          "https://goldbandfinance.nz/assets/files/schedule-of-interest_rates_standard-charges-gold-band-finance.pdf"
+        ],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "harmoney-car-loan-rates",
+        "institution": "harmoney",
+        "urls": ["https://www.harmoney.co.nz/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "heartland-car",
+        "institution": "heartland-bank",
+        "urls": ["https://www.heartland.co.nz/car-loans/rates-fees-terms"],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "instant-finance-car-loan-rates",
+        "institution": "instant-finance",
+        "urls": ["https://instantfinance.co.nz/key-information/rates-fees/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "mtf-finance-car-loan-rates",
+        "institution": "mtf-finance",
+        "urls": [
+          "https://www.mtf.co.nz/important-information/interest-rates-and-fees"
+        ],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "nz-vehicle-finance-car",
+        "institution": "nz-vehicle-finance",
+        "urls": [
+          "https://www.nzvehiclefinance.co.nz/page/disclosure-information/"
+        ],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "oxford-finance-car-loan-rates",
+        "institution": "oxford-finance",
+        "urls": [
+          "https://www.oxfordfinance.co.nz/fees-and-charges-for-vehicle-and-personal-finance/"
+        ],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "paraloan-car-loan-rates",
+        "institution": "paraloan",
+        "urls": ["https://www.paraloan.org.nz/26/costs-of-borrowing"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "police-car-loan-rates",
+        "institution": "police-cu",
+        "urls": ["https://www.policecu.org.nz/about-us/rates/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "stadium-finance-car-loan-rates",
+        "institution": "stadium-finance",
+        "urls": ["https://stadium-finance.co.nz/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "toyota-car-loan-rates",
+        "institution": "toyota-financial-services",
+        "urls": [
+          "https://www.toyota.co.nz/toyota-finance-leasing/consumer-interest-rates-and-fees/"
+        ],
+        "status": "ok",
+        "observations": 3
+      },
+      {
+        "id": "udc-car",
+        "institution": "udc",
+        "urls": ["https://www.udc.co.nz/for-individuals/cars"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "unity-car-loan-rates",
+        "institution": "unitymoney",
+        "urls": ["https://unitymoney.co.nz/about-us/interest-rates/"],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "westpac-car-loan-rates",
+        "institution": "westpac",
+        "urls": [
+          "https://www.westpac.co.nz/personal-loans/",
+          "https://www.westpac.co.nz/personal-loans/ev-loan/"
+        ],
+        "status": "ok",
+        "observations": 2
+      }
+    ],
+    "blockers": [],
+    "publishable": true,
+    "institutionCount": 26,
+    "observationCount": 34
+  },
+  {
+    "dataset": "credit-card-rates",
+    "checkedAt": "2026-10-05T02:24:55.238Z",
+    "sources": [
+      {
+        "id": "amex-cards",
+        "institution": "amex",
+        "urls": [
+          "https://www.americanexpress.com/nz/credit-cards/airnz-base-credit-card/",
+          "https://www.americanexpress.com/nz/credit-cards/airpoints-cards/airpoints-platinum-card/",
+          "https://www.americanexpress.com/nz/credit-cards/low-rate-credit-card/",
+          "https://www.americanexpress.com/nz/credit-cards/gold-credit-card/"
+        ],
+        "status": "ok",
+        "observations": 4
+      },
+      {
+        "id": "anz-cards",
+        "institution": "anz",
+        "urls": [
+          "https://www.anz.co.nz/rates-fees-agreements/credit-cards/",
+          "https://www.anz.co.nz/bin/anzconz/rates/?format=JSON"
+        ],
+        "status": "ok",
+        "observations": 5
+      },
+      {
+        "id": "asb-cards",
+        "institution": "asb",
+        "urls": ["https://www.asb.co.nz/credit-cards/interest-rates-fees.html"],
+        "status": "ok",
+        "observations": 4
+      },
+      {
+        "id": "asb-gold",
+        "institution": "asb",
+        "urls": [
+          "https://www.asb.co.nz/content/asb/constant-collection/en/constant-collection/visa.constantsapi.html"
+        ],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "ballantynes-cards",
+        "institution": "ballantynes",
+        "urls": ["https://www.ballantynes.co.nz/ballantynes-account-card.html"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "bnz-cards",
+        "institution": "bnz",
+        "urls": [
+          "https://www.bnz.co.nz/personal-banking/credit-cards/compare-credit-cards",
+          "https://www.bnz.co.nz/support/rates-and-fees/products-no-longer-on-sale/credit-cards"
+        ],
+        "status": "ok",
+        "observations": 3
+      },
+      {
+        "id": "cooperative-cards",
+        "institution": "co-operative-bank",
+        "urls": [
+          "https://www.co-operativebank.co.nz/api/content/content/website/rates",
+          "https://www.co-operativebank.co.nz/api/content/content/website/cards-and-payments/our-cards/credit-card"
+        ],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "farmers-cards",
+        "institution": "farmers-finance",
+        "urls": ["https://www.farmersfinancecard.co.nz/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "finance-now-cards",
+        "institution": "finance-now",
+        "urls": ["https://www.financenow.co.nz/credit-cards/now-rewards/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "flight-centre-cards",
+        "institution": "flight-centre",
+        "urls": ["https://www.flightcentremastercard.co.nz/fees-and-charges/"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "gem-cards",
+        "institution": "gem",
+        "urls": ["https://www.gemfinance.co.nz/credit-cards/gem-visa-card/"],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "humm-cards",
+        "institution": "humm-group",
+        "urls": ["https://www.qcard.co.nz/fees-and-charges/"],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "kiwibank-cards",
+        "institution": "kiwibank",
+        "urls": [
+          "https://www.kiwibank.co.nz/personal-banking/credit-cards/rates-and-fees/",
+          "https://rates.kiwibank.co.nz/api/v1/rates?id__in=562,676,563,677,565,679,567,681,568,682,569,683,571,572,663,733,582,649"
+        ],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "sbs-cards",
+        "institution": "sbs-bank",
+        "urls": ["https://www.sbsbank.co.nz/everyday/sbs-visa-credit-card"],
+        "status": "ok",
+        "observations": 1
+      },
+      {
+        "id": "tsb-cards",
+        "institution": "tsb-bank",
+        "urls": [
+          "https://www.tsb.co.nz/rates-fees-agreements/credit-mastercard"
+        ],
+        "status": "ok",
+        "observations": 2
+      },
+      {
+        "id": "westpac-cards",
+        "institution": "westpac",
+        "urls": [
+          "https://www.westpac.co.nz/about-us/legal-information-privacy/cards-terms-fees-rates/"
+        ],
+        "status": "ok",
+        "observations": 7
+      }
+    ],
+    "blockers": [],
+    "publishable": true,
+    "institutionCount": 15,
+    "observationCount": 38
+  }
+]

@@ -16,9 +16,7 @@ export const aboutPage: ContentPage = {
     {
       kind: "paragraph",
       content: [
-        "Every hour, Rates API reads the rate tables that ",
-        { text: "interest.co.nz", href: "https://www.interest.co.nz/" },
-        " publishes, groups the rates by institution and product, and stores the newest data. On each day that a dataset changes, it also keeps a snapshot, so the history shows what the API returned on that date. The history starts on 8 March 2025.",
+        "Rates API collects public rates from institution websites, groups them by institution and product, and stores validated data. Each direct record includes its source URL. Earlier snapshots came from interest.co.nz. Stored datasets remain unchanged until direct coverage is complete. On each day that a dataset changes, it also keeps a snapshot, so the history shows what the API returned on that date. The history starts on 8 March 2025.",
       ],
     },
     {
@@ -60,7 +58,7 @@ export const aboutPage: ContentPage = {
     {
       kind: "paragraph",
       content: [
-        "The MIT licence covers the code, not the rates. The terms of interest.co.nz apply to the rate data. For fair use rules and the licence of the data, read ",
+        "The MIT licence covers the code, not the rates. Each source has its own terms. For fair use rules and the licence of the data, read ",
         { text: "the data source and terms", href: apiLinks.about },
         " in the documentation.",
       ],

@@ -1,0 +1,169 @@
+{
+  "checkedAt": "2026-10-05T02:24:55.238Z",
+  "environment": "Local macOS, Node.js 24, Chromium and Browser Use Cloud",
+  "mode": "auto",
+  "attempts": [
+    {
+      "url": "https://bankofindia.co.nz/advances",
+      "host": "local",
+      "status": "failed",
+      "error": "Browser page returned HTTP 403"
+    },
+    {
+      "url": "https://bankofindia.co.nz/advances",
+      "host": "cloud",
+      "status": "ok",
+      "proxyCountryCode": "nz"
+    },
+    {
+      "url": "https://www.barodanzltd.co.nz/rates-and-charges/rate-of-interest-on-loans",
+      "host": "local",
+      "status": "failed",
+      "error": "Browser navigation failed (ERR_TIMED_OUT)"
+    },
+    {
+      "url": "https://www.barodanzltd.co.nz/rates-and-charges/rate-of-interest-on-loans",
+      "host": "cloud",
+      "status": "ok",
+      "proxyCountryCode": "nz"
+    },
+    {
+      "url": "https://nz.ccb.com/lng/newzealand/en/service/262586.shtml",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://nz.icbc.com.cn/ICBC/%E6%B5%B7%E5%A4%96%E5%88%86%E8%A1%8C/%E5%B7%A5%E9%93%B6%E6%96%B0%E8%A5%BF%E5%85%B0%E7%BD%91%E7%AB%99/EN/RatesFees/HomeLoans/HomeLoan.htm",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.resimac.co.nz/home-loans/rates-all",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.asb.co.nz/lending/aia-interest-rates-fees.html",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.asb.co.nz/home-loans-mortgages/interest-rates-fees.html",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.bnz.co.nz/personal-banking/home-loans/compare-bnz-home-loan-rates",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.westpac.co.nz/home-loans-mortgages/interest-rates/",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.tsb.co.nz/rates-fees-agreements/home-loan",
+      "host": "local",
+      "status": "failed",
+      "error": "Browser page returned HTTP 403"
+    },
+    {
+      "url": "https://www.tsb.co.nz/rates-fees-agreements/home-loan",
+      "host": "cloud",
+      "status": "ok",
+      "proxyCountryCode": "nz"
+    },
+    {
+      "url": "https://www.westpac.co.nz/home-loans-mortgages/options/greater-choices-home-loan/",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.westpac.co.nz/personal-loans/",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://lendingcrowd.co.nz/howitworks/ratesandfees",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.bnz.co.nz/personal-banking/personal-loan",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.asb.co.nz/personal-loans",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.westpac.co.nz/personal-loans/ev-loan/",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.tsb.co.nz/rates-fees-agreements/personal-loans",
+      "host": "local",
+      "status": "failed",
+      "error": "Browser page returned HTTP 403"
+    },
+    {
+      "url": "https://www.tsb.co.nz/rates-fees-agreements/personal-loans",
+      "host": "cloud",
+      "status": "ok",
+      "proxyCountryCode": "nz"
+    },
+    {
+      "url": "https://www.tsb.co.nz/rates-fees-agreements/overdraft",
+      "host": "local",
+      "status": "failed",
+      "error": "Browser page returned HTTP 403"
+    },
+    {
+      "url": "https://www.tsb.co.nz/rates-fees-agreements/overdraft",
+      "host": "cloud",
+      "status": "ok",
+      "proxyCountryCode": "nz"
+    },
+    {
+      "url": "https://www.udc.co.nz/for-individuals/cars",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.qcard.co.nz/fees-and-charges/",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.asb.co.nz/credit-cards/interest-rates-fees.html",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.bnz.co.nz/personal-banking/credit-cards/compare-credit-cards",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.westpac.co.nz/about-us/legal-information-privacy/cards-terms-fees-rates/",
+      "host": "local",
+      "status": "ok"
+    },
+    {
+      "url": "https://www.tsb.co.nz/rates-fees-agreements/credit-mastercard",
+      "host": "local",
+      "status": "failed",
+      "error": "Browser page returned HTTP 403"
+    },
+    {
+      "url": "https://www.tsb.co.nz/rates-fees-agreements/credit-mastercard",
+      "host": "cloud",
+      "status": "ok",
+      "proxyCountryCode": "nz"
+    }
+  ]
+}

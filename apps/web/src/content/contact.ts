@@ -35,7 +35,7 @@ export const contactPage: ContentPage = {
     {
       kind: "paragraph",
       content: [
-        "Rates API reports what interest.co.nz publishes. If a rate is incorrect there, it is also incorrect here until the source changes, so tell the lender or interest.co.nz too.",
+        "Rates API reports published rates. Include the sourceUrl and the product conditions when you report a problem. Confirm the current offer with the institution.",
       ],
     },
     { kind: "heading", text: "Report a security issue" },

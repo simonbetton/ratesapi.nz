@@ -4,6 +4,8 @@ import { nullable } from "../lib/schema";
 import { RateSchema } from "./rate";
 
 export type RateTerm =
+  | "By agreement"
+  | "Fixed for 3–18 months"
   | "Variable floating"
   | "6 months"
   | "18 months"
@@ -14,6 +16,8 @@ export type RateTerm =
   | "5 years";
 
 const RateTermValues: [RateTerm, ...RateTerm[]] = [
+  "By agreement",
+  "Fixed for 3–18 months",
   "Variable floating",
   "6 months",
   "18 months",
@@ -25,6 +29,8 @@ const RateTermValues: [RateTerm, ...RateTerm[]] = [
 ];
 
 export const RateTerm: Record<string, RateTerm> = {
+  BY_AGREEMENT: "By agreement",
+  FIXED_RANGE: "Fixed for 3–18 months",
   VARIABLE_FLOATING: "Variable floating",
   "6_MONTHS": "6 months",
   "18_MONTHS": "18 months",
@@ -40,9 +46,14 @@ const RateTermLookup = new Set<string>(RateTermValues);
 const MortgageRate = t.Object(
   {
     ...RateSchema.properties,
+    condition: t.Optional(
+      t.String({
+        description: "Eligibility or other conditions published with the rate.",
+      })
+    ),
     term: t.UnionEnum(RateTermValues, {
       description:
-        "The term of the rate. `Variable floating` is a rate that the institution can change at any time. All other values are fixed terms.",
+        "The term of the rate. `Variable floating` is a rate that the institution can change at any time. `By agreement` means the lender does not publish a single fixed period. Other values describe fixed periods.",
       examples: ["6 months", "3 years"],
     }),
     termInMonths: nullable(
@@ -51,7 +62,7 @@ const MortgageRate = t.Object(
       }),
       {
         description:
-          "The fixed term in months. The value is `null` for a variable floating rate.",
+          "The fixed term in months. The value is `null` for a variable rate, a term agreed individually, or a fixed period range; consult `term`.",
       }
     ),
   },

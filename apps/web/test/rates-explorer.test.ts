@@ -5,6 +5,7 @@ import type { ApiRates } from "../src/lib/rates-data";
 import {
   defaultFilters,
   filterRows,
+  formatAdvertisedRate,
   historySeries,
   lowestKeys,
   providerRanking,
@@ -125,6 +126,51 @@ describe("site origins", () => {
 });
 
 describe("rates explorer data", () => {
+  test("preserves direct source provenance, ranges, conditions, and verified zero offers", () => {
+    const direct = structuredClone(mortgages);
+    const rate = direct.data[0]?.products?.[0]?.rates[0];
+    if (!rate) {
+      throw new Error("Missing test rate");
+    }
+    Object.assign(rate, {
+      rate: 0,
+      sourceUrl: "https://bank.example/rates",
+      rateType: "range",
+      rateMaximum: 2.5,
+      condition: "Eligible upgrades only",
+    });
+    const [row] = toRows("mortgage", direct);
+    expect(row).toMatchObject({
+      rate: 0,
+      rateMaximum: 2.5,
+      sourceUrl: "https://bank.example/rates",
+      condition: "Eligible upgrades only",
+    });
+    if (!row) {
+      throw new Error("Missing row");
+    }
+    expect(formatAdvertisedRate(row)).toBe("0.00%–2.50%");
+    expect(formatAdvertisedRate({ rate: 7.95, rateType: "from" })).toBe(
+      "From 7.95%"
+    );
+    expect(formatAdvertisedRate({ rate: null })).toBe("—");
+    const issuer = cardIssuer("issuer:bank", "Bank", 0);
+    const directCard = {
+      ...issuer,
+      plans: issuer.plans.map((plan) => ({
+        ...plan,
+        sourceUrl: "https://bank.example/cards",
+        condition: "Existing customers only",
+      })),
+    };
+    expect(
+      toRows("credit-card", {
+        type: "CreditCardRates",
+        lastUpdated: mortgages.lastUpdated,
+        data: [directCard],
+      })[0]
+    ).toMatchObject({ rate: 0, condition: "Existing customers only" });
+  });
   test("flattens mortgages into rows grouped by term, with unique keys", () => {
     expect(rows).toHaveLength(6);
     expect(new Set(rows.map((row) => row.key)).size).toBe(6);

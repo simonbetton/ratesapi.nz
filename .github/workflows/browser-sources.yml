@@ -1,0 +1,72 @@
+name: Audit direct institution sources
+
+on:
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: Browser host (auto tries Chromium, then Cloud if a key is configured)
+        type: choice
+        options: [auto, local, cloud]
+        default: auto
+      institutions:
+        description: All sources, or comma-separated institution IDs for access diagnostics
+        type: string
+        default: all
+  pull_request:
+    paths:
+      - "apps/api/bin/direct/**"
+      - "apps/api/bin/audit-browser-sources.ts"
+      - "apps/api/test/browser-sources.test.ts"
+      - ".github/workflows/browser-sources.yml"
+      - "apps/api/package.json"
+      - "bun.lock"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: browser-sources-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  browser-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js for remote browser connections
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile --ignore-scripts
+      - name: Install Chromium and system dependencies
+        working-directory: apps/api
+        run: bunx playwright install --with-deps chromium
+      - name: Test browser lifecycle and extraction
+        run: RUN_BROWSER_TESTS=1 bun test apps/api/test/browser-sources.test.ts apps/api/test/direct-sources.test.ts
+      - name: Audit live sources (no database credentials or writes)
+        if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+        working-directory: apps/api
+        run: |
+          if [ "$RATES_INSTITUTIONS" = "all" ]; then
+            bun run sources:audit
+          else
+            bun run sources:browser
+          fi
+        env:
+          RATES_BROWSER: ${{ inputs.browser || 'auto' }}
+          RATES_INSTITUTIONS: ${{ inputs.institutions || 'all' }}
+          BROWSER_USE_API_KEY: ${{ secrets.BROWSER_USE_API_KEY }}
+      - name: Upload access and coverage evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-source-report
+          path: |
+            apps/api/browser-source-report.json
+            apps/api/direct-source-report.json
+            apps/api/direct-source-report-browser.json
+          if-no-files-found: warn
+          retention-days: 14

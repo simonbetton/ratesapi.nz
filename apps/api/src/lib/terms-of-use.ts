@@ -1,3 +1,3 @@
 export function termsOfUse() {
-  return "Data is retrieved hourly from interest.co.nz. Please note that the information provided is not guaranteed to be accurate. For the most up-to-date and accurate rates, please check with the provider directly.";
+  return "Direct collections use financial institutions' own websites. Check sourceUrl for provenance. Earlier snapshots may come from interest.co.nz. Rates and eligibility can change; confirm them with the institution. Collection is scheduled hourly but is not guaranteed to succeed.";
 }

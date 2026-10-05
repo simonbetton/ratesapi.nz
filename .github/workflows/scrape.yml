@@ -11,6 +11,7 @@ on:
 jobs:
   run-scripts:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
     # Cloudflare secrets are scoped to the steps that talk to D1, so dependency
@@ -24,11 +25,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Node.js for remote browser connections
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
       - name: Install Dependencies
         run: bun install --frozen-lockfile --ignore-scripts
+
+      - name: Install Chromium and system dependencies
+        working-directory: apps/api
+        run: bunx playwright install --with-deps chromium
 
       - name: Check
         run: bun run check
@@ -54,33 +64,28 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
-      - name: Run the scraper script for mortgage rates
+      - name: Verify browser collector
+        run: RUN_BROWSER_TESTS=1 bun test apps/api/test/browser-sources.test.ts
+
+      - name: Collect and publish verified institution sources
         working-directory: apps/api
-        run: bun bin/scrape-mortgage-rates.ts
+        run: bun run scrape
         env:
+          RATES_BROWSER: auto
+          BROWSER_USE_API_KEY: ${{ secrets.BROWSER_USE_API_KEY }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
-      - name: Run the scraper script for personal loan rates
-        working-directory: apps/api
-        run: bun bin/scrape-personal-loan-rates.ts
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
-      - name: Run the scraper script for car loan rates
-        working-directory: apps/api
-        run: bun bin/scrape-car-loan-rates.ts
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
-      - name: Run the scraper script for credit card rates
-        working-directory: apps/api
-        run: bun bin/scrape-credit-card-rates.ts
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Upload direct source coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: direct-source-coverage
+          path: |
+            apps/api/direct-source-report.json
+            apps/api/direct-source-report-browser.json
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Verify saved data
         working-directory: apps/api

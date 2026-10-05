@@ -161,6 +161,49 @@ const invalidRequestBody = {
 };
 
 describe("v1 API contract", () => {
+  test("serves direct provenance, ranges and conditions through current and historical routes", async () => {
+    const direct = structuredClone(mortgageRates);
+    const rate = direct.data[0]?.products[0]?.rates[0];
+    if (!rate) {
+      throw new Error("Missing test rate");
+    }
+    Object.assign(rate, {
+      rate: 4.5,
+      rateType: "range",
+      rateMaximum: 6.5,
+      sourceUrl: "https://bank.example/rates",
+      condition: "Test eligibility",
+    });
+    const getEnv = (): Environment => ({
+      ENVIRONMENT: "test",
+      RATESAPI_DB: createD1Mock({
+        latest: { "mortgage-rates": direct },
+        historical: { "mortgage-rates": { "2026-04-30": direct } },
+        lastChecked: null,
+      }),
+    });
+    const response = await requestWithEnv(
+      getEnv,
+      "/api/v1/mortgage-rates?termInMonths=6",
+      "http://localhost"
+    );
+    expect(response.status).toBe(200);
+    const body = parseSchema(MortgageRatesResponse, await jsonBody(response));
+    expect(body.data[0]?.products[0]?.rates[0]).toEqual(rate);
+    const historical = await requestWithEnv(
+      getEnv,
+      "/api/v1/mortgage-rates/time-series?date=2026-04-30",
+      "http://localhost"
+    );
+    expect(historical.status).toBe(200);
+    const history = parseSchema(
+      MortgageRatesTimeSeriesResponse,
+      await jsonBody(historical)
+    );
+    expect(
+      history.timeSeries["2026-04-30"]?.data[0]?.products[0]?.rates[0]
+    ).toEqual(rate);
+  });
   const listCases: ListCase[] = [
     {
       path: "/api/v1/mortgage-rates",

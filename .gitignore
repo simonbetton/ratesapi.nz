@@ -10,3 +10,8 @@ node_modules
 plans
 tsconfig.tsbuildinfo
 next-env.d.ts
+direct-source-report.json
+
+# Browser collection reports contain transient access diagnostics.
+direct-source-report-browser.json
+browser-source-report.json

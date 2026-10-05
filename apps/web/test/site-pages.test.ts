@@ -175,7 +175,7 @@ describe("homepageMarkdown", () => {
   test("uses the live key facts", () => {
     expect(markdown).toContain("| Mortgage lenders | 36 |");
     expect(markdown).toContain("since 8 March 2025");
-    expect(homepageMarkdown(null)).toContain("30+ lenders");
+    expect(homepageMarkdown(null)).toContain("New Zealand lenders");
   });
 
   test("tells agents when to use the API and how to call it", () => {
