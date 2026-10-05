@@ -177,7 +177,7 @@ RATES_BROWSER=local RATES_INSTITUTIONS=asb,bnz,westpac bun run sources:browser
 RUN_BROWSER_TESTS=1 bun test test/browser-sources.test.ts
 ```
 
-`BROWSER_USE_API_KEY` is configured as an encrypted repository Actions secret. Cloud access was verified from the local Node.js collector on 5 October 2026, including regional retry, all three TSB adapters and Bank of India. GitHub-hosted runner verification is recorded below when available. Local runs read the key from the environment; never put it in source, fixtures or reports.
+`BROWSER_USE_API_KEY` is configured as an encrypted repository Actions secret. Cloud access was verified from the local Node.js collector on 5 October 2026, including regional retry, all three TSB adapters and Bank of India. GitHub-hosted runner checks and live-audit artifacts are available on [PR #514](https://github.com/simonbetton/ratesapi.nz/pull/514). Local runs read the key from the environment; never put it in source, fixtures or reports.
 
 ### TSB source review
 

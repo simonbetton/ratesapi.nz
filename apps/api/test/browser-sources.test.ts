@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, setDefaultTimeout, test } from "bun:test";
 
 import { chromium } from "playwright";
 import type { Browser } from "playwright";
@@ -151,6 +151,9 @@ describe("browser host lifecycle", () => {
 });
 
 const browserTest = process.env.RUN_BROWSER_TESTS === "1" ? test : test.skip;
+// Browser startup and multiple context lifecycles can exceed Bun's 5s default on CI.
+// This changes only the test budget; production timeouts and assertions stay strict.
+setDefaultTimeout(30_000);
 const url = "https://bank.example/rates";
 const feed = "https://bank.example/feed";
 const spec = {
@@ -387,7 +390,7 @@ describe("real Chromium transport", () => {
     async () => {
       const fixture = await fixtureBrowser();
       try {
-        const result = await renderPage(fixture.browser, url, spec, 3000);
+        const result = await renderPage(fixture.browser, url, spec, 5000);
         expect(result).toContain("<td>4.95%</td><td>5.25%</td>");
         expect(fixture.browser.contexts()).toHaveLength(0);
       } finally {
@@ -405,7 +408,7 @@ describe("real Chromium transport", () => {
       );
       try {
         await expect(
-          renderPage(fixture.browser, url, spec, 700)
+          renderPage(fixture.browser, url, spec, 5000)
         ).rejects.toThrow("Required first-party rate feed did not succeed");
         expect(fixture.browser.contexts()).toHaveLength(0);
       } finally {
@@ -422,7 +425,7 @@ describe("real Chromium transport", () => {
           fixture.browser,
           url,
           { selector: "td", minimumRates: 1 },
-          700
+          5000
         )
       ).rejects.toThrow("rate hydration failed");
       expect(fixture.browser.contexts()).toHaveLength(0);
@@ -437,7 +440,7 @@ describe("real Chromium transport", () => {
       const fixture = await fixtureBrowser(html, 200, true);
       try {
         await expect(
-          renderPage(fixture.browser, url, spec, 700)
+          renderPage(fixture.browser, url, spec, 5000)
         ).rejects.toThrow("navigation");
         expect(fixture.crossOriginRequests()).toBe(0);
       } finally {
