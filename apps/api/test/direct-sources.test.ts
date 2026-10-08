@@ -131,6 +131,16 @@ describe("direct source parsers", () => {
     }
   );
 
+  test("WBS rejects a truncated table even when it still contains valid rates", () => {
+    const html =
+      "<table><tr><th>Term</th> <th>Rate</th></tr><tr><td>Floating</td><td>6.25%</td></tr><tr><td>Fixed 1 year</td><td>5.35%</td></tr></table>";
+    expect(() =>
+      source("wbs-mortgage").parse(
+        new Map([["https://wbs.net.nz/home-loans/", html]])
+      )
+    ).toThrow("missing a reviewed mortgage term");
+  });
+
   test("ANZ matches published codes, including special rates with isfordisplay=0", () => {
     const rates = source("anz-mortgage").parse(pages);
     expect(

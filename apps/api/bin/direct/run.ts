@@ -8,10 +8,10 @@ import {
   markCheckedInD1,
   saveToD1,
 } from "../utils";
-import { createCollectionTransport } from "./browser";
 import { collectDirectDataset, schemas, unreconciledProducts } from "./collect";
 import type { CollectionResult } from "./collect";
 import { directSources, institutions } from "./sources";
+import { createRecoverableCollectionTransport } from "./transport";
 import type { CoverageEntry, Institution } from "./types";
 
 export interface PublishDependencies {
@@ -176,14 +176,16 @@ function persistenceFor(result: CollectionResult): PublishDependencies {
 
 export async function scrapeDirect(dataset: DataType): Promise<void> {
   const dryRun = process.argv.includes("--dry-run");
-  const transport = createCollectionTransport(directSources);
+  const transport = createRecoverableCollectionTransport(directSources);
   let result: CollectionResult;
   try {
     result = await collectDirectDataset(
       dataset,
       institutions,
       directSources,
-      transport.fetchPage
+      transport.fetchPage,
+      undefined,
+      { retryFetchPage: transport.retryFetchPage }
     );
   } finally {
     await transport.close();
@@ -219,7 +221,7 @@ export async function scrapeAllDirect(reportPath: string): Promise<void> {
 }
 
 async function collectAll(reportPath: string): Promise<CollectionResult[]> {
-  const transport = createCollectionTransport(directSources);
+  const transport = createRecoverableCollectionTransport(directSources);
   const { fetchPage } = transport;
   const results: CollectionResult[] = [];
   try {
@@ -230,7 +232,9 @@ async function collectAll(reportPath: string): Promise<CollectionResult[]> {
         dataset,
         institutions,
         directSources,
-        fetchPage
+        fetchPage,
+        undefined,
+        { retryFetchPage: transport.retryFetchPage }
       ).catch((error: unknown): CollectionResult => ({
         dataset,
         checkedAt: new Date().toISOString(),

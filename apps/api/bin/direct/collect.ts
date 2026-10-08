@@ -40,6 +40,9 @@ export interface SourceResult {
   status: "ok" | "failed";
   observations: number;
   error?: string;
+  /** Present when a fresh collection was needed after the initial pass. */
+  attempts?: number;
+  initialError?: string;
 }
 
 export interface CollectionResult {
@@ -163,7 +166,8 @@ export async function collectDirectDataset(
   institutions: readonly Institution[],
   allSources: readonly DirectSource[],
   fetchPage: FetchPage = createSourceFetcher(),
-  now = new Date()
+  now = new Date(),
+  options: { retryFetchPage?: FetchPage } = {}
 ): Promise<CollectionResult> {
   const sources = allSources.filter((source) => source.dataset === dataset);
   const blockers: string[] = [];
@@ -193,79 +197,18 @@ export async function collectDirectDataset(
   if (new Set(ids).size !== ids.length) {
     throw new Error(`Duplicate source IDs for ${dataset}`);
   }
-  const queue = [...sources];
-  const results: SourceResult[] = [];
-  const observations = new Map<string, Observation[]>();
-  await Promise.all(
-    Array.from({ length: Math.min(4, queue.length) }, async () => {
-      for (let source = queue.shift(); source; source = queue.shift()) {
-        try {
-          const institution = institutions.find(
-            (item) => item.id === source.institution
-          );
-          if (
-            !institution ||
-            institution.datasets[dataset]?.status !== "active"
-          ) {
-            throw new Error("Source has no active institution coverage entry");
-          }
-          const pages = new Map<string, string>();
-          for (const url of source.urls) {
-            pages.set(url, await fetchPage(url));
-          }
-          const discovered = source.discover?.(pages) ?? [];
-          const origins = new Set([
-            ...source.urls.map((url) => new URL(url).origin),
-            ...(source.documentOrigins ?? []),
-          ]);
-          if (
-            discovered.length > 20 ||
-            discovered.some(
-              (url) =>
-                new URL(url).protocol !== "https:" ||
-                !origins.has(new URL(url).origin)
-            )
-          ) {
-            throw new Error(
-              "Discovered documents are outside reviewed source origins or exceed the limit"
-            );
-          }
-          const permittedUrls = [...new Set([...source.urls, ...discovered])];
-          for (const url of discovered) {
-            if (!pages.has(url)) {
-              pages.set(url, await fetchPage(url, source.discoveredBrowser));
-            }
-          }
-          const rates = source.parse(pages);
-          validateObservations({ ...source, urls: permittedUrls }, rates);
-          observations.set(source.institution, [
-            ...(observations.get(source.institution) ?? []),
-            ...rates,
-          ]);
-          results.push({
-            id: source.id,
-            institution: source.institution,
-            urls: permittedUrls,
-            status: "ok",
-            observations: rates.length,
-          });
-        } catch (error) {
-          const message =
-            error instanceof Error ? error.message : String(error);
-          failedInstitutions.add(source.institution);
-          blockers.push(`${source.id}: ${message}`);
-          results.push({
-            id: source.id,
-            institution: source.institution,
-            urls: source.urls,
-            status: "failed",
-            observations: 0,
-            error: message,
-          });
-        }
-      }
-    })
+  const { results, observations } = await collectSourceAttempts(
+    sources,
+    institutions,
+    fetchPage,
+    options.retryFetchPage
   );
+  for (const result of results.values()) {
+    if (result.status === "failed") {
+      failedInstitutions.add(result.institution);
+      blockers.push(`${result.id}: ${result.error}`);
+    }
+  }
   let preview: SupportedModels | null = null;
   const { publishable, blockers: validationBlockers } = buildPublishableModel(
     dataset,
@@ -283,12 +226,127 @@ export async function collectDirectDataset(
   return {
     dataset,
     checkedAt: now.toISOString(),
-    sources: results.toSorted((a, b) => a.id.localeCompare(b.id)),
+    sources: [...results.values()].toSorted((a, b) => a.id.localeCompare(b.id)),
     blockers: blockers.toSorted(),
     model: blockers.length === 0 ? preview : null,
     preview,
     publishable,
   };
+}
+
+async function collectSourceAttempts(
+  sources: readonly DirectSource[],
+  institutions: readonly Institution[],
+  fetchPage: FetchPage,
+  retryFetchPage?: FetchPage
+) {
+  const results = new Map<string, SourceResult>();
+  const sourceRates = new Map<string, Observation[]>();
+  async function collectSources(
+    pending: readonly DirectSource[],
+    fetchAttempt: FetchPage
+  ) {
+    const queue = [...pending];
+    await Promise.all(
+      Array.from({ length: Math.min(4, queue.length) }, async () => {
+        for (let source = queue.shift(); source; source = queue.shift()) {
+          try {
+            const institution = institutions.find(
+              (item) => item.id === source.institution
+            );
+            if (
+              !institution ||
+              institution.datasets[source.dataset]?.status !== "active"
+            ) {
+              throw new Error(
+                "Source has no active institution coverage entry"
+              );
+            }
+            const pages = new Map<string, string>();
+            for (const url of source.urls) {
+              pages.set(url, await fetchAttempt(url));
+            }
+            const discovered = source.discover?.(pages) ?? [];
+            const origins = new Set([
+              ...source.urls.map((url) => new URL(url).origin),
+              ...(source.documentOrigins ?? []),
+            ]);
+            if (
+              discovered.length > 20 ||
+              discovered.some(
+                (url) =>
+                  new URL(url).protocol !== "https:" ||
+                  !origins.has(new URL(url).origin)
+              )
+            ) {
+              throw new Error(
+                "Discovered documents are outside reviewed source origins or exceed the limit"
+              );
+            }
+            const permittedUrls = [...new Set([...source.urls, ...discovered])];
+            for (const url of discovered) {
+              if (!pages.has(url)) {
+                pages.set(
+                  url,
+                  await fetchAttempt(url, source.discoveredBrowser)
+                );
+              }
+            }
+            const rates = source.parse(pages);
+            validateObservations({ ...source, urls: permittedUrls }, rates);
+            sourceRates.set(source.id, rates);
+            results.set(source.id, {
+              id: source.id,
+              institution: source.institution,
+              urls: permittedUrls,
+              status: "ok",
+              observations: rates.length,
+            });
+          } catch (error) {
+            const message =
+              error instanceof Error ? error.message : String(error);
+            results.set(source.id, {
+              id: source.id,
+              institution: source.institution,
+              urls: source.urls,
+              status: "failed",
+              observations: 0,
+              error: message,
+            });
+          }
+        }
+      })
+    );
+  }
+  await collectSources(sources, fetchPage);
+  const initialFailures = new Map(
+    [...results].filter(([, result]) => result.status === "failed")
+  );
+  if (retryFetchPage && initialFailures.size > 0) {
+    // Finish the primary pass before recovery. A separate transport avoids
+    // replaying cached failed responses and starts fresh browser sessions.
+    await collectSources(
+      sources.filter((source) => initialFailures.has(source.id)),
+      retryFetchPage
+    );
+    for (const result of results.values()) {
+      const initial = initialFailures.get(result.id);
+      if (initial) {
+        result.attempts = 2;
+        result.initialError = initial.error;
+      }
+    }
+  }
+  const observations = new Map<string, Observation[]>();
+  for (const result of results.values()) {
+    if (result.status === "ok") {
+      observations.set(result.institution, [
+        ...(observations.get(result.institution) ?? []),
+        ...(sourceRates.get(result.id) ?? []),
+      ]);
+    }
+  }
+  return { results, observations };
 }
 
 function buildPublishableModel(

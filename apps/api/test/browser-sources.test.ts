@@ -9,6 +9,8 @@ import {
   openBrowserSession,
   renderPage,
 } from "../bin/direct/browser";
+import { createSourceFetcher } from "../bin/direct/collect";
+import { createRecoverableCollectionTransport } from "../bin/direct/transport";
 import type { DirectSource } from "../bin/direct/types";
 
 const sessionId = "11111111-1111-1111-1111-111111111111";
@@ -658,4 +660,62 @@ setTimeout(() => {
       expect(closed.toSorted()).toEqual(["cloud", "local"]);
     }
   );
+});
+
+describe("collection recovery transport", () => {
+  test("recovery uses a new HTTP cache and opens no extra transport on healthy runs", async () => {
+    let requests = 0;
+    let transports = 0;
+    const transport = createRecoverableCollectionTransport([], (sources) => {
+      transports += 1;
+      return createCollectionTransport(sources, {
+        mode: "local",
+        http: createSourceFetcher(async () => {
+          requests += 1;
+          return new Response(requests === 1 ? "challenge" : "rates");
+        }),
+      });
+    });
+    try {
+      expect(await transport.fetchPage("https://bank.example/rates")).toBe(
+        "challenge"
+      );
+      expect(await transport.fetchPage("https://bank.example/rates")).toBe(
+        "challenge"
+      );
+      expect(transports).toBe(1);
+      expect(await transport.retryFetchPage("https://bank.example/rates")).toBe(
+        "rates"
+      );
+      expect(transports).toBe(2);
+      expect(requests).toBe(2);
+    } finally {
+      await transport.close();
+    }
+  });
+
+  test("both transports are closed even if primary cleanup fails, preserving both attempt reports", async () => {
+    let created = 0;
+    const closed: number[] = [];
+    const transport = createRecoverableCollectionTransport([], () => {
+      created += 1;
+      const id = created;
+      return {
+        fetchPage: async () => "rates",
+        attempts: [
+          { url: `https://bank.example/${id}`, host: "cloud", status: "ok" },
+        ],
+        close: async () => {
+          closed.push(id);
+          if (id === 1) {
+            throw new Error("cleanup");
+          }
+        },
+      };
+    });
+    await transport.retryFetchPage("https://bank.example/rates");
+    expect(transport.attempts).toHaveLength(2);
+    await expect(transport.close()).rejects.toThrow("cleanup failed");
+    expect(closed).toEqual([1, 2]);
+  });
 });

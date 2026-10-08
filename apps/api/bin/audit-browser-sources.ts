@@ -1,10 +1,12 @@
 import { writeFile } from "node:fs/promises";
 
 import type { DataType } from "../src/lib/data-loader";
+import type { BrowserAttempt } from "./direct/browser";
 import { browserMode, createCollectionTransport } from "./direct/browser";
 import { collectDirectDataset, schemas } from "./direct/collect";
 import type { CollectionResult } from "./direct/collect";
 import { directSources, institutions } from "./direct/sources";
+import { createRecoverableCollectionTransport } from "./direct/transport";
 
 // Deliberately has no D1 persistence dependency. This command is safe for CI access testing.
 const selectedIds = (
@@ -21,7 +23,8 @@ if (selected.length !== new Set(selectedIds).size) {
 const sources = directSources.filter((source) =>
   selectedIds.includes(source.institution)
 );
-const transport = createCollectionTransport(sources);
+const transport = createRecoverableCollectionTransport(sources);
+const probeAttempts: BrowserAttempt[] = [];
 const reportPath = process.argv[2] ?? "browser-source-report.json";
 const results: CollectionResult[] = [];
 try {
@@ -34,7 +37,9 @@ try {
       dataset,
       selected,
       sources,
-      transport.fetchPage
+      transport.fetchPage,
+      undefined,
+      { retryFetchPage: transport.retryFetchPage }
     );
     results.push(result);
     console.info(
@@ -62,7 +67,7 @@ try {
     } catch {
       process.exitCode = 1;
     } finally {
-      transport.attempts.push(...probe.attempts);
+      probeAttempts.push(...probe.attempts);
       await probe.close();
     }
   }
@@ -70,7 +75,7 @@ try {
   try {
     await writeFile(
       reportPath,
-      `${JSON.stringify({ checkedAt: new Date().toISOString(), mode: browserMode(), attempts: transport.attempts, results }, null, 2)}\n`
+      `${JSON.stringify({ checkedAt: new Date().toISOString(), mode: browserMode(), attempts: [...transport.attempts, ...probeAttempts], results }, null, 2)}\n`
     );
   } finally {
     await transport.close();
@@ -80,10 +85,10 @@ if (
   results.some((result) =>
     result.sources.some((source) => source.status === "failed")
   ) ||
-  transport.attempts.some(
+  [...transport.attempts, ...probeAttempts].some(
     (attempt) =>
       attempt.status === "failed" &&
-      !transport.attempts.some(
+      ![...transport.attempts, ...probeAttempts].some(
         (success) => success.url === attempt.url && success.status === "ok"
       )
   )

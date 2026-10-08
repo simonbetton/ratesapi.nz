@@ -75,9 +75,6 @@ jobs:
       - name: Install Chromium and system dependencies
         working-directory: apps/api
         run: bunx playwright install --with-deps chromium
-      - name: Capture Aotea HTTP responses
-        working-directory: apps/api
-        run: node --import tsx bin/probe-aotea.ts
       - name: Audit live sources (no database credentials or writes)
         id: live-audit
         working-directory: apps/api
@@ -97,7 +94,6 @@ jobs:
         with:
           name: browser-source-report
           path: |
-            apps/api/aotea-probe.json
             apps/api/browser-source-report.json
             apps/api/direct-source-report.json
             apps/api/direct-source-report-browser.json

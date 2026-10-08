@@ -216,10 +216,7 @@ export const additionalSources: DirectSource[] = [
     dataset: "mortgage-rates",
     urls: [wbs],
     parse(pages) {
-      const rows = matchingTable(
-        page(pages, wbs),
-        /^Term Rate(?:\s|Floating)/u
-      ).slice(1);
+      const rows = matchingTable(page(pages, wbs), /^Term Rate/u).slice(1);
       const terms = new Set<number | null>();
       const rates = rows.map((row) => {
         const [term, rate] = requireCount(row, 2);
@@ -237,10 +234,9 @@ export const additionalSources: DirectSource[] = [
             "Standard residential rate; margins of 0.50% to 2.00% can apply in some circumstances.",
         };
       });
-      if (!terms.has(null) || terms.size < 2) {
-        throw new Error(
-          "WBS must publish a floating rate and at least one fixed term"
-        );
+      // Preserve the reviewed baseline while allowing additional supported terms.
+      if ([null, 12, 18, 24].some((term) => !terms.has(term))) {
+        throw new Error("WBS is missing a reviewed mortgage term");
       }
       return rates;
     },
