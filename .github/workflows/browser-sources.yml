@@ -78,12 +78,7 @@ jobs:
       - name: Audit live sources (no database credentials or writes)
         id: live-audit
         working-directory: apps/api
-        run: |
-          if [ "$RATES_INSTITUTIONS" = "all" ]; then
-            bun run sources:audit
-          else
-            bun run sources:browser
-          fi
+        run: node --import tsx bin/probe-aotea.ts
         env:
           RATES_BROWSER: ${{ inputs.browser || 'auto' }}
           RATES_INSTITUTIONS: ${{ inputs.institutions || 'all' }}
