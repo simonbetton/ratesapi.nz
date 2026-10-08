@@ -36,6 +36,6 @@ for (let index = 0; index < 12; index += 1) {
   await sleep(1000);
 }
 await writeFile(
-  "browser-source-report.json",
+  "aotea-probe.json",
   JSON.stringify({ samples }, null, 2)
 );
