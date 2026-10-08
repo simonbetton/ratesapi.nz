@@ -79,6 +79,68 @@ describe("direct source parsers", () => {
     }
   );
 
+  test("WBS collects newly published mortgage terms without assuming a fixed row count", async () => {
+    const html = await readFile(
+      new URL("fixtures/direct/wbs-home-loans.html", import.meta.url),
+      "utf-8"
+    );
+    const adapter = source("wbs-mortgage");
+    const [url] = adapter.urls;
+    if (!url) {
+      throw new Error("Missing WBS URL");
+    }
+    const rates = adapter.parse(new Map([[url, html]]));
+    expect(rates.map(({ termInMonths, rate }) => [termInMonths, rate])).toEqual(
+      [
+        [null, 6.25],
+        [12, 5.35],
+        [18, 5.65],
+        [24, 5.65],
+        [36, 5.75],
+      ]
+    );
+  });
+
+  test.each([
+    ["added term", "<tr><td>Fixed 5 years</td><td>6.15%</td></tr>", false],
+    ["duplicate term", "<tr><td>Fixed 1 year</td><td>6.15%</td></tr>", true],
+    ["unknown term", "<tr><td>Default interest</td><td>9%</td></tr>", true],
+    ["missing rate", "<tr><td>Fixed 5 years</td><td></td></tr>", true],
+    [
+      "extra column",
+      "<tr><td>Fixed 5 years</td><td>6.15%</td><td>unknown</td></tr>",
+      true,
+    ],
+  ])(
+    "WBS validates %s rather than ignoring additional rows",
+    async (_label, row, rejects) => {
+      const html = await readFile(
+        new URL("fixtures/direct/wbs-home-loans.html", import.meta.url),
+        "utf-8"
+      );
+      const input = html.replace("</tbody>", `${row}</tbody>`);
+      const parse = () =>
+        source("wbs-mortgage").parse(
+          new Map([["https://wbs.net.nz/home-loans/", input]])
+        );
+      if (rejects) {
+        expect(parse).toThrow();
+      } else {
+        expect(parse()).toHaveLength(6);
+      }
+    }
+  );
+
+  test("WBS rejects a truncated table even when it still contains valid rates", () => {
+    const html =
+      "<table><tr><th>Term</th> <th>Rate</th></tr><tr><td>Floating</td><td>6.25%</td></tr><tr><td>Fixed 1 year</td><td>5.35%</td></tr></table>";
+    expect(() =>
+      source("wbs-mortgage").parse(
+        new Map([["https://wbs.net.nz/home-loans/", html]])
+      )
+    ).toThrow("missing a reviewed mortgage term");
+  });
+
   test("ANZ matches published codes, including special rates with isfordisplay=0", () => {
     const rates = source("anz-mortgage").parse(pages);
     expect(

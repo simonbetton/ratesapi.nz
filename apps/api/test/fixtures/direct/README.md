@@ -13,3 +13,5 @@ ASB, BNZ and Westpac captures were taken from rendered Chromium DOM on 5 October
 TSB captures were taken through Browser Use Cloud on 5 October. Fixtures retain the formal mortgage, personal-loan, overdraft and Credit Mastercard tables. Default-interest rows and additional-card fees remain in the inputs to verify that they are not mistaken for ordinary lending rates or primary annual fees. Personal-loan closure text is preserved. The debit-card exclusion was checked against TSB’s own debit-card page.
 
 Expanded captures include current linked disclosure text for Basecorp, Liberty, CFML, Xceda and Gold Band. `liberty-disclosure.pdf` is a small real PDF used to verify byte-level extraction and rejection of non-PDF responses. Bank of India fixtures retain its currently published schedule date; Christian Savings retains both minimum-deposit percentages and loan rates to guard against confusing them.
+
+`wbs-home-loans.html` was captured from https://wbs.net.nz/home-loans/ on 8 October 2026. It preserves the five published mortgage rows, including the newly added 36-month term that invalidated the former exact four-row assumption.

@@ -216,17 +216,29 @@ export const additionalSources: DirectSource[] = [
     dataset: "mortgage-rates",
     urls: [wbs],
     parse(pages) {
-      return requireCount(
-        matchingTable(page(pages, wbs), /^Term Rate/u).slice(1),
-        4
-      ).map(([term, rate]) => ({
-        product: "Residential Standard",
-        rate: percentage(rate ?? ""),
-        termInMonths: termMonths((term ?? "").replace(/^Fixed /u, "")),
-        sourceUrl: wbs,
-        condition:
-          "Standard residential rate; margins of 0.50% to 2.00% can apply in some circumstances.",
-      }));
+      const rows = matchingTable(page(pages, wbs), /^Term Rate/u).slice(1);
+      const terms = new Set<number | null>();
+      const rates = rows.map((row) => {
+        const [term, rate] = requireCount(row, 2);
+        const termInMonths = termMonths((term ?? "").replace(/^Fixed /u, ""));
+        if (terms.has(termInMonths)) {
+          throw new Error(`Duplicate WBS mortgage term: ${term}`);
+        }
+        terms.add(termInMonths);
+        return {
+          product: "Residential Standard",
+          rate: percentage(rate ?? ""),
+          termInMonths,
+          sourceUrl: wbs,
+          condition:
+            "Standard residential rate; margins of 0.50% to 2.00% can apply in some circumstances.",
+        };
+      });
+      // Preserve the reviewed baseline while allowing additional supported terms.
+      if ([null, 12, 18, 24].some((term) => !terms.has(term))) {
+        throw new Error("WBS is missing a reviewed mortgage term");
+      }
+      return rates;
     },
   },
   {

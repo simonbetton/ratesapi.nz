@@ -573,3 +573,114 @@ describe("partial publication SQL persistence", () => {
     });
   });
 });
+
+describe("fresh source recovery", () => {
+  test("recovers only failed sources after peers finish and publishes a complete snapshot", async () => {
+    const events: string[] = [];
+    const source = adapter("anz", 5.5);
+    const { parse } = source;
+    source.parse = (pages) => {
+      if (pages.get(required(source.urls[0])) !== "rates") {
+        throw new Error("Missing disclosed rate");
+      }
+      return parse(pages);
+    };
+    const result = await collectDirectDataset(
+      "mortgage-rates",
+      registry,
+      [source, adapter("midlands", 7)],
+      async (url) => {
+        events.push(`primary:${url}`);
+        return "challenge";
+      },
+      new Date("2026-10-08T08:00:00Z"),
+      {
+        retryFetchPage: async (url) => {
+          events.push(`recovery:${url}`);
+          return "rates";
+        },
+      }
+    );
+    expect(events).toEqual([
+      "primary:https://anz.example/rates",
+      "primary:https://midlands.example/rates",
+      "recovery:https://anz.example/rates",
+    ]);
+    expect(result.blockers).toEqual([]);
+    expect(result.sources[0]).toMatchObject({
+      status: "ok",
+      attempts: 2,
+      initialError: "Missing disclosed rate",
+    });
+    const { state, deps } = persistence(result, await previousModel());
+    await publishDirectDataset(deps);
+    expect(state.complete).toBe(true);
+    expect(state.stored?.data).toHaveLength(2);
+  });
+
+  test("invalid recovery remains quarantined and retains history and freshness", async () => {
+    const previous = await previousModel();
+    const result = await collectDirectDataset(
+      "mortgage-rates",
+      registry,
+      [adapter("anz", 150), adapter("midlands", 7)],
+      async () => "rates",
+      new Date("2026-10-08T08:00:00Z"),
+      { retryFetchPage: async () => "rates" }
+    );
+    expect(result.model).toBeNull();
+    expect(result.sources[0]).toMatchObject({
+      status: "failed",
+      attempts: 2,
+      observations: 0,
+    });
+    const { state, deps } = persistence(result, previous);
+    await expect(publishDirectDataset(deps)).rejects.toThrow(
+      "partial publication"
+    );
+    expect(
+      state.stored?.data.find((item) => item.id === "institution:anz")
+    ).toEqual(previous.data.find((item) => item.id === "institution:anz"));
+    expect(state.complete).toBe(false);
+    expect(state.checks).toBe(0);
+    expect(state.stored?.lastUpdated).toBe(previous.lastUpdated);
+  });
+
+  test("recovery refetches every page and never combines attempts", async () => {
+    const source = adapter("anz");
+    source.urls.push("https://anz.example/terms");
+    source.parse = (pages) => {
+      expect([...pages.values()]).toEqual(["fresh", "fresh"]);
+      return [
+        {
+          product: "Standard",
+          rate: 5,
+          termInMonths: 12,
+          sourceUrl: required(source.urls[0]),
+        },
+      ];
+    };
+    const recovered: string[] = [];
+    const result = await collectDirectDataset(
+      "mortgage-rates",
+      registry,
+      [source, adapter("midlands")],
+      async (url) => {
+        if (url.endsWith("terms")) {
+          throw new Error("Timeout");
+        }
+        return "old";
+      },
+      undefined,
+      {
+        retryFetchPage: async (url) => {
+          recovered.push(url);
+          return "fresh";
+        },
+      }
+    );
+    expect(recovered).toEqual(source.urls);
+    expect(result.blockers).toEqual([]);
+    expect(result.sources[0]?.observations).toBe(1);
+  });
+});
