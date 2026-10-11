@@ -35,7 +35,11 @@ function single(
     dataset,
     urls: [url],
     parse(pages) {
-      const match = requiredMatch(plainText(page(pages, url)), pattern);
+      const text = plainText(page(pages, url));
+      if (institution === "aotea-finance" && !pattern.test(text)) {
+        console.warn(`[DEBUG-aotea-response] ${text.slice(0, 12000)}`);
+      }
+      const match = requiredMatch(text, pattern);
       const rate = percentage(match[1] ?? "");
       return [
         {
