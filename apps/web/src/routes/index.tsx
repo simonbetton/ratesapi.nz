@@ -18,7 +18,7 @@ const getKeyFacts = createServerFn({ method: "GET" }).handler(() =>
 
 export const Route = createFileRoute("/")({
   loader: () => getKeyFacts(),
-  // The facts change hourly at most; don't refetch them after hydration.
+  // Use the server-fetched facts without refetching after hydration.
   staleTime: Number.POSITIVE_INFINITY,
   head: ({ loaderData }) => ({
     meta: [

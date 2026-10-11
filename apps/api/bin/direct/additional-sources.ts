@@ -215,6 +215,14 @@ export const additionalSources: DirectSource[] = [
     institution: "wairarapa-bldg-society",
     dataset: "mortgage-rates",
     urls: [wbs],
+    // The public page can deny plain HTTP from GitHub-hosted runners.
+    browser: {
+      [wbs]: {
+        selector: "table.twoColumns td.body",
+        minimumRates: 4,
+        cloudChallenge: true,
+      },
+    },
     parse(pages) {
       const rows = matchingTable(page(pages, wbs), /^Term Rate/u).slice(1);
       const terms = new Set<number | null>();

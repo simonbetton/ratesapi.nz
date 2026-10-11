@@ -10,11 +10,11 @@
     "typecheck": "tsgo --noEmit",
     "db:setup": "bun bin/init-local-d1.ts && bun bin/seed-local-d1.ts",
     "db:migrate": "bun bin/migrate-d1.ts",
-    "scrape": "node --import tsx bin/scrape-all-rates.ts",
+    "scrape": "node --max-http-header-size=65536 --import tsx bin/scrape-all-rates.ts",
     "scrape:local": "D1_DATABASE_NAME=ratesapi-data D1_LOCAL=true bun run scrape",
     "uptime": "bun bin/uptime-check.ts",
-    "sources:audit": "node --import tsx bin/audit-direct-sources.ts",
-    "sources:browser": "node --import tsx bin/audit-browser-sources.ts"
+    "sources:audit": "node --max-http-header-size=65536 --import tsx bin/audit-direct-sources.ts",
+    "sources:browser": "node --max-http-header-size=65536 --import tsx bin/audit-browser-sources.ts"
   },
   "dependencies": {
     "@elysia/openapi": "^1.4.16",

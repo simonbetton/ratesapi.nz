@@ -154,7 +154,7 @@ bun run --filter web deploy
 | Workflow | Starts | Secrets |
 | --- | --- | --- |
 | Deploy to Cloudflare | On each push to `main`, or manually | `CLOUDFLARE_API_TOKEN` |
-| Hourly Scraping and Database Updates | Each hour, on each push to `main`, or manually | `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` |
+| Scheduled Rate Collection | Every four hours (minute 17 UTC; best effort), on each push to `main`, or manually | `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` |
 
 Each workflow runs `bun run check` before it deploys or collects data.
 

@@ -3,7 +3,7 @@ import { env } from "cloudflare:workers";
 import { fetchKeyFacts } from "./key-facts";
 import type { KeyFacts } from "./key-facts";
 
-// Coverage changes at most hourly, so one lookup an hour is plenty.
+// Cache the coverage lookup for one hour; collection times vary.
 const cacheSeconds = 60 * 60;
 // After a failed lookup, serve the fallback for a minute before trying again,
 // so a slow API can't add its timeout to every page view.

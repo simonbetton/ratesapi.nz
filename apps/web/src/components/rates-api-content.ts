@@ -7,7 +7,7 @@ const openApiUrl = apiUrl("/openapi");
 export const homepageMeta = {
   title: "Free NZ Mortgage & Interest Rates API (JSON) | Rates API",
   description:
-    "Free JSON API for NZ mortgage, personal loan, car loan and credit card interest rates from New Zealand lenders. Updated hourly, with daily history. No API key.",
+    "Free JSON API for NZ mortgage, personal loan, car loan and credit card interest rates from New Zealand lenders. Collection scheduled every four hours, with daily history. No API key.",
   socialDescription:
     "Latest and historical NZ lending rates for products, dashboards, and agent tools.",
 } as const;
@@ -87,7 +87,7 @@ export const integrationNotes: { question: string; answer: Inline[] }[] = [
   {
     question: "Where do the rates come from?",
     answer: [
-      "Direct collections use institution websites and include a sourceUrl. Collection is scheduled hourly, but freshness varies by dataset. Check ",
+      "Direct collections use institution websites and include a sourceUrl. Collection is scheduled every four hours, and freshness varies by dataset. Check ",
       { code: "lastUpdated" },
       " and confirm rates and eligibility with the provider before relying on an offer. ",
       {

@@ -503,45 +503,64 @@ setTimeout(() => {
     }
   );
 
-  browserTest(
-    "a persistent cloud connection failure stops after three attempts and immediately releases every session",
-    async () => {
-      const fixture = await fixtureBrowser(html, 200, false, true);
-      const closed: string[] = [];
-      const source: DirectSource = {
-        id: "bank",
-        institution: "bank",
-        dataset: "mortgage-rates",
-        urls: [url],
-        browser: { [url]: { selector: "td", minimumRates: 2 } },
-        parse: () => [],
-      };
-      const transport = createCollectionTransport([source], {
-        mode: "cloud",
-        apiKey: secret,
-        async open(_host, _key, _deps, country) {
-          return {
-            browser: fixture.browser,
-            close: async () => {
-              closed.push(country ?? "unknown");
-            },
-          };
-        },
-      });
-      try {
-        await expect(transport.fetchPage(url)).rejects.toThrow(
-          "ERR_CONNECTION_RESET"
-        );
-        expect(transport.attempts).toHaveLength(3);
-        expect(fixture.pages()).toBe(3);
-        expect(closed).toEqual(["nz", "au", "nz"]);
-      } finally {
-        await transport.close();
-        await fixture.close();
-      }
+  test("a persistent cloud connection failure stops after three attempts and immediately releases every session", async () => {
+    // Exercise the real retry and error-sanitization path without Chromium
+    // process/IPC timing. Navigation failure itself is injected deterministically.
+    let navigations = 0;
+    let closedContexts = 0;
+    const browser = {
+      async newContext() {
+        return {
+          async newPage() {
+            return {
+              async route() {},
+              async goto() {
+                navigations += 1;
+                throw new Error(`net::ERR_CONNECTION_RESET at ${cdpUrl}`);
+              },
+            };
+          },
+          async close() {
+            closedContexts += 1;
+          },
+        };
+      },
+    } as unknown as Browser;
+    const closed: string[] = [];
+    const source: DirectSource = {
+      id: "bank",
+      institution: "bank",
+      dataset: "mortgage-rates",
+      urls: [url],
+      browser: { [url]: { selector: "td", minimumRates: 2 } },
+      parse: () => [],
+    };
+    const transport = createCollectionTransport([source], {
+      mode: "cloud",
+      apiKey: secret,
+      async open(_host, _key, _deps, country) {
+        return {
+          browser,
+          close: async () => {
+            closed.push(country ?? "unknown");
+          },
+        };
+      },
+    });
+    try {
+      await expect(transport.fetchPage(url)).rejects.toThrow(
+        "ERR_CONNECTION_RESET"
+      );
+      expect(transport.attempts).toHaveLength(3);
+      expect(navigations).toBe(3);
+      expect(closedContexts).toBe(3);
+      expect(JSON.stringify(transport.attempts)).not.toContain(secret);
       expect(closed).toEqual(["nz", "au", "nz"]);
+    } finally {
+      await transport.close();
     }
-  );
+    expect(closed).toEqual(["nz", "au", "nz"]);
+  });
 
   browserTest(
     "waits for the rate feed and hydrated cells, ignoring unrelated percentages",
