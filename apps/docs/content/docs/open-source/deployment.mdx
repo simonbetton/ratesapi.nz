@@ -156,7 +156,7 @@ bun run --filter web deploy
 | Deploy to Cloudflare | On each push to `main`, or manually | `CLOUDFLARE_API_TOKEN` |
 | Scheduled Rate Collection | Every four hours (minute 17 UTC; best effort), on each push to `main`, or manually | `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` |
 
-Each workflow runs `bun run check` before it deploys or collects data.
+CI and deployment run `bun run check`. Scheduled collection waits for a successful deployment of its commit, then collects each dataset independently without rerunning the test suite.
 
 ## After Deployment
 
