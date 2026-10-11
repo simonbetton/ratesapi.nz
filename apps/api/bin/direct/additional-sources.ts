@@ -35,11 +35,7 @@ function single(
     dataset,
     urls: [url],
     parse(pages) {
-      const text = plainText(page(pages, url));
-      if (institution === "aotea-finance" && !pattern.test(text)) {
-        console.warn(`[DEBUG-aotea-response] ${text.slice(0, 12000)}`);
-      }
-      const match = requiredMatch(text, pattern);
+      const match = requiredMatch(plainText(page(pages, url)), pattern);
       const rate = percentage(match[1] ?? "");
       return [
         {
@@ -91,18 +87,31 @@ function financeNowSource(
   };
 }
 
+const aotea = "https://aoteafinance.co.nz/costs-of-borrowing/";
+
 export const additionalSources: DirectSource[] = [
-  single(
-    "aotea-finance",
-    "personal-loan-rates",
-    "https://aoteafinance.co.nz/costs-of-borrowing/",
-    "Personal Loan",
-    /Annual Interest Rate is fixed for the whole contract being from (?<rate>[\d.]+)% to (?<maximum>[\d.]+)%/u,
-    {
-      condition:
-        "Fixed rate depends on individual credit assessment; default interest excluded.",
-    }
-  ),
+  {
+    ...single(
+      "aotea-finance",
+      "personal-loan-rates",
+      aotea,
+      "Personal Loan",
+      /Annual Interest Rate is fixed for the whole contract being from (?<rate>[\d.]+)% to (?<maximum>[\d.]+)%/u,
+      {
+        condition:
+          "Fixed rate depends on individual credit assessment; default interest excluded.",
+      }
+    ),
+    // GitHub can receive an HTTP 200 shell with no readable rate disclosure.
+    browser: {
+      [aotea]: {
+        selector: "body",
+        minimumRates: 1,
+        rateTextPattern: "Annual\\s+Interest\\s+Rate\\s+is\\s+fixed",
+        cloudChallenge: true,
+      },
+    },
+  },
   financeNowSource("personal-loan-rates"),
   financeNowSource("car-loan-rates"),
   {

@@ -10,6 +10,7 @@ import {
   renderPage,
 } from "../bin/direct/browser";
 import { createSourceFetcher } from "../bin/direct/collect";
+import { directSources } from "../bin/direct/sources";
 import { createRecoverableCollectionTransport } from "../bin/direct/transport";
 import type { DirectSource } from "../bin/direct/types";
 
@@ -224,6 +225,31 @@ async function fixtureBrowser(
 }
 
 describe("real Chromium transport", () => {
+  browserTest(
+    "Aotea waits for a rendered disclosure instead of parsing an empty response shell",
+    async () => {
+      const source = directSources.find(
+        (item) => item.id === "aotea-finance-personal-loan-rates"
+      );
+      const sourceUrl = source?.urls[0];
+      const readiness = sourceUrl ? source?.browser?.[sourceUrl] : undefined;
+      if (!source || !sourceUrl || !readiness) {
+        throw new Error("Aotea must have browser readiness for its disclosure");
+      }
+      const fixture = await fixtureBrowser(`<script>setTimeout(() => {
+      document.body.innerHTML = '<p>Annual Interest Rate is fixed for the whole contract being from 22.5% to 32.50%.</p><p>Annual Default Interest rate is 7% above the stated Annual Interest Rate.</p>';
+    }, 50);</script>`);
+      try {
+        const body = await renderPage(fixture.browser, url, readiness, 5000);
+        expect(source.parse(new Map([[sourceUrl, body]]))).toMatchObject([
+          { rate: 22.5, rateMaximum: 32.5, rateType: "range", sourceUrl },
+        ]);
+      } finally {
+        await fixture.close();
+      }
+    }
+  );
+
   browserTest(
     "reads tables with percentage units in their heading",
     async () => {
