@@ -55,7 +55,7 @@ export const exampleResponse = {
   ],
   lastUpdated: "2026-09-24T04:19:31.911Z",
   termsOfUse:
-    "Direct collections use financial institutions' own websites. Check sourceUrl for provenance. Rates and eligibility can change; confirm them with the institution. Collection is scheduled hourly but is not guaranteed to succeed.",
+    "Direct collections use financial institutions' own websites. Rates and eligibility can change; confirm them with the institution.",
   timestamp: "2026-09-24T05:41:12.125Z",
 };
 

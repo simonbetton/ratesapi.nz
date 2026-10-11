@@ -22,6 +22,9 @@ on:
       - "apps/api/test/direct-sources.test.ts"
       - "apps/api/test/partial-publication.test.ts"
       - "apps/api/test/browser-source-workflow.test.ts"
+      - "apps/api/test/scrape-workflow.test.ts"
+      - "apps/api/test/source-runtime.test.ts"
+      - ".github/workflows/scrape.yml"
       - "apps/api/test/fixtures/direct/**"
       - ".github/workflows/browser-sources.yml"
       - "apps/api/package.json"
@@ -47,6 +50,8 @@ jobs:
           node-version: "24"
 
       - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
       - run: bun install --frozen-lockfile --ignore-scripts
       - name: Install Chromium and system dependencies
         working-directory: apps/api
@@ -54,7 +59,7 @@ jobs:
       - name: Test browser lifecycle, extraction and partial publication
         id: source-tests
         run: >-
-          RUN_BROWSER_TESTS=1 bun test apps/api/test/browser-sources.test.ts apps/api/test/direct-sources.test.ts apps/api/test/partial-publication.test.ts apps/api/test/browser-source-workflow.test.ts
+          RUN_BROWSER_TESTS=1 bun test apps/api/test/browser-sources.test.ts apps/api/test/direct-sources.test.ts apps/api/test/partial-publication.test.ts apps/api/test/browser-source-workflow.test.ts apps/api/test/scrape-workflow.test.ts apps/api/test/source-runtime.test.ts
 
   live-source-audit:
     name: Manual live-source health audit
@@ -71,6 +76,8 @@ jobs:
         with:
           node-version: "24"
       - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
       - run: bun install --frozen-lockfile --ignore-scripts
       - name: Install Chromium and system dependencies
         working-directory: apps/api

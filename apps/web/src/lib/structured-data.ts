@@ -28,7 +28,7 @@ function dataset(facts: KeyFacts | null) {
     "@id": ids.dataset,
     name: "New Zealand lending interest rates",
     description:
-      "New Zealand mortgage, personal loan, car loan and credit card interest rates from New Zealand lenders and card issuers, collected directly from institution websites on an hourly schedule and served as free JSON by Rates API, with a daily history.",
+      "New Zealand mortgage, personal loan, car loan and credit card interest rates from New Zealand lenders and card issuers, collected directly from institution websites on a four-hour schedule and served as free JSON by Rates API, with a daily history.",
     url: home,
     creator: { "@id": ids.publisher },
     publisher: { "@id": ids.publisher },
@@ -118,7 +118,7 @@ export function homepageStructuredData(facts: KeyFacts | null) {
         url: home,
         name: "Rates API",
         description:
-          "Free, open-source JSON API for New Zealand mortgage, personal loan, car loan and credit card interest rates, collected directly from institution websites on an hourly schedule.",
+          "Free, open-source JSON API for New Zealand mortgage, personal loan, car loan and credit card interest rates, collected directly from institution websites on a four-hour schedule.",
         publisher: { "@id": ids.publisher },
         inLanguage: "en-NZ",
       },

@@ -184,7 +184,7 @@ If the tool fails, the result contains `isError: true`. For `2025-11-25` and lat
 | `-32020` | `Header mismatch` | A necessary header is missing, or it does not match the body. The HTTP status is 400. |
 | `-32022` | `Unsupported protocol version` | The server does not support the version. The HTTP status is 400. |
 
-The MCP server sends `listChanged: false`, because the list of tools does not change while the API version stays the same. The rate data can change each hour.
+The MCP server sends `listChanged: false`, because the list of tools does not change while the API version stays the same. Rate collection is scheduled every four hours; actual data freshness varies.
 
 ## OpenAPI for Tool Generation
 

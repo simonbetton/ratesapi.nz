@@ -1,7 +1,7 @@
 ---
 title: "Monitoring"
 seoTitle: "Uptime & Data Collection Monitoring"
-description: "How GitHub Actions check Rates API uptime every 15 minutes, monitor the hourly collection of New Zealand rates, and open issues for failures."
+description: "How GitHub Actions check Rates API uptime every 15 minutes, monitor the scheduled collection of New Zealand rates, and open issues for failures."
 ---
 
 Rates API uses GitHub Actions workflows to monitor the service. The workflows monitor uptime, data collection, and code quality.
@@ -42,12 +42,15 @@ If your organization limits permissions, make sure that GitHub Actions can make 
 
 ## Data Collection
 
-The `Hourly Scraping and Database Updates` workflow starts each hour. It also starts on each push to `main`. It does these steps:
+The `Scheduled Rate Collection` workflow targets minute 17 every four hours (UTC). This is a best-effort schedule, not a freshness guarantee: GitHub can delay or skip scheduled runs. It also starts on pushes to `main` and can be started manually.
 
-1. It runs `bun run check`.
-2. It makes sure that it can get access to the remote D1 database.
-3. It collects the four categories and merges verified institutions into each stored dataset.
-4. It reports publication results and any failures in the workflow log. It keeps the source coverage report as an artifact, including for failed runs.
+1. A preparation job waits for the matching commit to deploy, verifies D1 access, and runs the optional freshness-column migration once.
+2. Four independent jobs collect mortgages, personal loans, car loans and cards. At most two run concurrently; one failed job does not cancel its peers. Each writes only its own dataset.
+3. Each job retains collection and browser-recovery reports, including on failure. Failed jobs can be rerun independently from GitHub Actions.
+
+Tests run in CI and before deployment; they are not rerun as a prerequisite for scheduled collection. CI and collection pin the same Bun version. Production runs do not overlap. Each dataset write remains atomic, and earlier historical dates are not rewritten.
+
+For a read-only rehearsal of the same four jobs, use **Run workflow → dry_run**. Preparation and publication are skipped, and collection steps receive no database credentials. Dry runs have a separate concurrency group so they do not hold up production.
 
 A scraper saves a dataset only when the merged data changed. A failed source or product check leaves that institution's previous records in place. Other institutions, including those in the same category, can still update. The run exits with an error after it finishes the independent categories, so a failed workflow can include successful writes.
 

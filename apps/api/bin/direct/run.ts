@@ -176,23 +176,10 @@ function persistenceFor(result: CollectionResult): PublishDependencies {
 
 export async function scrapeDirect(dataset: DataType): Promise<void> {
   const dryRun = process.argv.includes("--dry-run");
-  const transport = createRecoverableCollectionTransport(directSources);
-  let result: CollectionResult;
-  try {
-    result = await collectDirectDataset(
-      dataset,
-      institutions,
-      directSources,
-      transport.fetchPage,
-      undefined,
-      { retryFetchPage: transport.retryFetchPage }
-    );
-  } finally {
-    await transport.close();
+  const [result] = await collectAll("direct-source-report.json", [dataset]);
+  if (!result) {
+    throw new Error(`No collection result for ${dataset}`);
   }
-  console.info(
-    `${dataset}: ${result.sources.filter((source) => source.status === "ok").length}/${result.sources.length} sources succeeded; ${result.blockers.length} blockers`
-  );
   if (dryRun) {
     console.info(JSON.stringify(result, null, 2));
     if (result.blockers.length > 0) {
@@ -220,18 +207,24 @@ export async function scrapeAllDirect(reportPath: string): Promise<void> {
   await publishDirectBatch(results.map(persistenceFor));
 }
 
-async function collectAll(reportPath: string): Promise<CollectionResult[]> {
-  const transport = createRecoverableCollectionTransport(directSources);
+async function collectAll(
+  reportPath: string,
+  datasets = Object.keys(schemas) as DataType[]
+): Promise<CollectionResult[]> {
+  const sources = directSources.filter((source) =>
+    datasets.includes(source.dataset)
+  );
+  const transport = createRecoverableCollectionTransport(sources);
   const { fetchPage } = transport;
   const results: CollectionResult[] = [];
   try {
-    for (const dataset of Object.keys(schemas) as DataType[]) {
+    for (const dataset of datasets) {
       // Each dataset already runs four workers; share its cache and network budget.
       // oxlint-disable-next-line no-await-in-loop
       const result = await collectDirectDataset(
         dataset,
         institutions,
-        directSources,
+        sources,
         fetchPage,
         undefined,
         { retryFetchPage: transport.retryFetchPage }
@@ -251,15 +244,17 @@ async function collectAll(reportPath: string): Promise<CollectionResult[]> {
     }
   } finally {
     try {
-      await writeFile(
-        `${reportPath.replace(/\.json$/u, "")}-browser.json`,
-        `${JSON.stringify(transport.attempts, null, 2)}\n`
-      );
+      await Promise.all([
+        writeFile(reportPath, `${JSON.stringify(results, null, 2)}\n`),
+        writeFile(
+          `${reportPath.replace(/\.json$/u, "")}-browser.json`,
+          `${JSON.stringify(transport.attempts, null, 2)}\n`
+        ),
+      ]);
     } finally {
       await transport.close();
     }
   }
-  await writeFile(reportPath, `${JSON.stringify(results, null, 2)}\n`);
   console.info(`Coverage report: ${reportPath}`);
   return results;
 }

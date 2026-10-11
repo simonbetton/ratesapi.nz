@@ -12,7 +12,7 @@ export interface LlmsPage {
 }
 
 const summary =
-  "Rates API is a free JSON API for New Zealand interest rates. It has four datasets: mortgage, personal loan, car loan, and credit card rates, with coverage listed in the institution register. Collection from institution websites is scheduled hourly. The API keeps a maximum of one snapshot per day when the data changes, with history since 8 March 2025. Mortgage terms are from 6 months to 5 years, plus floating rates. An API key is not necessary. The source code is MIT licensed.";
+  "Rates API is a free JSON API for New Zealand interest rates. It has four datasets: mortgage, personal loan, car loan, and credit card rates, with coverage listed in the institution register. Collection from institution websites is scheduled every four hours; actual freshness varies. The API keeps a maximum of one snapshot per day when the data changes, with history since 8 March 2025. Mortgage terms are from 6 months to 5 years, plus floating rates. An API key is not necessary. The source code is MIT licensed.";
 
 const introduction = [
   "The base URL is https://www.ratesapi.nz. All responses are JSON.",

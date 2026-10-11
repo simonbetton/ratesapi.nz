@@ -338,12 +338,12 @@ export const HealthResponse = t.Object(
             t.String({ examples: ["2025-03-05 09:00:00"] }),
             {
               description:
-                "The date and time (UTC) of the last complete successful data collection for this dataset, in YYYY-MM-DD HH:MM:SS format. Partial collections do not change this time. The API collects each dataset each hour, also when the data does not change. The value is `null` if the API has no record of a collection.",
+                "The date and time (UTC) of the last complete successful data collection for this dataset, in YYYY-MM-DD HH:MM:SS format. Partial collections do not change this time. Collection of each dataset is scheduled every four hours, also when the data does not change. Runs can be delayed or fail. The value is `null` if the API has no record of a collection.",
             }
           ),
           stale: nullable(t.Boolean(), {
             description:
-              "The value is `true` if the API did not collect this dataset correctly in the last 3 hours. Then the data can be old. The value is `false` if the API collected the dataset in the last 3 hours. The value is `null` if `lastChecked` is `null`.",
+              "The value is `true` if the API did not collect this dataset correctly in the last 12 hours. Then the data can be old. The value is `false` if the API collected the dataset in the last 12 hours. The value is `null` if `lastChecked` is `null`.",
           }),
         },
         { additionalProperties: false }

@@ -9,7 +9,7 @@ import { Elysia, ElysiaCustomStatusResponse } from "elysia";
 //   get `X-Robots-Tag: noindex`, so search engines do not index raw JSON.
 // - Successful GET responses of the dataset endpoints (list, by-id and
 //   time-series) and of the OpenAPI document get a short `Cache-Control`,
-//   because the data changes at most once each hour. Errors are not cached.
+//   to reduce repeated reads between collections. Errors are not cached.
 //   The health endpoint is not cached, because monitors need a fresh answer.
 //   MCP is not cached.
 

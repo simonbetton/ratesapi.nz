@@ -159,9 +159,9 @@ export function formatDay(day: string) {
  */
 export function keyFactsSummary(facts: KeyFacts | null) {
   if (!facts) {
-    return "Rates API is a free JSON API for New Zealand lending rates. It covers mortgages, personal loans, car loans and credit cards from New Zealand lenders and card issuers. Collection from institution websites is scheduled hourly. The API keeps a daily history and needs no account or API key.";
+    return "Rates API is a free JSON API for New Zealand lending rates. It covers mortgages, personal loans, car loans and credit cards from New Zealand lenders and card issuers. Collection from institution websites is scheduled every four hours; actual freshness varies. The API keeps a daily history and needs no account or API key.";
   }
-  return `Rates API is a free JSON API for New Zealand lending rates. It covers ${facts.mortgageLenders} mortgage lenders, ${facts.personalLoanLenders} personal loan lenders, ${facts.carLoanLenders} car loan lenders and ${facts.creditCardIssuers} credit card issuers. Collection from institution websites is scheduled hourly. The API has kept a daily history since ${formatDay(facts.historyStart)} and needs no account or API key.`;
+  return `Rates API is a free JSON API for New Zealand lending rates. It covers ${facts.mortgageLenders} mortgage lenders, ${facts.personalLoanLenders} personal loan lenders, ${facts.carLoanLenders} car loan lenders and ${facts.creditCardIssuers} credit card issuers. Collection from institution websites is scheduled every four hours; actual freshness varies. The API has kept a daily history since ${formatDay(facts.historyStart)} and needs no account or API key.`;
 }
 
 /** Small stat items to sit beside the summary. */

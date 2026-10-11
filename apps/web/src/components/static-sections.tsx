@@ -258,8 +258,9 @@ export function AutomationsSection() {
               <SectionBadge className="mb-5">Freshness</SectionBadge>
               <h2>Know how fresh your data is.</h2>
               <p className={cn("mb-4 text-base leading-[1.65] text-[#717583]")}>
-                Collection from institution websites is scheduled hourly. Check
-                each dataset’s lastUpdated value before displaying rates; a
+                Collection is scheduled every four hours and can be delayed or
+                fail. Check lastChecked in the health response for the last
+                complete check and lastUpdated for the last data change. A
                 healthy service does not guarantee fresh data.
               </p>
               <a
@@ -274,7 +275,7 @@ export function AutomationsSection() {
               </a>
             </div>
             <figure
-              aria-label="Hourly data collection workflow"
+              aria-label="Scheduled data collection workflow"
               className={cn(
                 "min-h-[390px] rounded-[14px] border border-[#f1f3f6] bg-white bg-[radial-gradient(#e1e3e9_1px,transparent_1px)] bg-size-[10px_10px] p-8"
               )}
@@ -285,7 +286,7 @@ export function AutomationsSection() {
                     "mb-5 block text-[11px] tracking-[1px] text-[#656977] uppercase"
                   )}
                 >
-                  Hourly collection schedule
+                  Four-hour collection schedule
                 </strong>
                 <ol className={cn("m-0 grid list-none gap-3 p-0")}>
                   {collectionSteps.map(([label, body], index) => (
@@ -499,8 +500,8 @@ export function SiteFooter() {
               <span>Rates API</span>
             </div>
             <p className={cn("mt-3")}>
-              Free New Zealand lending rates as JSON, OpenAPI, and MCP. Updated
-              every hour.
+              Free New Zealand lending rates as JSON, OpenAPI, and MCP.
+              Collection scheduled every four hours, with daily history.
             </p>
           </div>
           <nav

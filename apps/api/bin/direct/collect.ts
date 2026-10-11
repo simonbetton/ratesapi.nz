@@ -63,7 +63,7 @@ export type FetchPage = (
 ) => Promise<string>;
 type HttpFetch = (url: string, init?: RequestInit) => Promise<Response>;
 
-/** Share this fetcher for one collection run only, never between hourly runs. */
+/** Share this fetcher for one collection run only, never between scheduled runs. */
 export function createSourceFetcher(fetcher: HttpFetch = fetch): FetchPage {
   const cache = new Map<string, Promise<string>>();
   return (url) => {

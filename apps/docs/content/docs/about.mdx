@@ -14,7 +14,7 @@ Rates API is independent. It is not affiliated with, or endorsed by, any lender.
 
 ## How Data Collection Operates
 
-1. Each hour, a GitHub Actions workflow runs the scraper scripts.
+1. A GitHub Actions workflow is scheduled to run the scraper scripts every four hours. Runs can be delayed or fail.
 2. The scripts read institution websites and their first-party rate feeds for mortgages, personal loans, car loans, and credit cards. They do not fall back to a comparison site.
 3. The scripts validate all sources and products for each institution. They save verified changes and keep the previous records for institutions that cannot be verified. One failed institution does not stop updates to others.
 4. The API keeps a maximum of one snapshot for each dataset on each UTC date.
@@ -35,7 +35,7 @@ To see the time of the last change to each dataset, send a request to [`/api/v1/
 
 An API key is not necessary, and Rates API has no published rate limit. Obey these rules, so that the service stays available for all users:
 
-- Keep the responses in a cache. The API checks for new data only one time each hour.
+- Keep the responses in a cache. Checks for new data are scheduled every four hours.
 - Do not send many requests in a short time. For example, do not send one request for each visitor to your site.
 - To get earlier rates, use the time-series endpoints. Do not use the list endpoints to make your own history.
 

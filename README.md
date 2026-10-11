@@ -5,7 +5,7 @@
 <p align="center">
   ✨ <a href="https://www.ratesapi.nz">https://www.ratesapi.nz</a> ✨
   <br />
-  A free JSON API for New Zealand mortgage, personal loan, car loan, and credit card rates, updated hourly.
+  A free JSON API for New Zealand mortgage, personal loan, car loan, and credit card rates, with collection scheduled every four hours.
 </p>
 <br />
 
@@ -15,7 +15,7 @@
 </p>
 <br />
 
-Rates API collects the interest rates of New Zealand financial institutions directly from institution websites on an hourly schedule. It serves the newest rates and a daily snapshot history. You don't need an API key, and every response is JSON. AI agents can use the data through an MCP endpoint, the OpenAPI document, or `llms.txt`.
+Rates API collects the interest rates of New Zealand financial institutions directly from institution websites on a four-hour schedule. It serves the latest successfully collected rates and a daily snapshot history. The scheduler targets minute 17 every four hours (UTC), but GitHub may delay or skip runs; the schedule is not a freshness guarantee. You don't need an API key, and every response is JSON. AI agents can use the data through an MCP endpoint, the OpenAPI document, or `llms.txt`.
 
 > [!NOTE] The data can be wrong. Check rates with the financial institution before you make a decision.
 
@@ -73,7 +73,7 @@ Run `bun run --filter api sources:audit` for a read-only live report. Browser so
 | Docs | `apps/docs` | Cloudflare Workers ([Next.js](https://nextjs.org) + [Fumadocs](https://fumadocs.dev) via OpenNext), serving `/docs*` |
 | Landing page | `apps/web` | Cloudflare Workers ([TanStack Start](https://tanstack.com/start)), serving everything else on `www.ratesapi.nz` and redirecting the apex to `www` |
 | Database | `apps/api/schema.sql` | [Cloudflare D1](https://developers.cloudflare.com/d1/), holding the newest datasets and snapshots |
-| Scrapers | `apps/api/bin` | GitHub Actions, every hour ([Cheerio](https://cheerio.js.org)) |
+| Scrapers | `apps/api/bin` | GitHub Actions, checks scheduled every four hours ([Cheerio](https://cheerio.js.org)) |
 
 GitHub Actions also run CI, deploy on every push to `main`, and check the production API every 15 minutes. A failed check opens an issue.
 

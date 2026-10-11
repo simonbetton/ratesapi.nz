@@ -1,12 +1,12 @@
 ---
 title: "Core Concepts"
 seoTitle: "Data Freshness, Lender IDs & Snapshots"
-description: "How Rates API collects New Zealand rates from institution websites each hour, and how snapshots, lender IDs, date filters, and errors operate."
+description: "How Rates API collects New Zealand rates on a four-hour schedule, and how snapshots, lender IDs, date filters, freshness, and errors operate."
 ---
 
 ## Data Freshness
 
-The collectors read institution websites each hour. Each institution must pass its source and product checks before its data can replace stored records. Verified institutions can update even when another institution fails in the same category. Failed or unreconciled institutions keep their previous records. Stored institutions without a verified replacement also stay in the dataset.
+The collectors are scheduled to read institution websites every four hours. Runs can be delayed or fail. Each institution must pass its source and product checks before its data can replace stored records. Verified institutions can update even when another institution fails in the same category. Failed or unreconciled institutions keep their previous records. Stored institutions without a verified replacement also stay in the dataset.
 
 The API saves the merged dataset only when its data changes. Cloudflare D1 keeps the newest version of each dataset and snapshots of earlier versions.
 
@@ -22,7 +22,7 @@ For each dataset, the health response has these fields:
 | --- | --- |
 | `lastUpdated` | The time of the last change to the data. |
 | `lastChecked` | The time of the last complete successful collection, also when the data did not change. Partial updates do not change this time. The value is `null` if the time is not known. |
-| `stale` | `true` if no complete collection was successful in the last 3 hours. `false` if a complete collection was successful in the last 3 hours. `null` if `lastChecked` is `null`. |
+| `stale` | `true` if no complete collection was successful in the last 12 hours. `false` if a complete collection was successful in the last 12 hours. `null` if `lastChecked` is `null`. |
 
 In the health response, `lastUpdated` and `lastChecked` have the format `YYYY-MM-DD HH:MM:SS` (UTC). In the rate responses, `lastUpdated` has the ISO 8601 format.
 

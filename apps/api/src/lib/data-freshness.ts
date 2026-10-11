@@ -3,9 +3,9 @@ import { createLogger } from "./logging";
 
 const log = createLogger("data-freshness");
 
-// The scrapers check each dataset each hour. A dataset is stale when no
-// check succeeded in 3 hours, so one late or failed run is not enough.
-export const staleAfterMs = 3 * 60 * 60 * 1000;
+// Collection is scheduled every four hours. A dataset is stale when no
+// complete check succeeded in three intervals, allowing a late or failed run.
+export const staleAfterMs = 12 * 60 * 60 * 1000;
 
 export interface DataSetFreshness {
   dataType: string;
