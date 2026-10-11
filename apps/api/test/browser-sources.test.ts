@@ -238,7 +238,7 @@ describe("real Chromium transport", () => {
       }
       const fixture = await fixtureBrowser(`<script>setTimeout(() => {
       document.body.innerHTML = '<p>Annual Interest Rate is fixed for the whole contract being from 22.5% to 32.50%.</p><p>Annual Default Interest rate is 7% above the stated Annual Interest Rate.</p>';
-    }, 50);</script>`);
+    }, 700);</script>`);
       try {
         const body = await renderPage(fixture.browser, url, readiness, 5000);
         expect(source.parse(new Map([[sourceUrl, body]]))).toMatchObject([
