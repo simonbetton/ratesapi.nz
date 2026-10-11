@@ -84,12 +84,12 @@ export function createApp(getEnv: GetEnv, options: CreateAppOptions = {}) {
           description: [
             "This endpoint shows if the API can read its database. Use this endpoint to make sure that the API operates correctly.",
             "",
-            "The API collects data each hour, but it saves a dataset only when the data changes. Thus, for each dataset, the response shows two times:",
+            "Collection is scheduled every four hours, but a dataset is saved only when the data changes. Runs can be delayed or fail. Thus, for each dataset, the response shows two times:",
             "",
             "- `lastUpdated` is the time of the last change to the data. This time can be old when the data is correct.",
             "- `lastChecked` is the time of the last complete successful data collection. Partial collections do not change this time.",
             "",
-            "`stale` is `true` when the API did not collect the dataset correctly in the last 3 hours. The `status` stays `ok` when a dataset is stale.",
+            "`stale` is `true` when the API did not collect the dataset correctly in the last 12 hours. The `status` stays `ok` when a dataset is stale.",
           ].join("\n"),
         },
       }

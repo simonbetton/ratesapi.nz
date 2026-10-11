@@ -1712,18 +1712,18 @@ describe("health data freshness", () => {
     }
   });
 
-  test("marks a dataset stale after 3 hours without a check, and keeps status ok", async () => {
+  test("marks a dataset stale after 12 hours without a check, and keeps status ok", async () => {
     const body = await requestHealth(
-      toD1Timestamp(new Date(Date.now() - 4 * hour))
+      toD1Timestamp(new Date(Date.now() - 12 * hour - 60_000))
     );
 
     expect(body.status).toBe("ok");
     expect(body.dataSets.every((dataSet) => dataSet.stale === true)).toBe(true);
   });
 
-  test("does not mark a dataset stale just inside 3 hours", async () => {
+  test("does not mark a dataset stale just inside 12 hours", async () => {
     const body = await requestHealth(
-      toD1Timestamp(new Date(Date.now() - 3 * hour + 60_000))
+      toD1Timestamp(new Date(Date.now() - 12 * hour + 60_000))
     );
 
     expect(body.dataSets.every((dataSet) => dataSet.stale === false)).toBe(
