@@ -155,7 +155,9 @@ async function fetchFirstParty(
       ) {
         const codes = networkErrorCodes(error);
         if (codes.length > 0 && error instanceof Error) {
-          throw new Error(`${error.message} at ${url} [${codes.join(", ")}]`);
+          throw new Error(`${error.message} at ${url} [${codes.join(", ")}]`, {
+            cause: error,
+          });
         }
         throw error;
       }

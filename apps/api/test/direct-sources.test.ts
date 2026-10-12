@@ -609,14 +609,17 @@ describe("first-party fetch boundary", () => {
     const fetchPage = createSourceFetcher(async () => {
       requests += 1;
       throw new TypeError("fetch failed", {
-        cause: new AggregateError([
-          Object.assign(new Error("sensitive connection details"), {
-            code: "ETIMEDOUT",
-          }),
-          Object.assign(new Error("sensitive connection details"), {
-            code: "ENETUNREACH",
-          }),
-        ]),
+        cause: new AggregateError(
+          [
+            Object.assign(new Error("sensitive connection details"), {
+              code: "ETIMEDOUT",
+            }),
+            Object.assign(new Error("sensitive connection details"), {
+              code: "ENETUNREACH",
+            }),
+          ],
+          "Connection attempts failed"
+        ),
       });
     });
     await expect(fetchPage("https://bank.example/rates")).rejects.toThrow(

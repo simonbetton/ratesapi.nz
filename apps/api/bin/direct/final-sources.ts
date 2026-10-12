@@ -10,6 +10,17 @@ export const finalSources: DirectSource[] = [
     institution: "midlands-mortgage-trust",
     dataset: "mortgage-rates",
     urls: [midlands],
+    // Plain HTTP can exhaust network retries from GitHub-hosted runners.
+    // Browser readiness enables the existing local-to-cloud recovery path.
+    browser: {
+      [midlands]: {
+        selector: "p",
+        minimumRates: 1,
+        rateTextPattern:
+          "Our\\s+interest\\s+rates\\s+are\\s+floating\\s+and\\s+currently\\s+start\\s+at\\s+\\d+(?:\\.\\d+)?%",
+        cloudChallenge: true,
+      },
+    },
     parse(pages) {
       const match = requiredMatch(
         plainText(page(pages, midlands)),
