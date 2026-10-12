@@ -144,7 +144,7 @@ async function fetchFirstParty(
           }
           throw new Error(`HTTP ${response.status} at ${target}`);
         }
-        return readSourceResponse(response, target);
+        return await readSourceResponse(response, target);
       }
     } catch (error) {
       // Access denials and parser failures are not repaired by repeated requests.
@@ -153,12 +153,38 @@ async function fetchFirstParty(
         !(error instanceof Error) ||
         !["TimeoutError", "AbortError", "TypeError"].includes(error.name)
       ) {
+        const codes = networkErrorCodes(error);
+        if (codes.length > 0 && error instanceof Error) {
+          throw new Error(`${error.message} at ${url} [${codes.join(", ")}]`);
+        }
         throw error;
       }
     }
     await sleep(500);
   }
   throw new Error(`Source did not return a successful response: ${url}`);
+}
+
+/** Keep machine-readable network causes, never raw socket details or nested logs. */
+function networkErrorCodes(error: unknown, depth = 0): string[] {
+  if (!(error instanceof Error) || depth >= 3) {
+    return [];
+  }
+  const code = "code" in error ? error.code : undefined;
+  const own =
+    typeof code === "string" && /^[A-Z][A-Z0-9_]{1,63}$/u.test(code)
+      ? [code]
+      : [];
+  const nested =
+    error instanceof AggregateError ? error.errors.slice(0, 8) : [error.cause];
+  return [
+    ...new Set([
+      ...own,
+      ...nested.flatMap((cause: unknown) =>
+        networkErrorCodes(cause, depth + 1)
+      ),
+    ]),
+  ].slice(0, 8);
 }
 
 export async function collectDirectDataset(

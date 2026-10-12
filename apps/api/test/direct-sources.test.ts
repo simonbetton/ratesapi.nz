@@ -577,6 +577,54 @@ describe("complete dataset publication", () => {
 });
 
 describe("first-party fetch boundary", () => {
+  test("retries a connection reset while reading the response body", async () => {
+    let requests = 0;
+    const fetchPage = createSourceFetcher(async () => {
+      requests += 1;
+      if (requests === 1) {
+        return new Response(
+          new ReadableStream({
+            start(controller) {
+              controller.error(
+                new TypeError("terminated", {
+                  cause: Object.assign(new Error("socket closed"), {
+                    code: "UND_ERR_SOCKET",
+                  }),
+                })
+              );
+            },
+          })
+        );
+      }
+      return new Response("verified disclosure");
+    });
+    expect(await fetchPage("https://bank.example/rates")).toBe(
+      "verified disclosure"
+    );
+    expect(requests).toBe(2);
+  });
+
+  test("reports bounded network cause codes after exhausting retries", async () => {
+    let requests = 0;
+    const fetchPage = createSourceFetcher(async () => {
+      requests += 1;
+      throw new TypeError("fetch failed", {
+        cause: new AggregateError([
+          Object.assign(new Error("sensitive connection details"), {
+            code: "ETIMEDOUT",
+          }),
+          Object.assign(new Error("sensitive connection details"), {
+            code: "ENETUNREACH",
+          }),
+        ]),
+      });
+    });
+    await expect(fetchPage("https://bank.example/rates")).rejects.toThrow(
+      "fetch failed at https://bank.example/rates [ETIMEDOUT, ENETUNREACH]"
+    );
+    expect(requests).toBe(2);
+  });
+
   test("shares a request within a run", async () => {
     let requests = 0;
     const fetchPage = createSourceFetcher(async () => {
