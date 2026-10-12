@@ -226,6 +226,60 @@ async function fixtureBrowser(
 
 describe("real Chromium transport", () => {
   browserTest(
+    "Midlands recovers a runner connection failure through a browser and validates the borrower rate",
+    async () => {
+      const source = directSources.find(
+        (item) => item.id === "midlands-mortgage"
+      );
+      const sourceUrl = source?.urls[0];
+      if (!source || !sourceUrl) {
+        throw new Error("Missing Midlands source");
+      }
+      const readiness = source.browser?.[sourceUrl];
+      const fixture = await fixtureBrowser(
+        "<h3>What interest rate do you charge borrowers?</h3> <p>Our interest rates are floating and currently start at 7.50% per annum.</p>"
+      );
+      const transport = createCollectionTransport(
+        [
+          {
+            ...source,
+            urls: [url],
+            browser: readiness ? { [url]: readiness } : undefined,
+          },
+        ],
+        {
+          mode: "auto",
+          apiKey: secret,
+          http: async () => {
+            throw new TypeError("fetch failed");
+          },
+          open: async (host) => {
+            if (host === "local") {
+              throw new Error("Runner connection failed");
+            }
+            return { browser: fixture.browser, close: fixture.close };
+          },
+        }
+      );
+      try {
+        const body = await transport.fetchPage(url);
+        expect(source.parse(new Map([[sourceUrl, body]]))).toMatchObject([
+          { rate: 7.5, rateType: "from", sourceUrl },
+        ]);
+        expect(
+          transport.attempts.map(({ host, status }) => ({ host, status }))
+        ).toEqual([
+          { host: "local", status: "failed" },
+          { host: "cloud", status: "ok" },
+        ]);
+      } finally {
+        await transport.close();
+        await fixture.close();
+      }
+    }
+  );
+
+  browserTest(
     "Aotea waits for a rendered disclosure instead of parsing an empty response shell",
     async () => {
       const source = directSources.find(
