@@ -35,7 +35,7 @@
     "husky": "^9.1.7",
     "oxfmt": "^0.70.0",
     "oxlint": "^1.85.0",
-    "react-doctor": "^0.9.14",
+    "react-doctor": "^0.9.17",
     "typescript": "catalog:",
     "ultracite": "^7.12.0"
   },
