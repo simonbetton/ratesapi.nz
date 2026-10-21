@@ -1,3 +1,5 @@
+import { load } from "cheerio";
+
 import type { DataType } from "../../src/lib/data-loader";
 import {
   matchingTable,
@@ -60,6 +62,16 @@ function financeNowSource(
     institution: "finance-now",
     dataset,
     urls: [financeNow],
+    // Plain requests from GitHub can receive 403 even when local HTTP works.
+    browser: {
+      [financeNow]: {
+        selector: "body",
+        minimumRates: 1,
+        rateTextPattern:
+          "Interest\\s+rates\\s+for\\s+personal\\s+loans\\s+range\\s+from",
+        cloudChallenge: true,
+      },
+    },
     parse(pages) {
       const text = plainText(page(pages, financeNow));
       const match = requiredMatch(
@@ -328,20 +340,37 @@ export const additionalSources: DirectSource[] = [
     dataset: "mortgage-rates",
     urls: [welcome],
     parse(pages) {
-      const text = plainText(page(pages, welcome));
-      const fixed =
-        requiredMatch(
-          text,
-          /Residential Fixed Rates\. (?<rows>.+?) Commercial Fixed Rates\./u
-        )[1] ?? "";
-      const matches = requireCount(
-        [
-          ...fixed.matchAll(
-            /(?<term>\d+ (?:months|years)) - from (?<rate>[\d.]+)%/gu
+      const html = page(pages, welcome);
+      const text = plainText(html);
+      const $ = load(html);
+      // The residential card remains valid when commercial products disappear.
+      const [fixed] = requireCount(
+        $(".rate-overview__card_content")
+          .toArray()
+          .filter(
+            (card) =>
+              $(card).find("h3").text().trim() === "Residential Fixed Rates."
           ),
-        ],
+        1
+      );
+      const matches = requireCount(
+        $(fixed)
+          .find("li")
+          .toArray()
+          .map((row) =>
+            requiredMatch(
+              plainText($.html(row)),
+              /^(?<term>\d+ (?:months|years)) - from (?<rate>[\d.]+)%$/u
+            )
+          ),
         4
       );
+      const terms = new Set(matches.map((match) => termMonths(match[1] ?? "")));
+      if ([6, 12, 18, 24].some((term) => !terms.has(term))) {
+        throw new Error(
+          "Welcome is missing a reviewed residential mortgage term"
+        );
+      }
       const rates: Observation[] = matches.map((match) => ({
         product: "Short-term first mortgages from:",
         rate: percentage(match[2] ?? ""),

@@ -13,6 +13,7 @@ import { createSourceFetcher } from "../bin/direct/collect";
 import { directSources } from "../bin/direct/sources";
 import { createRecoverableCollectionTransport } from "../bin/direct/transport";
 import type { DirectSource } from "../bin/direct/types";
+import responses from "./fixtures/direct/responses.json";
 
 const sessionId = "11111111-1111-1111-1111-111111111111";
 const secret = "test-key-must-never-be-logged";
@@ -225,6 +226,73 @@ async function fixtureBrowser(
 }
 
 describe("real Chromium transport", () => {
+  browserTest.each(["personal-loan-rates", "car-loan-rates"])(
+    "Finance Now %s recovers runner access denial and validates the rendered promotion",
+    async (dataset) => {
+      const source = directSources.find(
+        (item) => item.id === `finance-now-${dataset}`
+      );
+      const sourceUrl = source?.urls[0];
+      if (!source || !sourceUrl) {
+        throw new Error("Missing Finance Now source");
+      }
+      const fixture = await fixtureBrowser(
+        responses["https://www.financenow.co.nz/personal-loans/"]
+      );
+      const readiness = source.browser?.[sourceUrl];
+      const transport = createCollectionTransport(
+        [
+          {
+            ...source,
+            urls: [url],
+            browser: readiness ? { [url]: readiness } : undefined,
+          },
+        ],
+        {
+          mode: "auto",
+          apiKey: secret,
+          http: async () => {
+            throw new Error("HTTP 403");
+          },
+          open: async (host) => {
+            if (host === "local") {
+              throw new Error("Browser page returned HTTP 403");
+            }
+            return { browser: fixture.browser, close: fixture.close };
+          },
+        }
+      );
+      try {
+        const body = await transport.fetchPage(url);
+        expect(source.parse(new Map([[sourceUrl, body]]))).toMatchObject([
+          {
+            product: "Personal Loan",
+            rate: 8.25,
+            rateMaximum: 29.95,
+            rateType: "range",
+            sourceUrl,
+          },
+        ]);
+        expect(
+          transport.attempts.map(({ host, status }) => ({ host, status }))
+        ).toEqual([
+          { host: "local", status: "failed" },
+          { host: "cloud", status: "ok" },
+        ]);
+        const expired = body.replace(
+          /until \d{1,2} [A-Za-z]+ \d{4}/u,
+          "until 1 January 2020"
+        );
+        expect(() => source.parse(new Map([[sourceUrl, expired]]))).toThrow(
+          "promotion has expired"
+        );
+      } finally {
+        await transport.close();
+        await fixture.close();
+      }
+    }
+  );
+
   browserTest(
     "Midlands recovers a runner connection failure through a browser and validates the borrower rate",
     async () => {

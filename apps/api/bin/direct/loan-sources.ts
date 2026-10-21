@@ -317,7 +317,16 @@ export const loanSources: DirectSource[] = [
     urls: [avanti],
     parse(pages) {
       const text = plainText(page(pages, avanti));
-      return ["Near Prime", "Specialist"].map((product) => ({
+      return [
+        {
+          product: "Near Prime",
+          contract: "First Mortgage Property Loan – Near Prime",
+        },
+        {
+          product: "First Mortgage Property Loan",
+          contract: "First Mortgage Property Loan",
+        },
+      ].map(({ product, contract }) => ({
         product,
         termInMonths: null,
         sourceUrl: avanti,
@@ -325,13 +334,12 @@ export const loanSources: DirectSource[] = [
           requiredMatch(
             text,
             new RegExp(
-              `First Mortgage Loans \\(${product}\\) Base Variable Rate: ([\\d.]+)%`,
+              `[“"]${contract}[”"], your variable base rate is ([\\d.]+)% p\\.a\\.`,
               "iu"
             )
           )[1] ?? ""
         ),
-        condition:
-          "Base variable rate. High LVRs above 80% may have a margin of up to 1% applied.",
+        condition: `Base variable rate for contracts labelled “${contract}”; borrower-specific margins may apply.`,
       }));
     },
   },

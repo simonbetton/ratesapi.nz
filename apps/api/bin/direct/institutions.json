@@ -660,7 +660,14 @@
         "reason": "Current public rate page mapped to a tested direct adapter. Legacy products are listed below for migration review.",
         "legacyProducts": ["Near Prime", "Specialist"],
         "sourceUrl": "https://www.avantifinance.co.nz/rates-fees/",
-        "reviewedAt": "2026-10-04"
+        "reviewedAt": "2026-10-21",
+        "productDecisions": {
+          "Specialist": {
+            "replacements": ["First Mortgage Property Loan"],
+            "reason": "The current disclosure identifies this base variable rate by the contract name First Mortgage Property Loan and no longer uses the Specialist label. Keep the contract-specific base rate distinct from the new residential fixed-rate ranges.",
+            "sourceUrl": "https://www.avantifinance.co.nz/rates-fees/"
+          }
+        }
       },
       "personal-loan-rates": {
         "status": "active",

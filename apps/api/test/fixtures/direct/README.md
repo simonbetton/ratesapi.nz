@@ -8,6 +8,8 @@ Tests check both successful extraction and rejection of missing, disabled, ambig
 
 Production collectors never import this directory and never fall back to these fixtures.
 
+The Avanti Finance and Welcome entries were refreshed from their public pages on 21 October 2026 after scheduled collection failed. Avanti retains the contract-specific base-variable-rate sentences, surrounding fixed-rate ranges, loan rates and default-interest text. Welcome retains the residential rate cards and lending guidelines after removal of its commercial fixed-rate card. Tests verify exact rates, reject incomplete or ambiguous disclosures, and keep commercial and default-interest rates out of residential results.
+
 ASB, BNZ and Westpac captures were taken from rendered Chromium DOM on 5 October. Public bootstrap API-key attributes, scripts and page-model attributes are stripped. Tests retain populated cells, product labels and eligibility text; runtime collection requires successful feed responses before accepting these pages.
 
 TSB captures were taken through Browser Use Cloud on 5 October. Fixtures retain the formal mortgage, personal-loan, overdraft and Credit Mastercard tables. Default-interest rows and additional-card fees remain in the inputs to verify that they are not mistaken for ordinary lending rates or primary annual fees. Personal-loan closure text is preserved. The debit-card exclusion was checked against TSB’s own debit-card page.
