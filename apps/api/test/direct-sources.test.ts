@@ -52,6 +52,74 @@ async function fixtureFetch(url: string): Promise<string> {
 }
 
 describe("direct source parsers", () => {
+  test("Avanti reads the current contract-specific base rates, excluding fixed ranges and default interest", () => {
+    expect(source("avanti-mortgage").parse(pages)).toMatchObject([
+      { product: "Near Prime", rate: 6.85, termInMonths: null },
+      { product: "First Mortgage Property Loan", rate: 8, termInMonths: null },
+    ]);
+  });
+
+  test.each(["missing", "duplicate", "invalid"])(
+    "Avanti rejects a %s contract-specific base rate",
+    (failure) => {
+      const url = "https://www.avantifinance.co.nz/rates-fees/";
+      const html = pages.get(url) ?? "";
+      const input =
+        failure === "duplicate"
+          ? `${html} ${html}`
+          : html.replace(
+              "your variable base rate is 8%",
+              failure === "missing"
+                ? "your rate is available on request"
+                : "your variable base rate is 800%"
+            );
+      expect(() =>
+        source("avanti-mortgage").parse(new Map([[url, input]]))
+      ).toThrow();
+    }
+  );
+
+  test("Welcome reads residential rates without requiring commercial products", () => {
+    const rates = source("welcome-mortgage").parse(pages);
+    expect(rates.map(({ termInMonths, rate }) => [termInMonths, rate])).toEqual(
+      [
+        [6, 6.85],
+        [12, 6.95],
+        [18, 6.95],
+        [24, 7.25],
+        [null, 6.75],
+      ]
+    );
+    expect(rates.every(({ rateType }) => rateType === "from")).toBe(true);
+  });
+
+  test("Welcome ignores commercial cards and rejects missing or duplicate residential rows", () => {
+    const url = "https://www.welcome.co.nz/borrow/";
+    const html = pages.get(url) ?? "";
+    const $ = load(html);
+    const residential = $("h3")
+      .filter((_, heading) => $(heading).text() === "Residential Fixed Rates.")
+      .closest(".rate-overview__card_content");
+    const commercial = residential.clone();
+    commercial.find("h3").text("Commercial Fixed Rates.");
+    commercial.find("li").text("6 months - from 99%");
+    residential.after(commercial);
+    expect(
+      source("welcome-mortgage").parse(new Map([[url, $.html()]]))
+    ).toEqual(source("welcome-mortgage").parse(pages));
+    residential.find("li").first().remove();
+    expect(() =>
+      source("welcome-mortgage").parse(new Map([[url, $.html()]]))
+    ).toThrow();
+    residential
+      .find("li")
+      .first()
+      .after(residential.find("li").first().clone());
+    expect(() =>
+      source("welcome-mortgage").parse(new Map([[url, $.html()]]))
+    ).toThrow();
+  });
+
   test.each(directSources)(
     "$id reads captured first-party content and rejects an empty page",
     (adapter) => {
