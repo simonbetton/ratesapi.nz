@@ -1,15 +1,21 @@
 import { Database } from "bun:sqlite";
 import { describe, expect, test } from "bun:test";
 
-import { collectDirectDataset } from "../bin/direct/collect";
+import { collectDirectDataset, schemas } from "../bin/direct/collect";
 import type { CollectionResult } from "../bin/direct/collect";
+import {
+  page,
+  percentage,
+  plainText,
+  requiredMatch,
+} from "../bin/direct/parsing";
 import type { PublishDependencies } from "../bin/direct/run";
 import { publishDirectBatch, publishDirectDataset } from "../bin/direct/run";
 import type { DirectSource, Institution } from "../bin/direct/types";
 import { loadFromD1, markCheckedInD1, saveToD1 } from "../bin/utils";
 import type { D1SaveDeps } from "../bin/utils";
 import { toSavableJson } from "../src/lib/data-loader";
-import type { SupportedModels } from "../src/lib/data-loader";
+import type { DataType, SupportedModels } from "../src/lib/data-loader";
 import { MortgageRates } from "../src/models/mortgage-rates";
 
 const registry: Institution[] = ["anz", "midlands"].map((id) => ({
@@ -436,6 +442,203 @@ describe("publication isolation and recovery", () => {
 });
 
 describe("partial publication SQL persistence", () => {
+  const datasets: DataType[] = [
+    "mortgage-rates",
+    "personal-loan-rates",
+    "car-loan-rates",
+    "credit-card-rates",
+  ];
+
+  test.each(datasets)(
+    "%s extraction failure preserves only the affected institution while all categories save",
+    async (failedDataset) => {
+      using db = new Database(":memory:");
+      db.exec(`CREATE TABLE latest_data (data_type TEXT PRIMARY KEY, data TEXT NOT NULL, last_updated TEXT, last_checked TEXT);
+      CREATE TABLE historical_data (data_type TEXT, date TEXT, data TEXT, UNIQUE(data_type, date));`);
+      const selected: Institution[] = ["anz", "midlands"].map((id) => ({
+        id,
+        name: id,
+        datasets: Object.fromEntries(
+          datasets.map((dataset) => [
+            dataset,
+            {
+              status: "active",
+              reason: "Test source",
+              legacyProducts: ["Standard"],
+            },
+          ])
+        ),
+      }));
+      const sources: DirectSource[] = datasets.flatMap((dataset) =>
+        selected.map(({ id }) => {
+          const url = `https://${id}.example/${dataset}`;
+          return {
+            id: `${id}-${dataset}`,
+            institution: id,
+            dataset,
+            urls: [url],
+            parse(pages) {
+              const match = requiredMatch(
+                plainText(page(pages, url)),
+                /^Standard rate: (?<rate>[\d.]+)%$/u
+              );
+              return [
+                {
+                  product: "Standard",
+                  rate: percentage(match[1] ?? ""),
+                  termInMonths: 12,
+                  sourceUrl: url,
+                },
+              ];
+            },
+          };
+        })
+      );
+      const previous = new Map(
+        await Promise.all(
+          datasets.map(async (dataset) => {
+            const result = await collectDirectDataset(
+              dataset,
+              selected,
+              sources,
+              async () => "<p>Standard rate: 5%</p>",
+              new Date("2026-10-20T08:00:00Z")
+            );
+            if (!result.model) {
+              throw new Error(`Incomplete baseline for ${dataset}`);
+            }
+            const encoded = toSavableJson(result.model);
+            db.query("INSERT INTO latest_data VALUES (?, ?, ?, ?)").run(
+              dataset,
+              encoded,
+              "2026-10-20 08:00:00",
+              "2026-10-20 08:00:00"
+            );
+            db.query("INSERT INTO historical_data VALUES (?, ?, ?)").run(
+              dataset,
+              "2026-10-20",
+              encoded
+            );
+            return [dataset, result.model] as const;
+          })
+        )
+      );
+      const io: D1SaveDeps = {
+        target: { databaseName: "memory-only", flags: ["--local"] },
+        now: () => new Date("2026-10-21T08:00:00Z"),
+        run: (_target, sql) => {
+          if (sql.startsWith("SELECT")) {
+            return JSON.stringify([
+              { success: true, results: db.query(sql).all() },
+            ]);
+          }
+          db.exec(sql);
+          return "ok";
+        },
+      };
+      const brokenUrl = `https://anz.example/${failedDataset}`;
+      const requests: string[] = [];
+      const fetchPage = async (url: string) => {
+        requests.push(url);
+        // HTTP succeeds, but the changed disclosure no longer matches the parser.
+        return url === brokenUrl
+          ? "<p>Contact us for current pricing</p>"
+          : "<p>Standard rate: 7%</p>";
+      };
+      // A failure in the first category must not prevent later categories saving.
+      const order = [
+        failedDataset,
+        ...datasets.filter((dataset) => dataset !== failedDataset),
+      ];
+      await expect(
+        publishDirectBatch(
+          order.map((dataset) => ({
+            collect: () =>
+              collectDirectDataset(
+                dataset,
+                selected,
+                sources,
+                fetchPage,
+                io.now?.(),
+                { retryFetchPage: fetchPage }
+              ),
+            load: () =>
+              loadFromD1(dataset, schemas[dataset], { ...io, strict: true }),
+            save: (model, options) =>
+              saveToD1(model, dataset, { ...io, ...options }),
+            markChecked: () => markCheckedInD1(dataset, io),
+            registry: selected,
+          }))
+        )
+      ).rejects.toThrow(`${failedDataset}: partial publication saved`);
+
+      for (const source of sources) {
+        const url = required(source.urls[0]);
+        expect(requests.filter((request) => request === url)).toHaveLength(
+          url === brokenUrl ? 2 : 1
+        );
+      }
+      await Promise.all(
+        datasets.map(async (dataset) => {
+          const stored = await loadFromD1(dataset, schemas[dataset], {
+            ...io,
+            strict: true,
+          });
+          if (!stored) {
+            throw new Error(`Missing saved ${dataset}`);
+          }
+          const baseline = required(previous.get(dataset));
+          expect(stored.data).toHaveLength(2);
+          for (const entry of stored.data) {
+            const failed = dataset === failedDataset && entry.name === "anz";
+            if (failed) {
+              expect(entry).toEqual(
+                required(baseline.data.find((item) => item.id === entry.id))
+              );
+            }
+            const rates =
+              "plans" in entry
+                ? entry.plans.map((plan) => plan.purchaseRate)
+                : entry.products.flatMap((product) =>
+                    product.rates.map((rate) => rate.rate)
+                  );
+            expect(rates).toEqual([failed ? 5 : 7]);
+          }
+          expect(
+            db
+              .query(
+                "SELECT last_checked = last_updated AS fully_checked FROM latest_data WHERE data_type = ?"
+              )
+              .get(dataset)
+          ).toEqual({ fully_checked: dataset === failedDataset ? 0 : 1 });
+          if (dataset === failedDataset) {
+            expect(
+              db
+                .query(
+                  "SELECT last_checked FROM latest_data WHERE data_type = ?"
+                )
+                .get(dataset)
+            ).toEqual({ last_checked: "2026-10-20 08:00:00" });
+          }
+          expect(
+            db
+              .query(
+                "SELECT data FROM historical_data WHERE data_type = ? AND date = ?"
+              )
+              .get(dataset, "2026-10-20")
+          ).toEqual({ data: toSavableJson(baseline) });
+          expect(
+            db
+              .query(
+                "SELECT data FROM historical_data WHERE data_type = ? AND date = ?"
+              )
+              .get(dataset, "2026-10-21")
+          ).toEqual({ data: toSavableJson(stored) });
+        })
+      );
+    }
+  );
+
   test.each([true, false])(
     "retains failed data, historical dates and freshness with last_checked column=%s",
     async (hasLastChecked) => {
