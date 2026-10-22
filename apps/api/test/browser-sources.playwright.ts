@@ -198,7 +198,7 @@ async function fixtureBrowser(
                       status: 302,
                       headers: { location: "https://outside.example/rates" },
                     }
-                  : { contentType: "text/html", body }
+                  : { contentType: "text/html; charset=utf-8", body }
               );
             } else {
               crossOriginRequests += 1;
@@ -221,6 +221,67 @@ async function fixtureBrowser(
 }
 
 test.describe("real Chromium transport", () => {
+  test("Future Finance recovers a runner timeout through cloud and validates the advertised range", async () => {
+    const source = directSources.find(
+      (item) => item.id === "future-finance-personal-loan-rates"
+    );
+    const sourceUrl = source?.urls[0];
+    const readiness = sourceUrl ? source?.browser?.[sourceUrl] : undefined;
+    if (!source || !sourceUrl || !readiness) {
+      throw new Error(
+        "Future Finance must have browser readiness for its disclosure"
+      );
+    }
+    const fixture = await fixtureBrowser(
+      responses["https://www.futurefinance.co.nz/interest-rates"]
+    );
+    const transport = createCollectionTransport(
+      [{ ...source, urls: [url], browser: { [url]: readiness } }],
+      {
+        mode: "auto",
+        apiKey: secret,
+        async open(host) {
+          if (host === "local") {
+            throw new Error("Runner connection timed out");
+          }
+          return { browser: fixture.browser, close: fixture.close };
+        },
+      }
+    );
+    try {
+      const body = await transport.fetchPage(url);
+      expect(source.parse(new Map([[sourceUrl, body]]))).toMatchObject([
+        {
+          product: "Personal Loan",
+          rate: 11.99,
+          rateMaximum: 27.99,
+          rateType: "range",
+          sourceUrl,
+        },
+      ]);
+      expect(
+        transport.attempts.map(({ host, status }) => ({ host, status }))
+      ).toEqual([
+        { host: "local", status: "failed" },
+        { host: "cloud", status: "ok" },
+      ]);
+    } finally {
+      await transport.close();
+      await fixture.close();
+    }
+    const irrelevant =
+      "<p>Default interest is 10% greater than the annual rate. Representative example: 12.99%.</p>";
+    const invalid = await fixtureBrowser(irrelevant);
+    try {
+      await expect(
+        renderPage(invalid.browser, url, readiness, 250)
+      ).rejects.toThrow("rate hydration");
+      expect(() => source.parse(new Map([[sourceUrl, irrelevant]]))).toThrow();
+    } finally {
+      await invalid.close();
+    }
+  });
+
   for (const dataset of ["personal-loan-rates", "car-loan-rates"]) {
     test(`Finance Now ${dataset} recovers runner access denial and validates the rendered promotion`, async () => {
       const source = directSources.find(

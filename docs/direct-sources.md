@@ -147,6 +147,8 @@ After each category's initial collection finishes, failed adapters receive one r
 
 WBS mortgage extraction validates every term and rate, rejects duplicate terms and malformed rows, and requires its reviewed floating, 12-, 18- and 24-month baseline. Additional supported terms are accepted without an exact row-count limit; the new 36-month rate is covered by a captured first-party fixture.
 
+Future Finance uses browser collection with cloud recovery when the runner cannot connect to its public rate page. Readiness requires its advertised fixed-rate range; default interest and representative examples cannot satisfy the check or supply a published rate.
+
 Collection validates numbers, term mappings, range endpoints, source provenance, non-empty data, identifiers, and product coverage for each institution. All sources for an institution within a category must pass before its replacement is eligible. The publisher merges verified institutions into the stored category, so a failed source does not block successful institutions in the same category or other categories. The same institution can still update in its other categories. It retains previous records for failed, unreconciled or unknown institutions in the affected category. A stored institution is removed from current rates only when its register entry is excluded with a reason, evidence URL and review date. Stored products also need reviewed decisions before a replacement can remove them. Legacy snapshots can split one card issuer across credit, debit and prepaid rows: every row must reconcile against the verified replacement before those rows can collapse into one issuer. Unresolved duplicate IDs still block publication. Database reads fail closed: an unreadable or invalid snapshot blocks that category and is not treated as an empty database.
 
 Complete successful collections update `last_checked`, also when the rates do not change. Partial collections preserve `last_checked`; if their merged rates are unchanged, they do not write anything. A changed partial collection saves the merged data and daily snapshot but keeps the payload's previous `lastUpdated` when a stored snapshot exists. This conservative timestamp does not present retained records as newly collected. The health endpoint's `lastUpdated` still records the last data change, while `lastChecked` records the last complete successful collection.
@@ -220,7 +222,15 @@ The committed fixtures are test input only and are never a runtime fallback. See
 
 ### Scheduled-run resilience
 
-The production workflow has one deployment/database preparation job and four independent dataset jobs. Each job writes its own `source-coverage-<dataset>` artifact containing source results and browser attempts, even if publication fails. Failed jobs can be rerun without recollecting healthy categories. The workflow's `dry_run` input runs the same collection jobs without deployment preparation, D1 credentials or writes, and uses separate concurrency from production.
+The production workflow has one deployment/database preparation job and four independent dataset jobs. Each job writes its own `source-coverage-<dataset>` artifact containing source results and browser attempts, even if publication fails. Failed jobs can be rerun without recollecting healthy categories.
+
+Pull requests that change collector code, rate models, dependencies or the collection workflow automatically run all four live collection jobs as dry runs. These checks use the PR merge commit and the same HTTP/browser access and extraction validation as production. Deployment preparation and publication are skipped, and the dry-run step receives no D1 or Cloudflare credentials. A failed source fails its PR check and preserves the diagnostic artifact. Dry runs use separate concurrency from production and may use the configured Browser Use Cloud key.
+
+Live PR checks run only for branches in this repository. Fork PRs cannot use the browser secret; after review, maintainers can test their changes on a repository branch. The workflow's `dry_run` input also allows a manual audit of a selected branch, without deployment preparation or database writes:
+
+```bash
+gh workflow run scrape.yml --ref feature/your-branch -f dry_run=true
+```
 
 Scraper and audit commands run Node with `--max-http-header-size=65536`. Amex's valid response headers exceed Node's default 16 KiB allowance; increasing the limit to a bounded 64 KiB prevents `UND_ERR_HEADERS_OVERFLOW` while rejecting oversized responses above that bound. WBS now uses reviewed browser readiness because its public page can return HTTP 403 to plain requests from GitHub runners. Aotea also uses browser readiness tied to its annual-interest disclosure: plain HTTP can return a successful response with no readable disclosure text. All rate parsers remain strict.
 

@@ -10,7 +10,8 @@ const workflow = Bun.YAML.parse(
     "utf-8"
   )
 ) as {
-  concurrency: { "cancel-in-progress": boolean };
+  on: { pull_request: { paths: string[] } };
+  concurrency: { group: string; "cancel-in-progress": boolean };
   jobs: Record<
     string,
     {
@@ -52,7 +53,9 @@ describe("scheduled collection isolation", () => {
   test("production is deployment-gated and dry runs cannot receive database credentials", () => {
     const { prepare } = workflow.jobs;
     const { collect } = workflow.jobs;
-    expect(prepare?.if).toBe("${{ !inputs.dry_run }}");
+    expect(prepare?.if).toBe(
+      "${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && !inputs.dry_run }}"
+    );
     expect(
       prepare?.steps.some(
         (step) => step.run === "bash .github/scripts/wait-for-deployment.sh"
@@ -60,16 +63,41 @@ describe("scheduled collection isolation", () => {
     ).toBe(true);
     expect(collect?.needs).toBe("prepare");
     expect(collect?.if).toBe(
-      "${{ !cancelled() && (inputs.dry_run || needs.prepare.result == 'success') }}"
+      "${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (github.event_name == 'pull_request' || inputs.dry_run || needs.prepare.result == 'success') }}"
     );
     const dry = collect?.steps.find((step) => step.id === "dry-run");
     const publish = collect?.steps.find((step) => step.id === "publish");
-    expect(dry?.if).toBe("${{ inputs.dry_run }}");
+    expect(dry?.if).toBe(
+      "${{ github.event_name == 'pull_request' || inputs.dry_run }}"
+    );
     expect(dry?.run).toContain("--dry-run");
     expect(JSON.stringify(dry)).not.toContain("CLOUDFLARE");
-    expect(publish?.if).toBe("${{ !inputs.dry_run }}");
+    expect(JSON.stringify(dry)).not.toContain("D1_");
+    expect(publish?.if).toBe(prepare?.if);
     expect(publish?.run).not.toContain("--dry-run");
     expect(publish?.env?.CLOUDFLARE_API_TOKEN).toBeDefined();
+  });
+  test("collector PRs run live audits without queuing behind production", () => {
+    expect(workflow.on.pull_request.paths).toContain("apps/api/bin/**");
+    expect(workflow.on.pull_request.paths).toContain(
+      ".github/workflows/scrape.yml"
+    );
+    expect(workflow.concurrency.group).toBe(
+      "${{ (github.event_name == 'pull_request' || inputs.dry_run) && format('rate-audit-{0}', github.ref) || 'production-rate-publication' }}"
+    );
+    const { collect } = workflow.jobs;
+    expect(collect?.if).toContain(
+      "github.event.pull_request.head.repo.full_name == github.repository"
+    );
+    const credentialSteps = Object.values(workflow.jobs)
+      .flatMap((job) => job.steps)
+      .filter((step) => JSON.stringify(step.env ?? {}).includes("CLOUDFLARE"));
+    expect(credentialSteps).toHaveLength(3);
+    expect(
+      collect?.steps
+        .filter((step) => JSON.stringify(step.env ?? {}).includes("CLOUDFLARE"))
+        .map((step) => step.id)
+    ).toEqual(["publish"]);
   });
   test("failed dataset jobs keep separate diagnostic artifacts", () => {
     const upload = workflow.jobs.collect?.steps.find(

@@ -61,6 +61,8 @@ const instantRange =
   /Instant Finance provides loans at an annual interest rate from (?<value>[\d.]+)% to (?<maximum>[\d.]+)% per annum/iu;
 const avanti = "https://www.avantifinance.co.nz/rates-fees/";
 const aa = "https://www.aamoney.co.nz/our-pricing/";
+const futureRange =
+  /Our\s+interest\s+rates\s+are\s+fixed\s+and\s+range\s+from\s+(?<value>[\d.]+)%\s*–\s*(?<maximum>[\d.]+)%\s*p\.a\./iu;
 
 export const loanSources: DirectSource[] = [
   rangeSource(
@@ -71,10 +73,14 @@ export const loanSources: DirectSource[] = [
       {
         product: "Personal Loan",
         plan: null,
-        pattern:
-          /Our interest rates are fixed and range from (?<value>[\d.]+)% – (?<maximum>[\d.]+)% p\.a\./iu,
+        pattern: futureRange,
       },
-    ]
+    ],
+    {
+      selector: "body",
+      minimumRates: 1,
+      rateTextPattern: futureRange.source,
+    }
   ),
   rangeSource(
     "gilrose-finance",
