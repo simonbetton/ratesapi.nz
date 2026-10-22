@@ -22,7 +22,7 @@ export default defineConfig({
     },
     {
       // Test doubles implement async interfaces without awaiting anything.
-      files: ["**/*.test.ts"],
+      files: ["**/*.test.ts", "**/*.playwright.ts"],
       rules: { "require-await": "off" },
     },
     {
@@ -38,6 +38,7 @@ export default defineConfig({
       files: [
         "oxlint.config.ts",
         "oxfmt.config.ts",
+        "apps/api/playwright.config.ts",
         "apps/docs/app/**",
         "apps/docs/next.config.mjs",
         "apps/docs/open-next.config.ts",

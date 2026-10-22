@@ -177,7 +177,7 @@ Cloud sessions start with NZ proxy routing, have a 15-minute expiry, and are exp
 
 Both workflows install Node.js 24, Chromium and its Linux dependencies. The scheduled scraper uses the institution-level publication rules above. The **Direct institution source checks** workflow automatically runs deterministic browser, parser and partial-publication tests on relevant pull requests, without a cloud key or live source requests. A test failure fails the PR check. The paid-capable live source-health audit runs only by explicit manual dispatch, after those tests pass. Manual dispatch defaults to all sources, with optional host and institution inputs for diagnostics. Its collection step receives only the optional browser key, with no database credentials. It uploads sanitized access diagnostics and coverage results even when access fails. The full live audit still fails on either access or coverage errors; source failures are not treated as a successful audit. A selected-institution browser diagnostic reports coverage separately and never publishes.
 
-To run locally:
+Browser tests run with Playwright under Node.js, matching the collector runtime. The parser and publication tests run with Bun. To run the browser checks locally:
 
 ```bash
 cd apps/api
@@ -186,7 +186,7 @@ RATES_BROWSER=local bun run sources:browser
 # Isolate the newly implemented adapters:
 RATES_BROWSER=local RATES_INSTITUTIONS=asb,bnz,westpac bun run sources:browser
 # Includes actual Chromium tests against controlled page/feed fixtures:
-RUN_BROWSER_TESTS=1 bun test test/browser-sources.test.ts
+bun run test:browser
 ```
 
 `BROWSER_USE_API_KEY` is configured as an encrypted repository Actions secret. Cloud access was verified from the local Node.js collector on 5 October 2026, including regional retry, all three TSB adapters and Bank of India. GitHub-hosted runner checks and live-audit artifacts are available on [PR #514](https://github.com/simonbetton/ratesapi.nz/pull/514). Local runs read the key from the environment; never put it in source, fixtures or reports.
