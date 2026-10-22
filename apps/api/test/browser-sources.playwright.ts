@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+
 import { chromium } from "playwright";
 import type { Browser } from "playwright";
 import { expect, test } from "playwright/test";
@@ -237,6 +239,15 @@ test.describe("real Chromium transport", () => {
         throw new Error(`${id} must have browser readiness`);
       }
       const pages = new Map(Object.entries(responses));
+      if (id === "sbs-mortgage") {
+        pages.set(
+          sourceUrl,
+          await readFile(
+            new URL("fixtures/direct/sbs-rendered-rates.html", import.meta.url),
+            "utf-8"
+          )
+        );
+      }
       const fixture = await fixtureBrowser(pages.get(sourceUrl));
       const transport = createCollectionTransport(
         [{ ...source, urls: [url], browser: { [url]: readiness } }],

@@ -17,3 +17,5 @@ TSB captures were taken through Browser Use Cloud on 5 October. Fixtures retain 
 Expanded captures include current linked disclosure text for Basecorp, Liberty, CFML, Xceda and Gold Band. `liberty-disclosure.pdf` is a small real PDF used to verify byte-level extraction and rejection of non-PDF responses. Bank of India fixtures retain its currently published schedule date; Christian Savings retains both minimum-deposit percentages and loan rates to guard against confusing them.
 
 `wbs-home-loans.html` was captured from https://wbs.net.nz/home-loans/ on 8 October 2026. It preserves the five published mortgage rows, including the newly added 36-month term that invalidated the former exact four-row assumption.
+
+`sbs-rendered-rates.html` was captured from https://www.sbsbank.co.nz/rates in Chromium on 22 October 2026. It retains the original tables and generated Stacktable mobile layouts, including default-interest and deposit rows. Tests extract the original lending tables and reject missing, duplicate or malformed originals even when their mobile layouts remain.

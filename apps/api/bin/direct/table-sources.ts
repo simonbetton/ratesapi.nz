@@ -1,3 +1,5 @@
+import { load } from "cheerio";
+
 import {
   advertisedRate,
   matchingTable,
@@ -70,13 +72,16 @@ export const tableSources: DirectSource[] = [
     urls: [sbs],
     browser: {
       [sbs]: {
-        selector: ".e-rates-table__table td",
+        selector: ".e-rates-table__table:not(.small-only) td",
         minimumRates: 20,
         cloudChallenge: true,
       },
     },
     parse(pages) {
-      const html = page(pages, sbs);
+      const $ = load(page(pages, sbs));
+      // Stacktable creates a mobile layout beside each original rate table.
+      $("table.stacktable.small-only").remove();
+      const html = $.html();
       const rows = matchingTable(
         html,
         /Residential Floating Rate \/ First Home Loan Floating Rate/u
