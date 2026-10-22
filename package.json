@@ -33,7 +33,7 @@
   "devDependencies": {
     "fallow": "^3.28.0",
     "husky": "^9.1.7",
-    "oxfmt": "^0.70.0",
+    "oxfmt": "^0.72.0",
     "oxlint": "^1.85.0",
     "react-doctor": "^0.9.14",
     "typescript": "catalog:",
