@@ -11,6 +11,7 @@ import {
   renderPage,
 } from "../bin/direct/browser";
 import { createSourceFetcher } from "../bin/direct/collect";
+import { SourceUnavailableError } from "../bin/direct/failures";
 import { directSources } from "../bin/direct/sources";
 import { createRecoverableCollectionTransport } from "../bin/direct/transport";
 import type { DirectSource } from "../bin/direct/types";
@@ -223,6 +224,33 @@ async function fixtureBrowser(
 }
 
 test.describe("real Chromium transport", () => {
+  test("connection failures are outage warnings but missing rendered rates remain blocking", async () => {
+    const disconnected = await fixtureBrowser(undefined, 200, false, true);
+    const changed = await fixtureBrowser(
+      "<p>The rate disclosure has changed.</p>"
+    );
+    try {
+      await expect(
+        renderPage(
+          disconnected.browser,
+          url,
+          { selector: "td", minimumRates: 1 },
+          250
+        )
+      ).rejects.toBeInstanceOf(SourceUnavailableError);
+      const error = await renderPage(
+        changed.browser,
+        url,
+        { selector: "td", minimumRates: 1 },
+        250
+      ).catch((caughtError: unknown) => caughtError);
+      expect(error).toBeInstanceOf(Error);
+      expect(error).not.toBeInstanceOf(SourceUnavailableError);
+    } finally {
+      await disconnected.close();
+      await changed.close();
+    }
+  });
   for (const id of [
     "fhl-personal",
     "fhl-car",

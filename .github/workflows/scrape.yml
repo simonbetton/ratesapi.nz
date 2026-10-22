@@ -16,6 +16,7 @@ on:
       - "apps/api/package.json"
       - "bun.lock"
       - ".github/workflows/scrape.yml"
+      - ".github/scripts/report-collection.ts"
       - ".github/scripts/wait-for-deployment.sh"
   workflow_dispatch:
     inputs:
@@ -134,5 +135,36 @@ jobs:
           path: |
             apps/api/direct-source-report.json
             apps/api/direct-source-report-browser.json
+            apps/api/direct-run-failure.json
           if-no-files-found: warn
           retention-days: 14
+
+  report:
+    name: Report collection failures
+    needs: [prepare, collect]
+    if: ${{ always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Only the reporting job can comment. It receives no browser or database secrets.
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Download collection evidence
+        uses: actions/download-artifact@v4
+        # Setup failures can leave no artifact; report the failed job instead.
+        continue-on-error: true
+        with:
+          pattern: source-coverage-*
+          path: rate-reports
+      - name: Comment on the PR or collected commit
+        run: node .github/scripts/report-collection.ts
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          COLLECTION_RESULT: ${{ needs.collect.result }}
+          COLLECTION_DRY_RUN: ${{ github.event_name == 'pull_request' || inputs.dry_run || false }}

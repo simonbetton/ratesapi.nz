@@ -10,6 +10,7 @@ import type {
 
 import { createSourceFetcher } from "./collect";
 import type { FetchPage } from "./collect";
+import { SourceUnavailableError, unavailableHttpStatus } from "./failures";
 import type { BrowserReadiness, DirectSource } from "./types";
 
 export type BrowserMode = "auto" | "local" | "cloud";
@@ -47,17 +48,20 @@ type BrowserPhase =
   | "rate hydration";
 
 function browserFailure(error: unknown, phase: BrowserPhase): Error {
-  if (error instanceof RetryableBrowserError) {
+  if (
+    error instanceof RetryableBrowserError ||
+    error instanceof SourceUnavailableError
+  ) {
     return error;
   }
   if (error instanceof Error && phase === "navigation") {
     // Only expose a known error code, never the raw CDP/browser call log.
     const networkCode =
-      /\bnet::(?<code>ERR_(?:TUNNEL_CONNECTION_FAILED|PROXY_CONNECTION_FAILED|CONNECTION_RESET|CONNECTION_CLOSED|CONNECTION_TIMED_OUT|NETWORK_CHANGED|TIMED_OUT))\b/u.exec(
+      /\bnet::(?<code>ERR_(?:TUNNEL_CONNECTION_FAILED|PROXY_CONNECTION_FAILED|CONNECTION_RESET|CONNECTION_CLOSED|CONNECTION_TIMED_OUT|CONNECTION_REFUSED|NAME_NOT_RESOLVED|DNS_TIMED_OUT|NETWORK_CHANGED|TIMED_OUT|CERT_AUTHORITY_INVALID|CERT_DATE_INVALID|CERT_COMMON_NAME_INVALID|SSL_PROTOCOL_ERROR))\b/u.exec(
         error.message
       )?.groups?.code;
     if (networkCode || error.name === "TimeoutError") {
-      return new RetryableBrowserError(
+      return new SourceUnavailableError(
         `Browser navigation failed (${networkCode ?? "TimeoutError"})`
       );
     }
@@ -284,7 +288,12 @@ export function createCollectionTransport(
         // oxlint-disable-next-line no-await-in-loop -- Retry only after closing the previous session.
         return await render(url, spec, "cloud");
       } catch (error) {
-        if (!(error instanceof RetryableBrowserError)) {
+        if (
+          !(
+            error instanceof RetryableBrowserError ||
+            error instanceof SourceUnavailableError
+          )
+        ) {
           throw error;
         }
         // Discard exhausted sessions too, so the next source cannot reuse one.
@@ -491,11 +500,15 @@ async function navigateToRates(
     if (verified) {
       return verified;
     }
-    throw new RetryableBrowserError(
+    throw new SourceUnavailableError(
       "Browser security challenge did not resolve"
     );
   }
-  throw new Error(
+  const Failure =
+    response && unavailableHttpStatus(response.status())
+      ? SourceUnavailableError
+      : Error;
+  throw new Failure(
     `Browser page returned HTTP ${response?.status() ?? "unknown"}`
   );
 }

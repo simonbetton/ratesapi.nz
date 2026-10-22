@@ -12,11 +12,14 @@ const workflow = Bun.YAML.parse(
 ) as {
   on: { pull_request: { paths: string[] } };
   concurrency: { group: string; "cancel-in-progress": boolean };
+  permissions: Record<string, string>;
   jobs: Record<
     string,
     {
-      needs?: string;
+      needs?: string | string[];
       if?: string;
+      permissions?: Record<string, string>;
+      "continue-on-error"?: boolean;
       strategy?: { "fail-fast": boolean; matrix: { dataset: string[] } };
       steps: {
         id?: string;
@@ -26,6 +29,7 @@ const workflow = Bun.YAML.parse(
         env?: Record<string, string>;
         uses?: string;
         with?: Record<string, string>;
+        "continue-on-error"?: boolean;
       }[];
     }
   >;
@@ -107,6 +111,34 @@ describe("scheduled collection isolation", () => {
     expect(upload?.with?.name).toContain("${{ matrix.dataset }}");
     expect(upload?.with?.path).toContain("direct-source-report.json");
     expect(upload?.with?.path).toContain("direct-source-report-browser.json");
+    expect(upload?.with?.path).toContain("direct-run-failure.json");
+  });
+  test("reports failures after all collection jobs with write permissions confined to reporting", () => {
+    const { collect, report } = workflow.jobs;
+    expect(report?.needs).toEqual(["prepare", "collect"]);
+    expect(report?.if).toBe(
+      "${{ always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}"
+    );
+    expect(report?.permissions).toEqual({
+      actions: "read",
+      contents: "write",
+      "pull-requests": "write",
+    });
+    expect(workflow.permissions).toEqual({ contents: "read" });
+    expect(collect?.permissions).toBeUndefined();
+    expect(collect?.["continue-on-error"]).not.toBe(true);
+    expect(collect?.steps.some((step) => step["continue-on-error"])).toBe(
+      false
+    );
+    expect(JSON.stringify(report)).not.toContain("secrets.");
+    expect(
+      report?.steps.some(
+        (step) => step.run === "node .github/scripts/report-collection.ts"
+      )
+    ).toBe(true);
+    expect(workflow.on.pull_request.paths).toContain(
+      ".github/scripts/report-collection.ts"
+    );
   });
   test("WBS uses reviewed browser readiness when HTTP access is denied", () => {
     const source = directSources.find((item) => item.id === "wbs-mortgage");

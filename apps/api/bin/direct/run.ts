@@ -32,20 +32,69 @@ export async function publishDirectDataset(
   const result = await deps.collect();
   const candidate = result.publishable;
   if (!candidate) {
+    if (result.blockers.length === 0 && (result.warnings?.length ?? 0) > 0) {
+      console.warn(
+        `${result.dataset}: no verified replacement; stored data and freshness unchanged:\n${result.warnings?.join("\n")}`
+      );
+      return "unchanged";
+    }
     throw new Error(
       `Direct collection of ${result.dataset} is incomplete:\n${result.blockers.join("\n")}`
     );
   }
   const current = await deps.load();
+  const { merged, verified, blockers, warnings } = reconcileInstitutions(
+    result,
+    candidate,
+    current,
+    deps.registry
+  );
+  const complete = blockers.length === 0 && result.model !== null;
+  if (!complete && blockers.length === 0 && warnings.length === 0) {
+    blockers.push("The complete dataset was not verified");
+  }
+  const model = parseSchema(schemas[result.dataset], {
+    ...candidate,
+    data: merged.toSorted((a, b) => a.id.localeCompare(b.id)),
+    // A mixed-age snapshot must not claim retained records were collected now.
+    lastUpdated:
+      !complete && current ? current.lastUpdated : candidate.lastUpdated,
+  });
+  const status = await persist(model, current, deps, result.dataset, complete);
+  if (!complete) {
+    const message = `${result.dataset}: partial publication ${status}; ${verified} institutions verified; complete-check freshness unchanged:\n${[...blockers, ...warnings].join("\n")}`;
+    if (blockers.length > 0) {
+      throw new Error(message);
+    }
+    console.warn(message);
+  }
+  return status;
+}
+
+function reconcileInstitutions(
+  result: CollectionResult,
+  candidate: SupportedModels,
+  current: SupportedModels | null,
+  registry: readonly Institution[]
+) {
   assertUniqueInstitutions(candidate.data, `collected ${result.dataset}`);
   const blockers = [...result.blockers];
+  const warnings = [...(result.warnings ?? [])];
+  const unavailable = new Set(
+    result.sources
+      .filter(
+        (source) =>
+          source.status === "failed" && source.failureKind === "outage"
+      )
+      .map((source) => `institution:${source.institution}`)
+  );
   const replacements = new Map(
     candidate.data.map((entry) => [entry.id, entry])
   );
   const exclusions = new Set<string>();
   for (const item of current?.data ?? []) {
     const [, id] = item.id.split(":");
-    const coverage = deps.registry.find((institution) => institution.id === id)
+    const coverage = registry.find((institution) => institution.id === id)
       ?.datasets[result.dataset];
     const replacement = replacements.get(item.id);
     if (!replacement) {
@@ -53,7 +102,7 @@ export async function publishDirectDataset(
         exclusions.add(item.id);
         continue;
       }
-      blockers.push(
+      (unavailable.has(item.id) ? warnings : blockers).push(
         `${item.id}: retained previous data because no verified replacement is available`
       );
       continue;
@@ -80,25 +129,12 @@ export async function publishDirectDataset(
     (entry) => !replacements.has(entry.id) && !exclusions.has(entry.id)
   );
   assertUniqueInstitutions(retained, `stored ${result.dataset}`);
-  const merged = [...retained, ...replacements.values()];
-  const complete = blockers.length === 0 && result.model !== null;
-  if (!complete && blockers.length === 0) {
-    blockers.push("The complete dataset was not verified");
-  }
-  const model = parseSchema(schemas[result.dataset], {
-    ...candidate,
-    data: merged.toSorted((a, b) => a.id.localeCompare(b.id)),
-    // A mixed-age snapshot must not claim retained records were collected now.
-    lastUpdated:
-      !complete && current ? current.lastUpdated : candidate.lastUpdated,
-  });
-  const status = await persist(model, current, deps, result.dataset, complete);
-  if (!complete) {
-    throw new Error(
-      `${result.dataset}: partial publication ${status}; ${replacements.size} institutions verified; complete-check freshness unchanged:\n${blockers.join("\n")}`
-    );
-  }
-  return status;
+  return {
+    merged: [...retained, ...replacements.values()],
+    verified: replacements.size,
+    blockers,
+    warnings,
+  };
 }
 
 function isReviewedExclusion(coverage: CoverageEntry | undefined): boolean {
@@ -175,6 +211,22 @@ function persistenceFor(result: CollectionResult): PublishDependencies {
 }
 
 export async function scrapeDirect(dataset: DataType): Promise<void> {
+  try {
+    await executeDirect(dataset);
+  } catch (error) {
+    await writeFile(
+      "direct-run-failure.json",
+      `${JSON.stringify({ dataset, error: error instanceof Error ? error.message : String(error) }, null, 2)}\n`
+    ).catch(() => {
+      console.error(
+        "Could not write the failure artifact; the original error follows."
+      );
+    });
+    throw error;
+  }
+}
+
+async function executeDirect(dataset: DataType): Promise<void> {
   const dryRun = process.argv.includes("--dry-run");
   const [result] = await collectAll("direct-source-report.json", [dataset]);
   if (!result) {
@@ -199,7 +251,7 @@ export async function auditDirectSources(reportPath: string): Promise<boolean> {
 export async function scrapeAllDirect(reportPath: string): Promise<void> {
   const results = await collectAll(reportPath);
   if (process.argv.includes("--dry-run")) {
-    if (results.some((result) => result.model === null)) {
+    if (results.some((result) => result.blockers.length > 0)) {
       process.exitCode = 1;
     }
     return;
@@ -239,8 +291,11 @@ async function collectAll(
       }));
       results.push(result);
       console.info(
-        `${dataset}: ${result.sources.filter((source) => source.status === "ok").length}/${result.sources.length} sources succeeded; ${result.blockers.length} blockers`
+        `${dataset}: ${result.sources.filter((source) => source.status === "ok").length}/${result.sources.length} sources succeeded; ${result.blockers.length} blockers; ${result.warnings?.length ?? 0} outage warnings`
       );
+      for (const warning of result.warnings ?? []) {
+        console.warn(`Source unavailable; continuing: ${warning}`);
+      }
     }
   } finally {
     try {
