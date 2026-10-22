@@ -782,66 +782,78 @@ setTimeout(() => {
     expect(lifecycle.at(-1)).toBe("close:nz");
   });
 
-  test("a persistent cloud connection failure stops after three attempts and immediately releases every session", async () => {
-    // Exercise the real retry and error-sanitization path without Chromium
-    // process/IPC timing. Navigation failure itself is injected deterministically.
-    let navigations = 0;
-    let closedContexts = 0;
-    const browser = {
-      async newContext() {
-        return {
-          async newPage() {
-            return {
-              async route() {
-                // This navigation-error double makes no network requests.
-              },
-              async goto() {
-                navigations += 1;
-                throw new Error(`net::ERR_CONNECTION_RESET at ${cdpUrl}`);
-              },
-            };
-          },
-          async close() {
-            closedContexts += 1;
-          },
-        };
-      },
-    } as unknown as Browser;
-    const closed: string[] = [];
-    const source: DirectSource = {
-      id: "bank",
-      institution: "bank",
-      dataset: "mortgage-rates",
-      urls: [url],
-      browser: { [url]: { selector: "td", minimumRates: 2 } },
-      parse: () => [],
-    };
-    const transport = createCollectionTransport([source], {
-      mode: "cloud",
-      apiKey: secret,
-      async open(_host, _key, _deps, country) {
-        return {
-          browser,
-          close: async () => {
-            closed.push(country ?? "unknown");
-          },
-        };
-      },
+  for (const [code, outage] of [
+    ["ERR_CONNECTION_RESET", true],
+    ["ERR_EMPTY_RESPONSE", true],
+    ["ERR_SOCKS_CONNECTION_HOST_UNREACHABLE", true],
+    ["ERR_ADDRESS_UNREACHABLE", true],
+    ["ERR_INVALID_REDIRECT", false],
+    ["ERR_UNRECOGNIZED_NETWORK_FAILURE", false],
+  ] as const) {
+    test(`${code} preserves diagnostics, classifies outages and releases all sessions`, async () => {
+      // Exercise the real retry and error-sanitization path without Chromium
+      // process/IPC timing. Navigation failure itself is injected deterministically.
+      let navigations = 0;
+      let closedContexts = 0;
+      const browser = {
+        async newContext() {
+          return {
+            async newPage() {
+              return {
+                async route() {
+                  // This navigation-error double makes no network requests.
+                },
+                async goto() {
+                  navigations += 1;
+                  throw new Error(`net::${code} at ${cdpUrl}`);
+                },
+              };
+            },
+            async close() {
+              closedContexts += 1;
+            },
+          };
+        },
+      } as unknown as Browser;
+      const closed: string[] = [];
+      const source: DirectSource = {
+        id: "bank",
+        institution: "bank",
+        dataset: "mortgage-rates",
+        urls: [url],
+        browser: { [url]: { selector: "td", minimumRates: 2 } },
+        parse: () => [],
+      };
+      const transport = createCollectionTransport([source], {
+        mode: "cloud",
+        apiKey: secret,
+        async open(_host, _key, _deps, country) {
+          return {
+            browser,
+            close: async () => {
+              closed.push(country ?? "unknown");
+            },
+          };
+        },
+      });
+      try {
+        const failure = await transport
+          .fetchPage(url)
+          .catch((error: unknown) => error);
+        expect(failure).toBeInstanceOf(Error);
+        expect(String(failure)).toContain(code);
+        expect(failure instanceof SourceUnavailableError).toBe(outage);
+        expect(transport.attempts).toHaveLength(outage ? 3 : 1);
+        expect(navigations).toBe(outage ? 3 : 1);
+        expect(closedContexts).toBe(outage ? 3 : 1);
+        expect(JSON.stringify(transport.attempts)).not.toContain(secret);
+        expect(closed).toEqual(outage ? ["nz", "au", "nz"] : []);
+      } finally {
+        await transport.close();
+      }
+      expect(closed).toEqual(outage ? ["nz", "au", "nz"] : ["nz"]);
     });
-    try {
-      await expect(transport.fetchPage(url)).rejects.toThrow(
-        "ERR_CONNECTION_RESET"
-      );
-      expect(transport.attempts).toHaveLength(3);
-      expect(navigations).toBe(3);
-      expect(closedContexts).toBe(3);
-      expect(JSON.stringify(transport.attempts)).not.toContain(secret);
-      expect(closed).toEqual(["nz", "au", "nz"]);
-    } finally {
-      await transport.close();
-    }
-    expect(closed).toEqual(["nz", "au", "nz"]);
-  });
+  }
 
   test("waits for the rate feed and hydrated cells, ignoring unrelated percentages", async () => {
     const fixture = await fixtureBrowser();

@@ -55,15 +55,22 @@ function browserFailure(error: unknown, phase: BrowserPhase): Error {
     return error;
   }
   if (error instanceof Error && phase === "navigation") {
-    // Only expose a known error code, never the raw CDP/browser call log.
-    const networkCode =
-      /\bnet::(?<code>ERR_(?:TUNNEL_CONNECTION_FAILED|PROXY_CONNECTION_FAILED|CONNECTION_RESET|CONNECTION_CLOSED|CONNECTION_TIMED_OUT|CONNECTION_REFUSED|NAME_NOT_RESOLVED|DNS_TIMED_OUT|NETWORK_CHANGED|TIMED_OUT|CERT_AUTHORITY_INVALID|CERT_DATE_INVALID|CERT_COMMON_NAME_INVALID|SSL_PROTOCOL_ERROR))\b/u.exec(
-        error.message
-      )?.groups?.code;
-    if (networkCode || error.name === "TimeoutError") {
+    // Preserve Chromium's machine-readable code, never the raw CDP/browser log.
+    const networkCode = /\bnet::(?<code>ERR_[A-Z0-9_]{1,80})\b/u.exec(
+      error.message
+    )?.groups?.code;
+    const unavailable =
+      networkCode &&
+      /^(?:ERR_)(?:TUNNEL_CONNECTION_FAILED|PROXY_CONNECTION_FAILED|CONNECTION_RESET|CONNECTION_CLOSED|CONNECTION_TIMED_OUT|CONNECTION_REFUSED|CONNECTION_ABORTED|NAME_NOT_RESOLVED|DNS_TIMED_OUT|NETWORK_CHANGED|TIMED_OUT|CERT_AUTHORITY_INVALID|CERT_DATE_INVALID|CERT_COMMON_NAME_INVALID|SSL_PROTOCOL_ERROR|EMPTY_RESPONSE|SOCKS_CONNECTION_FAILED|SOCKS_CONNECTION_HOST_UNREACHABLE|ADDRESS_UNREACHABLE|INTERNET_DISCONNECTED)$/u.test(
+        networkCode
+      );
+    if (unavailable || error.name === "TimeoutError") {
       return new SourceUnavailableError(
         `Browser navigation failed (${networkCode ?? "TimeoutError"})`
       );
+    }
+    if (networkCode) {
+      return new Error(`Browser navigation failed (${networkCode})`);
     }
   }
   if (
