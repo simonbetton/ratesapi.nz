@@ -3,7 +3,6 @@ import { appendFile, readdir, readFile } from "node:fs/promises";
 import nodePath from "node:path";
 import { pathToFileURL } from "node:url";
 
-import type { BrowserAttempt } from "../../apps/api/bin/direct/browser";
 import type { CollectionResult } from "../../apps/api/bin/direct/collect";
 
 export type CollectionReport = Pick<
@@ -22,7 +21,6 @@ interface Job {
 }
 interface ReportInput {
   reports: CollectionReport[];
-  attempts: BrowserAttempt[];
   failures: RunFailure[];
   jobs: Job[];
   problems: string[];
@@ -61,11 +59,6 @@ function sourceFindings(report: CollectionReport): string[] {
         `- ${code(`${report.dataset} / ${source.id}`)} — ${source.failureKind === "outage" ? "outage" : "blocking failure"}: ${code(source.error ?? "Unknown failure")}`
       );
     }
-    if (source.initialError) {
-      findings.push(
-        `- ${code(source.id)} — ${source.status === "ok" ? "recovered after" : "initial failure before recovery"}: ${code(source.initialError)}`
-      );
-    }
   }
   for (const warning of report.warnings ?? []) {
     findings.push(
@@ -95,19 +88,6 @@ export function buildCollectionComment(input: ReportInput): {
     );
     findings.push(...sourceFindings(report));
   }
-  const browserFailures = new Set<string>();
-  for (const attempt of input.attempts) {
-    if (attempt.status !== "failed") {
-      continue;
-    }
-    const recovered = input.attempts.some(
-      (other) => other.url === attempt.url && other.status === "ok"
-    );
-    browserFailures.add(
-      `- Browser ${code(attempt.host)} ${recovered ? "recovered after" : "access failure"}: ${code(`${attempt.url}: ${attempt.error ?? "Unknown failure"}`)}`
-    );
-  }
-  findings.push(...browserFailures);
   for (const failure of input.failures) {
     findings.push(
       `- ${code(failure.dataset)} — collection/publication failure: ${code(failure.error)}`
@@ -133,7 +113,7 @@ export function buildCollectionComment(input: ReportInput): {
   const hasFindings = findings.length > 0;
   const text = [
     marker,
-    `**Rate collection: ${hasFindings ? "failures or recovery reported" : "no failures in the latest run"}**`,
+    `**Rate collection: ${hasFindings ? "failures reported" : "no failures in the latest run"}**`,
     `[Workflow run](${input.runUrl}) · Commit ${code(input.sha.slice(0, 12))} · ${input.dryRun ? "Dry run — no database writes." : "Production collection."}`,
     summary.join("\n"),
     "Connection/access outages are warnings. Healthy institutions continue independently; failed institutions retain previous data and do not advance complete-check freshness. Extraction, validation and persistence errors remain blocking.",
@@ -186,13 +166,12 @@ export async function upsertCollectionComment(
 
 async function readReports(
   root: string
-): Promise<
-  Pick<ReportInput, "reports" | "attempts" | "failures" | "problems">
-> {
-  const result: Pick<
-    ReportInput,
-    "reports" | "attempts" | "failures" | "problems"
-  > = { reports: [], attempts: [], failures: [], problems: [] };
+): Promise<Pick<ReportInput, "reports" | "failures" | "problems">> {
+  const result: Pick<ReportInput, "reports" | "failures" | "problems"> = {
+    reports: [],
+    failures: [],
+    problems: [],
+  };
   async function visit(directory: string) {
     const entries = await readdir(directory, { withFileTypes: true });
     for (const entry of entries) {
@@ -202,11 +181,9 @@ async function readReports(
         continue;
       }
       if (
-        ![
-          "direct-source-report.json",
-          "direct-source-report-browser.json",
-          "direct-run-failure.json",
-        ].includes(entry.name)
+        !["direct-source-report.json", "direct-run-failure.json"].includes(
+          entry.name
+        )
       ) {
         continue;
       }
@@ -237,17 +214,6 @@ async function readReports(
             throw new Error("Invalid collection report");
           }
           result.reports.push(...(data as CollectionReport[]));
-        } else {
-          if (
-            !Array.isArray(data) ||
-            data.some(
-              (item) =>
-                typeof item.url !== "string" || typeof item.status !== "string"
-            )
-          ) {
-            throw new Error("Invalid browser report");
-          }
-          result.attempts.push(...(data as BrowserAttempt[]));
         }
       } catch (error) {
         result.problems.push(

@@ -30,7 +30,6 @@ const outage: CollectionReport = {
 };
 const input = {
   reports: [outage],
-  attempts: [],
   failures: [],
   jobs: [],
   problems: [],
@@ -77,7 +76,7 @@ describe("collection failure comments", () => {
     expect(comment.body).toContain("Failed to save mortgage-rates");
     expect(comment.body).toContain("Verify D1 access");
   });
-  test("includes recovered source and browser failures and prevents injected mentions or markup", () => {
+  test("recovered sources do not create findings", () => {
     const comment = buildCollectionComment({
       ...input,
       reports: [
@@ -92,19 +91,29 @@ describe("collection failure comments", () => {
           })),
         },
       ],
-      attempts: [
+    });
+    expect(comment.hasFindings).toBe(false);
+    expect(comment.body).not.toContain("recovered");
+    expect(comment.body).not.toContain("HTTP 403");
+    expect(comment.body).not.toContain("HTTP 503");
+  });
+  test("reports the final source failure without retry history and escapes untrusted text", () => {
+    const comment = buildCollectionComment({
+      ...input,
+      reports: [
         {
-          url: "https://bank.example/rates",
-          host: "local",
-          status: "failed",
-          error: "HTTP 403",
+          ...outage,
+          sources: outage.sources.map((source) => ({
+            ...source,
+            initialError: "Initial attempt timed out",
+            error: "HTTP 503 @someone `bad` <script>",
+          })),
         },
-        { url: "https://bank.example/rates", host: "cloud", status: "ok" },
       ],
     });
     expect(comment.hasFindings).toBe(true);
-    expect(comment.body).toContain("recovered");
-    expect(comment.body).toContain("HTTP 403");
+    expect(comment.body).toContain("HTTP 503");
+    expect(comment.body).not.toContain("Initial attempt timed out");
     expect(comment.body).not.toContain("@someone");
     expect(comment.body).not.toContain("<script>");
   });
@@ -236,6 +245,19 @@ describe("collection failure comments", () => {
       );
       await writeFile(
         nodePath.join(artifact, "direct-source-report-browser.json"),
+        JSON.stringify([
+          {
+            url: "https://bank.example/rates",
+            host: "local",
+            status: "failed",
+            error: "Transient browser failure",
+          },
+        ])
+      );
+      const brokenArtifact = nodePath.join(directory, "rate-reports", "broken");
+      await mkdir(brokenArtifact);
+      await writeFile(
+        nodePath.join(brokenArtifact, "direct-run-failure.json"),
         "invalid JSON"
       );
       const eventPath = nodePath.join(directory, "event.json");
@@ -280,6 +302,7 @@ describe("collection failure comments", () => {
       expect(summary).toContain("Report unavailable");
       expect(summary).toContain("Publish");
       expect(summary).not.toContain("test-token");
+      expect(summary).not.toContain("Transient browser failure");
     } finally {
       server.stop(true);
       await rm(directory, { recursive: true, force: true });
