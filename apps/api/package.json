@@ -8,6 +8,7 @@
     "build": "wrangler deploy --env '' --dry-run --outdir dist --minify",
     "deploy": "wrangler deploy --env '' --minify",
     "typecheck": "tsgo --noEmit",
+    "test:browser": "node node_modules/playwright/cli.js test --config playwright.config.ts",
     "db:setup": "bun bin/init-local-d1.ts && bun bin/seed-local-d1.ts",
     "db:migrate": "bun bin/migrate-d1.ts",
     "scrape": "node --max-http-header-size=65536 --import tsx bin/scrape-all-rates.ts",

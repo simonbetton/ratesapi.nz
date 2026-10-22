@@ -11,6 +11,7 @@ interface Step {
   env?: Record<string, string>;
   with?: Record<string, string>;
   "continue-on-error"?: boolean;
+  "working-directory"?: string;
 }
 
 interface Job {
@@ -57,7 +58,7 @@ function runStep(script: string, exitCode: number, institutions = "all") {
   try {
     writeFileSync(
       path.join(directory, "bun"),
-      '#!/bin/sh\nprintf "command: %s\\n" "$*"\nprintf "browser tests: %s\\n" "$RUN_BROWSER_TESTS"\necho "source diagnostic" >&2\nexit "$FAKE_EXIT_CODE"\n',
+      '#!/bin/sh\nprintf "command: %s\\n" "$*"\necho "source diagnostic" >&2\nexit "$FAKE_EXIT_CODE"\n',
       { mode: 0o755 }
     );
     const result = Bun.spawnSync(
@@ -95,7 +96,6 @@ describe("direct source workflow boundaries", () => {
     expect(testStep.if).toBeUndefined();
     const command = testStep.run ?? "";
     for (const file of [
-      "browser-sources.test.ts",
       "direct-sources.test.ts",
       "partial-publication.test.ts",
       "browser-source-workflow.test.ts",
@@ -105,7 +105,28 @@ describe("direct source workflow boundaries", () => {
     }
     const result = runStep(command, 7);
     expect(result.exitCode).toBe(7);
-    expect(result.stdout).toContain("browser tests: 1");
+    expect(result.stdout).toContain("command: test apps/api/test/");
+  });
+
+  test("browser checks use the Node.js runner and preserve failures", () => {
+    const browser = step(job("source-tests"), "browser-tests");
+    expect(browser.if).toBeUndefined();
+    expect(browser["working-directory"]).toBe("apps/api");
+    expect(browser.run).toBe("bun run test:browser");
+    const manifest = JSON.parse(
+      readFileSync(new URL("../package.json", import.meta.url), "utf-8")
+    );
+    expect(manifest.scripts["test:browser"]).toBe(
+      "node node_modules/playwright/cli.js test --config playwright.config.ts"
+    );
+    expect(workflow.on.pull_request.paths).toContain(
+      "apps/api/test/browser-sources.playwright.ts"
+    );
+    expect(workflow.on.pull_request.paths).toContain(
+      "apps/api/playwright.config.ts"
+    );
+    expect(runStep(browser.run ?? "", 7).exitCode).toBe(7);
+    expect(runStep(browser.run ?? "", 0).exitCode).toBe(0);
   });
 
   test("the live audit requires explicit manual dispatch after tests pass", () => {

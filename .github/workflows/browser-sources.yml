@@ -18,7 +18,8 @@ on:
       - "apps/api/bin/audit-browser-sources.ts"
       - "apps/api/bin/audit-direct-sources.ts"
       - "apps/api/bin/utils.ts"
-      - "apps/api/test/browser-sources.test.ts"
+      - "apps/api/test/browser-sources.playwright.ts"
+      - "apps/api/playwright.config.ts"
       - "apps/api/test/direct-sources.test.ts"
       - "apps/api/test/partial-publication.test.ts"
       - "apps/api/test/browser-source-workflow.test.ts"
@@ -56,10 +57,14 @@ jobs:
       - name: Install Chromium and system dependencies
         working-directory: apps/api
         run: bunx playwright install --with-deps chromium
-      - name: Test browser lifecycle, extraction and partial publication
+      - name: Test extraction and partial publication
         id: source-tests
         run: >-
-          RUN_BROWSER_TESTS=1 bun test apps/api/test/browser-sources.test.ts apps/api/test/direct-sources.test.ts apps/api/test/partial-publication.test.ts apps/api/test/browser-source-workflow.test.ts apps/api/test/scrape-workflow.test.ts apps/api/test/source-runtime.test.ts
+          bun test apps/api/test/direct-sources.test.ts apps/api/test/partial-publication.test.ts apps/api/test/browser-source-workflow.test.ts apps/api/test/scrape-workflow.test.ts apps/api/test/source-runtime.test.ts
+      - name: Test browser lifecycle and recovery under Node.js
+        id: browser-tests
+        working-directory: apps/api
+        run: bun run test:browser
 
   live-source-audit:
     name: Manual live-source health audit

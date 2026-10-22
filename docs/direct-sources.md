@@ -147,7 +147,7 @@ After each category's initial collection finishes, failed adapters receive one r
 
 WBS mortgage extraction validates every term and rate, rejects duplicate terms and malformed rows, and requires its reviewed floating, 12-, 18- and 24-month baseline. Additional supported terms are accepted without an exact row-count limit; the new 36-month rate is covered by a captured first-party fixture.
 
-Collection validates numbers, term mappings, range endpoints, source provenance, non-empty data, identifiers, and product coverage for each institution. All sources for an institution must pass before its replacement is eligible. The publisher merges verified institutions into the stored category, so a failed source does not block successful institutions in the same category or other categories. It retains previous records for failed, unreconciled or unknown institutions. A stored institution is removed from current rates only when its register entry is excluded with a reason, evidence URL and review date. Stored products also need reviewed decisions before a replacement can remove them. Legacy snapshots can split one card issuer across credit, debit and prepaid rows: every row must reconcile against the verified replacement before those rows can collapse into one issuer. Unresolved duplicate IDs still block publication. Database reads fail closed: an unreadable or invalid snapshot blocks that category and is not treated as an empty database.
+Collection validates numbers, term mappings, range endpoints, source provenance, non-empty data, identifiers, and product coverage for each institution. All sources for an institution within a category must pass before its replacement is eligible. The publisher merges verified institutions into the stored category, so a failed source does not block successful institutions in the same category or other categories. The same institution can still update in its other categories. It retains previous records for failed, unreconciled or unknown institutions in the affected category. A stored institution is removed from current rates only when its register entry is excluded with a reason, evidence URL and review date. Stored products also need reviewed decisions before a replacement can remove them. Legacy snapshots can split one card issuer across credit, debit and prepaid rows: every row must reconcile against the verified replacement before those rows can collapse into one issuer. Unresolved duplicate IDs still block publication. Database reads fail closed: an unreadable or invalid snapshot blocks that category and is not treated as an empty database.
 
 Complete successful collections update `last_checked`, also when the rates do not change. Partial collections preserve `last_checked`; if their merged rates are unchanged, they do not write anything. A changed partial collection saves the merged data and daily snapshot but keeps the payload's previous `lastUpdated` when a stored snapshot exists. This conservative timestamp does not present retained records as newly collected. The health endpoint's `lastUpdated` still records the last data change, while `lastChecked` records the last complete successful collection.
 
@@ -177,7 +177,7 @@ Cloud sessions start with NZ proxy routing, have a 15-minute expiry, and are exp
 
 Both workflows install Node.js 24, Chromium and its Linux dependencies. The scheduled scraper uses the institution-level publication rules above. The **Direct institution source checks** workflow automatically runs deterministic browser, parser and partial-publication tests on relevant pull requests, without a cloud key or live source requests. A test failure fails the PR check. The paid-capable live source-health audit runs only by explicit manual dispatch, after those tests pass. Manual dispatch defaults to all sources, with optional host and institution inputs for diagnostics. Its collection step receives only the optional browser key, with no database credentials. It uploads sanitized access diagnostics and coverage results even when access fails. The full live audit still fails on either access or coverage errors; source failures are not treated as a successful audit. A selected-institution browser diagnostic reports coverage separately and never publishes.
 
-To run locally:
+Browser tests run with Playwright under Node.js, matching the collector runtime. The parser and publication tests run with Bun. To run the browser checks locally:
 
 ```bash
 cd apps/api
@@ -186,7 +186,7 @@ RATES_BROWSER=local bun run sources:browser
 # Isolate the newly implemented adapters:
 RATES_BROWSER=local RATES_INSTITUTIONS=asb,bnz,westpac bun run sources:browser
 # Includes actual Chromium tests against controlled page/feed fixtures:
-RUN_BROWSER_TESTS=1 bun test test/browser-sources.test.ts
+bun run test:browser
 ```
 
 `BROWSER_USE_API_KEY` is configured as an encrypted repository Actions secret. Cloud access was verified from the local Node.js collector on 5 October 2026, including regional retry, all three TSB adapters and Bank of India. GitHub-hosted runner checks and live-audit artifacts are available on [PR #514](https://github.com/simonbetton/ratesapi.nz/pull/514). Local runs read the key from the environment; never put it in source, fixtures or reports.

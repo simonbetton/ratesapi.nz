@@ -6,7 +6,7 @@ import { cooperativeSources } from "./cooperative";
 import { discoveredSources } from "./discovered-sources";
 import { finalSources } from "./final-sources";
 import { heartlandSources } from "./heartland";
-import institutionData from "./institutions.json";
+import institutionData from "./institutions.json" with { type: "json" };
 import { kiwibankSources } from "./kiwibank";
 import { loanSources } from "./loan-sources";
 import { majorBankSources } from "./major-bank-sources";
