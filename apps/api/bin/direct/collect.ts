@@ -11,6 +11,7 @@ import { CreditCardRates } from "../../src/models/credit-card-rates";
 import { MortgageRates } from "../../src/models/mortgage-rates";
 import { PersonalLoanRates } from "../../src/models/personal-loan-rates";
 import { assertScrapeHasRates } from "../scrape-guards";
+import { SourceUnavailableError, unavailableHttpStatus } from "./failures";
 import type {
   BrowserReadiness,
   CoverageEntry,
@@ -40,9 +41,11 @@ export interface SourceResult {
   status: "ok" | "failed";
   observations: number;
   error?: string;
+  failureKind?: "outage" | "extraction";
   /** Present when a fresh collection was needed after the initial pass. */
   attempts?: number;
   initialError?: string;
+  initialFailureKind?: "outage" | "extraction";
 }
 
 export interface CollectionResult {
@@ -50,6 +53,7 @@ export interface CollectionResult {
   checkedAt: string;
   sources: SourceResult[];
   blockers: string[];
+  warnings?: string[];
   /** Null means the full dataset was not collected successfully. */
   model: SupportedModels | null;
   preview: SupportedModels | null;
@@ -142,7 +146,10 @@ async function fetchFirstParty(
           ) {
             break;
           }
-          throw new Error(`HTTP ${response.status} at ${target}`);
+          const Failure = unavailableHttpStatus(response.status)
+            ? SourceUnavailableError
+            : Error;
+          throw new Failure(`HTTP ${response.status} at ${target}`);
         }
         return await readSourceResponse(response, target);
       }
@@ -153,18 +160,28 @@ async function fetchFirstParty(
         !(error instanceof Error) ||
         !["TimeoutError", "AbortError", "TypeError"].includes(error.name)
       ) {
-        const codes = networkErrorCodes(error);
-        if (codes.length > 0 && error instanceof Error) {
-          throw new Error(`${error.message} at ${url} [${codes.join(", ")}]`, {
-            cause: error,
-          });
-        }
-        throw error;
+        throw sourceFetchFailure(error, url);
       }
     }
     await sleep(500);
   }
   throw new Error(`Source did not return a successful response: ${url}`);
+}
+
+function sourceFetchFailure(error: unknown, url: string): unknown {
+  const codes = networkErrorCodes(error);
+  if (isNetworkUnavailable(error, codes)) {
+    return new SourceUnavailableError(
+      `${error.message} at ${url} [${codes.join(", ") || error.name}]`,
+      { cause: error }
+    );
+  }
+  if (error instanceof Error && codes.length > 0) {
+    return new Error(`${error.message} at ${url} [${codes.join(", ")}]`, {
+      cause: error,
+    });
+  }
+  return error;
 }
 
 /** Keep machine-readable network causes, never raw socket details or nested logs. */
@@ -189,6 +206,43 @@ function networkErrorCodes(error: unknown, depth = 0): string[] {
   ].slice(0, 8);
 }
 
+function isNetworkUnavailable(error: unknown, codes: string[]): error is Error {
+  return (
+    error instanceof Error &&
+    (["TimeoutError", "AbortError"].includes(error.name) ||
+      (codes.length > 0 &&
+        codes.every((code) =>
+          /^(?:UND_ERR_(?:CONNECT_TIMEOUT|HEADERS_TIMEOUT|BODY_TIMEOUT|SOCKET)|ETIMEDOUT|ECONNREFUSED|ECONNRESET|EHOSTUNREACH|ENETUNREACH|ENOTFOUND|EAI_AGAIN|ERR_TLS_CERT_ALTNAME_INVALID|CERT_HAS_EXPIRED|UNABLE_TO_VERIFY_LEAF_SIGNATURE|SELF_SIGNED_CERT_IN_CHAIN|DEPTH_ZERO_SELF_SIGNED_CERT)$/u.test(
+            code
+          )
+        )))
+  );
+}
+
+function summarizeSourceFailures(
+  results: Iterable<SourceResult>,
+  failedInstitutions: Set<string>,
+  blockers: string[],
+  warnings: string[]
+): void {
+  for (const result of results) {
+    if (result.status !== "failed") {
+      continue;
+    }
+    failedInstitutions.add(result.institution);
+    if (
+      result.failureKind === "outage" &&
+      result.initialFailureKind !== "extraction"
+    ) {
+      warnings.push(`${result.id}: ${result.error}`);
+    } else {
+      blockers.push(
+        `${result.id}: ${result.error}${result.failureKind === "outage" && result.initialFailureKind === "extraction" ? `; initial extraction failure: ${result.initialError}` : ""}`
+      );
+    }
+  }
+}
+
 export async function collectDirectDataset(
   dataset: DataType,
   institutions: readonly Institution[],
@@ -199,6 +253,7 @@ export async function collectDirectDataset(
 ): Promise<CollectionResult> {
   const sources = allSources.filter((source) => source.dataset === dataset);
   const blockers: string[] = [];
+  const warnings: string[] = [];
   const failedInstitutions = new Set<string>();
   const configured = new Set(sources.map((source) => source.institution));
   for (const institution of institutions) {
@@ -231,12 +286,12 @@ export async function collectDirectDataset(
     fetchPage,
     options.retryFetchPage
   );
-  for (const result of results.values()) {
-    if (result.status === "failed") {
-      failedInstitutions.add(result.institution);
-      blockers.push(`${result.id}: ${result.error}`);
-    }
-  }
+  summarizeSourceFailures(
+    results.values(),
+    failedInstitutions,
+    blockers,
+    warnings
+  );
   let preview: SupportedModels | null = null;
   const { publishable, blockers: validationBlockers } = buildPublishableModel(
     dataset,
@@ -246,17 +301,22 @@ export async function collectDirectDataset(
     now
   );
   blockers.push(...validationBlockers);
-  try {
-    preview = buildModel(dataset, institutions, observations, now);
-  } catch (error) {
-    blockers.push(error instanceof Error ? error.message : String(error));
+  if (observations.size > 0) {
+    try {
+      preview = buildModel(dataset, institutions, observations, now);
+    } catch (error) {
+      blockers.push(error instanceof Error ? error.message : String(error));
+    }
+  } else if (results.size === 0) {
+    blockers.push(`No sources were collected for ${dataset}`);
   }
   return {
     dataset,
     checkedAt: now.toISOString(),
     sources: [...results.values()].toSorted((a, b) => a.id.localeCompare(b.id)),
     blockers: blockers.toSorted(),
-    model: blockers.length === 0 ? preview : null,
+    warnings: warnings.toSorted(),
+    model: blockers.length === 0 && warnings.length === 0 ? preview : null,
     preview,
     publishable,
   };
@@ -278,6 +338,7 @@ async function collectSourceAttempts(
     await Promise.all(
       Array.from({ length: Math.min(4, queue.length) }, async () => {
         for (let source = queue.shift(); source; source = queue.shift()) {
+          let phase: "fetch" | "extraction" = "extraction";
           try {
             const institution = institutions.find(
               (item) => item.id === source.institution
@@ -291,9 +352,11 @@ async function collectSourceAttempts(
               );
             }
             const pages = new Map<string, string>();
+            phase = "fetch";
             for (const url of source.urls) {
               pages.set(url, await fetchAttempt(url));
             }
+            phase = "extraction";
             const discovered = source.discover?.(pages) ?? [];
             const origins = new Set([
               ...source.urls.map((url) => new URL(url).origin),
@@ -312,6 +375,7 @@ async function collectSourceAttempts(
               );
             }
             const permittedUrls = [...new Set([...source.urls, ...discovered])];
+            phase = "fetch";
             for (const url of discovered) {
               if (!pages.has(url)) {
                 pages.set(
@@ -320,6 +384,7 @@ async function collectSourceAttempts(
                 );
               }
             }
+            phase = "extraction";
             const rates = source.parse(pages);
             validateObservations({ ...source, urls: permittedUrls }, rates);
             sourceRates.set(source.id, rates);
@@ -340,6 +405,10 @@ async function collectSourceAttempts(
               status: "failed",
               observations: 0,
               error: message,
+              failureKind:
+                phase === "fetch" && error instanceof SourceUnavailableError
+                  ? "outage"
+                  : "extraction",
             });
           }
         }
@@ -362,6 +431,7 @@ async function collectSourceAttempts(
       if (initial) {
         result.attempts = 2;
         result.initialError = initial.error;
+        result.initialFailureKind = initial.failureKind;
       }
     }
   }

@@ -25,6 +25,9 @@ on:
       - "apps/api/test/browser-source-workflow.test.ts"
       - "apps/api/test/scrape-workflow.test.ts"
       - "apps/api/test/source-runtime.test.ts"
+      - "apps/api/test/source-outages.test.ts"
+      - "apps/api/test/collection-comments.test.ts"
+      - ".github/scripts/report-collection.ts"
       - ".github/workflows/scrape.yml"
       - "apps/api/test/fixtures/direct/**"
       - ".github/workflows/browser-sources.yml"
@@ -60,7 +63,7 @@ jobs:
       - name: Test extraction and partial publication
         id: source-tests
         run: >-
-          bun test apps/api/test/direct-sources.test.ts apps/api/test/partial-publication.test.ts apps/api/test/browser-source-workflow.test.ts apps/api/test/scrape-workflow.test.ts apps/api/test/source-runtime.test.ts
+          bun test apps/api/test/direct-sources.test.ts apps/api/test/partial-publication.test.ts apps/api/test/browser-source-workflow.test.ts apps/api/test/scrape-workflow.test.ts apps/api/test/source-runtime.test.ts apps/api/test/source-outages.test.ts apps/api/test/collection-comments.test.ts
       - name: Test browser lifecycle and recovery under Node.js
         id: browser-tests
         working-directory: apps/api

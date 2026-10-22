@@ -327,6 +327,65 @@ describe("direct source parsers", () => {
     ).toBe(5.19);
   });
 
+  test("SBS reads the original rate tables alongside generated mobile layouts", async () => {
+    const html = await readFile(
+      new URL("fixtures/direct/sbs-rendered-rates.html", import.meta.url),
+      "utf-8"
+    );
+    const rates = source("sbs-mortgage").parse(
+      new Map([["https://www.sbsbank.co.nz/rates", html]])
+    );
+    expect(rates).toHaveLength(20);
+    expect(
+      rates
+        .filter((rate) => rate.product === "Special")
+        .map(({ termInMonths, rate }) => [termInMonths, rate])
+    ).toEqual([
+      [6, 4.85],
+      [12, 5.19],
+      [18, 5.29],
+      [24, 5.29],
+      [36, 5.59],
+      [48, 5.65],
+      [60, 5.75],
+    ]);
+    expect(
+      rates.find((rate) => rate.product === "First Home Combo")
+    ).toMatchObject({ termInMonths: 12, rate: 4.69 });
+    expect(
+      rates.some((rate) => /Default|save|Investment/iu.test(rate.product))
+    ).toBe(false);
+  });
+
+  test.each(["missing", "duplicate", "invalid"])(
+    "SBS still rejects %s original tables when mobile layouts exist",
+    async (failure) => {
+      const html = await readFile(
+        new URL("fixtures/direct/sbs-rendered-rates.html", import.meta.url),
+        "utf-8"
+      );
+      const $ = load(html);
+      const original = $("table.large-only").filter((_index, table) =>
+        $(table).text().includes("First Home Loan Floating Rate")
+      );
+      if (failure === "missing") {
+        original.remove();
+      } else if (failure === "duplicate") {
+        original.after(original.clone());
+      } else {
+        original
+          .find("td")
+          .filter((_index, cell) => $(cell).text().trim() === "5.19%")
+          .text("unavailable");
+      }
+      expect(() =>
+        source("sbs-mortgage").parse(
+          new Map([["https://www.sbsbank.co.nz/rates", $.html()]])
+        )
+      ).toThrow();
+    }
+  );
+
   test("loan ranges retain their upper bound and security", () => {
     expect(source("toyota-personal-loan-rates").parse(pages)[0]).toMatchObject({
       rate: 12.95,

@@ -7,6 +7,17 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    paths:
+      - "apps/api/bin/**"
+      - "apps/api/src/models/**"
+      - "apps/api/src/lib/data-loader.ts"
+      - "apps/api/src/lib/schema.ts"
+      - "apps/api/package.json"
+      - "bun.lock"
+      - ".github/workflows/scrape.yml"
+      - ".github/scripts/report-collection.ts"
+      - ".github/scripts/wait-for-deployment.sh"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -16,7 +27,7 @@ on:
 
 # Do not overlap production runs. Dry runs cannot delay production publication.
 concurrency:
-  group: ${{ inputs.dry_run && format('rate-audit-{0}', github.ref) || 'production-rate-publication' }}
+  group: ${{ (github.event_name == 'pull_request' || inputs.dry_run) && format('rate-audit-{0}', github.ref) || 'production-rate-publication' }}
   cancel-in-progress: false
 
 permissions:
@@ -25,7 +36,7 @@ permissions:
 jobs:
   prepare:
     name: Verify deployment and prepare database
-    if: ${{ !inputs.dry_run }}
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && !inputs.dry_run }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -62,9 +73,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
   collect:
-    name: Collect ${{ matrix.dataset }}
+    name: ${{ (github.event_name == 'pull_request' || inputs.dry_run) && 'Dry run' || 'Collect' }} ${{ matrix.dataset }}
     needs: prepare
-    if: ${{ !cancelled() && (inputs.dry_run || needs.prepare.result == 'success') }}
+    # Only trusted repository branches can use the browser secret for a live audit.
+    if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (github.event_name == 'pull_request' || inputs.dry_run || needs.prepare.result == 'success') }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     strategy:
@@ -94,7 +106,7 @@ jobs:
       # Tests run in CI before deployment, never as a scheduled collection prerequisite.
       - name: Collect and validate without publishing
         id: dry-run
-        if: ${{ inputs.dry_run }}
+        if: ${{ github.event_name == 'pull_request' || inputs.dry_run }}
         working-directory: apps/api
         run: node --max-http-header-size=65536 --import tsx "bin/scrape-${RATES_DATASET}.ts" --dry-run
         env:
@@ -103,7 +115,7 @@ jobs:
           BROWSER_USE_API_KEY: ${{ secrets.BROWSER_USE_API_KEY }}
       - name: Collect and publish verified institutions
         id: publish
-        if: ${{ !inputs.dry_run }}
+        if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && !inputs.dry_run }}
         working-directory: apps/api
         run: node --max-http-header-size=65536 --import tsx "bin/scrape-${RATES_DATASET}.ts"
         env:
@@ -123,5 +135,36 @@ jobs:
           path: |
             apps/api/direct-source-report.json
             apps/api/direct-source-report-browser.json
+            apps/api/direct-run-failure.json
           if-no-files-found: warn
           retention-days: 14
+
+  report:
+    name: Report collection failures
+    needs: [prepare, collect]
+    if: ${{ always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Only the reporting job can comment. It receives no browser or database secrets.
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Download collection evidence
+        uses: actions/download-artifact@v4
+        # Setup failures can leave no artifact; report the failed job instead.
+        continue-on-error: true
+        with:
+          pattern: source-coverage-*
+          path: rate-reports
+      - name: Comment on the PR or collected commit
+        run: node .github/scripts/report-collection.ts
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          COLLECTION_RESULT: ${{ needs.collect.result }}
+          COLLECTION_DRY_RUN: ${{ github.event_name == 'pull_request' || inputs.dry_run || false }}

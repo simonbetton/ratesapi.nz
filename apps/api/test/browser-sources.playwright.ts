@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+
 import { chromium } from "playwright";
 import type { Browser } from "playwright";
 import { expect, test } from "playwright/test";
@@ -9,6 +11,7 @@ import {
   renderPage,
 } from "../bin/direct/browser";
 import { createSourceFetcher } from "../bin/direct/collect";
+import { SourceUnavailableError } from "../bin/direct/failures";
 import { directSources } from "../bin/direct/sources";
 import { createRecoverableCollectionTransport } from "../bin/direct/transport";
 import type { DirectSource } from "../bin/direct/types";
@@ -198,7 +201,7 @@ async function fixtureBrowser(
                       status: 302,
                       headers: { location: "https://outside.example/rates" },
                     }
-                  : { contentType: "text/html", body }
+                  : { contentType: "text/html; charset=utf-8", body }
               );
             } else {
               crossOriginRequests += 1;
@@ -221,6 +224,167 @@ async function fixtureBrowser(
 }
 
 test.describe("real Chromium transport", () => {
+  test("connection failures are outage warnings but missing rendered rates remain blocking", async () => {
+    const disconnected = await fixtureBrowser(undefined, 200, false, true);
+    const changed = await fixtureBrowser(
+      "<p>The rate disclosure has changed.</p>"
+    );
+    try {
+      await expect(
+        renderPage(
+          disconnected.browser,
+          url,
+          { selector: "td", minimumRates: 1 },
+          250
+        )
+      ).rejects.toBeInstanceOf(SourceUnavailableError);
+      const error = await renderPage(
+        changed.browser,
+        url,
+        { selector: "td", minimumRates: 1 },
+        250
+      ).catch((caughtError: unknown) => caughtError);
+      expect(error).toBeInstanceOf(Error);
+      expect(error).not.toBeInstanceOf(SourceUnavailableError);
+    } finally {
+      await disconnected.close();
+      await changed.close();
+    }
+  });
+  for (const id of [
+    "fhl-personal",
+    "fhl-car",
+    "gold-band-personal-loan-rates",
+    "gold-band-car-loan-rates",
+    "sbs-mortgage",
+    "sbs-cards",
+  ]) {
+    test(`${id} renders its reviewed disclosure after runner access denial`, async () => {
+      const source = directSources.find((item) => item.id === id);
+      const sourceUrl = source?.urls[0];
+      const readiness = sourceUrl ? source?.browser?.[sourceUrl] : undefined;
+      if (!source || !sourceUrl || !readiness) {
+        throw new Error(`${id} must have browser readiness`);
+      }
+      const pages = new Map(Object.entries(responses));
+      if (id === "sbs-mortgage") {
+        pages.set(
+          sourceUrl,
+          await readFile(
+            new URL("fixtures/direct/sbs-rendered-rates.html", import.meta.url),
+            "utf-8"
+          )
+        );
+      }
+      const fixture = await fixtureBrowser(pages.get(sourceUrl));
+      const transport = createCollectionTransport(
+        [{ ...source, urls: [url], browser: { [url]: readiness } }],
+        {
+          mode: "auto",
+          apiKey: secret,
+          async open(host) {
+            if (host === "local") {
+              throw new Error("Runner access denied");
+            }
+            return { browser: fixture.browser, close: fixture.close };
+          },
+        }
+      );
+      try {
+        const body = await transport.fetchPage(url);
+        const rendered = new Map(pages).set(sourceUrl, body);
+        expect(source.parse(rendered)).toEqual(source.parse(pages));
+        expect(source.discover?.(rendered)).toEqual(source.discover?.(pages));
+        expect(
+          transport.attempts.map(({ host, status }) => [host, status])
+        ).toEqual([
+          ["local", "failed"],
+          ["cloud", "ok"],
+        ]);
+      } finally {
+        await transport.close();
+        await fixture.close();
+      }
+      const invalid = await fixtureBrowser(
+        "<p>Default interest 10%. Temporarily unavailable.</p>"
+      );
+      try {
+        await expect(
+          renderPage(invalid.browser, url, readiness, 250)
+        ).rejects.toThrow("rate hydration");
+      } finally {
+        await invalid.close();
+      }
+    });
+  }
+
+  test("Future Finance recovers a runner timeout through cloud and validates the advertised range", async () => {
+    const source = directSources.find(
+      (item) => item.id === "future-finance-personal-loan-rates"
+    );
+    const sourceUrl = source?.urls[0];
+    const readiness = sourceUrl ? source?.browser?.[sourceUrl] : undefined;
+    if (!source || !sourceUrl || !readiness) {
+      throw new Error(
+        "Future Finance must have browser readiness for its disclosure"
+      );
+    }
+    const fixture = await fixtureBrowser(
+      responses["https://www.futurefinance.co.nz/interest-rates"]
+    );
+    const cloudContext = await fixture.browser.newContext();
+    let cloudPages = 0;
+    cloudContext.on("page", () => {
+      cloudPages += 1;
+    });
+    const transport = createCollectionTransport(
+      [{ ...source, urls: [url], browser: { [url]: readiness } }],
+      {
+        mode: "auto",
+        apiKey: secret,
+        async open(host) {
+          if (host === "local") {
+            throw new Error("Runner connection timed out");
+          }
+          return { browser: fixture.browser, close: fixture.close };
+        },
+      }
+    );
+    try {
+      const body = await transport.fetchPage(url);
+      expect(cloudPages).toBe(1);
+      expect(source.parse(new Map([[sourceUrl, body]]))).toMatchObject([
+        {
+          product: "Personal Loan",
+          rate: 11.99,
+          rateMaximum: 27.99,
+          rateType: "range",
+          sourceUrl,
+        },
+      ]);
+      expect(
+        transport.attempts.map(({ host, status }) => ({ host, status }))
+      ).toEqual([
+        { host: "local", status: "failed" },
+        { host: "cloud", status: "ok" },
+      ]);
+    } finally {
+      await transport.close();
+      await fixture.close();
+    }
+    const irrelevant =
+      "<p>Default interest is 10% greater than the annual rate. Representative example: 12.99%.</p>";
+    const invalid = await fixtureBrowser(irrelevant);
+    try {
+      await expect(
+        renderPage(invalid.browser, url, readiness, 250)
+      ).rejects.toThrow("rate hydration");
+      expect(() => source.parse(new Map([[sourceUrl, irrelevant]]))).toThrow();
+    } finally {
+      await invalid.close();
+    }
+  });
+
   for (const dataset of ["personal-loan-rates", "car-loan-rates"]) {
     test(`Finance Now ${dataset} recovers runner access denial and validates the rendered promotion`, async () => {
       const source = directSources.find(
@@ -618,66 +782,78 @@ setTimeout(() => {
     expect(lifecycle.at(-1)).toBe("close:nz");
   });
 
-  test("a persistent cloud connection failure stops after three attempts and immediately releases every session", async () => {
-    // Exercise the real retry and error-sanitization path without Chromium
-    // process/IPC timing. Navigation failure itself is injected deterministically.
-    let navigations = 0;
-    let closedContexts = 0;
-    const browser = {
-      async newContext() {
-        return {
-          async newPage() {
-            return {
-              async route() {
-                // This navigation-error double makes no network requests.
-              },
-              async goto() {
-                navigations += 1;
-                throw new Error(`net::ERR_CONNECTION_RESET at ${cdpUrl}`);
-              },
-            };
-          },
-          async close() {
-            closedContexts += 1;
-          },
-        };
-      },
-    } as unknown as Browser;
-    const closed: string[] = [];
-    const source: DirectSource = {
-      id: "bank",
-      institution: "bank",
-      dataset: "mortgage-rates",
-      urls: [url],
-      browser: { [url]: { selector: "td", minimumRates: 2 } },
-      parse: () => [],
-    };
-    const transport = createCollectionTransport([source], {
-      mode: "cloud",
-      apiKey: secret,
-      async open(_host, _key, _deps, country) {
-        return {
-          browser,
-          close: async () => {
-            closed.push(country ?? "unknown");
-          },
-        };
-      },
+  for (const [code, outage] of [
+    ["ERR_CONNECTION_RESET", true],
+    ["ERR_EMPTY_RESPONSE", true],
+    ["ERR_SOCKS_CONNECTION_HOST_UNREACHABLE", true],
+    ["ERR_ADDRESS_UNREACHABLE", true],
+    ["ERR_INVALID_REDIRECT", false],
+    ["ERR_UNRECOGNIZED_NETWORK_FAILURE", false],
+  ] as const) {
+    test(`${code} preserves diagnostics, classifies outages and releases all sessions`, async () => {
+      // Exercise the real retry and error-sanitization path without Chromium
+      // process/IPC timing. Navigation failure itself is injected deterministically.
+      let navigations = 0;
+      let closedContexts = 0;
+      const browser = {
+        async newContext() {
+          return {
+            async newPage() {
+              return {
+                async route() {
+                  // This navigation-error double makes no network requests.
+                },
+                async goto() {
+                  navigations += 1;
+                  throw new Error(`net::${code} at ${cdpUrl}`);
+                },
+              };
+            },
+            async close() {
+              closedContexts += 1;
+            },
+          };
+        },
+      } as unknown as Browser;
+      const closed: string[] = [];
+      const source: DirectSource = {
+        id: "bank",
+        institution: "bank",
+        dataset: "mortgage-rates",
+        urls: [url],
+        browser: { [url]: { selector: "td", minimumRates: 2 } },
+        parse: () => [],
+      };
+      const transport = createCollectionTransport([source], {
+        mode: "cloud",
+        apiKey: secret,
+        async open(_host, _key, _deps, country) {
+          return {
+            browser,
+            close: async () => {
+              closed.push(country ?? "unknown");
+            },
+          };
+        },
+      });
+      try {
+        const failure = await transport
+          .fetchPage(url)
+          .catch((error: unknown) => error);
+        expect(failure).toBeInstanceOf(Error);
+        expect(String(failure)).toContain(code);
+        expect(failure instanceof SourceUnavailableError).toBe(outage);
+        expect(transport.attempts).toHaveLength(outage ? 3 : 1);
+        expect(navigations).toBe(outage ? 3 : 1);
+        expect(closedContexts).toBe(outage ? 3 : 1);
+        expect(JSON.stringify(transport.attempts)).not.toContain(secret);
+        expect(closed).toEqual(outage ? ["nz", "au", "nz"] : []);
+      } finally {
+        await transport.close();
+      }
+      expect(closed).toEqual(outage ? ["nz", "au", "nz"] : ["nz"]);
     });
-    try {
-      await expect(transport.fetchPage(url)).rejects.toThrow(
-        "ERR_CONNECTION_RESET"
-      );
-      expect(transport.attempts).toHaveLength(3);
-      expect(navigations).toBe(3);
-      expect(closedContexts).toBe(3);
-      expect(JSON.stringify(transport.attempts)).not.toContain(secret);
-      expect(closed).toEqual(["nz", "au", "nz"]);
-    } finally {
-      await transport.close();
-    }
-    expect(closed).toEqual(["nz", "au", "nz"]);
-  });
+  }
 
   test("waits for the rate feed and hydrated cells, ignoring unrelated percentages", async () => {
     const fixture = await fixtureBrowser();
