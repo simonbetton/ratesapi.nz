@@ -130,6 +130,13 @@ export const discoveredSources: DirectSource[] = [
       institution: "gold-band-finance",
       dataset,
       urls: [goldband],
+      browser: {
+        [goldband]: {
+          responseType: "links",
+          linkTextPattern: String.raw`INTEREST\s*/\s*STANDARD\s+CHARGES`,
+          cloudChallenge: true,
+        },
+      },
       discover: (pages) => [documentLink(pages, goldband, goldbandDocument)],
       parse(pages) {
         const sourceUrl = documentLink(pages, goldband, goldbandDocument);

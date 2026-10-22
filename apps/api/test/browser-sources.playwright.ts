@@ -221,6 +221,62 @@ async function fixtureBrowser(
 }
 
 test.describe("real Chromium transport", () => {
+  for (const id of [
+    "fhl-personal",
+    "fhl-car",
+    "gold-band-personal-loan-rates",
+    "gold-band-car-loan-rates",
+  ]) {
+    test(`${id} renders its reviewed disclosure after runner access denial`, async () => {
+      const source = directSources.find((item) => item.id === id);
+      const sourceUrl = source?.urls[0];
+      const readiness = sourceUrl ? source?.browser?.[sourceUrl] : undefined;
+      if (!source || !sourceUrl || !readiness) {
+        throw new Error(`${id} must have browser readiness`);
+      }
+      const pages = new Map(Object.entries(responses));
+      const fixture = await fixtureBrowser(pages.get(sourceUrl));
+      const transport = createCollectionTransport(
+        [{ ...source, urls: [url], browser: { [url]: readiness } }],
+        {
+          mode: "auto",
+          apiKey: secret,
+          async open(host) {
+            if (host === "local") {
+              throw new Error("Runner access denied");
+            }
+            return { browser: fixture.browser, close: fixture.close };
+          },
+        }
+      );
+      try {
+        const body = await transport.fetchPage(url);
+        const rendered = new Map(pages).set(sourceUrl, body);
+        expect(source.parse(rendered)).toEqual(source.parse(pages));
+        expect(source.discover?.(rendered)).toEqual(source.discover?.(pages));
+        expect(
+          transport.attempts.map(({ host, status }) => [host, status])
+        ).toEqual([
+          ["local", "failed"],
+          ["cloud", "ok"],
+        ]);
+      } finally {
+        await transport.close();
+        await fixture.close();
+      }
+      const invalid = await fixtureBrowser(
+        "<p>Default interest 10%. Temporarily unavailable.</p>"
+      );
+      try {
+        await expect(
+          renderPage(invalid.browser, url, readiness, 250)
+        ).rejects.toThrow("rate hydration");
+      } finally {
+        await invalid.close();
+      }
+    });
+  }
+
   test("Future Finance recovers a runner timeout through cloud and validates the advertised range", async () => {
     const source = directSources.find(
       (item) => item.id === "future-finance-personal-loan-rates"
@@ -235,6 +291,11 @@ test.describe("real Chromium transport", () => {
     const fixture = await fixtureBrowser(
       responses["https://www.futurefinance.co.nz/interest-rates"]
     );
+    const cloudContext = await fixture.browser.newContext();
+    let cloudPages = 0;
+    cloudContext.on("page", () => {
+      cloudPages += 1;
+    });
     const transport = createCollectionTransport(
       [{ ...source, urls: [url], browser: { [url]: readiness } }],
       {
@@ -250,6 +311,7 @@ test.describe("real Chromium transport", () => {
     );
     try {
       const body = await transport.fetchPage(url);
+      expect(cloudPages).toBe(1);
       expect(source.parse(new Map([[sourceUrl, body]]))).toMatchObject([
         {
           product: "Personal Loan",

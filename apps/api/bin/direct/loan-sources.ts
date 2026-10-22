@@ -80,6 +80,7 @@ export const loanSources: DirectSource[] = [
       selector: "body",
       minimumRates: 1,
       rateTextPattern: futureRange.source,
+      cloudChallenge: true,
     }
   ),
   rangeSource(

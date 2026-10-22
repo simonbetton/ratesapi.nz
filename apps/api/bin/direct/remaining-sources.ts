@@ -212,6 +212,9 @@ export const remainingSources: DirectSource[] = [
     institution: "financial-holdings",
     dataset: "personal-loan-rates",
     urls: [fhl],
+    browser: {
+      [fhl]: { selector: "table td", minimumRates: 6, cloudChallenge: true },
+    },
     parse(pages) {
       const text = plainText(page(pages, fhl));
       return ["Secured", "Unsecured"].flatMap((plan) => {
@@ -239,6 +242,14 @@ export const remainingSources: DirectSource[] = [
     institution: "financial-holdings",
     dataset: "car-loan-rates",
     urls: [fhlHome],
+    browser: {
+      [fhlHome]: {
+        selector: "body",
+        minimumRates: 1,
+        rateTextPattern: String.raw`Vehicle\s+Finance[\s\S]*?Interest\s+rates\s+from\s+[\d.]+%`,
+        cloudChallenge: true,
+      },
+    },
     parse(pages) {
       const match = requiredMatch(
         plainText(page(pages, fhlHome)),
