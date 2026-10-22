@@ -226,6 +226,8 @@ test.describe("real Chromium transport", () => {
     "fhl-car",
     "gold-band-personal-loan-rates",
     "gold-band-car-loan-rates",
+    "sbs-mortgage",
+    "sbs-cards",
   ]) {
     test(`${id} renders its reviewed disclosure after runner access denial`, async () => {
       const source = directSources.find((item) => item.id === id);

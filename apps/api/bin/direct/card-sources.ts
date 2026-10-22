@@ -31,6 +31,14 @@ export const cardSources: DirectSource[] = [
     institution: "sbs-bank",
     dataset: "credit-card-rates",
     urls: [sbs],
+    browser: {
+      [sbs]: {
+        selector: "body",
+        minimumRates: 1,
+        rateTextPattern: String.raw`Purchase\s+interest\s+rate:\s*[\d.]+%\s*p\.a\.`,
+        cloudChallenge: true,
+      },
+    },
     parse(pages) {
       const text = plainText(page(pages, sbs));
       if (!text.includes("The SBS Visa Credit Card has no annual fee.")) {

@@ -68,6 +68,13 @@ export const tableSources: DirectSource[] = [
     institution: "sbs-bank",
     dataset: "mortgage-rates",
     urls: [sbs],
+    browser: {
+      [sbs]: {
+        selector: ".e-rates-table__table td",
+        minimumRates: 20,
+        cloudChallenge: true,
+      },
+    },
     parse(pages) {
       const html = page(pages, sbs);
       const rows = matchingTable(
