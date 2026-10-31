@@ -91,13 +91,21 @@ test.describe("browser host lifecycle", () => {
     expect(mock.calls.at(-1)?.init?.method).toBe("PATCH");
   });
 
-  test("API errors report status without echoing credentials or response bodies", async () => {
-    const mock = cloudDependencies();
-    mock.deps.fetch = async () => new Response(secret, { status: 402 });
-    await expect(
-      openBrowserSession("cloud", secret, mock.deps)
-    ).rejects.toThrow("Browser Use session creation returned HTTP 402");
-  });
+  for (const status of [401, 402, 403, 404, 422]) {
+    test(`cloud HTTP ${status} is sanitised and only payment failures are availability warnings`, async () => {
+      const mock = cloudDependencies();
+      mock.deps.fetch = async () => new Response(secret, { status });
+      const error = await openBrowserSession("cloud", secret, mock.deps).catch(
+        (caughtError: unknown) => caughtError
+      );
+      expect(error).toBeInstanceOf(Error);
+      expect(error instanceof SourceUnavailableError).toBe(status === 402);
+      expect(String(error)).toContain(
+        `Browser Use session creation returned HTTP ${status}`
+      );
+      expect(String(error)).not.toContain(secret);
+    });
+  }
 
   test("accepts the HTTPS CDP endpoint returned by the live v4 API", async () => {
     const mock = cloudDependencies();

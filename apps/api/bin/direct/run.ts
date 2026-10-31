@@ -86,7 +86,7 @@ function reconcileInstitutions(
         (source) =>
           source.status === "failed" && source.failureKind === "outage"
       )
-      .map((source) => `institution:${source.institution}`)
+      .map((source) => source.institution)
   );
   const replacements = new Map(
     candidate.data.map((entry) => [entry.id, entry])
@@ -102,7 +102,7 @@ function reconcileInstitutions(
         exclusions.add(item.id);
         continue;
       }
-      (unavailable.has(item.id) ? warnings : blockers).push(
+      (id && unavailable.has(id) ? warnings : blockers).push(
         `${item.id}: retained previous data because no verified replacement is available`
       );
       continue;
