@@ -1,11 +1,16 @@
 import { describe, expect, test } from "bun:test";
 
 import {
+  createCollectionTransport,
+  openBrowserSession,
+} from "../bin/direct/browser";
+import {
   collectDirectDataset,
   createSourceFetcher,
 } from "../bin/direct/collect";
 import { SourceUnavailableError } from "../bin/direct/failures";
 import { publishDirectDataset } from "../bin/direct/run";
+import { createRecoverableCollectionTransport } from "../bin/direct/transport";
 import type { DirectSource, Institution } from "../bin/direct/types";
 import type { SupportedModels } from "../src/lib/data-loader";
 
@@ -36,61 +41,171 @@ const forbidden = async () => {
 };
 
 describe("source outage isolation", () => {
-  test("a connection outage warns while healthy institutions publish and stale data stays unchanged", async () => {
-    const previous = await collectDirectDataset(
-      "mortgage-rates",
-      registry,
-      sources,
-      async () => "rates",
-      new Date("2026-10-01")
+  test.each([
+    "mortgage-rates",
+    "personal-loan-rates",
+    "car-loan-rates",
+    "credit-card-rates",
+  ] as const)(
+    "%s outages preserve stale data while healthy institutions publish",
+    async (dataset) => {
+      const selectedRegistry: Institution[] = registry.map((institution) => ({
+        ...institution,
+        datasets: { [dataset]: institution.datasets["mortgage-rates"] },
+      }));
+      const selectedSources = sources.map((source) => ({ ...source, dataset }));
+      const previous = await collectDirectDataset(
+        dataset,
+        selectedRegistry,
+        selectedSources,
+        async () => "rates",
+        new Date("2026-10-01")
+      );
+      const result = await collectDirectDataset(
+        dataset,
+        selectedRegistry,
+        selectedSources.map((source) => ({
+          ...source,
+          parse: () =>
+            source.parse(new Map()).map((rate) => ({ ...rate, rate: 6 })),
+        })),
+        async (url) => {
+          if (url.includes("midlands")) {
+            throw new SourceUnavailableError("Connection timed out");
+          }
+          return "rates";
+        },
+        new Date("2026-10-22")
+      );
+      expect(result.blockers).toEqual([]);
+      expect(result.warnings).toEqual([
+        "midlands-mortgage: Connection timed out",
+      ]);
+      expect(result.model).toBeNull();
+      expect(result.publishable?.data.map(({ id }) => id)).toEqual([
+        dataset === "credit-card-rates" ? "issuer:anz" : "institution:anz",
+      ]);
+      let saved: SupportedModels | null = null;
+      let checked = false;
+      await expect(
+        publishDirectDataset({
+          collect: async () => result,
+          load: async () => previous.model,
+          registry: selectedRegistry,
+          save: async (model, options) => {
+            saved = model;
+            expect(options.complete).toBe(false);
+            return true;
+          },
+          markChecked: async () => {
+            checked = true;
+          },
+        })
+      ).resolves.toBe("saved");
+      const rateField =
+        dataset === "credit-card-rates" ? "purchaseRate" : "rate";
+      expect(JSON.stringify(saved)).toContain(`"${rateField}":6`);
+      expect(JSON.stringify(saved)).toContain(`"${rateField}":5`);
+      expect(JSON.stringify(saved)).toContain(
+        '"lastUpdated":"2026-10-01T00:00:00.000Z"'
+      );
+      expect(checked).toBe(false);
+    }
+  );
+
+  test("cloud HTTP 402 warns through collection and recovery without repeated session requests", async () => {
+    const selectedSources: DirectSource[] = sources.map((source) => ({
+      ...source,
+      ...(source.institution === "midlands"
+        ? {
+            browser: {
+              "https://midlands.example/rates": {
+                selector: "td",
+                minimumRates: 1,
+              },
+            },
+          }
+        : {}),
+    }));
+    const unavailableSource = selectedSources.find(
+      (source) => source.institution === "midlands"
     );
-    const result = await collectDirectDataset(
-      "mortgage-rates",
-      registry,
-      sources.map((source) => ({
-        ...source,
-        parse: () =>
-          source.parse(new Map()).map((rate) => ({ ...rate, rate: 6 })),
-      })),
-      async (url) => {
-        if (url.includes("midlands")) {
-          throw new SourceUnavailableError("Connection timed out");
-        }
-        return "rates";
+    if (!unavailableSource) {
+      throw new Error("Missing test source");
+    }
+    selectedSources.push({
+      ...unavailableSource,
+      id: "midlands-secondary",
+      urls: ["https://midlands.example/other-rates"],
+      browser: {
+        "https://midlands.example/other-rates": {
+          selector: "td",
+          minimumRates: 1,
+        },
       },
-      new Date("2026-10-22")
+    });
+    let sessionRequests = 0;
+    const secret = "test-key-must-not-be-logged";
+    const transport = createRecoverableCollectionTransport(
+      selectedSources,
+      (selected) =>
+        createCollectionTransport(selected, {
+          mode: "cloud",
+          apiKey: secret,
+          http: async () => "rates",
+          open: (host, key) =>
+            openBrowserSession(host, key, {
+              fetch: async () => {
+                sessionRequests += 1;
+                return new Response(secret, { status: 402 });
+              },
+              launch: forbidden,
+              connect: forbidden,
+            }),
+        })
     );
-    expect(result.blockers).toEqual([]);
-    expect(result.warnings).toEqual([
-      "midlands-mortgage: Connection timed out",
-    ]);
-    expect(result.model).toBeNull();
-    expect(result.publishable?.data.map(({ id }) => id)).toEqual([
-      "institution:anz",
-    ]);
-    let saved: SupportedModels | null = null;
-    let checked = false;
-    await expect(
-      publishDirectDataset({
-        collect: async () => result,
-        load: async () => previous.model,
+    try {
+      const result = await collectDirectDataset(
+        "mortgage-rates",
         registry,
-        save: async (model, options) => {
-          saved = model;
-          expect(options.complete).toBe(false);
-          return true;
-        },
-        markChecked: async () => {
-          checked = true;
-        },
-      })
-    ).resolves.toBe("saved");
-    expect(JSON.stringify(saved)).toContain('"rate":6');
-    expect(JSON.stringify(saved)).toContain('"rate":5');
-    expect(JSON.stringify(saved)).toContain(
-      '"lastUpdated":"2026-10-01T00:00:00.000Z"'
-    );
-    expect(checked).toBe(false);
+        selectedSources,
+        transport.fetchPage,
+        undefined,
+        { retryFetchPage: transport.retryFetchPage }
+      );
+      expect(result.blockers).toEqual([]);
+      expect(result.warnings).toHaveLength(2);
+      expect(result.warnings?.join(" ")).toContain("HTTP 402");
+      expect(result.warnings?.join(" ")).toContain("credits");
+      expect(JSON.stringify(result)).not.toContain(secret);
+      expect(JSON.stringify(transport.attempts)).not.toContain(secret);
+      expect(sessionRequests).toBe(2);
+      expect(
+        result.sources.filter((source) => source.status === "failed")
+      ).toEqual([
+        expect.objectContaining({
+          failureKind: "outage",
+          initialFailureKind: "outage",
+          attempts: 2,
+        }),
+        expect.objectContaining({
+          failureKind: "outage",
+          initialFailureKind: "outage",
+          attempts: 2,
+        }),
+      ]);
+      await expect(
+        publishDirectDataset({
+          collect: async () => result,
+          load: async () => result.publishable,
+          save: forbidden,
+          markChecked: forbidden,
+          registry,
+        })
+      ).resolves.toBe("unchanged");
+    } finally {
+      await transport.close();
+    }
   });
 
   test("an all-outage collection warns without reading, writing or refreshing the database", async () => {
@@ -229,7 +344,7 @@ describe("HTTP outage classification", () => {
     expect(error).toBeInstanceOf(SourceUnavailableError);
     expect(String(error)).not.toContain("private socket details");
   });
-  test.each([404, 401])(
+  test.each([404, 401, 402])(
     "HTTP %i remains a blocking failure",
     async (status) => {
       const error = await createSourceFetcher(

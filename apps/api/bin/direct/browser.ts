@@ -130,6 +130,12 @@ export async function openBrowserSession(
   } catch {
     throw new Error("Browser Use session creation failed or timed out");
   }
+  if (response.status === 402) {
+    throw new SourceUnavailableError(
+      "Browser Use session creation returned HTTP 402 (payment required); check Browser Use credits and spending limits",
+      { retryable: false }
+    );
+  }
   if (!response.ok) {
     throw new Error(
       `Browser Use session creation returned HTTP ${response.status}`
@@ -296,11 +302,14 @@ export function createCollectionTransport(
         return await render(url, spec, "cloud");
       } catch (error) {
         if (
+          (error instanceof SourceUnavailableError && !error.retryable) ||
           !(
             error instanceof RetryableBrowserError ||
             error instanceof SourceUnavailableError
           )
         ) {
+          // Keep payment failures cached for this transport. Other sources still
+          // try local Chromium, and the next collection pass can check Cloud again.
           throw error;
         }
         // Discard exhausted sessions too, so the next source cannot reuse one.
