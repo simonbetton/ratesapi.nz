@@ -1,7 +1,7 @@
 import {
   BookOpen,
   ChartLine,
-  Github,
+  CodeXml,
   SquareMenu,
   SquareTerminal,
   X,
@@ -49,7 +49,7 @@ export function MobileNav() {
               Docs
             </a>
             <a href={apiLinks.source} onClick={closeMenu}>
-              <Github aria-hidden="true" />
+              <CodeXml aria-hidden="true" />
               GitHub
             </a>
             <a

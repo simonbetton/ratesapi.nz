@@ -9,11 +9,11 @@
     "typecheck": "fumadocs-mdx && next typegen && tsgo --noEmit"
   },
   "dependencies": {
-    "@opennextjs/cloudflare": "^1.20.6",
-    "fumadocs-core": "^16.15.14",
-    "fumadocs-mdx": "^15.4.4",
-    "fumadocs-ui": "^16.15.14",
-    "next": "^16.3.6",
+    "@opennextjs/cloudflare": "^1.20.15",
+    "fumadocs-core": "^16.17.10",
+    "fumadocs-mdx": "^15.4.10",
+    "fumadocs-ui": "^16.17.10",
+    "next": "^16.4.4",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
