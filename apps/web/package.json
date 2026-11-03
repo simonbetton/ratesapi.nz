@@ -14,31 +14,31 @@
     "indexnow": "bun bin/indexnow.ts"
   },
   "dependencies": {
-    "@fontsource/crimson-pro": "^5.2.8",
-    "@tailwindcss/vite": "^4.1.18",
+    "@fontsource/crimson-pro": "^5.3.0",
+    "@tailwindcss/vite": "^4.3.4",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-router": "latest",
     "@tanstack/react-router-devtools": "latest",
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
-    "@tanstack/router-plugin": "^1.132.0",
+    "@tanstack/router-plugin": "^1.168.48",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.545.0",
+    "lucide-react": "^1.66.0",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "tailwind-merge": "^3.6.0",
-    "tailwindcss": "^4.1.18"
+    "tailwind-merge": "^3.7.0",
+    "tailwindcss": "^4.3.4"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.60.1",
-    "@tailwindcss/typography": "^0.5.16",
+    "@cloudflare/vite-plugin": "^1.67.0",
+    "@tailwindcss/typography": "^0.5.20",
     "@tanstack/devtools-vite": "latest",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@typescript/native-preview": "catalog:",
-    "@vitejs/plugin-react": "^6.0.1",
-    "vite": "^8.0.0",
+    "@vitejs/plugin-react": "^6.2.1",
+    "vite": "^8.3.5",
     "wrangler": "catalog:"
   }
 }
