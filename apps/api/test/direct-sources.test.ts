@@ -1179,6 +1179,79 @@ describe("document and expanded-source safeguards", () => {
     );
   });
 
+  test("Westpac Koru cards retain their purchase rates, cash rates and annual fees after the rename", async () => {
+    const adapter = source("westpac-cards");
+    const html = await readFile(
+      new URL("fixtures/direct/westpac-koru-cards.html", import.meta.url),
+      "utf-8"
+    );
+    const url = adapter.urls[0] ?? "";
+    const parse = (input: string) => adapter.parse(new Map([[url, input]]));
+    expect(parse(html)).toMatchObject([
+      {
+        product: "Fee Free",
+        rate: 12.9,
+        cashAdvanceRate: 19.95,
+        primaryFeeNZD: 0,
+      },
+      {
+        product: "Koru",
+        rate: 20.95,
+        cashAdvanceRate: 22.95,
+        primaryFeeNZD: 70,
+      },
+      {
+        product: "Koru Platinum",
+        rate: 20.95,
+        cashAdvanceRate: 22.95,
+        primaryFeeNZD: 125,
+      },
+      {
+        product: "Koru World",
+        rate: 16.95,
+        cashAdvanceRate: 22.95,
+        primaryFeeNZD: 310,
+      },
+      {
+        product: "Hotpoints",
+        rate: 20.95,
+        cashAdvanceRate: 22.95,
+        primaryFeeNZD: 40,
+      },
+      {
+        product: "Platinum Hotpoints",
+        rate: 20.95,
+        cashAdvanceRate: 22.95,
+        primaryFeeNZD: 70,
+      },
+      {
+        product: "Hotpoints World",
+        rate: 16.95,
+        cashAdvanceRate: 22.95,
+        primaryFeeNZD: 285,
+      },
+    ]);
+
+    const $ = load(html);
+    const rows = $("tr").filter((_, row) =>
+      $(row).text().includes("Westpac Koru Platinum Mastercard®")
+    );
+    expect(rows).toHaveLength(2);
+    rows.first().remove();
+    expect(() => parse($.html())).toThrow();
+    const duplicate = load(html);
+    const row = duplicate("tr")
+      .filter((_, entry) =>
+        duplicate(entry).text().includes("Westpac Koru Platinum Mastercard®")
+      )
+      .first();
+    row.after(row.clone());
+    expect(() => parse(duplicate.html())).toThrow();
+    expect(() =>
+      parse(html.replace('id="koru-platinum"', 'id="unknown-card"'))
+    ).toThrow();
+  });
+
   test("card eligibility and promotion conditions survive model construction", async () => {
     const adapter = source("amex-cards");
     const selected = institutions.filter(

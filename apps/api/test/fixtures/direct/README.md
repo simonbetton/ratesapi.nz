@@ -19,3 +19,5 @@ Expanded captures include current linked disclosure text for Basecorp, Liberty, 
 `wbs-home-loans.html` was captured from https://wbs.net.nz/home-loans/ on 8 October 2026. It preserves the five published mortgage rows, including the newly added 36-month term that invalidated the former exact four-row assumption.
 
 `sbs-rendered-rates.html` was captured from https://www.sbsbank.co.nz/rates in Chromium on 22 October 2026. It retains the original tables and generated Stacktable mobile layouts, including default-interest and deposit rows. Tests extract the original lending tables and reject missing, duplicate or malformed originals even when their mobile layouts remain.
+
+`westpac-koru-cards.html` was captured from Westpac's rendered cards terms, fees and rates page on 3 November 2026 after Airpoints cards were renamed to Koru. It retains the main content, populated purchase/cash-advance tables and product fee anchors. Scripts and nonessential attributes are removed. Regression tests cover all seven cards, the renamed fee anchors, and rejection of missing or duplicated product rows. The older Airpoints capture remains covered.

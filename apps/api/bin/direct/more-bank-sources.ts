@@ -188,29 +188,31 @@ export const moreBankSources: DirectSource[] = [
           text,
           /Cash advance rates\s*Rate\s*(?<rows>.+?) More about cash advance rates/u
         )[1] ?? "";
+      const koru = purchases.includes("Westpac Koru Mastercard®");
+      const rewardsName = koru ? "Koru" : "Airpoints";
       const names = [
         "Fee Free",
-        "Airpoints",
-        "Airpoints Platinum",
-        "Airpoints World",
+        rewardsName,
+        `${rewardsName} Platinum`,
+        `${rewardsName} World`,
         "Hotpoints",
         "Platinum Hotpoints",
         "Hotpoints World",
       ];
       const fees = [
         "credit-card-fees",
-        "airpointsmastercard",
-        "airpoints-platinum",
-        "airpoints-world",
+        koru ? "koru-mastercard" : "airpointsmastercard",
+        koru ? "koru-platinum" : "airpoints-platinum",
+        koru ? "koru-world" : "airpoints-world",
         "hotpoints-mastercard",
         "hotpointsplatinum",
         "hotpoints-world",
       ];
       const labels = [
         "Fee Free Mastercard®",
-        "Westpac Airpoints™ Mastercard®",
-        "Westpac Airpoints™ Platinum Mastercard®",
-        "Westpac Airpoints™ World Mastercard®",
+        `Westpac ${koru ? "Koru" : "Airpoints™"} Mastercard®`,
+        `Westpac ${koru ? "Koru" : "Airpoints™"} Platinum Mastercard®`,
+        `Westpac ${koru ? "Koru" : "Airpoints™"} World Mastercard®`,
         "hotpoints® Mastercard®",
         "hotpoints® Platinum Mastercard®",
         "hotpoints® World Mastercard®",
