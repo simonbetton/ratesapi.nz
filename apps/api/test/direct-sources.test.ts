@@ -1187,6 +1187,14 @@ describe("document and expanded-source safeguards", () => {
     );
     const url = adapter.urls[0] ?? "";
     const parse = (input: string) => adapter.parse(new Map([[url, input]]));
+    const collection = await collectDirectDataset(
+      "credit-card-rates",
+      institutions.filter((institution) => institution.id === "westpac"),
+      [adapter],
+      () => Promise.resolve(html)
+    );
+    expect(collection.blockers).toEqual([]);
+    expect(collection.model).not.toBeNull();
     expect(parse(html)).toMatchObject([
       {
         product: "Fee Free",

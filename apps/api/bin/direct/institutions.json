@@ -471,7 +471,7 @@
           "Debit"
         ],
         "sourceUrl": "https://www.westpac.co.nz/about-us/legal-information-privacy/cards-terms-fees-rates/",
-        "reviewedAt": "2026-10-05",
+        "reviewedAt": "2026-11-03",
         "productDecisions": {
           "Debit": {
             "replacements": [],
@@ -492,6 +492,21 @@
             "replacements": [],
             "reason": "Westpac identifies the Express product as a pre-paid card with load fees. Prepaid card balances are not revolving credit.",
             "sourceUrl": "https://www.westpac.co.nz/assets/About-us/legal-information-privacy/documents/Changes_to_Fees_1_February_2017.pdf"
+          },
+          "Airpoints": {
+            "replacements": ["Koru"],
+            "reason": "Westpac renamed the Airpoints card range to Koru; the current first-party disclosure lists the corresponding Koru card and its rates and fees.",
+            "sourceUrl": "https://www.westpac.co.nz/about-us/legal-information-privacy/cards-terms-fees-rates/"
+          },
+          "Airpoints Platinum": {
+            "replacements": ["Koru Platinum"],
+            "reason": "Westpac renamed the Airpoints card range to Koru; the current first-party disclosure lists the corresponding Koru card and its rates and fees.",
+            "sourceUrl": "https://www.westpac.co.nz/about-us/legal-information-privacy/cards-terms-fees-rates/"
+          },
+          "Airpoints World": {
+            "replacements": ["Koru World"],
+            "reason": "Westpac renamed the Airpoints card range to Koru; the current first-party disclosure lists the corresponding Koru card and its rates and fees.",
+            "sourceUrl": "https://www.westpac.co.nz/about-us/legal-information-privacy/cards-terms-fees-rates/"
           }
         }
       }
