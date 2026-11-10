@@ -23,6 +23,7 @@ for ((attempt = 1; attempt <= 30; attempt++)); do
 
   case "$deployment_status" in
     success)
+      bash "$(dirname "$0")/assert-current-main.sh"
       echo "Deployment succeeded for $GITHUB_SHA; publication may proceed."
       exit 0
       ;;

@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createPublicationStore } from "../bin/direct/publication-store";
 import type { D1RunOptions, D1Target } from "../bin/utils";
 import { runWranglerD1, saveToD1 } from "../bin/utils";
 import { fromSavableJson, toSavableJson } from "../src/lib/data-loader";
@@ -161,6 +162,79 @@ describe.skipIf(!RUN_INTEGRATION)("saveToD1 local D1 integration", () => {
       rmSync(tempDir, { recursive: true, force: true });
     }
   });
+
+  test("publication guards and rollback survive real D1 command and file batches", () => {
+    const io = { target, run, now: fixedNow("2027-01-01T00:00:00Z") };
+    const first = createPublicationStore(
+      "mortgage-rates",
+      "2027-01-01T01:00:00Z",
+      io
+    );
+    const competing = createPublicationStore(
+      "mortgage-rates",
+      "2027-01-01T02:00:00Z",
+      io
+    );
+    first.read();
+    competing.read();
+    first.save(sampleData(), true);
+    const before = queryRows(
+      "SELECT * FROM latest_data WHERE data_type='mortgage-rates'"
+    );
+    expect(() =>
+      competing.save(sampleData({ lastUpdated: "2027-01-01T02:00:00Z" }), true)
+    ).toThrow(/concurrent|newer/u);
+    expect(
+      queryRows("SELECT * FROM latest_data WHERE data_type='mortgage-rates'")
+    ).toEqual(before);
+
+    const large = sampleData();
+    const [institution] = large.data;
+    if (!institution) {
+      throw new Error("Missing fixture");
+    }
+    institution.name = "Kāinga 🏠".repeat(20_000);
+    const retry = createPublicationStore(
+      "mortgage-rates",
+      "2027-01-01T03:00:00Z",
+      io
+    );
+    retry.read();
+    const revision = queryRows(
+      "SELECT * FROM publication_state WHERE data_type='mortgage-rates'"
+    );
+    const history = queryRows(
+      "SELECT * FROM historical_data WHERE data_type='mortgage-rates'"
+    );
+    execLocal([
+      "--command",
+      "CREATE TRIGGER fail_guarded_latest BEFORE INSERT ON latest_data BEGIN SELECT RAISE(ABORT, 'guarded failure'); END",
+    ]);
+    try {
+      expect(() => retry.save(large, true)).toThrow();
+      expect(
+        queryRows(
+          "SELECT * FROM publication_state WHERE data_type='mortgage-rates'"
+        )
+      ).toEqual(revision);
+      expect(
+        queryRows(
+          "SELECT * FROM historical_data WHERE data_type='mortgage-rates'"
+        )
+      ).toEqual(history);
+      expect(
+        queryRows("SELECT * FROM latest_data WHERE data_type='mortgage-rates'")
+      ).toEqual(before);
+    } finally {
+      execLocal(["--command", "DROP TRIGGER fail_guarded_latest"]);
+    }
+    retry.save(large, false);
+    const stored = expectSingleRow(
+      queryRows("SELECT data FROM latest_data WHERE data_type='mortgage-rates'")
+    );
+    expect(fromSavableJson(stored.data as string)).toEqual(large);
+    expect(() => competing.markChecked()).toThrow(/concurrent|newer/u);
+  }, 180_000);
 
   test(
     "writes the same encoded payload to both tables on success",

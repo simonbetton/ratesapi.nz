@@ -20,6 +20,13 @@ CREATE TABLE IF NOT EXISTS latest_data (
   last_checked DATETIME                             -- Time of the last successful scrape, changed or not (bin/migrate-d1.ts adds it to older databases)
 );
 
+-- Atomic publication guard: includes unchanged complete checks as revisions.
+CREATE TABLE IF NOT EXISTS publication_state (
+  data_type TEXT PRIMARY KEY,
+  revision TEXT NOT NULL,
+  collected_at TEXT NOT NULL
+);
+
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_historical_data_type ON historical_data(data_type);
 CREATE INDEX IF NOT EXISTS idx_historical_date ON historical_data(date);

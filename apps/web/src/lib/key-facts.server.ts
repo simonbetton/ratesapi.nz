@@ -18,6 +18,7 @@ interface Cached {
 
 // Per isolate, in front of the per-colo Cache API below.
 let memory: Cached | undefined;
+let pending: Promise<KeyFacts | null> | undefined;
 
 // `caches.default` is Workers-only, so it isn't in the DOM types.
 function defaultCache() {
@@ -55,12 +56,20 @@ async function writeCache(cache: Cache, facts: KeyFacts) {
  * example in local development, where the service binding has no API Worker
  * behind it). Callers render static wording for null.
  */
-export async function loadKeyFacts(): Promise<KeyFacts | null> {
+export function loadKeyFacts(): Promise<KeyFacts | null> {
   const now = Date.now();
   if (memory && memory.expires > now) {
-    return memory.facts;
+    return Promise.resolve(memory.facts);
   }
+  // One refresh owns the next cache state. A concurrent slow failure must not
+  // overwrite a successful refresh with fallback data.
+  pending ??= refreshKeyFacts(now).finally(() => {
+    pending = undefined;
+  });
+  return pending;
+}
 
+async function refreshKeyFacts(now: number): Promise<KeyFacts | null> {
   const cache = defaultCache();
   const cached = cache ? await readCache(cache) : null;
   if (cached) {

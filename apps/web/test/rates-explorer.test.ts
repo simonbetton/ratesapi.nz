@@ -126,6 +126,21 @@ describe("site origins", () => {
 });
 
 describe("rates explorer data", () => {
+  test("monthly history clamps month-end dates instead of skipping February", () => {
+    expect(
+      pickMonthlySnapshots(
+        ["2026-01-31", "2026-02-28", "2026-03-01"],
+        "2026-03-31",
+        2
+      )
+    ).toEqual([
+      { date: "2026-01-31", snapshot: "2026-01-31" },
+      { date: "2026-02-28", snapshot: "2026-02-28" },
+    ]);
+    expect(pickMonthlySnapshots(["2024-02-29"], "2024-03-31", 1)).toEqual([
+      { date: "2024-02-29", snapshot: "2024-02-29" },
+    ]);
+  });
   test("preserves direct source provenance, ranges, conditions, and verified zero offers", () => {
     const direct = structuredClone(mortgages);
     const rate = direct.data[0]?.products?.[0]?.rates[0];

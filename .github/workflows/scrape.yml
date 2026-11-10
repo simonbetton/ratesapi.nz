@@ -18,6 +18,7 @@ on:
       - ".github/workflows/scrape.yml"
       - ".github/scripts/report-collection.ts"
       - ".github/scripts/wait-for-deployment.sh"
+      - ".github/scripts/assert-current-main.sh"
   workflow_dispatch:
     inputs:
       dry_run:

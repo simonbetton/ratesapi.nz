@@ -287,7 +287,10 @@ function isTimeSeries(value: unknown): value is TimeSeriesPayload {
   return (
     typeof record.timeSeries === "object" &&
     record.timeSeries !== null &&
-    Array.isArray(record.availableDates)
+    Array.isArray(record.availableDates) &&
+    record.availableDates.every(
+      (date) => typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/u.test(date)
+    )
   );
 }
 
@@ -315,7 +318,8 @@ async function fetchSnapshot(
 
 function shiftMonths(date: string, months: number) {
   const [year = 0, month = 1, day = 1] = date.split("-").map(Number);
-  return new Date(Date.UTC(year, month - 1 + months, day))
+  const lastDay = new Date(Date.UTC(year, month + months, 0)).getUTCDate();
+  return new Date(Date.UTC(year, month - 1 + months, Math.min(day, lastDay)))
     .toISOString()
     .slice(0, 10);
 }
@@ -347,15 +351,26 @@ const historyMonths = 12;
 // Samples monthly single-date snapshots instead of one long range request:
 // each is a small, cheap read, while long ranges decode every stored day.
 async function fetchHistory(
-  category: Category,
-  latestDate: string
+  category: Category
 ): Promise<Loaded<HistorySnapshot[]>> {
+  // A snapshot is keyed by its persistence day. Partial collections retain the
+  // older model lastUpdated, and a collection can finish across UTC midnight.
+  const index = await fetchJson(
+    apiUrl(`${categoryInfo(category).path}/time-series`)
+  );
+  if (index.status === "error" || !isTimeSeries(index.value)) {
+    return { status: "error", message: "Rate history is unavailable." };
+  }
+  const latestDate = index.value.availableDates.toSorted().at(-1);
+  if (!latestDate) {
+    return { status: "success", value: [] };
+  }
   const latest = await fetchSnapshot(category, latestDate);
   if (!latest) {
     return { status: "error", message: "Rate history is unavailable." };
   }
   const picks = pickMonthlySnapshots(
-    latest.availableDates,
+    index.value.availableDates,
     latestDate,
     historyMonths
   );
@@ -365,6 +380,12 @@ async function fetchHistory(
       date === latestDate ? latest : fetchSnapshot(category, date)
     )
   );
+  if (fetched.some((snapshot) => snapshot === null)) {
+    return {
+      status: "error",
+      message: "Some rate history could not be loaded. Try again.",
+    };
+  }
   const rowsBySnapshot = new Map(
     fetched
       .filter((snapshot) => snapshot !== null)
@@ -394,11 +415,15 @@ export function loadLatest(category: Category) {
   return promise;
 }
 
-export function loadHistory(category: Category, latestDate: string) {
-  const key = `${category}:${latestDate}`;
+export function loadHistory(
+  category: Category,
+  latestDate: string,
+  attempt = 0
+) {
+  const key = `${category}:${latestDate}:${attempt}`;
   let promise = historyCache.get(key);
   if (!promise) {
-    promise = fetchHistory(category, latestDate);
+    promise = fetchHistory(category);
     historyCache.set(key, promise);
   }
   return promise;

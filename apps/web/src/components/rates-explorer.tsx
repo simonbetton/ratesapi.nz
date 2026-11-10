@@ -533,7 +533,8 @@ function HistoryCard({
   filters: RateFilters;
   latestDate: string;
 }) {
-  const result = use(loadHistory(category, latestDate));
+  const [attempt, setAttempt] = useState(0);
+  const result = use(loadHistory(category, latestDate, attempt));
   const term = historyTerm(category, filters);
   const subtitle = historySubtitle(category, filters);
 
@@ -541,6 +542,14 @@ function HistoryCard({
     return (
       <ChartCard subtitle={subtitle} title="12-month history">
         <p className="chart-empty">{result.message}</p>
+        <button
+          className="explorer-button"
+          onClick={() => setAttempt((current) => current + 1)}
+          type="button"
+        >
+          <RotateCw aria-hidden="true" size={14} />
+          Retry history
+        </button>
       </ChartCard>
     );
   }
