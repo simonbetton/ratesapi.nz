@@ -16,7 +16,11 @@ afterEach(() => {
 });
 
 // Exercise the production shell script without GitHub access or real waits.
-function runGate(statuses: string[], ref = "refs/heads/main") {
+function runGate(
+  statuses: string[],
+  ref = "refs/heads/main",
+  mainSha = "new-commit"
+) {
   const directory = mkdtempSync(path.join(tmpdir(), "deployment-gate-"));
   directories.push(directory);
   writeFileSync(path.join(directory, "responses"), statuses.join("\n"));
@@ -26,6 +30,7 @@ function runGate(statuses: string[], ref = "refs/heads/main") {
     `#!/usr/bin/env bash
 set -eu
 echo "$*" >> "$GATE_TEST_DIR/calls"
+if [[ "$1" == "api" ]]; then echo "$GATE_TEST_MAIN_SHA"; exit 0; fi
 response=$(head -n 1 "$GATE_TEST_DIR/responses")
 tail -n +2 "$GATE_TEST_DIR/responses" > "$GATE_TEST_DIR/remaining"
 mv "$GATE_TEST_DIR/remaining" "$GATE_TEST_DIR/responses"
@@ -46,6 +51,7 @@ echo "$response"
       ...process.env,
       PATH: `${directory}:${process.env.PATH}`,
       GATE_TEST_DIR: directory,
+      GATE_TEST_MAIN_SHA: mainSha,
       GITHUB_REPOSITORY: "test/rates",
       GITHUB_SHA: "new-commit",
       GITHUB_REF: ref,
@@ -56,11 +62,16 @@ echo "$response"
     output: result.stdout.toString(),
     calls: readFileSync(path.join(directory, "calls"), "utf-8")
       .split("\n")
-      .filter(Boolean),
+      .filter((call) => call.startsWith("run list")),
   };
 }
 
 describe("production deployment gate", () => {
+  test("a successful old deployment cannot admit a rerun after main advances", () => {
+    const result = runGate(["success"], "refs/heads/main", "newer-commit");
+    expect(result.exitCode).toBe(1);
+    expect(result.output).not.toContain("publication may proceed");
+  });
   test("waits for the matching commit to finish deploying", () => {
     const result = runGate(["missing", "queued", "in_progress", "success"]);
     expect(result.exitCode).toBe(0);

@@ -2,14 +2,11 @@ import { writeFile } from "node:fs/promises";
 
 import type { DataType, SupportedModels } from "../../src/lib/data-loader";
 import { parseSchema } from "../../src/lib/schema";
-import {
-  hasDataChanged,
-  loadFromD1,
-  markCheckedInD1,
-  saveToD1,
-} from "../utils";
+import { hasDataChanged } from "../utils";
+import type { D1SaveDeps } from "../utils";
 import { collectDirectDataset, schemas, unreconciledProducts } from "./collect";
 import type { CollectionResult } from "./collect";
+import { createPublicationStore } from "./publication-store";
 import { directSources, institutions } from "./sources";
 import { createRecoverableCollectionTransport } from "./transport";
 import type { CoverageEntry, Institution } from "./types";
@@ -195,16 +192,22 @@ export async function publishDirectBatch(
   }
 }
 
-function persistenceFor(result: CollectionResult): PublishDependencies {
+export function persistenceFor(
+  result: CollectionResult,
+  io: D1SaveDeps = {}
+): PublishDependencies {
   const { dataset } = result;
+  const store = createPublicationStore(dataset, result.checkedAt, io);
   return {
     collect: () => Promise.resolve(result),
-    load: () => loadFromD1(dataset, schemas[dataset], { strict: true }),
-    save: (model, { complete }) => saveToD1(model, dataset, { complete }),
-    markChecked: async () => {
-      if (!(await markCheckedInD1(dataset))) {
-        throw new Error(`Failed to record successful check of ${dataset}`);
-      }
+    load: () => Promise.resolve(store.read()),
+    save: (model, { complete }) => {
+      store.save(model, complete);
+      return Promise.resolve(true);
+    },
+    markChecked: () => {
+      store.markChecked();
+      return Promise.resolve();
     },
     registry: institutions,
   };
@@ -256,7 +259,7 @@ export async function scrapeAllDirect(reportPath: string): Promise<void> {
     }
     return;
   }
-  await publishDirectBatch(results.map(persistenceFor));
+  await publishDirectBatch(results.map((result) => persistenceFor(result)));
 }
 
 async function collectAll(

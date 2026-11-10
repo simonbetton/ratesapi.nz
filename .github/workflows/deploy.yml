@@ -6,8 +6,18 @@ on:
       - main
   workflow_dispatch: # Allows manual triggering
 
+# Keep the three-Worker deployment intact. A queued stale run checks main again
+# immediately before deployment; queue order need not match commit order.
+concurrency:
+  group: production-worker-deployment
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
 jobs:
   deploy:
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -29,8 +39,11 @@ jobs:
         run: bun run check
 
       - name: Deploy API, docs, and web Workers to Cloudflare
-        run: bun run deploy
+        run: |
+          bash .github/scripts/assert-current-main.sh
+          bun run deploy
         env:
+          GH_TOKEN: ${{ github.token }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
       # Tells Bing and other IndexNow engines about the deployed pages. The

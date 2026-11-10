@@ -280,7 +280,7 @@ export async function loadFromD1<Schema extends TSchema>(
 
 // Wrangler prints the SQLite error on stderr. The command (and so the error
 // message) always contains "last_checked", so match the SQLite text only.
-function isMissingLastCheckedError(error: unknown): boolean {
+export function isMissingLastCheckedError(error: unknown): boolean {
   const output = [
     error instanceof Error ? error.message : String(error),
     readOutput(error, "stdout"),

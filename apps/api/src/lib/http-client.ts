@@ -45,10 +45,16 @@ export function createHttpClient(
     let retries = retryOptions?.retries ?? 0;
     const retryDelay = retryOptions?.retryDelay ?? 0;
     const retryOn = retryOptions?.retryOn ?? [];
+    const waitToRetry = () =>
+      sleep(retryDelay, undefined, {
+        signal: mergedOptions.signal ?? undefined,
+      });
 
     const executeFetch = async (): Promise<Response> => {
+      mergedOptions.signal?.throwIfAborted();
+      let response: Response;
       try {
-        const response = await fetch(
+        response = await fetch(
           composedUrl,
           timeoutMs === undefined
             ? mergedOptions
@@ -57,39 +63,42 @@ export function createHttpClient(
                 signal: withTimeout(mergedOptions, timeoutMs),
               }
         );
-
-        // Log the request
-        log.debug(
-          {
-            url: composedUrl,
-            headers: mergedOptions.headers,
-            method: mergedOptions.method,
-          },
-          `${name}: ${mergedOptions.method ?? "GET"} ${composedUrl}`
-        );
-
-        if (response.ok) {
-          return response;
-        }
-
-        if (retryOn.includes(response.status) && retries > 0) {
-          log.info(`${name}: Retrying after status code: ${response.status}`);
-          retries -= 1;
-          await sleep(retryDelay);
-          return executeFetch();
-        }
-
-        throw new Error(`Request failed with status ${response.status}`);
       } catch (error) {
-        if (retries > 0) {
-          log.info(`${name}: Retrying due to error: ${error}`);
-          retries -= 1;
-          await sleep(retryDelay);
-          return executeFetch();
+        // A caller's cancellation is terminal; per-attempt timeouts can retry.
+        mergedOptions.signal?.throwIfAborted();
+        if (retries <= 0) {
+          throw error;
         }
-
-        throw error;
+        log.info(`${name}: Retrying due to error: ${error}`);
+        retries -= 1;
+        await waitToRetry();
+        return executeFetch();
       }
+
+      log.debug(
+        {
+          url: composedUrl,
+          headers: mergedOptions.headers,
+          method: mergedOptions.method,
+        },
+        `${name}: ${mergedOptions.method ?? "GET"} ${composedUrl}`
+      );
+      if (response.ok) {
+        return response;
+      }
+      // Error responses are never returned to a caller to consume. Release the
+      // connection before backoff, even when the error body is still streaming.
+      await response.body?.cancel().catch(() => {
+        // A failed/cancelled body must not obscure the HTTP status.
+      });
+      if (retryOn.includes(response.status) && retries > 0) {
+        log.info(`${name}: Retrying after status code: ${response.status}`);
+        retries -= 1;
+        await waitToRetry();
+        return executeFetch();
+      }
+      // Status failures must not re-enter the network-error retry branch.
+      throw new Error(`Request failed with status ${response.status}`);
     };
 
     return await executeFetch();

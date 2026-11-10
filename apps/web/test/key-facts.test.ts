@@ -83,6 +83,29 @@ function wordCount(text: string) {
 }
 
 describe("key facts from the API", () => {
+  test("an early failed lookup cancels unfinished sibling requests", async () => {
+    let signal: AbortSignal | null | undefined;
+    const pending = Promise.withResolvers<Response>();
+    const api = fakeApi({
+      "/api/v1/mortgage-rates": async () =>
+        new Response("Unavailable", { status: 503 }),
+      "/api/v1/car-loan-rates": (init) => {
+        signal = init?.signal;
+        signal?.addEventListener(
+          "abort",
+          () => pending.reject(signal?.reason),
+          { once: true }
+        );
+        return pending.promise;
+      },
+    });
+    try {
+      expect(await fetchKeyFacts(api)).toBeNull();
+      expect(signal?.aborted).toBe(true);
+    } finally {
+      pending.resolve(Response.json({}));
+    }
+  });
   test("counts providers, and finds the newest update and first snapshot", async () => {
     const api = fakeApi();
     expect(await fetchKeyFacts(api)).toEqual(facts);

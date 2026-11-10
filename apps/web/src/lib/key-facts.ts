@@ -138,6 +138,9 @@ export async function fetchKeyFacts(
     return null;
   } finally {
     clearTimeout(timer);
+    // Promise.all can fail before its other requests finish. Do not remove
+    // their only timeout while leaving those requests running indefinitely.
+    controller.abort();
   }
 }
 
