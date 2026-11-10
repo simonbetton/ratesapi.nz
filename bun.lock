@@ -18,7 +18,7 @@
       "name": "api",
       "dependencies": {
         "@elysia/openapi": "^1.4.16",
-        "@elysiajs/cors": "^1.4.2",
+        "@elysiajs/cors": "^1.4.3",
         "@sinclair/typebox": "^0.34.52",
         "cheerio": "1.2.0",
         "elysia": "^1.4.30",
@@ -287,7 +287,7 @@
 
     "@elysia/openapi": ["@elysia/openapi@1.4.16", "", { "peerDependencies": { "@sinclair/typebox": ">= 0.34.0 < 1", "elysia": ">= 1.4.0", "typescript": ">= 5.0.0" } }, "sha512-bAaU1yOn8oxTv+EdzrW8z7RccUQ/y9zeMEPLz+K6lyc4KJ2MLTT0QI9H7Inh2O6N8PDv2nfXGFH8YDfJUOLPOQ=="],
 
-    "@elysiajs/cors": ["@elysiajs/cors@1.4.2", "", { "peerDependencies": { "elysia": ">= 1.4.0" } }, "sha512-FTCcbH35brTLigF1W7BYySRZomgI/dBEMK9BgK9RP9Nez7zmpGh4koL/Yr1BFv8nYz7CfhRvcM8d/c+XnwMaVQ=="],
+    "@elysiajs/cors": ["@elysiajs/cors@1.4.3", "", { "peerDependencies": { "elysia": ">= 1.4.0" } }, "sha512-UgsFfmR50A46QBa4WumJuLNA5yTTrNTyfegpI1BjA+i/PlrkWd15QWqeOzlvqD2P4AZdIty9zUTuRDSSs0XJNA=="],
 
     "@emnapi/core": ["@emnapi/core@1.11.2", "", { "dependencies": { "@emnapi/wasi-threads": "1.2.2", "tslib": "^2.4.0" } }, "sha512-TC8MkTuZUtcTSiFeuC0ksCh9QIJ5+F21MvZ4Wn4ORfYaFJ/0dsiudv5tVkejgwZlwQ39jL9WWDe2lz8x0WglOA=="],
 
