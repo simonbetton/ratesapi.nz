@@ -8,6 +8,8 @@ Tests check both successful extraction and rejection of missing, disabled, ambig
 
 Production collectors never import this directory and never fall back to these fixtures.
 
+The Heartland car-loan entry was refreshed from its public rates, fees and terms page on 14 November 2026. It retains the standard loan and Tesla disclosure sections, including default-interest text. Tesla now publishes separate principal-and-interest and guaranteed-future-value rates; the capture preserves the source's "Guranteed" spelling. Tests require both repayment plans and reject missing, duplicate, invalid or misplaced rates.
+
 The Avanti Finance and Welcome entries were refreshed from their public pages on 21 October 2026 after scheduled collection failed. Avanti retains the contract-specific base-variable-rate sentences, surrounding fixed-rate ranges, loan rates and default-interest text. Welcome retains the residential rate cards and lending guidelines after removal of its commercial fixed-rate card. Tests verify exact rates, reject incomplete or ambiguous disclosures, and keep commercial and default-interest rates out of residential results.
 
 ASB, BNZ and Westpac captures were taken from rendered Chromium DOM on 5 October. Public bootstrap API-key attributes, scripts and page-model attributes are stripped. Tests retain populated cells, product labels and eligibility text; runtime collection requires successful feed responses before accepting these pages.

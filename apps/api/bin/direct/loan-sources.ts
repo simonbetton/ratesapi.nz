@@ -292,10 +292,24 @@ export const loanSources: DirectSource[] = [
         text,
         /Our interest rates range from (?<value>[\d.]+)% p\.a\. to (?<maximum>[\d.]+)% p\.a\./iu
       );
-      const tesla = requiredMatch(
-        text,
-        /Tesla Loan rates, fees and terms Rates Our interest rates is (?<value>[\d.]+)%\s*p\.a\./iu
-      );
+      const tesla =
+        requiredMatch(
+          text,
+          /Tesla Loan rates, fees and terms Rates (?<rates>.*?) Default interest rates/iu
+        )[1] ?? "";
+      const teslaPlans = [
+        {
+          plan: "Principal and interest (P&I)",
+          pattern:
+            /Principal and interest \(P&I\) interest rate is (?<value>[\d.]+)%\s*p\.a\.? and is fixed/iu,
+        },
+        {
+          plan: "Guaranteed Future Value (GFV)",
+          // The current disclosure misspells "Guaranteed" as "Guranteed".
+          pattern:
+            /Gu(?:a)?ranteed Future Value \(GFV\) interest rate is (?<value>[\d.]+)%\s*p\.a\.? and is fixed/iu,
+        },
+      ];
       return [
         {
           product: "Car Loan",
@@ -307,13 +321,14 @@ export const loanSources: DirectSource[] = [
             "Fixed for the loan term; rate depends on personal circumstances.",
           sourceUrl: url,
         },
-        {
+        ...teslaPlans.map(({ plan, pattern }): Observation => ({
           product: "Tesla Loan",
-          rate: percentage(tesla[1] ?? ""),
-          plan: "Secured",
-          condition: "Tesla loan eligibility criteria apply.",
+          rate: percentage(requiredMatch(tesla, pattern)[1] ?? ""),
+          plan: `Secured - ${plan}`,
+          condition:
+            "Fixed for the loan term; Tesla loan eligibility criteria apply.",
           sourceUrl: url,
-        },
+        })),
       ];
     },
   },
