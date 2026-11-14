@@ -34,4 +34,6 @@ jobs:
       - name: Run Fallow
         uses: fallow-rs/fallow@v3
         with:
+          # Match bun.lock; the action otherwise resolves package.json's caret range.
+          version: "3.38.1"
           fail-on-issues: false

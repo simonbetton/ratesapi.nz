@@ -52,6 +52,67 @@ async function fixtureFetch(url: string): Promise<string> {
 }
 
 describe("direct source parsers", () => {
+  test("Heartland collects both Tesla repayment plans without using default interest", async () => {
+    const adapter = source("heartland-car");
+    expect(adapter.parse(pages)).toMatchObject([
+      {
+        product: "Car Loan",
+        rate: 8.95,
+        rateMaximum: 13.95,
+        rateType: "range",
+      },
+      {
+        product: "Tesla Loan",
+        plan: "Secured - Principal and interest (P&I)",
+        rate: 7.2,
+      },
+      {
+        product: "Tesla Loan",
+        plan: "Secured - Guaranteed Future Value (GFV)",
+        rate: 9.2,
+      },
+    ]);
+    const collection = await collectDirectDataset(
+      "car-loan-rates",
+      institutions.filter((institution) => institution.id === "heartland-bank"),
+      [adapter],
+      fixtureFetch
+    );
+    expect(collection.blockers).toEqual([]);
+    expect(collection.model).not.toBeNull();
+  });
+
+  test.each(["7.20", "9.20"])(
+    "Heartland rejects missing, invalid, duplicate or misplaced Tesla rate %s",
+    (value) => {
+      const adapter = source("heartland-car");
+      const url = adapter.urls[0] ?? "";
+      const html = pages.get(url) ?? "";
+      const sentence = html.match(
+        new RegExp(
+          `(?:Principal|Guranteed)[^\\n]+${value.replace(".", "\\.")}[^\\n]+`,
+          "u"
+        )
+      )?.[0];
+      if (!sentence) {
+        throw new Error("Missing Tesla fixture sentence");
+      }
+      for (const input of [
+        html.replace(sentence, "Rate available on request"),
+        html.replace(`${value}%`, "900%"),
+        html.replace(sentence, `${sentence} ${sentence}`),
+        html.replace(
+          sentence,
+          sentence.replace("interest rate", "default interest rate")
+        ),
+        html.replace(sentence, "").replace("</body>", `${sentence}</body>`),
+        `${html} ${html}`,
+      ]) {
+        expect(() => adapter.parse(new Map([[url, input]]))).toThrow();
+      }
+    }
+  );
+
   test("Avanti reads the current contract-specific base rates, excluding fixed ranges and default interest", () => {
     expect(source("avanti-mortgage").parse(pages)).toMatchObject([
       { product: "Near Prime", rate: 6.85, termInMonths: null },
