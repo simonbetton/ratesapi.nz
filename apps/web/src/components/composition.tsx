@@ -18,7 +18,7 @@ export function Page({ keyFacts }: { keyFacts: KeyFacts | null }) {
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      <SiteHeader />
+      <SiteHeader home />
       <main id="main-content" tabIndex={-1}>
         <HeroSection />
         <ChannelsSection keyFacts={keyFacts} />

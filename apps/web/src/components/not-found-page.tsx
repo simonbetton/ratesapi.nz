@@ -1,5 +1,6 @@
-import { ArrowRight, Terminal } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
+import { SiteHeader } from "./header";
 import { apiLinks } from "./rates-api-content";
 import { SiteFooter } from "./static-sections";
 
@@ -11,11 +12,8 @@ export function NotFoundPage() {
           description or canonical, so nothing points at the homepage. */}
       <title>Page not found | Rates API</title>
       <meta content="noindex" name="robots" />
-      <main className="page-container py-16" id="main-content" tabIndex={-1}>
-        <a className="site-logo" href="/" aria-label="Rates API home">
-          <Terminal size={24} aria-hidden="true" />
-          <span>Rates API</span>
-        </a>
+      <SiteHeader />
+      <main className="page-container pb-16" id="main-content" tabIndex={-1}>
         <p className="eyebrow mt-16">Error 404</p>
         <h1>Page not found.</h1>
         <p className="mt-5 max-w-[560px]">

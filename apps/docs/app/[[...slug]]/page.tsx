@@ -50,6 +50,14 @@ export default async function Page({ params }: PageProps) {
       />
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
+      <a
+        className="docs-support"
+        href="https://github.com/sponsors/simonbetton"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Support this project <span aria-hidden="true">↗</span>
+      </a>
       <DocsBody>
         <MDXContent components={{ a: ApiLink }} />
       </DocsBody>

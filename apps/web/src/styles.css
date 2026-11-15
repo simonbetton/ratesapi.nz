@@ -282,10 +282,28 @@ pre:focus-visible {
   font-size: 0.9375rem;
   font-weight: 600;
 }
+.header-actions,
 .site-header nav {
   display: flex;
   align-items: center;
   gap: 1.5rem;
+}
+.support-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.4rem;
+  background: var(--accent-ink);
+  color: white;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.support-link:hover {
+  background: #194b3c;
 }
 .site-header nav a {
   font-size: 0.8125rem;
@@ -293,6 +311,7 @@ pre:focus-visible {
   text-decoration: none;
   color: var(--muted-ink);
   padding-block: 0.65rem;
+  white-space: nowrap;
 }
 .site-header nav a:hover {
   color: var(--accent-ink);
@@ -1879,6 +1898,10 @@ pre:focus-visible {
   color: var(--accent-ink);
 }
 @media (max-width: 1000px) {
+  .header-actions,
+  .site-header nav {
+    gap: 0.875rem;
+  }
   .endpoint-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1907,7 +1930,7 @@ pre:focus-visible {
     gap: 2.5rem;
   }
 }
-@media (max-width: 760px) {
+@media (max-width: 840px) {
   #rates-home {
     padding-bottom: 4.5rem;
   }
@@ -1917,6 +1940,8 @@ pre:focus-visible {
   .mobile-nav {
     display: block;
   }
+}
+@media (max-width: 760px) {
   .hero {
     padding-top: 3.5rem;
   }

@@ -1,1 +1,21 @@
 @import "fumadocs-ui/style.css";
+
+.docs-support {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: fit-content;
+  min-height: 2.75rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.4rem;
+  background: #24614f;
+  color: white;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.docs-support:hover {
+  background: #194b3c;
+}
