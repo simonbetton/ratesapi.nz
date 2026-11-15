@@ -2,7 +2,7 @@ import { Terminal } from "lucide-react";
 
 import { apiLinks } from "./rates-api-content";
 
-export function SiteHeader() {
+export function SiteHeader({ home = false }: { home?: boolean }) {
   return (
     <header className="site-header">
       <div className="header-inner">
@@ -10,26 +10,38 @@ export function SiteHeader() {
           <Terminal size={24} aria-hidden="true" />
           <span>Rates API</span>
         </a>
-        <nav aria-label="Main navigation">
-          <a className="nav-secondary" href="#endpoints">
-            Endpoints
+        <div className="header-actions">
+          {home && (
+            <nav aria-label="Main navigation">
+              <a className="nav-secondary" href="#endpoints">
+                Endpoints
+              </a>
+              <a className="nav-secondary" href="#explorer">
+                Explore
+              </a>
+              <a className="nav-secondary" href="#agents">
+                For agents
+              </a>
+              <a className="nav-secondary" href={apiLinks.source}>
+                GitHub
+              </a>
+              <a className="nav-docs" href={apiLinks.docs}>
+                API docs <span aria-hidden="true">↗</span>
+              </a>
+              <a className="nav-start" href="#quickstart">
+                Try the API <span aria-hidden="true">→</span>
+              </a>
+            </nav>
+          )}
+          <a
+            className="support-link"
+            href="https://github.com/sponsors/simonbetton"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Support this project <span aria-hidden="true">↗</span>
           </a>
-          <a className="nav-secondary" href="#explorer">
-            Explore
-          </a>
-          <a className="nav-secondary" href="#agents">
-            For agents
-          </a>
-          <a className="nav-secondary" href={apiLinks.source}>
-            GitHub
-          </a>
-          <a className="nav-docs" href={apiLinks.docs}>
-            API docs <span aria-hidden="true">↗</span>
-          </a>
-          <a className="nav-start" href="#quickstart">
-            Try the API <span aria-hidden="true">→</span>
-          </a>
-        </nav>
+        </div>
       </div>
     </header>
   );

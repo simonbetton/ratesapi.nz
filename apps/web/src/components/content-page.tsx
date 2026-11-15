@@ -1,7 +1,6 @@
-import { Terminal } from "lucide-react";
-
 import { formatDay } from "../lib/key-facts";
 import type { Block, ContentPage } from "../lib/page-content";
+import { SiteHeader } from "./header";
 import { InlineContent, keyed, partLabel } from "./inline-content";
 import { SiteFooter } from "./static-sections";
 
@@ -47,18 +46,14 @@ function ContentBlock({ block }: { block: Block }) {
   }
 }
 
-// The layout of the 404 page: the logo, the text, then the site footer.
 export function ContentPageView({ page }: { page: ContentPage }) {
   return (
     <div id="rates-home">
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      <main className="page-container py-16" id="main-content" tabIndex={-1}>
-        <a className="site-logo" href="/" aria-label="Rates API home">
-          <Terminal size={24} aria-hidden="true" />
-          <span>Rates API</span>
-        </a>
+      <SiteHeader />
+      <main className="page-container pb-16" id="main-content" tabIndex={-1}>
         <article className="content-page">
           <p className="eyebrow mt-16">{page.eyebrow}</p>
           <h1>{page.title}</h1>

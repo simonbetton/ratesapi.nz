@@ -47,7 +47,35 @@ const pageHead = `
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/ratesapi-terminal-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)" />
     <link rel="icon" href="/ratesapi-terminal-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)" />
+    <style>
+      .reference-header {
+        display: flex;
+        justify-content: flex-end;
+        padding: 0.5rem 1rem;
+      }
+      .reference-support {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        min-height: 2.75rem;
+        padding: 0 0.75rem;
+        border-radius: 0.4rem;
+        background: #24614f;
+        color: white;
+        font: 600 0.8125rem system-ui, sans-serif;
+        text-decoration: none;
+      }
+      .reference-support:hover {
+        background: #194b3c;
+      }
+    </style>
     `;
+
+const referenceHeader = `<header class="reference-header">
+      <a class="reference-support" href="https://github.com/sponsors/simonbetton" target="_blank" rel="noopener noreferrer">
+        Support this project <span aria-hidden="true">↗</span>
+      </a>
+    </header>`;
 
 // Crawlers and readers without JavaScript get this summary. Scalar renders
 // the full reference from /openapi/json in the browser.
@@ -106,7 +134,10 @@ function buildOpenApiPage(): string {
   const configurationScript = '<script\n      id="api-reference"';
   const replacements: [search: string, replacement: string][] = [
     ["<html>", '<html lang="en">'],
-    [configurationScript, `${noscriptSummary}\n    ${configurationScript}`],
+    [
+      configurationScript,
+      `${referenceHeader}\n    ${noscriptSummary}\n    ${configurationScript}`,
+    ],
     [
       `<script src="${scalarBundleUrl}" crossorigin></script>`,
       `<script src="${scalarBundleUrl}" integrity="${scalarBundle.integrity}" crossorigin defer></script>`,
