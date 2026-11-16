@@ -21,7 +21,7 @@
     "@tanstack/react-router-devtools": "latest",
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
-    "@tanstack/router-plugin": "^1.168.48",
+    "@tanstack/router-plugin": "^1.169.0",
     "clsx": "^2.1.1",
     "lucide-react": "^1.66.0",
     "react": "catalog:",
