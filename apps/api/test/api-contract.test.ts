@@ -1,5 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
+import { load } from "cheerio";
+
 import { createApp } from "../src/app";
 import { toSavableJson } from "../src/lib/data-loader";
 import type { DataType, SupportedModels } from "../src/lib/data-loader";
@@ -2216,8 +2218,8 @@ describe("OpenAPI page", () => {
 
   test("keeps the Scalar configuration and the Elysia theme", async () => {
     const html = await openApiHtml();
-    const configuration = html.match(/data-configuration='(?<json>[^']*)'/u)
-      ?.groups?.json;
+    const $ = load(html);
+    const configuration = $("#api-reference").attr("data-configuration");
 
     expect(JSON.parse(configuration ?? "{}")).toMatchObject({
       url: "openapi/json",

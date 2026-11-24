@@ -6,7 +6,7 @@
       "apps/*"
     ],
     "catalog": {
-      "@types/bun": "^1.4.4",
+      "@types/bun": "^1.4.5",
       "@types/node": "^26.6.6",
       "@types/react": "^19.3.0",
       "@types/react-dom": "^19.3.0",
@@ -14,7 +14,7 @@
       "react": "^19.3.1",
       "react-dom": "^19.3.1",
       "typescript": "^7.0.2",
-      "wrangler": "^4.156.2"
+      "wrangler": "^4.167.0"
     }
   },
   "type": "module",
@@ -31,13 +31,13 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "fallow": "^3.38.1",
+    "fallow": "^3.48.0",
     "husky": "^9.1.7",
-    "oxfmt": "^0.76.0",
-    "oxlint": "^1.90.0",
-    "react-doctor": "^0.9.22",
+    "oxfmt": "^0.80.0",
+    "oxlint": "^1.95.0",
+    "react-doctor": "^0.9.23",
     "typescript": "catalog:",
-    "ultracite": "^8.1.1"
+    "ultracite": "^8.3.1"
   },
   "lint-staged": {
     "*.{js,jsx,mjs,ts,tsx,json,jsonc,css,md,mdx}": "ultracite fix"

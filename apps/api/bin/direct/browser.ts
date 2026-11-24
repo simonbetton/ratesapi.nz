@@ -425,10 +425,8 @@ export async function renderPage(
           (response) => response.url() === feed && response.ok(),
           { timeout: timeoutMs }
         )
-        .then(
-          () => true,
-          () => false
-        )
+        .then(() => true)
+        .catch(() => false)
     );
     phase = "navigation";
     const response = await navigateToRates(
@@ -499,10 +497,7 @@ async function navigateToRates(
             response.ok(),
           { timeout: timeoutMs }
         )
-        .then(
-          (response) => response,
-          () => null
-        )
+        .catch(() => null)
     : undefined;
   const response = await page.goto(url, {
     waitUntil: "domcontentloaded",
