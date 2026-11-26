@@ -206,12 +206,15 @@ function primaryFee(html: string, title: string): number {
     throw new Error(`Missing ANZ primary fee for ${title}`);
   }
   const text = bodies[0] ?? "";
-  if (/Primary card fee - No charge/u.test(text)) {
+  // primaryFeeNZD is the annual primary-cardholder fee. ANZ now labels it
+  // "Account fee"; older pages said "Primary card fee". A half-yearly charge
+  // is doubled. The joint or additional card fee is not this fee.
+  if (/(?:Primary card fee|Account fee) - No charge/u.test(text)) {
     return 0;
   }
   const match = requiredMatch(
     text,
-    /Primary card fee - \$(?<value>\d+(?:\.\d+)?) (?<frequency>half[- ]yearly|p\.a\.)/u
+    /(?:Primary card fee|Account fee) - \$(?<value>\d+(?:\.\d+)?) (?<frequency>half[- ]yearly|p\.a\.)/u
   );
   return Number(match[1]) * (match[2] === "p.a." ? 1 : 2);
 }
