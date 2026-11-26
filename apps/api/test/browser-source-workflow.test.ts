@@ -142,7 +142,7 @@ describe("direct source workflow boundaries", () => {
     expect(live.env?.BROWSER_USE_API_KEY).toBeDefined();
     expect(JSON.stringify(live)).not.toContain("CLOUDFLARE");
     const upload = audit.steps.find(
-      (item) => item.uses === "actions/upload-artifact@v4"
+      (item) => item.uses === "actions/upload-artifact@v7"
     );
     expect(upload?.if).toBe("always()");
     for (const file of [
