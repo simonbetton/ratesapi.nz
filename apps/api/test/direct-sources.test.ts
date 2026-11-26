@@ -29,6 +29,13 @@ function source(id: string): DirectSource {
   return found;
 }
 
+function cardFee(
+  rates: { product: string; primaryFeeNZD?: number | null }[],
+  product: string
+): number | null | undefined {
+  return rates.find((rate) => rate.product === product)?.primaryFeeNZD;
+}
+
 const registry: Institution[] = [
   {
     id: "anz",
@@ -300,17 +307,30 @@ describe("direct source parsers", () => {
     expect(() => source("anz-mortgage").parse(modified)).toThrow("inactive");
   });
 
-  test("ANZ converts half-yearly fees to annual fees and keeps a zero fee", () => {
+  test("ANZ reads Account fee as the annual primary card fee", () => {
     const rates = source("anz-cards").parse(pages);
-    expect(
-      rates.find((rate) => rate.product === "Airpoints Visa")?.primaryFeeNZD
-    ).toBe(65);
-    expect(
-      rates.find((rate) => rate.product === "CashBack Platinum")?.primaryFeeNZD
-    ).toBe(80);
-    expect(
-      rates.find((rate) => rate.product === "Low Rate")?.primaryFeeNZD
-    ).toBe(0);
+    expect(cardFee(rates, "Low Rate")).toBe(0);
+    expect(cardFee(rates, "Airpoints Visa")).toBe(65);
+    expect(cardFee(rates, "Airpoints Visa Platinum")).toBe(150);
+    expect(cardFee(rates, "CashBack")).toBe(40);
+    expect(cardFee(rates, "CashBack Platinum")).toBe(80);
+  });
+
+  test("ANZ still annualises the previous Primary card fee wording", () => {
+    const modified = new Map(pages);
+    const url = "https://www.anz.co.nz/rates-fees-agreements/credit-cards/";
+    modified.set(
+      url,
+      (pages.get(url) ?? "")
+        .replaceAll("Account&nbsp;fee", "Primary card fee")
+        .replaceAll("Account fee", "Primary card fee")
+    );
+    const rates = source("anz-cards").parse(modified);
+    expect(cardFee(rates, "Low Rate")).toBe(0);
+    expect(cardFee(rates, "Airpoints Visa")).toBe(65);
+    expect(cardFee(rates, "Airpoints Visa Platinum")).toBe(150);
+    expect(cardFee(rates, "CashBack")).toBe(40);
+    expect(cardFee(rates, "CashBack Platinum")).toBe(80);
   });
 
   test("Kiwibank resolves first-party placeholders and deduplicates responsive tables", () => {
