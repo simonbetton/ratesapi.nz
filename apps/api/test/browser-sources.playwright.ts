@@ -510,8 +510,9 @@ test.describe("real Chromium transport", () => {
     }
   });
 
-  test("Welcome renders its first-party disclosure and validates residential rates", async () => {
-    const source = directSources.find((item) => item.id === "welcome-mortgage");
+  test("Welcome renders and validates residential rates", async () => {
+    const id = "welcome-mortgage";
+    const source = directSources.find((item) => item.id === id);
     const sourceUrl = source?.urls[0];
     if (!source || !sourceUrl) {
       throw new Error("Missing Welcome source");
@@ -523,12 +524,12 @@ test.describe("real Chromium transport", () => {
     }
     const fixture = await fixtureBrowser(body);
     try {
-      const rendered = await renderPage(fixture.browser, url, readiness, 5000);
-      const rates = source.parse(new Map([[sourceUrl, rendered]]));
-      expect(rates.map(({ termInMonths }) => termInMonths)).toEqual([
-        6, 12, 18, 24, null,
-      ]);
-      expect(rates.every((rate) => rate.sourceUrl === sourceUrl)).toBe(true);
+      const page = await renderPage(fixture.browser, url, readiness, 5000);
+      const rates = source.parse(new Map([[sourceUrl, page]]));
+      const terms = rates.map(({ termInMonths }) => termInMonths);
+      expect(terms).toEqual([6, 12, 18, 24, null]);
+      const firstParty = rates.every((rate) => rate.sourceUrl === sourceUrl);
+      expect(firstParty).toBe(true);
     } finally {
       await fixture.close();
     }
