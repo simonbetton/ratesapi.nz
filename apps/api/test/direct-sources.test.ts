@@ -289,10 +289,7 @@ describe("direct source parsers", () => {
         (rate) => rate.product === "Standard" && rate.termInMonths === 12
       )?.rate
     ).toBe(5.59);
-    expect(rates.find((rate) => rate.product.includes("Reno"))).toMatchObject({
-      rate: 2.5,
-      termInMonths: 36,
-    });
+    expect(rates.some((rate) => rate.product.includes("Reno"))).toBe(false);
     expect(
       rates.some(
         (rate) => rate.product === "Special" && rate.termInMonths === 60
@@ -305,6 +302,31 @@ describe("direct source parsers", () => {
       "0";
     modified.set(feed, JSON.stringify(rows));
     expect(() => source("anz-mortgage").parse(modified)).toThrow("inactive");
+  });
+
+  test("ANZ publishes current mortgages without the retired Reno page or code", async () => {
+    const adapter = source("anz-mortgage");
+    const feed = "https://www.anz.co.nz/bin/anzconz/rates/?format=JSON";
+    const reno =
+      "https://www.anz.co.nz/personal/home-loans-mortgages/loan-types/reno/";
+    const rows: { code: string }[] = JSON.parse(pages.get(feed) ?? "[]");
+    const requested: string[] = [];
+    const result = await collectDirectDataset(
+      "mortgage-rates",
+      institutions.filter((institution) => institution.id === "anz"),
+      [adapter],
+      async (url) => {
+        requested.push(url);
+        if (url === feed) {
+          return JSON.stringify(rows.filter((row) => row.code !== "HFRNZRL"));
+        }
+        return fixtureFetch(url);
+      }
+    );
+    expect(requested).not.toContain(reno);
+    expect(result.blockers).toEqual([]);
+    expect(result.model).not.toBeNull();
+    expect(result.sources[0]?.observations).toBe(15);
   });
 
   test("ANZ reads Account fee as the annual primary card fee", () => {

@@ -13,7 +13,14 @@
           "Good Energy - Up to $80K"
         ],
         "sourceUrl": "https://www.anz.co.nz/rates-fees-agreements/home-loans/",
-        "reviewedAt": "2026-10-04"
+        "reviewedAt": "2026-11-28",
+        "productDecisions": {
+          "Reno loan - Up to $50K": {
+            "replacements": [],
+            "reason": "ANZ closed applications at the end of 27 November 2026. The dedicated offer page now redirects to general top-ups.",
+            "sourceUrl": "https://www.anz.co.nz/personal/home-loans-mortgages/loan-types/reno/"
+          }
+        }
       },
       "personal-loan-rates": {
         "status": "active",

@@ -339,6 +339,12 @@ export const additionalSources: DirectSource[] = [
     institution: "welcome",
     dataset: "mortgage-rates",
     urls: [welcome],
+    browser: {
+      [welcome]: {
+        selector: ".rate-overview__card_content li",
+        minimumRates: 4,
+      },
+    },
     parse(pages) {
       const html = page(pages, welcome);
       const text = plainText(html);

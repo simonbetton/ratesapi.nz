@@ -510,6 +510,30 @@ test.describe("real Chromium transport", () => {
     }
   });
 
+  test("Welcome renders its first-party disclosure and validates residential rates", async () => {
+    const source = directSources.find((item) => item.id === "welcome-mortgage");
+    const sourceUrl = source?.urls[0];
+    if (!source || !sourceUrl) {
+      throw new Error("Missing Welcome source");
+    }
+    const readiness = source.browser?.[sourceUrl];
+    const body = (responses as Record<string, string>)[sourceUrl];
+    if (!readiness || !body) {
+      throw new Error("Missing Welcome browser readiness or fixture");
+    }
+    const fixture = await fixtureBrowser(body);
+    try {
+      const rendered = await renderPage(fixture.browser, url, readiness, 5000);
+      const rates = source.parse(new Map([[sourceUrl, rendered]]));
+      expect(rates.map(({ termInMonths }) => termInMonths)).toEqual([
+        6, 12, 18, 24, null,
+      ]);
+      expect(rates.every((rate) => rate.sourceUrl === sourceUrl)).toBe(true);
+    } finally {
+      await fixture.close();
+    }
+  });
+
   test("Aotea waits for a rendered disclosure instead of parsing an empty response shell", async () => {
     const source = directSources.find(
       (item) => item.id === "aotea-finance-personal-loan-rates"
