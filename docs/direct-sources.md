@@ -21,6 +21,7 @@ The [live source audit](direct-source-audit.json) records source-level outcomes 
 
 ### Resolved access and extraction issues
 
+- **ANZ and Welcome (reviewed 28 November 2026):** ANZ closed its Reno Loan offer on 27 November and the offer URL redirects to general top-ups. The registry records retirement of that product; active ANZ mortgage codes still require both feed and page evidence. Welcome's public residential rates are still published. After a runner-side HTTP 403, its first-party disclosure uses the existing browser transport; the parser still requires all four residential fixed terms and the residential variable rate.
 - **Avanti and Welcome (reviewed 21 October 2026):** Avanti's two reviewed base-variable-rate products now use the contract-specific sentences. The former Specialist label is replaced by the published contract name, First Mortgage Property Loan. These remain base rates with borrower-specific margins, distinct from the residential fixed-rate ranges. Welcome's residential fixed rates are read from their own card, independent of commercial products; all four reviewed terms and the residential variable rate remain required.
 
 - **TSB:** local HTTP and Chromium return 403, while Browser Use Cloud retrieves the home-loan, personal-loan, overdraft and formal card disclosures. TSB's exact blocking rule is not exposed. A local 403 does not mean the bank's public website is unavailable.

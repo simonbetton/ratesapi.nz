@@ -5,8 +5,6 @@ import type { DirectSource, Observation } from "./types";
 
 const feed = "https://www.anz.co.nz/bin/anzconz/rates/?format=JSON";
 const mortgagePage = "https://www.anz.co.nz/rates-fees-agreements/home-loans/";
-const renoPage =
-  "https://www.anz.co.nz/personal/home-loans-mortgages/loan-types/reno/";
 const personalPage =
   "https://www.anz.co.nz/rates-fees-agreements/personal-loans/";
 const cardsPage = "https://www.anz.co.nz/rates-fees-agreements/credit-cards/";
@@ -50,7 +48,7 @@ export const anzSources: DirectSource[] = [
     id: "anz-mortgage",
     institution: "anz",
     dataset: "mortgage-rates",
-    urls: [mortgagePage, renoPage, feed],
+    urls: [mortgagePage, feed],
     parse(pages) {
       const value = ratesForPage(pages, mortgagePage);
       const standard: [number | null, string][] = [
@@ -97,14 +95,6 @@ export const anzSources: DirectSource[] = [
           termInMonths: null,
           rate: value("HFPNZI"),
           sourceUrl: mortgagePage,
-        },
-        {
-          product: "Reno loan - Up to $50K",
-          termInMonths: 36,
-          rate: ratesForPage(pages, renoPage)("HFRNZRL"),
-          sourceUrl: renoPage,
-          condition:
-            "Eligible renovations only; $3,000–$50,000 top-up to an ANZ Home Loan. Minimum 20% equity for owner occupiers, 30% for investment properties.",
         },
       ];
     },
