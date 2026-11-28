@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -35,5 +35,5 @@ jobs:
         uses: fallow-rs/fallow@v3
         with:
           # Match bun.lock; the action otherwise resolves package.json's caret range.
-          version: "3.48.0"
+          version: "3.49.0"
           fail-on-issues: false

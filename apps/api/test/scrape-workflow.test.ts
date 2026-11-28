@@ -105,7 +105,7 @@ describe("scheduled collection isolation", () => {
   });
   test("failed dataset jobs keep separate diagnostic artifacts", () => {
     const upload = workflow.jobs.collect?.steps.find(
-      (step) => step.uses === "actions/upload-artifact@v4"
+      (step) => step.uses === "actions/upload-artifact@v7"
     );
     expect(upload?.if).toBe("always()");
     expect(upload?.with?.name).toContain("${{ matrix.dataset }}");
